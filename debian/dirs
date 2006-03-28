@@ -1,0 +1,4 @@
+usr/share/lintian/overrides
+usr/share/doc-base
+usr/sbin
+var/lib/doc-base/info

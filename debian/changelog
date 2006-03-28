@@ -1,3 +1,10 @@
+doc-base (0.7.19) UNRELEASED; urgency=low
+
+  * New maintainer (closes: #358436).
+  * debian/*: Switch build-system do debhelper v5
+
+ -- Robert Luberda <robert@debian.org>  Tue, 28 Mar 2006 19:30:55 +0200
+
 doc-base (0.7.18-0.1) unstable; urgency=high
 
   * Non-maintainer upload.
