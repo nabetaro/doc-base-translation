@@ -14,6 +14,7 @@ mandir		:= $(prefix)/usr/share/man
 docdir		:= $(prefix)/usr/share/doc/$(package)
 sharedir	:= $(prefix)/usr/share/$(package)
 vardir		:= $(prefix)/var/lib/$(package)
+lintiandir	:= $(prefix)/usr/share/lintian/overrides
 
 # build abstraction
 install_file	:= install -o root -g root -m 644
@@ -24,13 +25,16 @@ compress	:= gzip -9f
 
 # determine our version number
 DEB_VERSION	:= $(shell LC_ALL=C dpkg-parsechangelog | grep ^Version: | sed 's/^Version: *//')
+DEB_DATE	:= $(shell dpkg-parsechangelog | sed -n 's/^Date: *//p')
+# pretty-print the date; I wish this was dynamic like the top-level makefile but oh well
+DATE_EN		:= $(shell LC_ALL=C     date --date="$(DEB_DATE)" '+%d %B, %Y')
 
 build:
 	$(checkdir)
 	perl -cw install-docs		# check perl script syntax
 	rm -f version.ent
 	echo "<!entity version \"$(DEB_VERSION)\">" >> version.ent
-	echo "<!entity date    \"$(DATE)\">"        >> version.ent
+	echo "<!entity date    \"$(DATE_EN)\">"        >> version.ent
 	nsgmls -wall -s -E20 doc-base.sgml	# check SGML syntax
 	debiandoc2html doc-base.sgml
 	debiandoc2text doc-base.sgml
@@ -54,7 +58,7 @@ binary-indep:	checkroot build
 	rm -rf $(prefix)
 	$(make_directory) $(prefix)/DEBIAN
 	$(make_directory) $(docdir) $(sbindir) $(sharedir) $(mandir)/man8
-	$(make_directory) $(vardir)/info/
+	$(make_directory) $(vardir)/info/ $(lintiandir)
 	$(install_script) install-docs $(sbindir)/
 	$(install_file) doc-base.txt doc-base.sgml version.ent $(docdir)/
 	$(install_file) doc-base.desc $(sharedir)/doc-base
@@ -63,24 +67,26 @@ binary-indep:	checkroot build
 	$(install_file) install-docs.8 $(mandir)/man8/
 	$(install_file) install-docs.html $(docdir)/
 	$(install_file) install-docs.desc $(sharedir)/install-docs-man
-
 	$(install_file) debian/changelog debian/copyright $(docdir)/
+	$(install_file) debian/lintian-overrides $(lintiandir)/$(package)
 
-	# make sure control files are good
+#	 make sure control files are good
 	sh -n debian/preinst
 	sh -n debian/postinst
 	sh -n debian/prerm
-	# install control files
-	$(install_script) debian/preinst debian/postinst debian/prerm \
+	sh -n debian/postrm
+#	 install control files
+	$(install_script) debian/preinst debian/postinst debian/prerm debian/postrm \
 		$(prefix)/DEBIAN/
 
-	# compress docs (policy)	
+#	 compress docs (policy)	
 	find $(mandir) -type f | xargs $(compress)
 	find $(docdir) -type f \
 	    \( -size +4k -or -name "changelog*" \) \
             ! -name "*.htm" ! -name "*.html" ! -name "*.gif" \
             ! -name "copyright" | xargs $(compress)
 
+	dh_perl
 	dpkg-gencontrol -isp
 	dpkg --build $(prefix) ..
 

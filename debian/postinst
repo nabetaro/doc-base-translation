@@ -5,33 +5,56 @@
 set -e
 
 package=doc-base
+# upgrades prior to this version require complete re-registration
+compat_ver=0.7.9
+# upgrades of the following version requires complete re-registration
+bad_ver=0.7.13
+VERBOSE=
 
 if [ "$DEBUG" ]; then
     echo entering $package postinst
     set -x
 fi
 
-add_docs ( ) {
-    install-docs -i /usr/share/$package/$package
-    install-docs -i /usr/share/$package/install-docs-man
-}
-
-compat_symlink ( ) {
-    if [ -d /usr/doc ]; then
-	if [ ! -e /usr/doc/$package -a -d /usr/share/doc/$package ]; then
-	    ln -s ../share/doc/$package /usr/doc/$package
-	fi
+reinstall_docs ( ) {
+    # install all the existing doc-base control files
+    num=`ls -1 /usr/share/$package/* | wc -l`
+    echo "(re)registering $num documents from /usr/share/$package ..." >&2
+    for file in /usr/share/$package/*; do
+        install-docs ${VERBOSE} --no-update-menus -i $file || true  # don't abort on failure
+    done
+    if [ -x /usr/bin/update-menus ]; then
+        /usr/bin/update-menus
     fi
 }
 
 case "$1" in
   configure)
-    add_docs
-    compat_symlink
-    ;;
-  install)
-    compat_symlink
+    if [ "${2+set}" != set -o -z "$2" -o "$2" = "<unknown>" ]; then
+        # first install, or upgrade from ancient version
+        reinstall_docs
+    elif dpkg --compare-versions $2 lt $compat_ver; then
+	# version is less than last compatable version, we need to
+	# re-register all the docs
+        reinstall_docs
+    elif dpkg --compare-versions $2 eq $bad_ver; then
+        # bad version, ew, re-register
+        reinstall_docs
+    else
+        # only register our stuff
+        install-docs ${VERBOSE} --no-update-menus -i /usr/share/$package/$package
+        install-docs ${VERBOSE} -i /usr/share/$package/install-docs-man
+    fi
+    if [ -d /usr/lib/menu ]; then
+        files=`find /usr/lib/menu/ -name 'doc-base-*' -type f -maxdepth 1`
+        if [ "$files" ]; then
+            echo "removing old dwww menu files..." >&2
+            rm -f /usr/lib/menu/doc-base-* || true
+        fi
+    fi
     ;;
 esac
+
+#DEBHELPER#
 
 exit 0

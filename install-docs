@@ -11,20 +11,44 @@ install-docs - manage online Debian documentation
 $DATA_DIR = "/var/lib/doc-base/info";
 
 $dwww_update = "/usr/bin/update-menus";
+$dhelp_parse = "/usr/sbin/dhelp_parse";
+$do_dwww_update = 1;
 
 # ---end-of-configuration-part---
 
-use File::Basename;
+# This would normally be just 'use File::Basename;'. However, install-docs
+# often gets called opportunistically by packages if it's present, and
+# there's no way for those packages to make sure that perl is configured
+# when doing so, so it's possible that standard modules will not be usable.
+
+sub basename {
+  (my $basename = $_[0]) =~ s#.*/##s;
+  return $basename;
+}
+
+sub dirname {
+  my ($dirname, $basename) = ($_[0] =~ m#^(.*/)?(.*)#s);
+  $dirname = './' if not defined $dirname or $dirname eq '';
+  $dirname =~ s#(.)/*\z#$1#s;
+  unless (length $basename) {
+    ($dirname) = ($dirname =~ m#^(.*/)?#s);
+    $dirname = './' if not defined $dirname or $dirname eq '';
+    $dirname =~ s#(.)/*\z#$1#s;
+  }
+  return $dirname;
+}
+
 # set umask explicitly
 umask 022;
 
 =head1 SYNOPSIS
 
- install-docs -i --install | 
+ install-docs [ -v, --verbose ]
+              [ --no-update-menus ]
+              -i --install | 
               -r --remove  |
               -s --status  |
               -L --listfiles
-              [ -v, --verbose ]
                 <doc-id | file>
 
 =head1 DESCRIPTION
@@ -56,6 +80,17 @@ Operate verbosely.
     next;
   }
 
+  if ($arg eq '--no-update-menus') {
+
+=item B<--no-update-menus>
+
+Inhibit running L<update-menus(1L)>, used for the L<dwww(1)> update program.
+
+=cut
+    $do_dwww_update = 0;
+    next;
+  }
+
   if (($arg eq '-i') or ($arg eq '--install')) {
 
 =item B<-i> I<file> | B<--install> I<file>
@@ -64,8 +99,8 @@ Install the documentation described by the control file I<file>.
 
 =cut
     # install new docs
-    ($file = shift) or die "argument missing for `install'";
-    ($#ARGV == -1) or die "too many arguments for `install'";
+    ($file = shift) or die "argument missing for `install'\n";
+    ($#ARGV == -1) or die "too many arguments for `install'\n";
 
     read_control_file($file);
     read_status_file(1);
@@ -95,8 +130,8 @@ file, and usually correspond to the package name.
 
 =cut
     # remove old docs
-    ($docid = shift) or die "argument missing for `remove'";
-    ($#ARGV == -1) or die "too many arguments for `remove'";
+    ($docid = shift) or die "argument missing for `remove'\n";
+    ($#ARGV == -1) or die "too many arguments for `remove'\n";
 
     if ( ! read_status_file(1) ) {
       warn("Document `$docid' is not installed, cannot remove.\n");
@@ -120,8 +155,8 @@ Display the status of the document identifier I<docid>.
 
 =cut
     # display status
-    ($docid = shift) or die "argument missing for `status'";
-    ($#ARGV == -1) or die "too many arguments for `status'";
+    ($docid = shift) or die "argument missing for `status'\n";
+    ($#ARGV == -1) or die "too many arguments for `status'\n";
 
     read_status_file();
     read_list_file();
@@ -139,8 +174,8 @@ List the files associated with the document identifier I<docid>.
 
 =cut
     # display status
-    ($docid = shift) or die "argument missing for `listfiles'";
-    ($#ARGV == -1) or die "too many arguments for `listfiles'";
+    ($docid = shift) or die "argument missing for `listfiles'\n";
+    ($#ARGV == -1) or die "too many arguments for `listfiles'\n";
 
     read_status_file();
     read_list_file();
@@ -148,7 +183,7 @@ List the files associated with the document identifier I<docid>.
     display_listing();
 
   } else {
-    die "invalid command line argument: $arg";
+    die "invalid command line argument: $arg\n";
   }
 }
 
@@ -159,7 +194,6 @@ exit 0;
 # Registering to dhelp
 sub register_dhelp {
   my (%update_dhelp, %removed_dhelp);
-  my $dhelp_parse;
 
   my $format_data;
   for $format_data (@format_list) {
@@ -171,17 +205,11 @@ sub register_dhelp {
       die "Index file has to be specified with absolute path: $$format_data{'index'}";
 
     # ensure the documentation is in an area dhelp can deal with
-    if ( $dir !~ m|^/usr/(share/)?doc| ) {
+    if ( $dir !~ m|^/usr/share/doc| ) {
 	print "register_dhelp: skipping $dir/$file
-   because dhelp only knows about /usr/doc and /usr/share/doc\n"
+   because dhelp only knows about /usr/share/doc\n"
 	    if $verbose;
 	next;
-    }
-    # set the program name, depending on the dir
-    if ( $dir =~ m|^/usr/doc| ) {
-	$dhelp_parse = "/usr/sbin/dhelp_parse_fsstnd";
-    } else {
-	$dhelp_parse = "/usr/sbin/dhelp_parse";
     }
 
     my @dhelp_data;
@@ -201,7 +229,7 @@ sub register_dhelp {
       # take a look at the contents
       my $i;
       for ( $i = 0; $i <= $#$dhelp_data; $i++ ) {
-	if ($$dhelp_data[$i]{'filename'} =~ /^\s*$file\s*$/o) {
+	if ($$dhelp_data[$i]{'filename'} =~ /^\s*\Q$file\E\s*$/o) {
 	  # remove this entry; we'll add it back below
 	  print "register_dhelp: found entry for $file in $dhelp_file, replacing\n"
 	    if $verbose;
@@ -258,51 +286,15 @@ sub register_dhelp {
 	warn "warning: error occured during execution of $dhelp_parse -a";
       }
     }
+  } else {
+    print "Skipping $dhelp_parse, program not found\n" if $verbose;
   }
-
 }
 
 # Registering to dwww:
 sub register_dwww {
   for $format_data (@format_list) {
-    next unless $$format_data{'format'} eq 'html';
-
-    my $dwww_file = "/usr/lib/menu/doc-base-$docid";
-    # dwww file already exists?
-    if (-f $dwww_file) {
-      # is this file from us?
-      if (not exists $list{$dwww_file}) {
-	# no, skip action
-	warn "warning: skipping foreign dwww file $dwww_file";
-	next;
-      }
-    }
-
-    print "Writing $dwww_file\n" if $verbose;
-    add_file($dwww_file);
-    open(OUT,">$dwww_file")
-      or die "$dwww_file: cannot open file for writing: $!";
-    my $t_s = $$doc_data{'section'};
-    $t_s =~ s/\n/ /g;
-    $t_s =~ s/"/\\"/g;
-    my $t_t = $$doc_data{'title'};
-    $t_t =~ s/\n/ /g;
-    $t_t =~ s/"/\\"/g;
-    my $t_a = $$doc_data{'abstract'};
-    $t_a =~ s/\n/ /g;
-    $t_a =~ s/"/\\"/g;
-    my $t_i = $$format_data{'index'};
-    $t_i =~ s/\n/ /g;
-    $t_i =~ s/"/\\"/g;
-
-    print OUT "?package(doc-base):needs=\"dwww\" section=\"$t_s\"\\\n";
-    print OUT "     title=\"$t_t\"\\\n";
-    print OUT "     description=\"$t_a\"\\\n";
-    print OUT "     command=\"$t_i\"\n";
-    close(OUT) or die "$dwww_file: unable to close file: $!";
-
     $update_dwww = 1;
-
     # set status
     $status{'Registered-to-dwww'} = 1;
     $status_changed = 1;
@@ -310,12 +302,11 @@ sub register_dwww {
 
   if ($update_dwww) {
     update_dwww_menus();
-    undef %update_dwww;
   }
 }
 
 sub update_dwww_menus {
-  if (-x $dwww_update) {
+  if ($do_dwww_update && -x $dwww_update) {
     print "Executing $dwww_update\n" if $verbose;
     if (system($dwww_update) != 0) {
       warn "warning: error occured during execution of $dwww_update";
@@ -331,13 +322,6 @@ sub remove_files {
     if ($file =~ /\.dhelp$/o) {	# yes
 
       my $dir = dirname($file);
-
-      # set the program name, depending on the dir
-      if ( $dir =~ m|^/usr/doc| ) {
-	$dhelp_parse = "/usr/sbin/dhelp_parse_fsstnd";
-      } else {
-	$dhelp_parse = "/usr/sbin/dhelp_parse";
-      }
 
       if (-x $dhelp_parse) {
 	# call dhelp to notice removal of document
@@ -556,7 +540,7 @@ sub read_dhelp_file {
 sub write_dhelp_file {
   my ($file, $data) = @_;
   
-  open(FH, ">$file") or die "cannot open dhelp file '$file':";
+  open(FH, ">$file") or die "cannot create dhelp file '$file': $!\n";
   foreach $rec (@$data) {
     print FH "<item>\n";
     foreach $field ((
@@ -573,6 +557,12 @@ sub write_dhelp_file {
 
 # -------------------------------
 
+##
+## assuming filehandle IN is the control file, read a section (or
+## "stanza") of the doc-base control file and adds data in that
+## section to the hash reference passed as an argument.  Returns 1 if
+## there is data and 0 if it was empty
+##
 sub read_control_file_section {
   my ($pfields) = @_;
 
@@ -580,6 +570,7 @@ sub read_control_file_section {
   my ($cf,$v);
   while (<IN>) {
     chomp;
+    s/\s*$//;                   # trim trailing whitespace
 
     # empty line?
     if (/^\s*$/o) {
@@ -594,7 +585,8 @@ sub read_control_file_section {
 
     # new field?
     if (/^(\S+)\s*:\s*(.*)$/) {
-      ($cf,$v) = (lc $1,$2);
+      ($cf,$v) = ($1,$2);
+      $cf = lc $cf;
       #print STDERR "$cf -> $v\n";
       if (exists $$pfields{$cf}) {
 	warn "warning: $cf: overwriting previous setting of control field";
@@ -632,6 +624,8 @@ sub read_control_file {
     or die "error in control file: `Document' value not specified";
   $$doc_data{'title'}
     or die "error in control file: `Title' value not specified";
+  $$doc_data{'section'}
+    or die "error in control file: `Section' value not specified";
 
   undef @format_list;
   $format_data = {};
@@ -669,8 +663,8 @@ generation of doc-base.
 =head1 SEE ALSO
 
 dwww(8), Debian doc-base Manual
-F</usr/doc/doc-base/doc-base.html/index.html>, dhelp Manual
-F</usr/doc/dhelp/dhelp.html>
+F</usr/share/doc/doc-base/doc-base.html/index.html>, dhelp Manual
+F</usr/share/doc/dhelp/dhelp.html>
 
 =head1 AUTHOR
 
@@ -685,5 +679,6 @@ with this software, please join the mailing list
 
 =cut
 
-
-
+#Local Variables:
+#perl-indent-level:2
+#End:

@@ -9,7 +9,7 @@ Format: debiandoc-sgml
 Files: /usr/share/doc/doc-base/doc-base.sgml.gz
 
 Format: text
-Files: /usr/share/doc/doc-base/doc-base.text.gz
+Files: /usr/share/doc/doc-base/doc-base.txt.gz
 
 Format: HTML
 Index: /usr/share/doc/doc-base/doc-base.html/index.html

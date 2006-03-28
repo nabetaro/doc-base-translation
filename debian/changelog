@@ -1,3 +1,153 @@
+doc-base (0.7.18-0.1) unstable; urgency=high
+
+  * Non-maintainer upload.
+  * High-urgency upload for sarge-targetted RC bugfix
+  * Fix install-docs to not require perl's File::Basename, so that it
+    works even when perl is unconfigured.  Thanks to Colin Watson for
+    the patch.  Closes: #278495.
+
+ -- Steve Langasek <vorlon@debian.org>  Thu, 12 May 2005 17:25:15 -0700
+
+doc-base (0.7.18) unstable; urgency=low
+
+  * postinst: don't die if /usr/lib/menu doesn't exist; closes: #186707
+
+ -- Adam Di Carlo <aph@debian.org>  Sun, 30 Mar 2003 12:14:52 -0500
+
+doc-base (0.7.17) unstable; urgency=low
+
+  * new dwww changes: no longer produce files under /usr/lib/menu;
+    obsoletes and closes: #153242; conflict with dwww < 1.9.0
+  * on upgrade, remove the files /usr/lib/menu/doc-base-*
+  * postinst should use stderr, not stdout
+  * rewrite the description/synopsis
+  * policy compliance updated to 3.5.9, no changes required
+  * preinst: don't babble about removing dhelp files unless they are
+    really there; let dhelp_parse_fsstnd fail if it wants to
+
+ -- Adam Di Carlo <aph@debian.org>  Sun, 23 Mar 2003 16:28:15 -0500
+
+doc-base (0.7.16) unstable; urgency=low
+
+  * fix a /usr/doc problem in preinst; closes: #183491
+
+ -- Adam Di Carlo <aph@debian.org>  Fri,  7 Mar 2003 13:53:18 -0500
+
+doc-base (0.7.15) unstable; urgency=low
+
+  * attempting to flush the easy bugs before the major rewrite...
+  
+  * don't set /usr/doc symlink, in fact, remove it in preinst if it is there
+  * add #DEBHELPER# areas in maintainer scripts (thanks, linda)
+  * postinst: don't variablize /usr/bin/update-menus, it confuses lintian
+  * install lintian overrides for:
+    doc-base: maintainer-script-does-not-check-for-existence-of-installdocs postinst
+    doc-base: preinst-calls-installdocs
+  * docs: update (c) date; s/command -v/which/; closes: #169115
+  * install-docs: strip trailing space in fields that we read; 
+    closes: #86040 and part of #60981
+  * install-docs: improve the error message when we fail writing a dhelp
+    file; closes: #111620
+  * Section is now a required field, otherwise, we create invalid menu
+    files; closes: #112450
+  * doc-base.sgml: document document and format fields, indicating which
+    fields are required; closes: #63822, #151945
+  * install-docs: POD documentation improvements
+  * postinst: don't create /usr/doc symlink
+
+ -- Adam Di Carlo <aph@debian.org>  Sun,  2 Mar 2003 22:17:55 -0500
+
+doc-base (0.7.14) unstable; urgency=low
+
+  * fix a bug introduced in last version, thanks to bug hunting by 
+    David Kimdon; closes: #171202
+  * dhelp registration was busted in 0.7.13, so if we're upgrading from
+    that version, take the time to reregister all docreg files
+
+ -- Adam Di Carlo <aph@debian.org>  Sun,  1 Dec 2002 17:30:05 -0500
+
+doc-base (0.7.13) unstable; urgency=low
+
+  * documentation corrections and updates from Chris Tillman;
+    closes: #130054
+  * add --no-update-menus switch for more efficient bulk invocation, and
+    rewrite postinst to use that, so we end up calling update-menus only
+    once; closes: #114886
+  * postinst: don't re-register all doc-base files if they don't need
+    re-registering
+  * install-docs: less cryptic arg processing warnings
+  * if you want to re-register all doc-base files, just purge and install
+    the package; closes: #97009
+  * remove old FSSTD stuff in documentation; closes: #146226
+  * remove old FSSTD stuff in dhelp support; closes: #127985
+
+ -- Adam Di Carlo <aph@debian.org>  Tue, 26 Nov 2002 14:25:40 -0500
+
+doc-base (0.7.12) unstable; urgency=low
+
+  * deal with problems when locale is UTF-8, patch from Drew Parsons
+    closes: #158624, #163188, #165312
+  * embarrassing: doc-base's own doc-base file was a bit wrong
+    closes: #137514
+  * slight postinst message change
+
+  * note: many more changes coming; I'm just trying to close any easy and
+    gratuitous bugs here while I'm working on the redesign
+
+ -- Adam Di Carlo <aph@debian.org>  Mon, 25 Nov 2002 13:36:24 -0500
+
+doc-base (0.7.11) unstable; urgency=low
+
+  * incorporate NMU (closes: #111703, #114657)
+  * strengthen the wording of the prerm case -- for people getting 
+      dpkg: warning - unable to delete old file `directory': Directory not empty
+    due to old .dhelp files, please read section 2.4
+    (closes: #59850)
+  * some other minor updates in the documentation
+  * debian/control: upgrade to standards version to 3.5.6, no changes
+    needed 
+
+    - Note that the stipulation that programs cannot reference files in
+      /usr/share/doc [13.3] is not honored because that is required by
+      dhelp; complaints about that should be directed towards dhelp.
+
+ -- Adam Di Carlo <aph@debian.org>  Sun, 21 Oct 2001 01:38:04 -0400
+
+doc-base (0.7.10.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Quote control file names for regexps (closes: #111703).
+
+ -- Colin Watson <cjwatson@debian.org>  Sat,  6 Oct 2001 13:06:59 +0100
+
+doc-base (0.7.10) unstable; urgency=low
+
+  * clarify wording when unregistering documentation
+  * postrm works better when it's actually installed into the deb, duh
+    really closes: #101252
+  
+ -- Adam Di Carlo <aph@debian.org>  Mon, 30 Jul 2001 02:11:12 -0400
+
+doc-base (0.7.9) unstable; urgency=low
+
+  * process doc-base files present already at configure time
+    closes: #39006
+  * conversely, remove all our files (nicely) at remove time, and purge
+    /var/lib/doc-base at purge time
+    closes: #101252
+  * get our perl depends right, using dh_perl (required build-depends on
+    debhelper)
+    closes: #67171
+  * fix a minor usr/doc vs usr/share/doc problem in the man page
+    closes: #81126
+  * fix for new license location in copyright file
+  * in the documentation, we weren't noting the date properly based on the
+    Debian changelogs
+  * fixed a while ago:
+    closes: #62230
+
+ -- Adam Di Carlo <aph@debian.org>  Mon, 30 Jul 2001 01:56:07 -0400
+
 doc-base (0.7.8) frozen unstable; urgency=low
 
   * small changes for bugfixing, no new features, should go in potato
@@ -171,7 +321,3 @@ doc-base (0.1) unstable; urgency=low
 
  -- Christian Schwarz <schwarz@debian.org>  Fri, 30 Jan 1998 21:38:45 +0100
 
-Local variables:
-mode: debian-changelog
-mode: auto-fill
-End:

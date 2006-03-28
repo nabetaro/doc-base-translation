@@ -1,0 +1,12 @@
+#!/bin/sh
+# postrm for doc-base
+
+set -e
+
+if [ "$1" = purge ]; then
+    rm -rf /var/lib/doc-base
+fi
+
+#DEBHELPER#
+
+exit 0

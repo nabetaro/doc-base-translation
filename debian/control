@@ -2,17 +2,19 @@ Source: doc-base
 Section: doc
 Priority: optional
 Maintainer: Adam Di Carlo <aph@debian.org>
-Standards-Version: 3.1.1
-Build-Depends-Indep: debiandoc-sgml (>= 1.1.37)
+Standards-Version: 3.5.9
+Build-Depends-Indep: debiandoc-sgml (>= 1.1.37), debhelper
 
 Package: doc-base
-Depends: perl5
+Depends: ${perl:Depends}
 Suggests: dhelp | dwww
-Conflicts: dhelp (<< 0.3.14)
+Conflicts: dhelp (<< 0.3.14), dwww (<< 1.9.0)
 Architecture: all
-Description: Utilities to manage online documentation
- This package contains utilities to manage online documentation
- on a Debian system.
+Description: utilities to manage online documentation
+ This package contains utilities to manage documentation installed on
+ a Debian system.  It contains a database of document metadata.
+ Various third-party systems such as 'dwww', 'dhelp' and 'doc-central'
+ use this data to provide a catalog of available documentation.
  .
- If you want to get additional information about doc-base please
- check out the `Debian doc-base Manual' included in this package.
+ If you want to get additional information about 'doc-base' please
+ consult the `Debian doc-base Manual' included in this package.

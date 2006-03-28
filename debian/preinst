@@ -29,15 +29,18 @@ remove_docs ( ) {
     echo "cannot find install-docs on path" 1>&2
   fi
   if [ ! -L /usr/doc/$package ]; then
-    echo "removing old .dhelp files under /usr/doc/$package"
     if [ -f /usr/doc/$package/.dhelp ]; then
-	dhelp_parse_fsstnd -d /usr/doc/$package/
+        echo "removing old .dhelp files under /usr/doc/$package" 1>&2
+	dhelp_parse_fsstnd -d /usr/doc/$package/ || true
 	rm -f /usr/doc/$package/.dhelp
     fi
     if [ -f /usr/doc/$package/doc-base.html/.dhelp ]; then
-	dhelp_parse_fsstnd -d /usr/doc/$package/doc-base.html/
+        echo "removing old .dhelp files under /usr/doc/$package/doc-base.html" 1>&2
+	dhelp_parse_fsstnd -d /usr/doc/$package/doc-base.html/ || true
 	rm -f /usr/doc/$package/doc-base.html/.dhelp
     fi
+    # remove the usr/doc symlink
+    [ -L /usr/doc/$package ] && rm -f /usr/doc/$package || true
   fi
 }
 
@@ -63,5 +66,7 @@ case "$1" in
     remove_docs
     ;;
 esac
+
+#DEBHELPER#
 
 exit 0
