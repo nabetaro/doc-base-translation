@@ -1,0 +1,177 @@
+doc-base (0.7.8) frozen unstable; urgency=low
+
+  * small changes for bugfixing, no new features, should go in potato
+  * install-docs: if open of control file fails, look for file in
+    /usr/share/doc-base/ (closes: Bug#53555)
+  * update to Policy standards 3.1.1 -- added Build-Depends-Indep
+    (closes: Bug#53261)
+  * tweak preinst wording as it removes old .dhelp files 
+    (closes: Bug#47010)
+  * doc-base.sgml: use version.ent for dynamic versioning (shipped too);
+    SGML aesthetics and tagging
+
+ -- Adam Di Carlo <aph@debian.org>  Tue,  8 Feb 2000 20:07:16 -0500
+
+doc-base (0.7.7) unstable; urgency=low
+
+  * really update Policy standards to 3.0.1
+  * dhelp now has a different program, dhelp_parse_fsstnd, to deal with
+    /usr/doc vs /usr/share/doc, so use it
+  * debian/control: conflict with dhelp (<< 0.3.14)
+  * prerm, postinst: implement tech committe solution on /usr/doc symlink
+
+ -- Adam Di Carlo <aph@debian.org>  Sat, 25 Sep 1999 16:34:11 -0400
+
+doc-base (0.7.6) unstable; urgency=low
+
+  * add perl5 depends (closes: Bug#44623)
+
+ -- Adam Di Carlo <aph@debian.org>  Fri, 10 Sep 1999 21:37:01 -0400
+
+doc-base (0.7.5) unstable; urgency=low
+
+  * update Policy standards to 3.0.1
+  * debian/rules: move documentation area back to /usr/doc for now;
+    clean is a bit cleaner
+  * maintainer scripts: simplify a bit; call 'install-docs -r' from
+    preinst for upgrade from 0.7.4 (dir move) to avoid the dpkg warning
+    (closes Bug#41785, #41161, #41326)
+  * install-docs: prior to installing new docreg file, remove any already
+    installed dhelp files -- this will help with the /usr/doc ->
+    /usr/share/doc transition, although it won't suppress the dpkg
+    warning, since 'install-docs -i' runs *after* the warning
+  * doc-base.sgml: talk about how to avoid the dpkg warning about
+    'Directory not empty' due to .dhelp file left around during upgrade;
+    the solution in short is to run 'install-docs -r' during 'upgrade' in
+    prerm
+
+ -- Adam Di Carlo <aph@debian.org>  Sat, 14 Aug 1999 21:32:55 -0400
+
+doc-base (0.7.4) unstable; urgency=low
+
+  * install-docs: skip dhelp when directory != /usr/doc or 
+    /usr/share/doc (closes Bug#32034)
+  * changes for Policy 3.0.0 (no /usr/doc compat symlinks)
+  * debian/control: removed perl-base dependancy -- it's required!
+    (thanks to Raphael Hertzog)
+
+ -- Adam Di Carlo <aph@debian.org>  Sat, 10 Jul 1999 21:45:41 -0400
+
+doc-base (0.7.3) unstable; urgency=low
+
+  * doc-base.sgml: fix typo (closes Bug#35986)
+  * install-docs: only warn about unknown formats if verbose ('-v') is in
+    effect (closes Bug#33509, Bug#35947, and hopefully quells the recent
+    outcry on debian-devel)
+  * debian/rules: debiandoc2text now has a default extension of .txt,
+    which is better anyway, so use that
+
+ -- Adam Di Carlo <aph@debian.org>  Thu, 13 May 1999 01:25:06 -0400
+
+doc-base (0.7.2) frozen unstable; urgency=low
+
+  * maintainer name change
+  * debian/rules: more robust way to interact with changelog, which is
+    what I use on all my other packages
+  * install-docs: fix some glitches in the POD output
+  * doc-base.sgml: minor typo in documentation fixed (closes Bug#26530)
+  * debian/control: suggests 'dwww | dhelp', without which the package
+    currently isn't much good (closes Bug#31302)
+  * no code changes
+
+ -- Adam Di Carlo <aph@debian.org>  Sat,  2 Jan 1999 04:38:30 -0500
+
+doc-base (0.7.1) frozen unstable; urgency=low (HIGH if you have problems
+    with quotes in document registration files)
+
+  * depend on recent Perl (closes Bug#21816)
+  * set umask explictly, so all files are -rw-r--r-- (closes Bug#22275)
+  * quote quotes for dwww-menu files (closes grave Bug#22990)
+
+ -- Adam P. Harris <aph@debian.org>  Mon,  1 Jun 1998 01:49:50 -0400
+
+doc-base (0.7.0) frozen unstable; urgency=low
+
+  * maintainer scripts: one of the shell function used '-', which was
+    renamed to '_'; shell for maintainer scripts set back to /bin/sh
+  * doc-base.sgml: update the FSF address
+  * copyright: list myself as maintainer
+  * bump standards version to 2.4.1.0 (checked)
+  * add digit to version number: 0.7.x will be for hamm maintenance
+    (branched); probably 0.8 will be for our documentation drafts
+    including information on the Debian Document Hierarchy, the new docreg 
+    file format documentation and system, and other documents; 0.9 will
+    probalby contain our implementations of these new infrastructures for
+    slink; and eventually it'll all be a done deal and we'll hit 1.0. 
+
+ -- Adam P. Harris <aph@debian.org>  Sun,  3 May 1998 09:05:23 -0400
+
+doc-base (0.6) frozen unstable; urgency=low
+
+  * change shell on maintainer scripts to bash, since that seems to cope
+    with the shell functions better (closes Bug#21359, and undoubtedly
+    more reports to come until this makes it into the archive)
+
+ -- Adam P. Harris <aph@debian.org>  Sun, 19 Apr 1998 01:54:36 -0400
+
+doc-base (0.5) frozen unstable; urgency=low
+
+  * fix minor problems with the new install-docs-man document id, the
+    document id was misnamed install-doc-man
+  * improve the maintainer scripts immensely, trying to minimize removal,
+    since it's not necessary to remove a document id when replacing it
+  * doc-base.sgml: update TODO list
+
+ -- Adam P. Harris <aph@debian.org>  Fri, 17 Apr 1998 01:17:06 -0400
+
+doc-base (0.4) frozen unstable; urgency=low
+
+  * much better dhelp support: be sure to run 'dhelp_parse -d' before
+    altering a .dhelp file, multiple <item>s in one .dhelp file, and very
+    good parsing of existing .dhelp files in case more than one
+    document-id is adding a files in the same directory (closes
+    Bug#18808, Bug#20038, Bug#20529)
+  * we now will modify even foreign .dhelp files
+  * lowercase sections for dhelp (only), and remove leading 'Apps/', which
+    is a workaround until we have a real, policy-specified and thought-out
+    documentation hierarchy (closes Bug#20862)
+  * register install-docs man page, html version
+  * moved Section for our own documentation from Apps/Programming to
+    Debian
+
+ -- Adam P. Harris <aph@debian.org>  Thu, 16 Apr 1998 06:27:08 -0400
+
+doc-base (0.3) frozen unstable; urgency=low
+
+  * add manual page for install-docs
+  * debian/rules: clarifications and cleanup
+  * added frozen to distribution ("oopsie" on last version)
+  * install-docs is idempotent for --remove, that is, if you try to remove
+    a docid which is already removed, it exits with a warning, but not a
+    non-zero exit status (closes Bug#19875, I think)
+
+ -- Adam P. Harris <aph@debian.org>  Thu,  9 Apr 1998 20:36:00 -0400
+
+doc-base (0.2) unstable; urgency=low
+
+  * new maintainer
+  * clarify how to call install-docs in documentation (closes Bug#20530)
+  * practice what I preach in maintainer scripts
+  * debian/rules: call dpkg-gencontrol with -isp
+  * copyright: update FSF address
+  * actively fixing rest of bugs and lack of man page, patience please
+
+ -- Adam P. Harris <aph@debian.org>  Mon,  6 Apr 1998 07:31:21 -0400
+
+doc-base (0.1) unstable; urgency=low
+
+  * Initial Release.
+  * Only supports registering documents to the online documentation
+    systems dwww and dhelp for now.
+
+ -- Christian Schwarz <schwarz@debian.org>  Fri, 30 Jan 1998 21:38:45 +0100
+
+Local variables:
+mode: debian-changelog
+mode: auto-fill
+End:

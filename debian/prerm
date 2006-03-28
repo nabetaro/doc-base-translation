@@ -1,0 +1,53 @@
+#!/bin/sh
+# prerm for doc-base
+
+# Abort if any command returns an error value
+set -e
+
+package=doc-base
+
+if [ "$DEBUG" ]; then
+    echo entering $package prerm
+    set -x
+fi
+
+remove_docs ( ) {
+    if command -v install-docs >/dev/null 2>&1; then
+	install-docs -r $package || true
+	install-docs -r install-docs-man || true
+    else
+	# error because we this *is* the doc-base package
+	echo "cannot find install-docs on path" 1>&2
+	exit 1
+    fi
+}
+
+remove_compat_symlink ( ) {
+    if [ -d /usr/doc ]; then
+	if [ -L /usr/doc/$package ]; then
+	    rm -f /usr/doc/$package
+	fi
+    fi
+}
+
+
+case "$1" in
+  remove)
+    remove_docs
+    remove_compat_symlink
+    ;;
+  upgrade)
+    remove_compat_symlink
+    ;;
+  failed-upgrade)
+    # Prepare to upgrade from version $2 of this package TO THIS VERSION.
+    # This is only used if the old version's prerm couldn't handle it,
+    # and returned non-zero.  (Fix old prerm bugs here.)
+    if dpkg --compare-versions $2 lt 0.4; then
+	install-docs -r install-docs-man || true
+	install-docs -r install-doc-man || true
+    fi
+    ;;
+esac
+
+exit 0

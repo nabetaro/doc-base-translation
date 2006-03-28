@@ -1,0 +1,67 @@
+#!/bin/sh
+# preinst for doc-base
+
+# cleanup problems transitioning to prior versions
+
+# Abort if any command returns an error value
+set -e
+
+package=doc-base
+
+if [ "$DEBUG" ]; then
+    echo entering $package preinst
+    set -x
+fi
+
+cleanup_old_bug ( ) {
+  if command -v install-docs >/dev/null 2>&1; then
+    install-docs -r install-doc-man || true
+  else
+    echo "cannot find install-docs on path" 1>&2
+  fi
+}
+
+remove_docs ( ) {
+  if command -v install-docs >/dev/null 2>&1; then
+    install-docs -r $package || true
+    install-docs -r install-docs-man || true
+  else
+    echo "cannot find install-docs on path" 1>&2
+  fi
+  if [ ! -L /usr/doc/$package ]; then
+    echo "removing old .dhelp files under /usr/doc/$package"
+    if [ -f /usr/doc/$package/.dhelp ]; then
+	dhelp_parse_fsstnd -d /usr/doc/$package/
+	rm -f /usr/doc/$package/.dhelp
+    fi
+    if [ -f /usr/doc/$package/doc-base.html/.dhelp ]; then
+	dhelp_parse_fsstnd -d /usr/doc/$package/doc-base.html/
+	rm -f /usr/doc/$package/doc-base.html/.dhelp
+    fi
+  fi
+}
+
+
+case "$1" in
+  install)
+    if test "${2+set}" = set; then
+      # The configuration files from version $2 of this package are
+      # still on the system.
+      if [ "$2" = "0.4" ]; then
+	cleanup_old_bug
+      fi
+    fi
+    ;;
+  upgrade)
+    # About to upgrade this package from version $2 TO THIS VERSION.
+    # "prerm upgrade" has already been called for the old version of
+    # this package.
+    if [ "$2" = "0.4" ]; then
+      cleanup_old_bug
+    fi
+
+    remove_docs
+    ;;
+esac
+
+exit 0

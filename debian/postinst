@@ -1,0 +1,37 @@
+#!/bin/sh
+# postinst for doc-base
+
+# Abort if any command returns an error value
+set -e
+
+package=doc-base
+
+if [ "$DEBUG" ]; then
+    echo entering $package postinst
+    set -x
+fi
+
+add_docs ( ) {
+    install-docs -i /usr/share/$package/$package
+    install-docs -i /usr/share/$package/install-docs-man
+}
+
+compat_symlink ( ) {
+    if [ -d /usr/doc ]; then
+	if [ ! -e /usr/doc/$package -a -d /usr/share/doc/$package ]; then
+	    ln -s ../share/doc/$package /usr/doc/$package
+	fi
+    fi
+}
+
+case "$1" in
+  configure)
+    add_docs
+    compat_symlink
+    ;;
+  install)
+    compat_symlink
+    ;;
+esac
+
+exit 0

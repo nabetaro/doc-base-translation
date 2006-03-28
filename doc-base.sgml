@@ -1,0 +1,372 @@
+<!DOCTYPE debiandoc PUBLIC "-//DebianDoc//DTD DebianDoc//EN"[
+  <!-- include version information so we don't have to hard-code it
+       within the document -->
+  <!entity % versiondata SYSTEM "version.ent"> %versiondata;
+]>
+<book>
+
+<title>Debian <package>doc-base</package> Manual
+<author>Christian Schwarz <email/schwarz@debian.org/
+<author>Adam Di Carlo <email/aph@debian.org/
+<version>ver. &version;, &date;
+
+<abstract>
+This manual describes what <package>doc-base</package> is and how it
+can be used to manage online manuals on Debian systems.
+</abstract>
+
+<copyright>
+	<copyrightsummary>
+copyright &copy;1998, Christian Schwarz</copyrightsummary>
+	<copyrightsummary>
+copyright &copy;1999, Adam Di Carlo</copyrightsummary>
+
+<p>
+
+This manual is free software; you may redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2, or (at your option) any
+later version.
+<p>
+
+This is distributed in the hope that it will be useful, but
+<em>without any warranty</em>; without even the implied warranty of
+merchantability or fitness for a particular purpose.  See the GNU
+General Public License for more details.
+<p>
+
+A copy of the GNU General Public License is available as
+<tt>/usr/doc/copyright/GPL</tt> in the Debian GNU/Linux distribution
+or on the World Wide Web at
+<tt>http://www.gnu.org/copyleft/gpl.html</tt>. You can also obtain it
+by writing to the Free Software Foundation, Inc., 59 Temple Place,
+Suite 330, Boston, MA 02111-1307 USA
+
+      </copyright>
+
+<toc detail="sect2">
+
+<chapt>About <package>doc-base</package>
+<p>
+
+Some time ago, there was a big discussion on the Debian mailing lists
+about the preferred documentation format in Debian because the current
+section in the policy manual about documentation contradicts itself
+(cf. bug #7890). The discussion showed clearly that people have very
+different opinions on that topic and thus, we'll have to implement a
+flexible solution so that everyone is pleased.
+
+<p>
+
+The <package>doc-base</package> package tries to implement such a flexible solution:
+Every Debian package that provides online documentation (other than
+manual pages) will register these documents to
+<package>doc-base</package> via the <prgn/install-docs/ script (see
+below) at installation time and de-register the manuals again once the
+package is removed.
+
+<p>
+
+With this registration process, <package>doc-base</package>
+will be provided with details about the installed manuals, file names,
+documentation formats, etc. Based on the <package>doc-base</package> configuration which
+can easily adjusted by the local system administrator, <package>doc-base</package> will
+eventually convert between different documentation formats (where
+available, for example, texinfo source to GNU info or PostScript),
+optionally compress or remove HTML manuals which are also available in
+GNU info format, etc. etc.
+
+<p>
+
+Since all manuals will eventually by registered,
+<package>doc-base</package> can also be used to solve another
+outstanding problem: Debian currently has two different online
+documentation systems, <package>dwww</package> and
+<package>dhelp</package>. Since both systems have their advantages and
+disadvantages, it has been decided to support both packages and let
+the system administrator choose which implementation he/she prefers.
+
+<p>
+
+However, this requires all packages to support both online
+documentation systems. This can be done easily via <package>doc-base</package> (see
+below).
+
+<p>
+
+In summary, <package>doc-base</package>'s main functionality is:
+
+<list compact>
+	  <item>
+convert online manuals between different documentation formats
+(depending on its configuration), and
+	  <item>
+register online manuals to Debian's online help systems,
+<package>dwww</package> and <package>dhelp</package>.
+</list>
+
+Until now, only the second part has been implemented.
+<p>
+
+<chapt>The packages interface
+<p>
+
+<sect>Introduction
+<p>
+
+Each Debian package that installs online manuals (any format) should
+register its manuals to <package>doc-base</package>. This is done by installing a
+<package>doc-base</package> <em/control file/ and calling <prgn/install-docs/ from the
+<prgn/postinst/ script.
+<p>
+
+<sect>Document ids
+<p>
+
+Each piece of online documentation that is registered to <package>doc-base</package> must
+have an unique <em/document id/.
+<p>
+
+The document id is usually taken from the document's title or from the
+package name. Here are a few examples:
+<p>
+
+<example>
+DOCID                  Title
+---------------------- ----------------------------
+debian-policy          Debian Policy Manual
+developers-reference   Debian Developers Reference
+doc-base               Debian doc-base Manual
+emacs-manual           GNU Emacs Manual
+</example>
+<p>
+
+Just as package names, the document id may only consist lower case
+letters (a-z), digits (0-9), plus (+) or minus (-) signs, and dots
+(.).
+<p>
+
+<sect>Control files
+<p>
+
+For each piece online documentation, <package>doc-base</package> needs a <em/control
+file/ that describes the documentation and the documentation file
+formats that are provided initially.
+<p>
+
+Here is an example of a control file:
+<p>
+
+<example>
+Document: doc-base
+Title: Debian doc-base Manual
+Author: Christian Schwarz
+Abstract: This manual describes what doc-base is
+ and how it can be used to
+ manage online manuals on Debian systems.
+Section: Apps/Programming
+
+Format: debiandoc-sgml
+Files: /usr/doc/doc-base/doc-base.sgml.gz
+
+Format: text
+Files: /usr/doc/doc-base/doc-base.text.gz
+
+Format: HTML
+Index: /usr/doc/doc-base/doc-base.html/index.html
+Files: /usr/doc/doc-base/doc-base.html/*.html
+</example>
+<p>
+
+As you can see from this example, the syntax--just as the whole
+design of <package>doc-base</package>--is heavily influenced by dpkg. This is important
+since every maintainer will have to work with <package>doc-base</package> and thus, it
+should be simply to remember the basic ideas.
+
+<p>
+
+The syntax of the control file is simple: Empty lines seperate
+sections (see below). The other line use a field-value syntax.  Field
+values may be wrapped over several lines if the first character of
+subsequent lines is a space; if the value should contain an empty line
+a single dot (.) has to be placed in the second column. The field
+names are case-insensitive.
+
+<p>
+
+The first section of the control file describes the document, starting
+with the document id (the `Document:' field), the title, etc. This
+information will be used when the manual is registered to the online
+menu systems (<package>dhelp</package>, <package>dwww</package>,
+etc.).
+
+<p>
+
+The following sections describe the different formats which are
+provided by the package. This information will be needed when the
+format-conversion feature is implemented. (Note, that these fields are
+likely to be changed as soon as I start with the implementation.)
+
+<p>
+
+For now, only the format `HTML' is recognized. The `Index:' field has
+to contain the absolute file name of the title page of the
+document. (This file will be specified as front page link when the
+document is registered to <package>dwww</package> or
+<package>dhelp</package>.)
+
+<p>
+
+      <sect>Registering documents using <prgn>install-docs</prgn>
+<p>
+
+In order to register a piece of online documentation to
+<package>doc-base</package>, the package has to install the control
+file (see above) as file
+<file>/usr/share/doc-base/<var/document-id/</file>.
+<p>
+
+Then, it should call <prgn/install-docs/ from its <file>postinst</file> script:
+
+<example>
+  if [ "$1" = configure ]; then
+    if command -v install-docs >/dev/null 2>&1; then
+      install-docs -i /usr/share/doc-base/&lt;document-id&gt;
+    fi
+  fi
+</example>
+
+and from the <file>prerm</file> script as well:
+
+<example>
+  if [ "$1" = remove -o "$1" = upgrade ]; then
+    if command -v install-docs >/dev/null 2>&1; then
+      install-docs -r &lt;document-id&gt;
+    fi
+  fi
+</example>
+
+<p>
+With that, <package>doc-base</package> will automatically register the online manuals to
+<package>dwww</package> and <package>dhelp</package> when the package
+is installed, and de-register the manuals when the package is removed.
+
+<p>
+Note that the call to remove the registered documentation from the
+<file>prerm</file> maintainer script is not generally necessary.
+However, it <em>is</em> necessary in case the documentation directory
+has changed locations and you want to avoid messages such as 
+
+<example>
+dpkg: warning - unable to delete old file `<var>directory</var>': Directory not empty
+</example>
+
+
+
+
+<chapt>Getting information about installed documents
+<p>
+
+If you want to get information about the status of an installed
+manual, you can use the `<tt/-s/' or `<tt/--status/' option of
+<prgn/install-docs/ followed by the document id:
+
+<example>
+$ install-docs -s foo
+---document-information---
+Document: foo
+Abstract: This manual is about foos, bars, and Debian.
+Author: Wile E. Coyote
+Section: debian
+Title: Debian Foo's Manual
+
+---format-description---
+Format: debiandoc-sgml
+Files: /usr/doc/foo/sgml/foo.sgml.gz
+
+---format-description---
+Format: html
+Files: /usr/doc/foo/html-sgml/*.html
+Index: /usr/doc/foo/html-sgml/index.html
+
+---status-information---
+Control-File: ../foo-0.0/foo.desc
+Registered-to-dhelp: 1
+Registered-to-dwww: 1
+</example>
+<p>
+
+In some cases, <package>doc-base</package> creates files when
+installing a document. For example, when a document is registered to
+dhelp a file `<tt/.dhelp/' is generated. You can check out which files
+have been created by <package>doc-base</package> with the `<tt/-L/' or
+`<tt/--listfiles/' options followed by the document id. Here is an
+example:
+
+<example>
+$ install-docs -L foo
+/usr/doc/foo/html-sgml/.dhelp
+/usr/lib/menu/doc-base-foo
+</example>
+<p>
+
+<chapt>TODO List
+
+<p> The following items are listed, in approximate priority, as to-do
+items.  Our first priority is to define the core issues of the Slink
+(Debian 2.1) Debian Documentation System, which will have status a
+Sub-Policy.
+
+<list>
+  <item> Policy: document the <package>doc-base</package> document registration file
+  format separately (or SUBDOC it) as a proposed Debian documentation
+  system policy.  Discussion is underway at
+  <email>debian-doc@lists.debian.org</email>; Adam Di Carlo is in
+  charge of this.
+
+  <item> Policy: define a first-cut standard as the document
+  heirarchy. Discussion is underway at
+  <email>debian-doc@lists.debian.org</email>; Marcus Brinkmann is in
+  charge of this.
+
+  <item> Documentation update: show clean and minimal use of
+  <prgn>install-docs</prgn> from maintainer script.
+
+  <item> It is <em>extremely</em> difficult to deal coherently with a
+  misnamed control file, or a mismatch between a control file and the
+  document field.  This hit me in the transition between <package>doc-base</package> 0.4
+  to 0.5 (in 0.4 I had added, in a file install-docs-man, a document
+  id named install-doc-man).  Something needs to be done about that.
+
+  <item> Determine a cleaner way to manage the various little files
+  such as <file>.dhelp</file> and <package>doc-base</package> status
+  files.  This also involves behavior on remove or purge of the
+  <package>doc-base</package> packges.  I believe derived files such
+  as <file>.dhelp</file> will eventually go away, since packages
+  should understand the <package>doc-base</package> document
+  registration control file format directly.
+
+  <item> Internationalization.
+  
+  <item> Automated format conversion, including user preferences.
+
+</list>
+
+</book>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-omittag:t
+sgml-shorttag:t
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:nil
+sgml-parent-document:nil
+sgml-exposed-tags:nil
+sgml-declaration:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->
