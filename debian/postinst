@@ -46,7 +46,7 @@ case "$1" in
         install-docs ${VERBOSE} -i /usr/share/$package/install-docs-man
     fi
     if [ -d /usr/lib/menu ]; then
-        files=`find /usr/lib/menu/ -name 'doc-base-*' -type f -maxdepth 1`
+        files=`find /usr/lib/menu/ -maxdepth 1 -name 'doc-base-*' -type f`
         if [ "$files" ]; then
             echo "removing old dwww menu files..." >&2
             rm -f /usr/lib/menu/doc-base-* || true

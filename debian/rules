@@ -44,7 +44,7 @@ clean:
 	dh_testroot
 	rm -f build-stamp
 	rm -rf doc-base.html doc-base.txt* install-docs.8 install-docs.html
-	rm -f pod2html* version.ent pod2html*.tmp
+	rm -f pod2htm*.tmp version.ent
 	rm -f `find . -name "*~"`
 	dh_clean
 
