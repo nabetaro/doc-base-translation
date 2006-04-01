@@ -18,10 +18,10 @@ fi
 
 reinstall_docs ( ) {
     # install all the existing doc-base control files
-    num=`ls -1 /usr/share/$package/* | wc -l`
+    num=`find /usr/share/$package/ -maxdepth 1 -type f | wc -l`
     echo "(re)registering $num documents from /usr/share/$package ..." >&2
     for file in /usr/share/$package/*; do
-        install-docs ${VERBOSE} --no-update-menus -i $file || true  # don't abort on failure
+        [ -f $file ] && install-docs ${VERBOSE} --no-update-menus -i $file || true  # don't abort on failure
     done
     if [ -x /usr/bin/update-menus ]; then
         /usr/bin/update-menus
@@ -30,7 +30,7 @@ reinstall_docs ( ) {
 
 case "$1" in
   configure)
-    if [ "${2+set}" != set -o -z "$2" -o "$2" = "<unknown>" ]; then
+    if [ "${2+set}" != set ] || [ -z "$2" ] || [ "$2" = "<unknown>" ]; then
         # first install, or upgrade from ancient version
         reinstall_docs
     elif dpkg --compare-versions $2 lt $compat_ver; then
@@ -44,13 +44,6 @@ case "$1" in
         # only register our stuff
         install-docs ${VERBOSE} --no-update-menus -i /usr/share/$package/$package
         install-docs ${VERBOSE} -i /usr/share/$package/install-docs-man
-    fi
-    if [ -d /usr/lib/menu ]; then
-        files=`find /usr/lib/menu/ -maxdepth 1 -name 'doc-base-*' -type f`
-        if [ "$files" ]; then
-            echo "removing old dwww menu files..." >&2
-            rm -f /usr/lib/menu/doc-base-* || true
-        fi
     fi
     ;;
 esac

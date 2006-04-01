@@ -7,7 +7,7 @@ Build-Depends-Indep: debiandoc-sgml (>= 1.1.37), debhelper (>= 5.0.26)
 
 Package: doc-base
 Depends: ${perl:Depends}
-Suggests: dhelp | dwww
+Suggests: dhelp | dwww | doc-central
 Conflicts: dhelp (<< 0.3.14), dwww (<< 1.9.0)
 Architecture: all
 Description: utilities to manage online documentation

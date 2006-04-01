@@ -12,7 +12,16 @@ if [ "$DEBUG" ]; then
 fi
 
 remove_docs ( ) {
-    if command -v install-docs >/dev/null 2>&1; then
+  if which install-docs >/dev/null 2>&1; then
+    install-docs -r $package || true
+    install-docs -r install-docs-man || true
+  else
+    echo "cannot find install-docs on path" 1>&2
+  fi
+}
+
+remove_all_docs ( ) {
+    if which install-docs >/dev/null 2>&1; then
         echo "unregistering documentation ..."
         for file in /var/lib/doc-base/info/*.status; do
             install-docs -r `basename $file .status` || true
@@ -24,31 +33,18 @@ remove_docs ( ) {
     fi
 }
 
-remove_compat_symlink ( ) {
-    if [ -d /usr/doc ]; then
-	if [ -L /usr/doc/$package ]; then
-	    rm -f /usr/doc/$package
-	fi
-    fi
-}
-
 
 case "$1" in
   remove)
-    remove_docs
-    remove_compat_symlink
+    remove_all_docs
     ;;
   upgrade)
-    remove_compat_symlink
+    remove_docs
     ;;
   failed-upgrade)
     # Prepare to upgrade from version $2 of this package TO THIS VERSION.
     # This is only used if the old version's prerm couldn't handle it,
     # and returned non-zero.  (Fix old prerm bugs here.)
-    if dpkg --compare-versions $2 lt 0.4; then
-	install-docs -r install-docs-man || true
-	install-docs -r install-doc-man || true
-    fi
     ;;
 esac
 

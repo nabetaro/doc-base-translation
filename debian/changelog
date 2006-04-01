@@ -1,3 +1,25 @@
+doc-base (0.7.20) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+  * doc-base.sgml:
+    + document common practice that value of `Files' field is a space
+      separated list of filenames or glob patterns
+    + also explicity document the meaning of lines starting with two
+      or more spaces
+    + add the missing word (closes: #289448)
+  * install-docs:
+    + encode HTML special characters when writing the .dhelp files
+      (closes: #114877)
+    + correctly handle the verbatim text and blank line for the .dhelp files
+    + warn if files refrerred by the doc-base files does not exist.
+  * Remove ancient stuff from postinst & prerm scripts, remove preinst
+    entirelly.
+  * Use `which' instead of`command -v' in the scripts (closes: #292967).
+  * debian/copyright: update.
+  * debian/control: suggest doc-central as an alternative to dhelp or dwww.
+
+ -- Robert Luberda <robert@debian.org>  Sat,  1 Apr 2006 18:48:55 +0200
+
 doc-base (0.7.19) unstable; urgency=low
 
   * New maintainer (closes: #358436).

@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-
+# vim:ts=4:et
 =head1 NAME
 
 install-docs - manage online Debian documentation
@@ -13,6 +13,7 @@ $DATA_DIR = "/var/lib/doc-base/info";
 $dwww_update = "/usr/bin/update-menus";
 $dhelp_parse = "/usr/sbin/dhelp_parse";
 $do_dwww_update = 1;
+my $warn_nonexistent_files = 0;
 
 # ---end-of-configuration-part---
 
@@ -84,7 +85,7 @@ Operate verbosely.
 
 =item B<--no-update-menus>
 
-Inhibit running L<update-menus(1L)>, used for the L<dwww(1)> update program.
+Inhibit running L<update-menus(1)>, used for the L<dwww(8)> update program.
 
 =cut
     $do_dwww_update = 0;
@@ -101,7 +102,8 @@ Install the documentation described by the control file I<file>.
     # install new docs
     ($file = shift) or die "argument missing for `install'\n";
     ($#ARGV == -1) or die "too many arguments for `install'\n";
-
+    $warn_nonexistent_files = 1;
+    
     read_control_file($file);
     read_status_file(1);
     read_list_file();
@@ -537,6 +539,40 @@ sub read_dhelp_file {
 }
 
 
+sub html_encode { # {{{
+	my $text = shift;
+
+	$text =~ s/&/&amp;/g;
+	$text =~ s/</&lt;/g;
+	$text =~ s/>/&gt;/g;
+	$text =~ s/"/&quot;/g;
+	return $text;
+} # }}}
+
+sub html_encode_description { # {{{
+    my $text = &html_encode(@_);
+    my @lines=split(/\n/, $text);
+    $text = "";
+    my $in_pre = 0;
+    foreach $_  (@lines) {
+        s/^\s//;
+        if (/^\s/) {
+            $_ = "<pre>\n$_" unless $in_pre;
+            $in_pre = 1;
+        } else {
+            $_ = "$_\n<\\pre>" if $in_pre;
+            $in_pre = 0;
+        }    
+        s/^\.\s*$/<br>&nbsp;<br>/;
+        s/(http|ftp)s?:\/([\w\/~\.%#-])+[\w\/]/<a href="$&">$&<\/a>/g;
+
+        $text .= $_ . "\n";
+     }
+    $text .= "</pre>\n" if $in_pre;
+    return $text;
+} # }}}
+
+
 sub write_dhelp_file {
   my ($file, $data) = @_;
   
@@ -546,9 +582,13 @@ sub write_dhelp_file {
     foreach $field ((
 			'directory', 'dtitle', 'linkname', 'filename'
 		       )) {
-      print FH "<$field>$$rec{$field}\n" if length($$rec{$field});
+      if ($field ne 'linkname') {	       
+        print FH "<$field>$$rec{$field}\n" if length($$rec{$field});
+      } else {	 
+        print FH "<$field>" . &html_encode($$rec{$field}) ."\n" if length($$rec{$field});
+     }
     }
-    print FH "<description>\n$$rec{description}\n</description>\n"
+    print FH "<description>\n" . &html_encode_description($$rec{description}) . "\n</description>\n"
       if length($$rec{'description'});
     print FH "</item>\n\n";
   }
@@ -564,11 +604,12 @@ sub write_dhelp_file {
 ## there is data and 0 if it was empty
 ##
 sub read_control_file_section {
+  my $fh = shift;
   my ($pfields) = @_;
 
   my $empty = 1;
   my ($cf,$v);
-  while (<IN>) {
+  while (<$fh>) {
     chomp;
     s/\s*$//;                   # trim trailing whitespace
 
@@ -593,7 +634,7 @@ sub read_control_file_section {
       }
       $$pfields{$cf} = $v;
     } elsif (/^\s+(\S.*)$/) {
-      $v = $1;
+      $v = $&;
       defined($cf) or die "syntax error in control file: no field specified";
       #print STDERR "$cf -> $v (continued)\n";
       $$pfields{$cf} .= "\n$v";
@@ -613,12 +654,13 @@ sub read_control_file_section {
 sub read_control_file {
   my ($file) = @_;
 
-  open(IN, $file) or 
-      open(IN, "/usr/share/doc-base/$file") or
+  my $fh=$file; 
+  open($fh, $file) or 
+      open($fh, "/usr/share/doc-base/$file") or
 	  die "$file: cannot open control file for reading: $!\n";
 
   $doc_data = {};
-  read_control_file_section($doc_data) or die "error: empty control file";
+  read_control_file_section($fh, $doc_data) or die "error: empty control file";
   # check for required information
   ($docid = $$doc_data{'document'}) 
     or die "error in control file: `Document' value not specified";
@@ -629,7 +671,7 @@ sub read_control_file {
 
   undef @format_list;
   $format_data = {};
-  while (read_control_file_section($format_data)) {
+  while (read_control_file_section($fh, $format_data)) {
     # adjust control fields
     $$format_data{'format'} =~ tr/A-Z/a-z/;
     # check for required information
@@ -647,11 +689,24 @@ sub read_control_file {
     } elsif ($verbose) {
       warn "warning: ignoring unknown format `$$format_data{'format'}'";
     }
+   
+    my $ok = 1;
+    if ($warn_nonexistent_files) {
+        if (defined $$format_data{'index'} && ! -e $$format_data{'index'}) {
+            warn "warning: file `$$format_data{'index'}' does not exist";
+            $ok = 0;
+        }
+        my @globlist = glob($$format_data{'files'});
+        if ($#globlist < 0) {
+            warn "warning: file mask `$$format_data{'files'}' does not match any files";
+            $ok = 0;
+        }        
+    }
     
-    push(@format_list,$format_data);
+    push(@format_list,$format_data) if $ok;
     $format_data = {};
   }
-  close(IN);
+  close($fh);
 }
 
 

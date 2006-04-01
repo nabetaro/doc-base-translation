@@ -39,9 +39,8 @@ A copy of the GNU General Public License is available as
 <tt>/usr/share/common-licenses/GPL</tt> in the Debian GNU/Linux
 distribution or on the World Wide Web at the <url
 id="http://www.gnu.org/copyleft/gpl.html" name="GNU website">. You can
-also obtain it by writing to the Free Software Foundation, Inc., 59
-Temple Place, Suite 330, Boston, MA 02111-1307 USA
-
+also obtain it by writing to the Free Software Foundation, Inc.,
+51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA 
       </copyright>
 
 <toc detail="sect2">
@@ -177,12 +176,12 @@ should be simple to remember the basic ideas.
 <p>
 
 The syntax of the control file is simple: Empty lines separate
-sections (see below). Non-empty lines use a field-value syntax.  Field
+sections (see below). Non-empty lines use a field-value syntax. The field
+names are case-insensitive.  Field
 values may be wrapped over several lines by making the first character of
 subsequent lines a space; if a multi-line value should contain an empty line,
-a single dot (.) must be placed in the second column. The field
-names are case-insensitive.
-
+a single dot (.) must be placed in the second column. If the <em/Abstract/ field
+value should contain lines displayed varbatim, the lines must begin with two spaces.
 <p>
 
 The first section of the control file describes the document.  The
@@ -231,8 +230,8 @@ document format HTML, and required if the format is HTML.</p>
             <tag>Files</tag>
             <item>
               <p>
-A filename or shell glob representing the files which constitute the
-in this format of the document.  Required field.</p>
+Space separated list of filenames or shell globs representing the files which constitute the
+documentation in this format.  Required field.</p>
             </item>
           </taglist>
 
@@ -267,7 +266,7 @@ Then, it should call <prgn/install-docs/ from its <file>postinst</file> script:
 and from the <file>prerm</file> script as well:
 
 <example>
-  if [ "$1" = remove -o "$1" = upgrade ]; then
+  if [ "$1" = remove ] || [ "$1" = upgrade ]; then
     if which install-docs >/dev/null 2>&1; then
       install-docs -r &lt;document-id&gt;
     fi
@@ -319,7 +318,7 @@ Files: /usr/share/doc/foo/html-sgml/*.html
 Index: /usr/share/doc/foo/html-sgml/index.html
 
 ---status-information---
-Control-File: ../foo-0.0/foo.desc
+Control-File: /usr/share/doc-base/foo
 Registered-to-dhelp: 1
 Registered-to-dwww: 1
 </example>
@@ -335,7 +334,6 @@ example:
 <example>
 $ install-docs -L foo
 /usr/share/doc/foo/html-sgml/.dhelp
-/usr/lib/menu/doc-base-foo
 </example>
 <p>
 
