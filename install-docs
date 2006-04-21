@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# vim:ts=4:et
+# vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 =head1 NAME
 
 install-docs - manage online Debian documentation
@@ -194,7 +194,7 @@ exit 0;
 # -------------------------------
 
 # Registering to dhelp
-sub register_dhelp {
+sub register_dhelp { # {{{
   my (%update_dhelp, %removed_dhelp);
 
   my $format_data;
@@ -208,10 +208,10 @@ sub register_dhelp {
 
     # ensure the documentation is in an area dhelp can deal with
     if ( $dir !~ m|^/usr/share/doc| ) {
-	print "register_dhelp: skipping $dir/$file
-   because dhelp only knows about /usr/share/doc\n"
-	    if $verbose;
-	next;
+      print "register_dhelp: skipping $dir/$file
+            because dhelp only knows about /usr/share/doc\n"
+      if $verbose;
+      next;
     }
 
     my @dhelp_data;
@@ -220,9 +220,9 @@ sub register_dhelp {
     if (-f $dhelp_file) {
       # is this file from us?
       #if (not exists $list{$dhelp_file}) {
-	# no, skip action -- actually we could probably tolerate this condition
-	#warn "warning: skipping foreign dhelp file $dhelp_file";
-	#next;
+        # no, skip action -- actually we could probably tolerate this condition
+        #warn "warning: skipping foreign dhelp file $dhelp_file";
+        #next;
       #}
 
       # yes, read in the file
@@ -231,24 +231,24 @@ sub register_dhelp {
       # take a look at the contents
       my $i;
       for ( $i = 0; $i <= $#$dhelp_data; $i++ ) {
-	if ($$dhelp_data[$i]{'filename'} =~ /^\s*\Q$file\E\s*$/o) {
-	  # remove this entry; we'll add it back below
-	  print "register_dhelp: found entry for $file in $dhelp_file, replacing\n"
-	    if $verbose;
-	  splice(@$dhelp_data, $i, 1);
-	}
+        if ($$dhelp_data[$i]{'filename'} =~ /^\s*\Q$file\E\s*$/o) {
+          # remove this entry; we'll add it back below
+          print "register_dhelp: found entry for $file in $dhelp_file, replacing\n"
+          if $verbose;
+          splice(@$dhelp_data, $i, 1);
+        }
       }
       
       if ( -x $dhelp_parse && ! defined($removed_dhelp{$dir}) ) {
-	# before we edit .dhelp, we need to remove the entry for it
-	print "Executing $dhelp_parse -d $dir for changed .dhelp file\n"
-	  if $verbose;
-	if ( system("$dhelp_parse -d $dir") != 0 ) {
-	  # this is not a fatal condition
-	  warn "warning: error occured during execution of $dhelp_parse -d";
-	}
-	# remember that we did this do we don't do it again
-	$removed_dhelp{$dir} = 1;
+        # before we edit .dhelp, we need to remove the entry for it
+        print "Executing $dhelp_parse -d $dir for changed .dhelp file\n"
+        if $verbose;
+        if ( system("$dhelp_parse -d $dir") != 0 ) {
+          # this is not a fatal condition
+          warn "warning: error occured during execution of $dhelp_parse -d";
+        }
+        # remember that we did this do we don't do it again
+        $removed_dhelp{$dir} = 1;
       }
     } else {
       # no file yet, let's make an empty ref to fill in below
@@ -262,12 +262,15 @@ sub register_dhelp {
     $dhelp_section =~ s|^apps/||;
     # now push our data onto the array (undefs are ok)
     push(@$dhelp_data, {
-			'filename'    => $file,
-			'directory'   => $dhelp_section,
-			'linkname'    => $$doc_data{'title'},
-			'description' => $$doc_data{'abstract'},
-		       }
-	);
+      'filename'    => $file,
+      'directory'   => $dhelp_section,
+      'linkname'    => $$doc_data{'title'},
+      'description' => $$doc_data{'abstract'},
+      'converted'   => 1,      # the entry is already HTML-encoded,
+                               # we shouldn'try recode it on writing
+
+      }
+    );
 
     print "Updating $dhelp_file\n" if $verbose;
     add_file($dhelp_file);
@@ -285,16 +288,16 @@ sub register_dhelp {
     for $dir (keys %update_dhelp) {
       print "Executing $dhelp_parse -a $dir\n" if $verbose;
       if (system("$dhelp_parse -a $dir") != 0) {
-	warn "warning: error occured during execution of $dhelp_parse -a";
+        warn "warning: error occured during execution of $dhelp_parse -a";
       }
     }
   } else {
     print "Skipping $dhelp_parse, program not found\n" if $verbose;
   }
-}
+} # }}}
 
 # Registering to dwww:
-sub register_dwww {
+sub register_dwww { # {{{
   for $format_data (@format_list) {
     $update_dwww = 1;
     # set status
@@ -305,32 +308,32 @@ sub register_dwww {
   if ($update_dwww) {
     update_dwww_menus();
   }
-}
+} # }}}
 
-sub update_dwww_menus {
+sub update_dwww_menus { # {{{
   if ($do_dwww_update && -x $dwww_update) {
     print "Executing $dwww_update\n" if $verbose;
     if (system($dwww_update) != 0) {
       warn "warning: error occured during execution of $dwww_update";
     }
   }
-}
+} # }}}
 
-sub remove_files {
+sub remove_files { # {{{
   for $file (keys %list) {
     next unless -f $file;
 
     # dhelp file?
-    if ($file =~ /\.dhelp$/o) {	# yes
+    if ($file =~ /\.dhelp$/o) { # yes
 
       my $dir = dirname($file);
 
       if (-x $dhelp_parse) {
-	# call dhelp to notice removal of document
-	print "Executing $dhelp_parse -d $dir\n" if $verbose;
-	if (system("$dhelp_parse -d $dir") != 0) {
-	  warn "warning: error occured during execution of $dhelp_parse";
-	}
+        # call dhelp to notice removal of document
+        print "Executing $dhelp_parse -d $dir\n" if $verbose;
+        if (system("$dhelp_parse -d $dir") != 0) {
+          warn "warning: error occured during execution of $dhelp_parse";
+        }
       }
 
       print "Removing dhelp file $file\n" if $verbose;
@@ -346,9 +349,9 @@ sub remove_files {
   }
   %list = ();
   $list_changed = 1;
-}
+} # }}}
 
-sub remove_data_files {
+sub remove_data_files { # {{{
   my $status_file = "$DATA_DIR/$docid.status";
   if (-f $status_file) {
     print "Removing status file $status_file\n" if $verbose;
@@ -362,11 +365,11 @@ sub remove_data_files {
     unlink($list_file)
       or die "$list_file: cannot remove status file: $!";
   }
-}
+} # }}}
 
 # -------------------------------
 
-sub read_status_file {
+sub read_status_file { # {{{
   my ($ignore) = @_;
 
   my $status_file = "$DATA_DIR/$docid.status";
@@ -388,9 +391,9 @@ sub read_status_file {
   }
   close(S)
     or die "$status_file: cannot close status file: $!";
-}
+} # }}}
 
-sub write_status_file {
+sub write_status_file { # {{{
   return unless $status_changed;
 
   my $status_file = "$DATA_DIR/$docid.status";
@@ -403,9 +406,9 @@ sub write_status_file {
   close(S) or die "$status_file: cannot close status file: $!";
 
   $status_changed = 0;
-}
+} # }}}
 
-sub display_status_information {
+sub display_status_information { # {{{
   print "---document-information---\n";
   print "Document: $$doc_data{'document'}\n";
   for $k (sort keys %$doc_data) {
@@ -430,15 +433,15 @@ sub display_status_information {
   for $k (sort keys %status) {
     print "$k: $status{$k}\n";
   }
-}
+} # }}}
 
-sub display_listing {
+sub display_listing { # {{{
   for $k (sort keys %list) {
     print "$k\n";
   }
-}
+} # }}}
 
-sub read_list_file {
+sub read_list_file { # {{{
   my $list_file = "$DATA_DIR/$docid.list";
   return unless -f $list_file;
 
@@ -450,9 +453,9 @@ sub read_list_file {
     $list{$_} = 1;
   }
   close(L) or die "$list_file: cannot close file: $!";
-}
+} # }}}
 
-sub write_list_file {
+sub write_list_file { # {{{
   return unless $list_changed;
 
   my $list_file = "$DATA_DIR/$docid.list";
@@ -465,9 +468,9 @@ sub write_list_file {
   close(L) or die "$list_file: cannot close file: $!";
 
   $list_changed = 0;
-}
+} # }}}
 
-sub add_file {
+sub add_file { # {{{
   my ($file) = @_;
 
   return if $list{$file};
@@ -479,7 +482,7 @@ sub add_file {
   close(L) or die "$data_file: cannot close file";
 
   $list{$file} = 1;
-}
+} # }}}
 
 # -------------------------------
 
@@ -488,112 +491,121 @@ sub add_file {
 #  file name
 # output:
 #  returns ref to array of hashes containing our data
-sub read_dhelp_file {
+sub read_dhelp_file { # {{{
   my ($dhelpfile) = @_;
-  my ($dhdata);			# array ref, to be returned holding all the dhelp data 
-  my (@rets);			# temporary array
+  my ($dhdata);     # array ref, to be returned holding all the dhelp data 
+  my (@rets);     # temporary array
   
   open(FH, "<$dhelpfile") or die "open file '$dhelpfile': $!\n";
-  $_ = join('', <FH>);		# slurp in the file
+  $_ = join('', <FH>);    # slurp in the file
 
   while ( m{
-      <item>\s*			# item defines a block, required
-	  (?:			# alternate everything group
-       (?:<directory>		# directory is starting, required
-	 ([^<]+)		#   $1
-       )			# ... ending
-	   |
-       (?:<dirtitle>		# dirtitle is starting, optional
-         ([^<]+)		#   $2 until next tag start
-       )			# ... ending
-	   |
-       (?:<linkname>		# linkname is starting, optional
-         ([^<]+)		#   $3
-       )			# ... ending
-	   |
-       (?:<filename>		# filename is starting, optional
-         ([^<]+)		#   $4
-       )			# ... ending
-	   |
-       (?:<description>		# filename is starting, optional
-         (.*?)			#  $5, non greedy
-       </description>)		# ... ending
-	   )*			# end alternating
-       \s*</item>		# spaces ok, item ends
+      <item>\s*     # item defines a block, required
+    (?:     # alternate everything group
+       (?:<directory>   # directory is starting, required
+   ([^<]+)    #   $1
+       )      # ... ending
+     |
+       (?:<dirtitle>    # dirtitle is starting, optional
+         ([^<]+)    #   $2 until next tag start
+       )      # ... ending
+     |
+       (?:<linkname>    # linkname is starting, optional
+         ([^<]+)    #   $3
+       )      # ... ending
+     |
+       (?:<filename>    # filename is starting, optional
+         ([^<]+)    #   $4
+       )      # ... ending
+     |
+       (?:<description>   # filename is starting, optional
+         (.*?)      #  $5, non greedy
+       </description>)    # ... ending
+     )*     # end alternating
+       \s*</item>   # spaces ok, item ends
       }gscx )
     {
       @rets =  ($1, $2, $3, $4, $5);
       @rets = map { chomp; $_; }  @rets;
       # push a hashref of our dhelp data item onto the $dhdata array
       push(@$dhdata, {
-		      'directory'   => $rets[0],
-		      'dirtitle'    => $rets[1],
-		      'linkname'    => $rets[2],
-		      'filename'    => $rets[3],
-		      'description' => $rets[4],
-		     });
+          'directory'   => $rets[0],
+          'dirtitle'    => $rets[1],
+          'linkname'    => $rets[2],
+          'filename'    => $rets[3],
+          'description' => $rets[4],
+         });
     }
   
   close FH;
   return $dhdata;
-}
+} # }}}
 
 
 sub html_encode { # {{{
-	my $text = shift;
+  my $text        = shift;
+  my $do_convert  = shift;
 
-	$text =~ s/&/&amp;/g;
-	$text =~ s/</&lt;/g;
-	$text =~ s/>/&gt;/g;
-	$text =~ s/"/&quot;/g;
-	return $text;
+  return $text unless $do_convert;
+
+  $text =~ s/&/&amp;/g;
+  $text =~ s/</&lt;/g;
+  $text =~ s/>/&gt;/g;
+  $text =~ s/"/&quot;/g;
+  return $text;
 } # }}}
 
 sub html_encode_description { # {{{
-    my $text = &html_encode(@_);
-    my @lines=split(/\n/, $text);
-    $text = "";
-    my $in_pre = 0;
-    foreach $_  (@lines) {
-        s/^\s//;
-        if (/^\s/) {
-            $_ = "<pre>\n$_" unless $in_pre;
-            $in_pre = 1;
-        } else {
-            $_ = "$_\n<\\pre>" if $in_pre;
-            $in_pre = 0;
-        }    
-        s/^\.\s*$/<br>&nbsp;<br>/;
-        s/(http|ftp)s?:\/([\w\/~\.%#-])+[\w\/]/<a href="$&">$&<\/a>/g;
+  my $text        = shift;
+  my $do_convert  = shift;
+  
+  return $text unless $do_convert;
+  
+  $text = &html_encode($text, $do_convert);
+  my @lines=split(/\n/, $text);
+  $text = "";
+  my $in_pre = 0;
+  foreach $_  (@lines) {
+    s/^\s//;
+    if (/^\s/) {
+      $_ = "<pre>\n$_" unless $in_pre;
+      $in_pre = 1;
+    } else {
+      $_ = "$_\n<\\pre>" if $in_pre;
+      $in_pre = 0;
+    }  
+    s/^\.\s*$/<br>&nbsp;<br>/;
+    s/(http|ftp)s?:\/([\w\/~\.%#-])+[\w\/]/<a href="$&">$&<\/a>/g;
 
-        $text .= $_ . "\n";
-     }
-    $text .= "</pre>\n" if $in_pre;
-    return $text;
+    $text .= $_ . "\n";
+   }
+  $text .= "</pre>\n" if $in_pre;
+  return $text;
 } # }}}
 
 
-sub write_dhelp_file {
+sub write_dhelp_file { # {{{
   my ($file, $data) = @_;
   
   open(FH, ">$file") or die "cannot create dhelp file '$file': $!\n";
   foreach $rec (@$data) {
+    my $do_html_convert = not (defined $$rec{'converted'} or $$rec{'converted'});
     print FH "<item>\n";
     foreach $field ((
-			'directory', 'dtitle', 'linkname', 'filename'
-		       )) {
-      if ($field ne 'linkname') {	       
+      'directory', 'dtitle', 'linkname', 'filename'
+           )) {
+      if ($field ne 'linkname') {        
         print FH "<$field>$$rec{$field}\n" if length($$rec{$field});
-      } else {	 
-        print FH "<$field>" . &html_encode($$rec{$field}) ."\n" if length($$rec{$field});
+      } else {   
+        print FH "<$field>" . &html_encode($$rec{$field}, $do_html_convert) ."\n" if length($$rec{$field});
      }
     }
-    print FH "<description>\n" . &html_encode_description($$rec{description}) . "\n</description>\n"
+    print FH "<description>\n" . &html_encode_description($$rec{description}, $do_html_convert) . "\n</description>\n"
       if length($$rec{'description'});
     print FH "</item>\n\n";
   }
   close FH;
-}
+} # }}}
 
 # -------------------------------
 
@@ -603,7 +615,7 @@ sub write_dhelp_file {
 ## section to the hash reference passed as an argument.  Returns 1 if
 ## there is data and 0 if it was empty
 ##
-sub read_control_file_section {
+sub read_control_file_section { # {{{
   my $fh = shift;
   my ($pfields) = @_;
 
@@ -616,9 +628,9 @@ sub read_control_file_section {
     # empty line?
     if (/^\s*$/o) {
       if ($empty) {
-	next;
+        next;
       } else {
-	last;
+        last;
       }
     }
 
@@ -630,7 +642,7 @@ sub read_control_file_section {
       $cf = lc $cf;
       #print STDERR "$cf -> $v\n";
       if (exists $$pfields{$cf}) {
-	warn "warning: $cf: overwriting previous setting of control field";
+        warn "warning: $cf: overwriting previous setting of control field";
       }
       $$pfields{$cf} = $v;
     } elsif (/^\s+(\S.*)$/) {
@@ -644,20 +656,20 @@ sub read_control_file_section {
   }
 
   return not $empty;
-}
+} # }}}
 
 # reads control file specified as argument
 # output:
 #    sets $docid
 #    sets $doc_data to point to a hash containing the document data
 #    sets @format_list, a list of pointers to hashes containing the format data
-sub read_control_file {
+sub read_control_file { # {{{
   my ($file) = @_;
 
   my $fh=$file; 
   open($fh, $file) or 
-      open($fh, "/usr/share/doc-base/$file") or
-	  die "$file: cannot open control file for reading: $!\n";
+    open($fh, "/usr/share/doc-base/$file") or
+    die "$file: cannot open control file for reading: $!\n";
 
   $doc_data = {};
   read_control_file_section($fh, $doc_data) or die "error: empty control file";
@@ -692,22 +704,22 @@ sub read_control_file {
    
     my $ok = 1;
     if ($warn_nonexistent_files) {
-        if (defined $$format_data{'index'} && ! -e $$format_data{'index'}) {
-            warn "warning: file `$$format_data{'index'}' does not exist";
-            $ok = 0;
-        }
-        my @globlist = glob($$format_data{'files'});
-        if ($#globlist < 0) {
-            warn "warning: file mask `$$format_data{'files'}' does not match any files";
-            $ok = 0;
-        }        
+      if (defined $$format_data{'index'} && ! -e $$format_data{'index'}) {
+        warn "warning: file `$$format_data{'index'}' does not exist";
+        $ok = 0;
+      }
+      my @globlist = glob($$format_data{'files'});
+      if ($#globlist < 0) {
+        warn "warning: file mask `$$format_data{'files'}' does not match any files";
+        $ok = 0;
+      }    
     }
     
     push(@format_list,$format_data) if $ok;
     $format_data = {};
   }
   close($fh);
-}
+} # }}}
 
 
 =head1 BUGS

@@ -20,7 +20,7 @@ doc-base (0.7.20) unstable; urgency=low
   * debian/control: suggest doc-central as an alternative to dhelp or dwww.
   * Ack NMU (closes: #278495).
 
- -- Robert Luberda <robert@debian.org>  Sun,  2 Apr 2006 14:01:28 +0200
+ -- Robert Luberda <robert@debian.org>  Sun,  2 Apr 2006 14:26:47 +0200
 
 doc-base (0.7.19) unstable; urgency=low
 
