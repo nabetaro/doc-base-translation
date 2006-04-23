@@ -6,7 +6,7 @@ set -e
 
 package=doc-base
 # upgrades prior to this version require complete re-registration
-compat_ver=0.7.20
+compat_ver=0.7.21
 # upgrades of the following version requires complete re-registration
 bad_ver=0.7.13
 VERBOSE=

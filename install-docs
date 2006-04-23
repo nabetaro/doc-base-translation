@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
+
 =head1 NAME
 
 install-docs - manage online Debian documentation
@@ -14,6 +15,25 @@ $dwww_update = "/usr/bin/update-menus";
 $dhelp_parse = "/usr/sbin/dhelp_parse";
 $do_dwww_update = 1;
 my $warn_nonexistent_files = 0;
+
+
+# All formats handled by the doc-base
+my @supported_formats =  (
+                            'html',
+                            'text',
+                            'pdf',
+                            'postscript',
+                            'info',
+                            'dvi',
+                            'debiandoc-sgml'
+                      );
+
+# Formats which need the Index: field
+my @need_index_formats = (
+                            'html',
+                            'info'
+                         );
+
 
 # ---end-of-configuration-part---
 
@@ -99,11 +119,11 @@ Inhibit running L<update-menus(1)>, used for the L<dwww(8)> update program.
 Install the documentation described by the control file I<file>.
 
 =cut
-    # install new docs
+    # install new docs # {{{
     ($file = shift) or die "argument missing for `install'\n";
     ($#ARGV == -1) or die "too many arguments for `install'\n";
     $warn_nonexistent_files = 1;
-    
+
     read_control_file($file);
     read_status_file(1);
     read_list_file();
@@ -112,15 +132,13 @@ Install the documentation described by the control file I<file>.
     $status{'Control-File'} = $file;
     $status_changed = 1;
 
-    # remove any installed dhelp files (since the location could change)
-    remove_files();
-    
+
     # register documents to subsystems
     register_dhelp();
     register_dwww();
 
     write_list_file();
-    write_status_file();
+    write_status_file(); # }}}
 
   } elsif (($arg eq '-r') or ($arg eq '--remove')) {
 
@@ -131,7 +149,7 @@ I<docid>.  Document identifiers are tags which are set in the control
 file, and usually correspond to the package name.
 
 =cut
-    # remove old docs
+    # remove old docs # {{{
     ($docid = shift) or die "argument missing for `remove'\n";
     ($#ARGV == -1) or die "too many arguments for `remove'\n";
 
@@ -147,7 +165,7 @@ file, and usually correspond to the package name.
     update_dwww_menus() if $status{'Registered-to-dwww'};
 
     # remove data files
-    remove_data_files();
+    remove_data_files(); # }}}
 
   } elsif (($arg eq '-s') or ($arg eq '--status')) {
 
@@ -156,7 +174,7 @@ file, and usually correspond to the package name.
 Display the status of the document identifier I<docid>.
 
 =cut
-    # display status
+    # display status # {{{
     ($docid = shift) or die "argument missing for `status'\n";
     ($#ARGV == -1) or die "too many arguments for `status'\n";
 
@@ -164,7 +182,7 @@ Display the status of the document identifier I<docid>.
     read_list_file();
     read_control_file($status{'Control-File'});
 
-    display_status_information();
+    display_status_information(); # }}}
 
   } elsif (($arg eq '-L') or ($arg eq '--listfiles')) {
 
@@ -175,14 +193,14 @@ List the files associated with the document identifier I<docid>.
 =back
 
 =cut
-    # display status
+    # display file listning # {{{
     ($docid = shift) or die "argument missing for `listfiles'\n";
     ($#ARGV == -1) or die "too many arguments for `listfiles'\n";
 
     read_status_file();
     read_list_file();
 
-    display_listing();
+    display_listing(); # }}}
 
   } else {
     die "invalid command line argument: $arg\n";
@@ -195,7 +213,6 @@ exit 0;
 
 # Registering to dhelp
 sub register_dhelp { # {{{
-  my (%update_dhelp, %removed_dhelp);
 
   my $format_data;
   for $format_data (@format_list) {
@@ -211,7 +228,7 @@ sub register_dhelp { # {{{
       print "register_dhelp: skipping $dir/$file
             because dhelp only knows about /usr/share/doc\n"
       if $verbose;
-      next;
+      last; # we can have only one Format:HTML section
     }
 
     my @dhelp_data;
@@ -227,7 +244,7 @@ sub register_dhelp { # {{{
 
       # yes, read in the file
       $dhelp_data = read_dhelp_file($dhelp_file);
-      
+
       # take a look at the contents
       my $i;
       for ( $i = 0; $i <= $#$dhelp_data; $i++ ) {
@@ -238,62 +255,52 @@ sub register_dhelp { # {{{
           splice(@$dhelp_data, $i, 1);
         }
       }
-      
-      if ( -x $dhelp_parse && ! defined($removed_dhelp{$dir}) ) {
-        # before we edit .dhelp, we need to remove the entry for it
-        print "Executing $dhelp_parse -d $dir for changed .dhelp file\n"
-        if $verbose;
-        if ( system("$dhelp_parse -d $dir") != 0 ) {
-          # this is not a fatal condition
-          warn "warning: error occured during execution of $dhelp_parse -d";
-        }
-        # remember that we did this do we don't do it again
-        $removed_dhelp{$dir} = 1;
-      }
     } else {
       # no file yet, let's make an empty ref to fill in below
       $dhelp_data = [];
     }
+
 
     # last minute data munging,
     # FIXME when we finally get a real document hierarchy
     my $dhelp_section;
     ( $dhelp_section = $$doc_data{'section'} ) =~ tr/A-Z/a-z/;
     $dhelp_section =~ s|^apps/||;
+    $dhelp_section =~ s/^(howto|faq)$/\U$&\E/;
     # now push our data onto the array (undefs are ok)
     push(@$dhelp_data, {
       'filename'    => $file,
       'directory'   => $dhelp_section,
       'linkname'    => $$doc_data{'title'},
       'description' => $$doc_data{'abstract'},
-      'converted'   => 1,      # the entry is already HTML-encoded,
-                               # we shouldn'try recode it on writing
-
       }
     );
 
+    # remove the dhelp_file and any other installed dhelp files 
+    # (since the location could change and we can have only one file for document-id)
+    # note: remove_files zeroes %list
+    $list{$dhelp_file} = 1;  remove_files();
+    
     print "Updating $dhelp_file\n" if $verbose;
     add_file($dhelp_file);
     write_dhelp_file($dhelp_file, $dhelp_data);
 
-    $update_dhelp{$dir} = 1;
-
-    # set status
-    $status{'Registered-to-dhelp'} = 1;
-    $status_changed = 1;
-
-  }
-
-  if (-x $dhelp_parse) {
-    for $dir (keys %update_dhelp) {
+    if (-x $dhelp_parse) {
       print "Executing $dhelp_parse -a $dir\n" if $verbose;
       if (system("$dhelp_parse -a $dir") != 0) {
         warn "warning: error occured during execution of $dhelp_parse -a";
       }
+    } else {
+      print "Skipping $dhelp_parse, program not found\n" if $verbose;
     }
-  } else {
-    print "Skipping $dhelp_parse, program not found\n" if $verbose;
+    # set status
+    $status{'Registered-to-dhelp'} = 1;
+    $status_changed = 1;
+
+    # we can have only one Format:HTML section the document
+    last;
   }
+
 } # }}}
 
 # Registering to dwww:
@@ -495,7 +502,7 @@ sub read_dhelp_file { # {{{
   my ($dhelpfile) = @_;
   my ($dhdata);     # array ref, to be returned holding all the dhelp data 
   my (@rets);     # temporary array
-  
+
   open(FH, "<$dhelpfile") or die "open file '$dhelpfile': $!\n";
   $_ = join('', <FH>);    # slurp in the file
 
@@ -526,7 +533,7 @@ sub read_dhelp_file { # {{{
       }gscx )
     {
       @rets =  ($1, $2, $3, $4, $5);
-      @rets = map { chomp; $_; }  @rets;
+      @rets = map { chomp; s/^\s+//; s/\s+$//; $_; }  @rets;
       # push a hashref of our dhelp data item onto the $dhdata array
       push(@$dhdata, {
           'directory'   => $rets[0],
@@ -534,9 +541,11 @@ sub read_dhelp_file { # {{{
           'linkname'    => $rets[2],
           'filename'    => $rets[3],
           'description' => $rets[4],
+          'converted'   => 1,      # the entry is already HTML-encoded,
+                                   # we shouldn'try recode it on writing
          });
     }
-  
+
   close FH;
   return $dhdata;
 } # }}}
@@ -558,9 +567,9 @@ sub html_encode { # {{{
 sub html_encode_description { # {{{
   my $text        = shift;
   my $do_convert  = shift;
-  
+
   return $text unless $do_convert;
-  
+
   $text = &html_encode($text, $do_convert);
   my @lines=split(/\n/, $text);
   $text = "";
@@ -586,7 +595,7 @@ sub html_encode_description { # {{{
 
 sub write_dhelp_file { # {{{
   my ($file, $data) = @_;
-  
+
   open(FH, ">$file") or die "cannot create dhelp file '$file': $!\n";
   foreach $rec (@$data) {
     my $do_html_convert = not (defined $$rec{'converted'} or $$rec{'converted'});
@@ -691,17 +700,18 @@ sub read_control_file { # {{{
       or die "error in control file: `Format' value not specified";
     $$format_data{'files'}
       or die "error in control file: `Files' value not specified";
-    if ($$format_data{'format'} eq 'html') {
-      $$format_data{'index'}
-        or die "error in control file: `Index' value missing for type HTML";
-    } elsif ($$format_data{'format'} eq 'debiandoc-sgml') {
-      # no additional fields required
-    } elsif ($$format_data{'format'} eq 'text') {
-      # no additional fields required
-    } elsif ($verbose) {
-      warn "warning: ignoring unknown format `$$format_data{'format'}'";
+      
+    if ($verbose) {
+      grep { $_ eq $$format_data{'format'} } @supported_formats
+        or  warn "warning: ignoring unknown format `$$format_data{'format'}'";
     }
-   
+    if (grep { $_ eq $$format_data{'format'}} @need_index_formats) {
+      $$format_data{'index'}
+        or $$format_data{'format'} eq 'html' and die "error in control file: `Index' value missing for format `" . $$format_data{'format'} . "'"
+        # FIXME - temporary
+        or warn "error in control file: `Index' value missing for format `" . $$format_data{'format'} . "'";
+    } 
+
     my $ok = 1;
     if ($warn_nonexistent_files) {
       if (defined $$format_data{'index'} && ! -e $$format_data{'index'}) {
@@ -714,7 +724,7 @@ sub read_control_file { # {{{
         $ok = 0;
       }    
     }
-    
+
     push(@format_list,$format_data) if $ok;
     $format_data = {};
   }

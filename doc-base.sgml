@@ -218,14 +218,22 @@ fields are available:<taglist>
             <tag>Format</tag>
             <item>
               <p>
-Format for the document. Required field.  Only "HTML",
-"DebianDoc-SGML", and "Text" is recognized.</p>
+Format for the document. Required field.  The following formats
+are recognized:
+"HTML",
+"Text",
+"PDF",
+"PostScript",
+"Info",
+"DVI",
+and "DebianDoc-SGML".
+</p>
             </item>
             <tag>Index</tag>
             <item>
               <p>
 Index or top-level file for this document format.  Only applies to
-document format HTML, and required if the format is HTML.</p>
+document formats "HTML" and "Info", and required if the format is "HTML" or "Info".</p>
             </item>
             <tag>Files</tag>
             <item>
@@ -237,8 +245,8 @@ documentation in this format.  Required field.</p>
 
 <p>
 
-For now, only the format `HTML' is recognized. The `Index:' field has
-to contain the absolute file name of the title page of the
+The `Index:' field has
+to contain the absolute file name of the main page of the
 document. This file will be specified as the front page link when the
 document is registered.
 

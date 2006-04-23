@@ -1,3 +1,23 @@
+doc-base (0.7.21) unstable; urgency=low
+
+  * doc-base.sgml:
+    + bless a few documentation formats: PDF, PostScript, Info, and DVI,
+      which are already often used in the doc-base files
+    + the `Index' field is required for the Info format.
+  * install-docs:
+    + support the above mentioned formats
+    + warn if info format lacks the `Index' field.
+  * install-docs: Some fixes for dhelp support:
+    + when registering the doc files, don't remove the old .dhelp file until
+      it's actually read and parsed. This partially fixes Bug#204195 (the full
+      fix would probably require not removing .dhelp files when doc-base documents
+      are unregistered)
+    + don't HTML-encode entries already read from .dhelp file
+    + made 'howto' and 'faq' section names  uppercase.
+  * debian/postinst: Reregister all the doc-base files.
+
+ -- Robert Luberda <robert@debian.org>  Sun, 23 Apr 2006 17:48:08 +0200
+
 doc-base (0.7.20) unstable; urgency=low
 
   * doc-base.sgml:
