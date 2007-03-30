@@ -122,7 +122,7 @@ Install the documentation described by the control file I<file>.
     # install new docs # {{{
     ($file = shift) or die "argument missing for `install'\n";
     ($#ARGV == -1) or die "too many arguments for `install'\n";
-    $warn_nonexistent_files = $verbose;
+    $warn_nonexistent_files = 1;
 
     read_control_file($file);
     read_status_file(1);
@@ -715,12 +715,12 @@ sub read_control_file { # {{{
     my $ok = 1;
     if ($warn_nonexistent_files) {
       if (defined $$format_data{'index'} && ! -e $$format_data{'index'}) {
-        warn "warning: file `$$format_data{'index'}' does not exist";
+        warn "warning: file `$$format_data{'index'}' does not exist" if ($verbose);
         $ok = 0;
       }
       my @globlist = glob($$format_data{'files'});
       if ($#globlist < 0) {
-        warn "warning: file mask `$$format_data{'files'}' does not match any files";
+        warn "warning: file mask `$$format_data{'files'}' does not match any files" if ($verbose);
         $ok = 0;
       }    
     }
