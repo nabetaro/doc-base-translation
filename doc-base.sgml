@@ -1,13 +1,14 @@
 <!DOCTYPE debiandoc PUBLIC "-//DebianDoc//DTD DebianDoc//EN"[
   <!-- include version information so we don't have to hard-code it
        within the document -->
-  <!entity % versiondata SYSTEM "version.ent"> %versiondata;
+  <!ENTITY % versiondata SYSTEM "version.ent"> %versiondata;
 ]>
 <book>
 
 <title>Debian <package>doc-base</package> Manual
 <author>Christian Schwarz <email/schwarz@debian.org/
 <author>Adam Di Carlo <email/aph@debian.org/
+<author>Robert Luberda <email/robert@debian.org/
 <version>ver. &version;, &date;
 
 <abstract>
@@ -20,6 +21,8 @@ can be used to manage online manuals on Debian systems.
 copyright &copy;1998, Christian Schwarz</copyrightsummary>
 	<copyrightsummary>
 copyright &copy;1999 &ndash 2002, Adam Di Carlo</copyrightsummary>
+	<copyrightsummary>
+copyright &copy;2006 &ndash 2007, Robert Luberda</copyrightsummary>
 
 <p>
 
@@ -45,7 +48,7 @@ also obtain it by writing to the Free Software Foundation, Inc.,
 
 <toc detail="sect2">
 
-<chapt>About <package>doc-base</package>
+<chapt id="about">About <package>doc-base</package>
 <p>
 
 Some time ago, there was a big discussion on the Debian mailing lists
@@ -59,7 +62,7 @@ The <package>doc-base</package> package tries to implement such a flexible solut
 Every Debian package that provides online documentation (other than
 manual pages) will register these documents to
 <package>doc-base</package> via the <prgn/install-docs/ script (see
-below) at installation time and de-register the manuals again when the
+<ref id="registering_documents">) at installation time and de-register the manuals again when the
 package is removed.
 
 <p>
@@ -75,12 +78,12 @@ GNU info format, etc. etc.
 
 <p>
 
-Since all manuals will eventually by registered,
+Since all manuals will eventually be registered,
 <package>doc-base</package> can also be used to solve another
 outstanding problem: Debian currently has three different online
 documentation systems, <package>doc-central</package>, <package>dwww</package> and
-<package>dhelp</package>. Since each system has advantages and
-disadvantages, doc-base supports all of them.
+<package>dhelp</package>. Each system has advantages and
+disadvantages, thus <package/doc-base/ supports all of them.
 The system administrator can choose which implementation he/she prefers.
 
 <p>
@@ -98,19 +101,19 @@ register online manuals to Debian's online help systems.
 Only the second part has been implemented so far.
 <p>
 
-<chapt>The packages interface
+<chapt id="interface">The packages interface
 <p>
 
 <sect>Introduction
 <p>
 
-Each Debian package that installs online manuals (any format) should
+Each Debian package that installs online manuals (in any format) should
 register its manuals to <package>doc-base</package>. This is done by installing a
-<package>doc-base</package> <em/control file/ and calling <prgn/install-docs/ from the
-<prgn/postinst/ script.
+<package>doc-base</package> <em/control file/ (see <ref id="control_files">) 
+and calling <prgn/install-docs/ from the <prgn/postinst/ script (see <ref id="registering_documents">).
 <p>
 
-<sect>Document IDs
+<sect id="document_ids">Document IDs
 <p>
 
 Each document that is registered to <package>doc-base</package> must
@@ -136,15 +139,16 @@ letters (a-z), digits (0-9), plus (+) or minus (-) signs, and dots
 (.) (the same characters allowed in package names).
 <p>
 
-<sect>Control Files
+<sect id="control_files">Control Files
 <p>
 
 For each piece online documentation, <package>doc-base</package> needs a <em/control
 file/ that describes the documentation and the documentation file
 formats that are provided initially.
 <p>
-
-Here is an example of a control file:
+<sect1>Example
+<p>
+Here is an example of a <em/control file/:
 <p>
 
 <example>
@@ -156,108 +160,170 @@ Abstract: This manual describes what doc-base is
  manage online manuals on Debian systems.
 Section: Apps/Programming
 
-Format: debiandoc-sgml
+Format: DebianDoc-SGML
 Files: /usr/share/doc/doc-base/doc-base.sgml.gz
 
-Format: text
+Format: Text
 Files: /usr/share/doc/doc-base/doc-base.txt.gz
 
 Format: HTML
 Index: /usr/share/doc/doc-base/doc-base.html/index.html
 Files: /usr/share/doc/doc-base/doc-base.html/*.html
 </example>
-<p>
 
-As you can see from this example, the syntax -- as is the whole
+<p>
+If the <package/doc-base/ package provided necessary files in other formats, it would be possible 
+to add  more sections at the end of the <em/control file/:
+<example>
+
+Format: PDF
+Files: /usr/share/doc-base/doc-base.pdf
+
+Format: PostScript
+Files: /usr/share/doc-base/doc-base.ps.gz
+
+Format: DVI
+Files: /usr/share/doc-base/doc-base.dvi.gz
+
+Format: Info
+Index: /usr/share/info/doc-base.info.gz
+Files: /usr/share/info/doc-base.info*.gz
+</example>
+</sect1>
+
+<sect1>Syntax of the control file
+<p>
+As you can see from the above example, the syntax -- as is the whole
 design of <package>doc-base</package> -- is heavily influenced by dpkg. This is important
 since every maintainer will have to work with <package>doc-base</package> and thus, it
 should be simple to remember the basic ideas.
-
 <p>
 
-The syntax of the control file is simple: Empty lines separate
-sections (see below). Non-empty lines use a field-value syntax. The field
-names are case-insensitive.  Field
-values may be wrapped over several lines by making the first character of
-subsequent lines a space; if a multi-line value should contain an empty line,
-a single dot (.) must be placed in the second column. If the <em/Abstract/ field
-value should contain lines displayed varbatim, the lines must begin with two spaces.
-<p>
+The syntax of the control file is simple: 
+<list compact>
+  <item>The file consist of
+     <list compact>
+      <item>exactly one main section providing base information about the registered manual
+        (see <ref id="main_section"> below);</item>
+      <item>one or more format sections (see <ref id="format_sections">) containing pointers 
+           to the registered documentation files.</item>
+    </list>
+  </item> 
+  <item>Successive sections must be separated with empty lines.</item>
+  <item>Non-empty lines use a `<tt/field-name: value/' syntax.</item>
+  <item>The field names are case-insensitive.</item>
+  <item>The field values are case-sensitive (except for the <em/Format/ field).</item>
+  <item>Field values may be wrapped over several lines by making the first character of
+        subsequent lines a space.
+   <list compact> 	
+    <item>If a multi-line value should contain an empty line,
+          a single dot (.) must be placed in the second column. 
+    <item>If the <em/Abstract/ field value should contain lines displayed verbatim,       
+          the lines must begin with two spaces.
+  </list>
+ </item> 
+</list>  
 
+<sect2 id="main_section">The main section
+<p>
 The first section of the control file describes the document.  The
 following fields are available:<taglist>
-            <tag>Document</tag>
+            <tag><em>Document</em></tag>
             <item>
               <p>
-Document ID, required field; should be the first field.</p>
+<qref id="document_ids">Document ID</qref>, required field; should be the first field.</p>
             </item>
-            <tag>Title</tag>
+            <tag><em>Title</em></tag>
             <item>
               <p>
 Title of the document; required field.</p>
             </item>
-            <tag>Abstract</tag>
+            <tag><em>Abstract</em></tag>
             <item>
               <p>
 Short paragraph giving an overview of the document; optional but
 recommended field.</p>
             </item>
-            <tag>Section</tag>
+            <tag><em>Section</em></tag>
             <item>
               <p>
 Section where the document belongs; this should follow the sections
-outlined in The Debian Menu sub-policy.</p>
+outlined in <url id="http://www.debian.org/doc/packaging-manuals/menu-policy/ch2.html#s2.1"
+name="The Debian Menu sub-policy">.  Required field.</p>
+
+
             </item>
           </taglist>
-
+</sect2>
+<sect2 id="format_sections"><em/Format/ sections
 <p>
-
-The following sections describe the different formats for the provided
+The next sections describe the different formats for the provided
 document which is described in the first section.  The following
 fields are available:<taglist>
-            <tag>Format</tag>
+            <tag><em>Format</em></tag>
             <item>
               <p>
-Format for the document. Required field.  The following formats
-are recognized:
-"HTML",
-"Text",
-"PDF",
-"PostScript",
-"Info",
-"DVI",
-and "DebianDoc-SGML".
+Format for the document.  Required field.  The following formats
+are recognised:
+<list compact>
+  <item><tt/HTML/,</item>
+  <item><tt/Text/,</item>
+  <item><tt/PDF/,</item>
+  <item><tt/PostScript/,</item>
+  <item><tt/Info/,</item>
+  <item><tt/DVI/,</item>
+  <item>and <tt/DebianDoc-SGML/.</item>  
+</list>
+The values of this field are case-insensitive (e.g. both <tt/Text/ and <tt/text/ are valid).
 </p>
             </item>
-            <tag>Index</tag>
+            <tag><em>Index</em></tag>
             <item>
               <p>
 Index or top-level file for this document format.  Only applies to
-document formats "HTML" and "Info", and required if the format is "HTML" or "Info".</p>
+document formats <tt/HTML/ and <tt/Info/, and required if the format is <tt/HTML/ or <tt/Info/.
+<p>
+This field has to contain the absolute file name of the main page of the
+document. This file will be specified as the front page link when the
+document is registered.
             </item>
-            <tag>Files</tag>
+            <tag><em>Files</em></tag>
             <item>
               <p>
-Space separated list of filenames or shell globs representing the files which constitute the
-documentation in this format.  Required field.</p>
+Space separated list of filenames or POSIX shell globs (i.e. <tt/*/, <tt/?/, and <tt/[]/ meta-characters)
+representing the files which constitute the
+documentation in this format.  Required field.
             </item>
           </taglist>
 
 <p>
-
-The `Index:' field has
-to contain the absolute file name of the main page of the
-document. This file will be specified as the front page link when the
-document is registered.
+There must be at least one such a section. If there are more, each of them must register 
+files in different formats (e.g. having two <tt/Format: HTML/ sections in one <em/control
+file/ is not allowed).
 
 <p>
+Except for the <tt/Info/ format the files referred in both <em/Index/ and <em/Files/
+fields should be placed somewhere under the <file>/usr/share/doc</file> hierarchy.
+If for some reason it's not possible, then the registering package should provide a symbolic 
+link pointing from the above hierarchy to the real files and register its documentation
+through the link, allowing <package/doc-base/, <package/dhelp/, or <package/dwww/ packages
+to actually handle the documentation.
 
-      <sect>Registering Documents Using <prgn>install-docs</prgn>
+Of course, files in the <tt/Info/ format should be located in the <file>/usr/share/info</file> 
+directory.
+
+
+
+</sect2>
+</sect1>
+</sect>
+
+<sect id="registering_documents">Registering Documents Using <prgn>install-docs</prgn>
 <p>
 
 In order to register a piece of online documentation to
 <package>doc-base</package>, the package must install the control
-file (see above) as file
+file (see <ref id="control_files">) as file
 <file>/usr/share/doc-base/<var/document-id/</file>.
 <p>
 
@@ -300,7 +366,7 @@ dpkg: warning - unable to delete old file `<var>directory</var>': Directory not 
 
 
 
-<chapt>Getting information about installed documents
+<chapt id="informations">Getting information about installed documents
 <p>
 
 If you want to get information about the status of an installed
@@ -345,23 +411,35 @@ $ install-docs -L foo
 </example>
 <p>
 
-<chapt>TODO List
+<chapt id="todo">TODO List
 
 <p> The following items are listed, in order of approximate priority, as to-do
 items.  Our first priority is to define the core issues of the 
 Debian Documentation System, which will have status as a Sub-Policy.
 
 <list>
+  <item> Internationalisation and po-debconf support. Unfortunately this 
+         would require merging <em/Abstract/ and <em/Title/ fields.
+        See <url id="http://bugs.debian.org/171373" name="Bug#171363">,
+             <url id="http://bugs.debian.org/171375" name="Bug#171375">,
+        and <url id="http://bugs.debian.org/171378" name="Bug#171378">.
+
+  <item>Redesigning sections hierarchy, see
+      <url id="http://bugs.debian.org/109431" name="Bug#109431">.
+
+  <item>Add some new fields, like <em/Package/ 
+   (<url id="http://bugs.debian.org/71955" name="Bug#71955">),
+   or <em/SortSkip/ 
+   (<url id="http://bugs.debian.org/187590" name="Bug#187590">).
+
+  <item>Merge the scrollkeeper support from the Ubuntu version of <package/doc-base/.
+
   <item> Policy: document the <package>doc-base</package> document registration file
   format separately (or SUBDOC it) as a proposed Debian documentation
-  system policy.  Discussion is underway at
-  <email>debian-doc@lists.debian.org</email>; Adam Di Carlo is in
-  charge of this.
+  system policy.  
 
   <item> Policy: define a first-cut standard as the document
-  hierarchy. Discussion is underway at
-  <email>debian-doc@lists.debian.org</email>; Marcus Brinkmann is in
-  charge of this.
+  hierarchy. 
 
   <item> Documentation update: show clean and minimal use of
   <prgn>install-docs</prgn> from maintainer script.
@@ -374,13 +452,14 @@ Debian Documentation System, which will have status as a Sub-Policy.
 
   <item> Determine a cleaner way to manage the various little files
   such as <file>.dhelp</file> and <package>doc-base</package> status
-  files.  This also involves behavior on remove or purge of the
+  files.  This also involves behaviour on remove or purge of the
   <package>doc-base</package> packages.  I believe derived files such
   as <file>.dhelp</file> will eventually go away, since packages
   should understand the <package>doc-base</package> document
   registration control file format directly.
 
-  <item> Internationalization.
+
+
   
   <item> Automated format conversion, including user preferences.
 

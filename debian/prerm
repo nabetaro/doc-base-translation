@@ -24,10 +24,10 @@ remove_all_docs ( ) {
     if which install-docs >/dev/null 2>&1; then
         echo "unregistering documentation ..."
         for file in /var/lib/doc-base/info/*.status; do
-            install-docs -r `basename $file .status` || true
+            install-docs -r "`basename "$file" .status`" || true
         done
     else
-	# error because we this *is* the doc-base package
+	# error because this *is* the doc-base package
 	echo "cannot find install-docs on path" 1>&2
 	exit 1
     fi

@@ -723,6 +723,8 @@ sub read_control_file { # {{{
         $ok = 0;
       }
       my @globlist = glob($$format_data{'files'});
+      # if the mask doesn't contain any meta-characters, then glob simply returns its argument 
+      pop @globlist if ($#globlist == 0 && ! -f $globlist[0])
       if ($#globlist < 0) {
         warn "warning: file mask `$$format_data{'files'}' does not match any files" if ($verbose);
         $ok = 0;

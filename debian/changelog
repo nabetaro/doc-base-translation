@@ -1,3 +1,23 @@
+doc-base (0.7.24) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+  * Improve doc-base manual:
+    + enhance the document layout, add some cross references;
+    + put an example of PDF and others supported formats (closes: #409121);
+    + clarify allowable shell glob patterns (closes: #392587);
+    + mention that the registered files should be located under /usr/share/doc
+      hierarchy (closes: #333648);
+    + review the TODO list.
+  * Do proper quoting of file names in postinst/postrm scripts
+    (closes: #395824)
+  * install-docs: 
+    + if glob() returns only one file, check for its existance. glob() seems
+      to simply return its argument if it doesn't contain any meta-characters;
+    + skip  any doc-base files that contain Version: field, for future
+      upgrades.
+
+ -- Robert Luberda <robert@debian.org>  Fri, 06 Apr 2007 01:01:41 +0200
+
 doc-base (0.7.23) unstable; urgency=low
 
   * Oops, the previous change caused dhelp warnings about trying to create its

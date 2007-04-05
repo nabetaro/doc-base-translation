@@ -27,13 +27,14 @@ build-stamp:
 	
 	perl -cw install-docs		# check perl script syntax
 	rm -f version.ent
-	echo "<!entity version \"$(DEB_VERSION)\">" >> version.ent
-	echo "<!entity date    \"$(DATE_EN)\">"        >> version.ent
+	echo "<!ENTITY version \"$(DEB_VERSION)\">" >> version.ent
+	echo "<!ENTITY date    \"$(DATE_EN)\">"        >> version.ent
 	nsgmls -wall -s -E20 doc-base.sgml	# check SGML syntax
 	debiandoc2html doc-base.sgml
 	debiandoc2text doc-base.sgml
 	pod2man --section=8 --center="Debian Utilities"		\
 		--release="doc-base v$(DEB_VERSION)"		\
+		--date="$(DATE_EN)"				\
 		install-docs > install-docs.8
 	pod2html --title "install-docs reference" 		\
 		< install-docs > install-docs.html
