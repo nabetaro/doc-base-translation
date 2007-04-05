@@ -682,6 +682,10 @@ sub read_control_file { # {{{
 
   $doc_data = {};
   read_control_file_section($fh, $doc_data) or die "error: empty control file";
+  if (defined $$doc_data{'version'}) {
+      warn "skipping $file, because of unsupported Version field\n" if ($verbose);
+      exit 0;
+  }      
   # check for required information
   ($docid = $$doc_data{'document'}) 
     or die "error in control file: `Document' value not specified";
