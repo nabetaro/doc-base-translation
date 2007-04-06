@@ -61,10 +61,10 @@ install: build
 	$(install_file) doc-base.desc $(sharedir)/doc-base
 	$(install_file) install-docs.desc $(sharedir)/install-docs-man
 	$(install_file) debian/lintian-overrides $(lintiandir)/$(package)
+	$(install_file) scrollkeeper.map $(sharedir)/data/
+	dh_link var/lib/doc-base/omf usr/share/omf/doc-base
 
-	
-
-# Build architecture-independent files here.
+# Buily architecture-independent files here.
 binary-indep: build install
 	dh_testdir
 	dh_testroot

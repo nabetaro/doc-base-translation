@@ -1,6 +1,10 @@
-doc-base (0.7.24) UNRELEASED; urgency=low
+doc-base (0.8.0~pre1) UNRELEASED; urgency=low
 
   * NOT RELEASED YET
+  * Merge the scrollkeeper stuff from Ubuntu (0.7.21ubuntu2):
+    + change omf dir to /var/lib/doc-base/omf and make it link from
+       /usr/share/omf/doc-base
+    + don't depend on scrollkeeper, just suggest it
   * Improve doc-base manual:
     + enhance the document layout, add some cross references;
     + put an example of PDF and others supported formats (closes: #409121);
@@ -10,13 +14,16 @@ doc-base (0.7.24) UNRELEASED; urgency=low
     + review the TODO list.
   * Do proper quoting of file names in postinst/postrm scripts
     (closes: #395824)
-  * install-docs: 
+  * install-docs:
     + if glob() returns only one file, check for its existance. glob() seems
       to simply return its argument if it doesn't contain any meta-characters;
     + skip  any doc-base files that contain Version: field, for future
       upgrades.
+  * Move debhelper to Build-Depends (linitan)
+  * Bump Standards-Version to 3.7.2.
+  * Remove one useless lintian override.
 
- -- Robert Luberda <robert@debian.org>  Fri, 06 Apr 2007 01:01:41 +0200
+ -- Robert Luberda <robert@debian.org>  Fri, 06 Apr 2007 22:30:49 +0200
 
 doc-base (0.7.23) unstable; urgency=low
 

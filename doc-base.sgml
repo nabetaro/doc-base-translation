@@ -432,7 +432,6 @@ Debian Documentation System, which will have status as a Sub-Policy.
    or <em/SortSkip/ 
    (<url id="http://bugs.debian.org/187590" name="Bug#187590">).
 
-  <item>Merge the scrollkeeper support from the Ubuntu version of <package/doc-base/.
 
   <item> Policy: document the <package>doc-base</package> document registration file
   format separately (or SUBDOC it) as a proposed Debian documentation

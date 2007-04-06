@@ -1,4 +1,5 @@
 usr/share/lintian/overrides
-usr/share/doc-base
+usr/share/doc-base/data
 usr/sbin
 var/lib/doc-base/info
+var/lib/doc-base/omf

@@ -10,9 +10,14 @@ install-docs - manage online Debian documentation
 # ---beginning-of-configuration-part---
 
 $DATA_DIR = "/var/lib/doc-base/info";
+$omf_locations = "/var/lib/doc-base/omf";
 
 $dwww_update = "/usr/bin/update-menus";
 $dhelp_parse = "/usr/sbin/dhelp_parse";
+$scrollkeeper_update = "/usr/bin/scrollkeeper-update";
+$scrollkeeper_gen_seriesid = "/usr/bin/scrollkeeper-gen-seriesid";
+$scrollkeeper_map_file = "/usr/share/doc-base/data/scrollkeeper.map";
+
 $do_dwww_update = 1;
 my $warn_nonexistent_files = 0;
 
@@ -128,6 +133,9 @@ Install the documentation described by the control file I<file>.
     read_status_file(1);
     read_list_file();
 
+    # read in doc-base -> scrollkeeper mappings
+    %mapping = read_map($scrollkeeper_map_file);
+
     # update status
     $status{'Control-File'} = $file;
     $status_changed = 1;
@@ -136,6 +144,7 @@ Install the documentation described by the control file I<file>.
     # register documents to subsystems
     register_dhelp();
     register_dwww();
+    register_scrollkeeper();
 
     write_list_file();
     write_status_file(); # }}}
@@ -162,7 +171,9 @@ file, and usually correspond to the package name.
 
     # remove newly created files and unregister from menus
     remove_files();
+    remove_omf_files() if $status{'Scrollkeeper-omf-file'};
     update_dwww_menus() if $status{'Registered-to-dwww'};
+    update_scrollkeeper() if $status{'Registered-to-scrollkeeper'};
 
     # remove data files
     remove_data_files(); # }}}
@@ -561,6 +572,11 @@ sub html_encode { # {{{
   $text =~ s/</&lt;/g;
   $text =~ s/>/&gt;/g;
   $text =~ s/"/&quot;/g;
+  no locale; # always use byte semantics for this regex range
+  # We take gratuitous advantage of the first 256 Unicode codepoints
+  # happening to coincide with ISO-8859-1 so that we can HTML-encode
+  # ISO-8859-1 characters without using any non-pragmatic modules.
+  $text =~ s/([^\0-\x7f])/sprintf('&#%d;', ord $1)/eg;
   return $text;
 } # }}}
 
@@ -614,6 +630,93 @@ sub write_dhelp_file { # {{{
     print FH "</item>\n\n";
   }
   close FH;
+} # }}}
+
+# -------------------------------
+
+sub remove_omf_files { # {{{
+  my $omf_file = $status{'Scrollkeeper-omf-file'};
+  my $omf_dir = dirname($omf_file);
+  unlink($omf_file) or die "$omf_file: could not delete file: $!";
+
+  #check to see if the directory is now empty. if so, kill it.
+  opendir(DIR, $omf_dir);
+  if (readdir DIR == 0) {
+    rmdir($omf_dir) or die "$omf_dir: could not delete directory: $!";
+  }
+  closedir DIR;
+} # }}}
+
+sub register_scrollkeeper { # {{{
+  my $document = $$doc_data{'document'};
+  my $format_data;
+  for $format_data (@format_list) {
+    next unless $$format_data{'format'} eq 'html'; # scrollkeeper only understands
+                                                   # docbook and html.
+    my $file = $$format_data{'index'};
+    my $format = $$format_data{'format'};
+    write_omf_file($file,$format);
+    #set status
+    $status{'Registered-to-scrollkeeper'} = 1;
+    $status_changed = 1;
+  }
+  update_scrollkeeper();
+} # }}}
+
+sub update_scrollkeeper { # {{{
+  if (-x $scrollkeeper_update) {
+    print "Executing $scrollkeeper_update\n" if $verbose;
+    if (system("$scrollkeeper_update -q >/dev/null 2>&1") != 0) {
+      warn "warning: error occurred during execution of $scrollkeeper_update\n";
+    }
+  }
+} # }}}
+
+sub write_omf_file { # {{{
+  my ($file, $format) = @_;
+  my $document = $$doc_data{'document'};
+  my $omf_file = "$omf_locations/$document/$document-C.omf";
+  my $date;
+  my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+  $year += 1900;
+  if ($mday <10) {$mday = "0$mday";}
+  if ($mon <10) {$mon = "0$mon";}
+  $date = "$year-$mon-$mday";
+
+  chomp(my $serial_id = `$scrollkeeper_gen_seriesid`);
+
+  if (! -d "$omf_locations/$document") {
+    mkdir("$omf_locations/$document");
+  }
+
+  open(OMF, ">$omf_file")
+    or die "$omf_file: cannot open OMF file for writing: $!";
+  
+  #now for the boiler plate XML stuff
+  print OMF "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+  print OMF "<!DOCTYPE omf PUBLIC \"-//OMF//DTD Scrollkeeper OMF Variant V1.0//EN\" \"http://scrollkeeper.sourceforge.net/dtds/scrollkeeper-omf-1.0/scrollkeeper-omf.dtd\">\n";
+  print OMF "<omf>\n\t<resource>\n";
+
+  #now for the dynamic stuff
+  print OMF "\t\t<creator>".&html_encode($$doc_data{'author'}, 1)."</creator>\n";
+  print OMF "\t\t<title>".&html_encode($$doc_data{'title'}, 1)."</title>\n";
+  print OMF "\t\t<date>$date</date>\n";
+  print OMF "\t\t<subject category=\"".map_docbase_to_scrollkeeper($$doc_data{'section'})."\"/>\n";
+  print OMF "\t\t<description>".&html_encode($$doc_data{'abstract'}, 1)."</description>\n";
+  if ($format eq 'html') {
+    print OMF "\t\t<format mime=\"text/html\"/>\n";
+  } 
+  elsif ($format eq 'docbook') {
+    print OMF "\t\t<format mime=\"text/xml\" dtd=\"-//OASIS//DTD DocBook XML V4.1.2//EN\"/>\n";
+  }
+  print OMF "\t\t<identifier url=\"$file\"/>\n";
+  print OMF "\t\t<language code=\"C\"/>\n";
+  print OMF "\t\t<relation seriesid=\"$serial_id\"/>\n";
+
+  #finish the boiler plate
+  print OMF "\t</resource>\n</omf>\n";
+  close(OMF) or die "$omf_file: cannot close OMF file: $!";
+  $status{'Scrollkeeper-omf-file'} = $omf_file;
 } # }}}
 
 # -------------------------------
@@ -724,7 +827,7 @@ sub read_control_file { # {{{
       }
       my @globlist = glob($$format_data{'files'});
       # if the mask doesn't contain any meta-characters, then glob simply returns its argument 
-      pop @globlist if ($#globlist == 0 && ! -f $globlist[0])
+      pop @globlist if ($#globlist == 0 && ! -f $globlist[0]);
       if ($#globlist < 0) {
         warn "warning: file mask `$$format_data{'files'}' does not match any files" if ($verbose);
         $ok = 0;
@@ -737,6 +840,29 @@ sub read_control_file { # {{{
   close($fh);
 } # }}}
 
+# arguments: filename
+# reads a file that looks like:
+# foo: bar
+# returns: hash of lv -> rv
+sub read_map { # {{{
+  my ($file) = @_;
+  my $map;
+  open (MAP, "<$file") or die "Could not open $file: $!";
+  while(<MAP>) {
+          chomp;
+          my ($lv,$rv) = split(/: /);
+          $map{lc($lv)} = $rv;
+  }
+  close(MAP);
+  return %map;
+} # }}}
+
+# arguments: doc-base section
+# returns: scrollkeeper category
+sub map_docbase_to_scrollkeeper { # {{{
+  return $mapping{lc($_[0])};
+} # }}}
+  
 
 =head1 BUGS
 
