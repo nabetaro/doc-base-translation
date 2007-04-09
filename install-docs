@@ -299,7 +299,7 @@ sub register_dhelp { # {{{
     if (-x $dhelp_parse) {
       print "Executing $dhelp_parse -a $dir\n" if $verbose;
       if (system("$dhelp_parse -a $dir") != 0) {
-        warn "warning: error occured during execution of $dhelp_parse -a";
+        warn "warning: error occured during execution of $dhelp_parse -a $dir";
       }
     } else {
       print "Skipping $dhelp_parse, program not found\n" if $verbose;
@@ -350,7 +350,7 @@ sub remove_files { # {{{
         # call dhelp to notice removal of document
         print "Executing $dhelp_parse -d $dir\n" if $verbose;
         if (system("$dhelp_parse -d $dir") != 0) {
-          warn "warning: error occured during execution of $dhelp_parse";
+          warn "warning: error occured during execution of $dhelp_parse -d $dir";
         }
       }
 
@@ -664,10 +664,10 @@ sub register_scrollkeeper { # {{{
 } # }}}
 
 sub update_scrollkeeper { # {{{
-  if (-x $scrollkeeper_update) {
+  if ($do_dwww_update && -x $scrollkeeper_update) {
     print "Executing $scrollkeeper_update\n" if $verbose;
     if (system("$scrollkeeper_update -q >/dev/null 2>&1") != 0) {
-      warn "warning: error occurred during execution of $scrollkeeper_update\n";
+      warn "warning: error occurred during execution of $scrollkeeper_update -q\n";
     }
   }
 } # }}}

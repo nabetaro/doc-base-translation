@@ -13,9 +13,9 @@ fi
 
 remove_docs ( ) {
   if which install-docs >/dev/null 2>&1; then
-    install-docs -r $package || true
-    install-docs -r install-docs-man || true
-  else
+    install-docs ${VERBOSE} --no-update-menus -r $package || true
+    install-docs ${VERBOSE} -r install-docs-man || true
+  lse
     echo "cannot find install-docs on path" 1>&2
   fi
 }
@@ -24,8 +24,15 @@ remove_all_docs ( ) {
     if which install-docs >/dev/null 2>&1; then
         echo "unregistering documentation ..."
         for file in /var/lib/doc-base/info/*.status; do
-            install-docs -r "`basename "$file" .status`" || true
+            install-docs ${VERBOSE} --no-update-menus -r "`basename "$file" .status`" || true
         done
+
+    	if [ -x /usr/bin/update-menus ]; then
+        	/usr/bin/update-menus
+    	fi
+    	if [ -x /usr/bin/scrollkeeper-update ]; then
+        	/usr/bin/scrollkeeper-update
+    	fi
     else
 	# error because this *is* the doc-base package
 	echo "cannot find install-docs on path" 1>&2

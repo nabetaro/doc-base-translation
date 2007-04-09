@@ -6,7 +6,7 @@ set -e
 
 package=doc-base
 # upgrades prior to this version require complete re-registration
-compat_ver=0.7.21a
+compat_ver=0.8.0
 # upgrades of the following version requires complete re-registration
 bad_ver=0.7.13
 VERBOSE=
@@ -25,6 +25,10 @@ reinstall_docs ( ) {
     done
     if [ -x /usr/bin/update-menus ]; then
         /usr/bin/update-menus
+    fi
+    
+    if [ -x /usr/bin/scrollkeeper-update ]; then
+        /usr/bin/scrollkeeper-update
     fi
 }
 
