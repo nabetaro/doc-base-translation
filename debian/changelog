@@ -1,32 +1,43 @@
-doc-base (0.8.0~pre1) UNRELEASED; urgency=low
+doc-base (0.8.0) unstable; urgency=low
 
-  * NOT RELEASED YET
-  * Merge the scrollkeeper stuff from Ubuntu (0.7.21ubuntu2):
-    + change omf dir to /var/lib/doc-base/omf and make it link from
-       /usr/share/omf/doc-base
-    + don't depend on scrollkeeper, just suggest it
-    + don't run scrollkeeper-update if --no-update-menus was provided  
-  * Improve doc-base manual:
+  * Merge the scrollkeeper stuff from Ubuntu 0.7.21ubuntu2 (closes: #418412)
+    with the following changes:
+    + set omf dir to /var/lib/doc-base/omf and make it link from
+       /usr/share/omf/doc-base;
+    + try to register more formats in addition to html, both khelpcenter and
+      yelp can handle them via external applications. Thanks to Sam Morris
+      <sam+robots.org.uk> for the suggestion;
+    + suggest yelp | khelpcenter as scrollkeeper browsers;
+    + don't run scrollkeeper-update if --no-update-menus was passed to
+      install-docs.
+
+  * Improve the doc-base manual:
     + enhance the document layout, add some cross references;
-    + put an example of PDF and others supported formats (closes: #409121);
+    + remove the paragraph about automatic conversions between formats, it's
+      not true, and won't be soon (unless someone provides me patch for this);
+    + put an example of PDF and other supported formats (closes: #409121);
     + clarify allowable shell glob patterns (closes: #392587);
     + mention that the registered files should be located under /usr/share/doc
       hierarchy (closes: #333648);
-    + review the TODO list.
-  * Do proper quoting of file names in postinst/postrm scripts
-    (closes: #395824)
-  * Make the handling docs code from postrm match the postinst code.
-  * install-docs:
-    + if glob() returns only one file, check for its existance. glob() seems
-      to simply return its argument if it doesn't contain any meta-characters;
-    + skip  any doc-base files that contain Version: field, for future
-      upgrades.
-  * Move debhelper to Build-Depends (linitan)
-  * Bump Standards-Version to 3.7.2.
-  * Remove one useless lintian override.
-  * 
+    + review the TODO list, add some items I'd like to implement shortly.
 
- -- Robert Luberda <robert@debian.org>  Mon, 09 Apr 2007 23:49:15 +0200
+  * postinst/postrm scripts:
+    + do proper quoting of file names (closes: #395824);
+    + reinstall_docs removes installed docs before re-registering them;
+    + make the handling docs code from postrm match the postinst code;
+
+  * install-docs:
+    + `missing Index field for Info format' is an error now, not warning;
+    + if glob() returns only one file, check for its existence. glob() seems
+      to simply return its argument if it doesn't contain any meta-characters;
+    + skip any doc-base files that contain Version: field, for future changes;
+    + ignore `two many arguments' error for `-i' and `-r' options;
+
+  * Move debhelper to Build-Depends (lintian)
+  * Remove one useless lintian override and add two new ones ;)
+  * Bump Standards-Version to 3.7.2.
+
+ -- Robert Luberda <robert@debian.org>  Wed, 11 Apr 2007 22:41:28 +0200
 
 doc-base (0.7.23) unstable; urgency=low
 
@@ -58,7 +69,7 @@ doc-base (0.7.21) unstable; urgency=low
       are unregistered)
     + don't HTML-encode entries already read from .dhelp file
     + made 'howto' and 'faq' section names  uppercase.
-  * debian/postinst: Reregister all the doc-base files.
+  * debian/postinst: Re-register all the doc-base files.
 
  -- Robert Luberda <robert@debian.org>  Sun, 23 Apr 2006 17:48:08 +0200
 
@@ -75,7 +86,7 @@ doc-base (0.7.20) unstable; urgency=low
       (closes: #114877)
     + correctly handle the verbatim text and blank line for the .dhelp files
     + warn if files referred by the doc-base files does not exist.
-  * debian/postinst: Reregister all the doc-base files because of the above
+  * debian/postinst: Re-register all the doc-base files because of the above
     install-docs changes.
   * Remove ancient stuff from postinst & prerm scripts, remove preinst
     entirely.

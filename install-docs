@@ -39,6 +39,24 @@ my @need_index_formats = (
                             'info'
                          );
 
+my %omf_mime_types = ( 
+                            'html'        => 'mime="text/html"',
+                            'text'        => 'mime="text/plain"',
+                            'pdf'         => 'mime="application/pdf"',
+                            'postscript'  => 'mime="application/postscript"',
+                            'dvi'         => 'mime="application/x-dvi"',
+                            'docbook-xml' => 'mime=mime="text/xml" dtd="-//OASIS//DTD DocBook XML V4.1.2//EN"'
+                  );
+
+my @omf_formats = (
+                        'html',
+                        'docbook-xml',
+                        'pdf',
+                        'postscript',
+                        'dvi',
+                        'text' 
+                 );
+    
 
 # ---end-of-configuration-part---
 
@@ -81,7 +99,7 @@ umask 022;
 
 B<install-docs> is a tool allow Debian package maintainers to register
 documentation to various documentation systems.  It currently supports
-B<dhelp> and B<dwww>.
+B<dhelp>,  B<dwww>, B<doc-central>, and B<scrollkeeper> browsers.
 
 This manual page provides a quick synopsis of B<install-docs> usage.
 Full documentation can be found in the documentation, including a
@@ -110,7 +128,8 @@ Operate verbosely.
 
 =item B<--no-update-menus>
 
-Inhibit running L<update-menus(1)>, used for the L<dwww(8)> update program.
+Inhibit running both L<update-menus(1)> (used for the L<dwww(8)> update program)
+and L<scrollkeeper-update(8)>.
 
 =cut
     $do_dwww_update = 0;
@@ -126,7 +145,8 @@ Install the documentation described by the control file I<file>.
 =cut
     # install new docs # {{{
     ($file = shift) or die "argument missing for `install'\n";
-    ($#ARGV == -1) or die "too many arguments for `install'\n";
+    ($#ARGV == -1) or warn ("ignoring additional arguments for `install'\n");
+    ($file eq "-") and warn("ignoring invalid argument for `install'\n") and exit (0);
     $warn_nonexistent_files = 1;
 
     read_control_file($file);
@@ -160,7 +180,8 @@ file, and usually correspond to the package name.
 =cut
     # remove old docs # {{{
     ($docid = shift) or die "argument missing for `remove'\n";
-    ($#ARGV == -1) or die "too many arguments for `remove'\n";
+    ($#ARGV == -1) or warn ("ignoring additional arguments for `remove'\n");
+    ($file eq "-") and warn("ignoring invalid argument for `remove'\n") and exit (0);
 
     if ( ! read_status_file(1) ) {
       warn("Document `$docid' is not installed, cannot remove.\n");
@@ -176,7 +197,9 @@ file, and usually correspond to the package name.
     update_scrollkeeper() if $status{'Registered-to-scrollkeeper'};
 
     # remove data files
-    remove_data_files(); # }}}
+    remove_data_files(); 
+
+   exit 0; # }}}
 
   } elsif (($arg eq '-s') or ($arg eq '--status')) {
 
@@ -650,17 +673,24 @@ sub remove_omf_files { # {{{
 sub register_scrollkeeper { # {{{
   my $document = $$doc_data{'document'};
   my $format_data;
-  for $format_data (@format_list) {
-    next unless $$format_data{'format'} eq 'html'; # scrollkeeper only understands
-                                                   # docbook and html.
-    my $file = $$format_data{'index'};
-    my $format = $$format_data{'format'};
-    write_omf_file($file,$format);
-    #set status
-    $status{'Registered-to-scrollkeeper'} = 1;
-    $status_changed = 1;
+  for $omf_format(@omf_formats) {
+    for $format_data (@format_list) {
+      next unless $$format_data{'format'} eq $omf_format;
+
+      my $file = defined $$format_data{'index'} ? $$format_data{'index'} : $$format_data{'files'};
+      next unless -f $file;
+      my $format = $$format_data{'format'};
+      write_omf_file($file,$format);
+
+      #set status
+      $status{'Registered-to-scrollkeeper'} = 1;
+      $status_changed = 1;
+      update_scrollkeeper();
+
+      return; # only register the first format we found
+    }        
+      
   }
-  update_scrollkeeper();
 } # }}}
 
 sub update_scrollkeeper { # {{{
@@ -703,12 +733,7 @@ sub write_omf_file { # {{{
   print OMF "\t\t<date>$date</date>\n";
   print OMF "\t\t<subject category=\"".map_docbase_to_scrollkeeper($$doc_data{'section'})."\"/>\n";
   print OMF "\t\t<description>".&html_encode($$doc_data{'abstract'}, 1)."</description>\n";
-  if ($format eq 'html') {
-    print OMF "\t\t<format mime=\"text/html\"/>\n";
-  } 
-  elsif ($format eq 'docbook') {
-    print OMF "\t\t<format mime=\"text/xml\" dtd=\"-//OASIS//DTD DocBook XML V4.1.2//EN\"/>\n";
-  }
+  print OMF "\t\t<format $omf_mime_types{$format} />\n";
   print OMF "\t\t<identifier url=\"$file\"/>\n";
   print OMF "\t\t<language code=\"C\"/>\n";
   print OMF "\t\t<relation seriesid=\"$serial_id\"/>\n";
@@ -814,9 +839,7 @@ sub read_control_file { # {{{
     }
     if (grep { $_ eq $$format_data{'format'}} @need_index_formats) {
       $$format_data{'index'}
-        or $$format_data{'format'} eq 'html' and die "error in control file: `Index' value missing for format `" . $$format_data{'format'} . "'"
-        # FIXME - temporary
-        or warn "error in control file: `Index' value missing for format `" . $$format_data{'format'} . "'";
+         or die "error in control file: `Index' value missing for format `" . $$format_data{'format'} . "'"
     } 
 
     my $ok = 1;
@@ -871,15 +894,16 @@ generation of doc-base.
 
 =head1 SEE ALSO
 
-dwww(8), Debian doc-base Manual
+dwww(8), scrollkeeper(7), Debian doc-base Manual
 F</usr/share/doc/doc-base/doc-base.html/index.html>, dhelp Manual
 F</usr/share/doc/dhelp/dhelp.html>
 
 =head1 AUTHOR
 
 This program was originally written by Christian Schwarz
-<schwarz@debian.org>, for the Debian GNU/Linux system.  Adam Di Carlo
-<aph@debian.org> is currently maintaining and extending it.
+<schwarz@debian.org>, for the Debian GNU/Linux system, and the
+next maintainer was Adam Di Carlo <aph@debian.org>.
+Robert Luberda <robert@debian.org> is currently maintaining and extending it.
 
 This software was meant to be for the benefit of the entire Debian
 user and developer community.  If you are interested in being involved

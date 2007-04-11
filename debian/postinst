@@ -17,12 +17,19 @@ if [ "$DEBUG" ]; then
 fi
 
 reinstall_docs ( ) {
+    
     # install all the existing doc-base control files
     num=`find /usr/share/$package/ -maxdepth 1 -type f | wc -l`
     echo "(re)registering $num documents from /usr/share/$package ..." >&2
+
+    for file in /var/lib/doc-base/info/*.status; do
+    	[ -f "$file" ] && install-docs ${VERBOSE} --no-update-menus -r "`basename "$file" .status`" || true
+    done
+
     for file in /usr/share/$package/*; do
         [ -f "$file" ] && install-docs ${VERBOSE} --no-update-menus -i "$file" || true  # don't abort on failure
     done
+
     if [ -x /usr/bin/update-menus ]; then
         /usr/bin/update-menus
     fi
@@ -34,8 +41,8 @@ reinstall_docs ( ) {
 
 case "$1" in
   configure)
-    if [ "${2+set}" != set ] || [ -z "$2" ] || [ "$2" = "<unknown>" ]; then
-        # first install, or upgrade from ancient version
+    if [ "${2+set}" != set ] || [ -z "$2" ] || [ "$2" = "<unknown>" ] || [ ! -d /var/lib/doc-base/info ]; then
+        # first install, or upgrade from ancient version, or install from removed-but-not-purged state
         reinstall_docs
     elif dpkg --compare-versions $2 lt $compat_ver; then
 	# version is less than last compatable version, we need to

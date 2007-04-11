@@ -65,16 +65,6 @@ manual pages) will register these documents to
 <ref id="registering_documents">) at installation time and de-register the manuals again when the
 package is removed.
 
-<p>
-
-With this registration process, <package>doc-base</package>
-will be provided with details about the installed manuals, file names,
-documentation formats, etc. Based on the <package>doc-base</package> configuration which
-can be easily adjusted by the local system administrator, <package>doc-base</package> will
-eventually convert between different documentation formats (where
-available, for example, texinfo source to GNU info or PostScript),
-optionally compress or remove HTML manuals which are also available in
-GNU info format, etc. etc.
 
 <p>
 
@@ -85,20 +75,11 @@ documentation systems, <package>doc-central</package>, <package>dwww</package> a
 <package>dhelp</package>. Each system has advantages and
 disadvantages, thus <package/doc-base/ supports all of them.
 The system administrator can choose which implementation he/she prefers.
-
 <p>
+Additionally <package/doc-base/ registers the documentation with
+ <url id="http://scrollkeeper.sourceforge.net/" name="scrollkeper">, thus making
+it possible to view the manuals using programs like <package/yelp/ or <package/khelpcenter/.
 
-In summary, <package>doc-base</package>'s main functionality is:
-
-<list compact>
-	  <item>
-convert online manuals between different documentation formats
-(depending on its configuration), and
-	  <item>
-register online manuals to Debian's online help systems.
-</list>
-
-Only the second part has been implemented so far.
 <p>
 
 <chapt id="interface">The packages interface
@@ -412,27 +393,37 @@ $ install-docs -L foo
 <p>
 
 <chapt id="todo">TODO List
-
-<p> The following items are listed, in order of approximate priority, as to-do
-items.  Our first priority is to define the core issues of the 
-Debian Documentation System, which will have status as a Sub-Policy.
-
+<sect>Roadmap for 0.8.* releases
+<p>
 <list>
+  <item> Make the <prgn/install-docs/ code more manageable (split into modules, etc.)
+
+  <item> Add support for merging doc-base files with the same <tt/Document-Id/s in order 
+         to allow two or more binary packages provide the same documentation, but in 
+	 different formats. <prgn/install-docs/ should dynamically
+	 generate appropriate files somewhere under <file>/var/lib/doc-base</file> directory.
+
   <item> Internationalisation and po-debconf support. Unfortunately this 
-         would require merging <em/Abstract/ and <em/Title/ fields.
+         would require merging <em/Abstract/ and <em/Title/ fields into
+	 one <em/Description/ field.
         See <url id="http://bugs.debian.org/171373" name="Bug#171363">,
              <url id="http://bugs.debian.org/171375" name="Bug#171375">,
         and <url id="http://bugs.debian.org/171378" name="Bug#171378">.
 
-  <item>Redesigning sections hierarchy, see
-      <url id="http://bugs.debian.org/109431" name="Bug#109431">.
-
-  <item>Add some new fields, like <em/Package/ 
+  <item> Introduce some new fields, like <em/Package/ 
    (<url id="http://bugs.debian.org/71955" name="Bug#71955">),
    or <em/SortSkip/ 
    (<url id="http://bugs.debian.org/187590" name="Bug#187590">).
 
+  <item> Redesigning sections hierarchy, see
+      <url id="http://bugs.debian.org/109431" name="Bug#109431">.
 
+</list>
+</sect>
+
+<sect>Old TODO entries
+<p>
+<list>
   <item> Policy: document the <package>doc-base</package> document registration file
   format separately (or SUBDOC it) as a proposed Debian documentation
   system policy.  
@@ -457,12 +448,16 @@ Debian Documentation System, which will have status as a Sub-Policy.
   should understand the <package>doc-base</package> document
   registration control file format directly.
 
-
-
   
-  <item> Automated format conversion, including user preferences.
+  <item> Automated format conversion, including user preferences. 
+        (For example, convert texinfo source to GNU info or PostScript,
+	optionally compress or remove HTML manuals which are also available in
+	GNU info format, etc. etc.)
+
 
 </list>
+
+</sect>
 
 </book>
 

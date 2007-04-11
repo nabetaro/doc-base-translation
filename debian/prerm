@@ -24,7 +24,7 @@ remove_all_docs ( ) {
     if which install-docs >/dev/null 2>&1; then
         echo "unregistering documentation ..."
         for file in /var/lib/doc-base/info/*.status; do
-            install-docs ${VERBOSE} --no-update-menus -r "`basename "$file" .status`" || true
+            [ -f "$file" ] && install-docs ${VERBOSE} --no-update-menus -r "`basename "$file" .status`" || true
         done
 
     	if [ -x /usr/bin/update-menus ]; then

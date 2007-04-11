@@ -1,2 +1,4 @@
 doc-base: maintainer-script-does-not-check-for-existence-of-installdocs postinst
 doc-base: postinst-has-useless-call-to-update-menus
+doc-base: prerm-calls-updatemenus
+doc-base: prerm-does-not-call-installdocs
