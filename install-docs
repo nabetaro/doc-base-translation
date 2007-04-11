@@ -167,7 +167,8 @@ Install the documentation described by the control file I<file>.
     register_scrollkeeper();
 
     write_list_file();
-    write_status_file(); # }}}
+    write_status_file(); 
+    exit(0); # }}}
 
   } elsif (($arg eq '-r') or ($arg eq '--remove')) {
 
