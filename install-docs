@@ -45,7 +45,7 @@ my %omf_mime_types = (
                             'pdf'         => 'mime="application/pdf"',
                             'postscript'  => 'mime="application/postscript"',
                             'dvi'         => 'mime="application/x-dvi"',
-                            'docbook-xml' => 'mime=mime="text/xml" dtd="-//OASIS//DTD DocBook XML V4.1.2//EN"'
+                            'docbook-xml' => 'mime="text/xml" dtd="-//OASIS//DTD DocBook XML V4.1.2//EN"'
                   );
 
 my @omf_formats = (
