@@ -3,6 +3,7 @@
 
 
 use lib 'perl';
+use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
 =head1 NAME
 
@@ -12,8 +13,7 @@ install-docs - manage online Debian documentation
 
 # ---beginning-of-configuration-part---
 
-$DATA_DIR = "/var/lib/doc-base/info";
-$omf_locations = "/var/lib/doc-base/omf";
+$omf_locations = "omf";
 
 $dwww_update = "/usr/bin/update-menus";
 $dhelp_parse = "/usr/sbin/dhelp_parse";
@@ -21,26 +21,6 @@ $scrollkeeper_update = "/usr/bin/scrollkeeper-update";
 $scrollkeeper_gen_seriesid = "/usr/bin/scrollkeeper-gen-seriesid";
 $scrollkeeper_map_file = "/usr/share/doc-base/data/scrollkeeper.map";
 
-$do_dwww_update = 1;
-my $warn_nonexistent_files = 0;
-
-
-# All formats handled by the doc-base
-my @supported_formats =  (
-                            'html',
-                            'text',
-                            'pdf',
-                            'postscript',
-                            'info',
-                            'dvi',
-                            'debiandoc-sgml'
-                      );
-
-# Formats which need the Index: field
-my @need_index_formats = (
-                            'html',
-                            'info'
-                         );
 
 my %omf_mime_types = ( 
                             'html'        => 'mime="text/html"',
@@ -61,7 +41,6 @@ my @omf_formats = (
                  );
     
 
-# ---end-of-configuration-part---
 
 # set umask explicitly
 umask 022;
@@ -234,7 +213,7 @@ sub register_dhelp { # {{{
   for $format_data (@format_list) {
     next unless $$format_data{'format'} eq 'html'; # dhelp only understand html
     # get directory of index file
-    my $file = basename($$format_data{'index'});
+    my $file = &basename($$format_data{'index'});
     my $dir = dirname($$format_data{'index'});
     $dir =~ m|^/| or 
       die "Index file has to be specified with absolute path: $$format_data{'index'}";

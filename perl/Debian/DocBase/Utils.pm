@@ -1,8 +1,7 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Utils.pm 42 2007-04-12 17:20:09Z robert $
+# $Id: Utils.pm 43 2007-04-12 17:28:48Z robert $
 #
-
 
 package Debian::DocBase::Utils;
 
@@ -11,14 +10,14 @@ use strict;
 
 use vars qw(@ISA @EXPORT);  
 @ISA = qw(Exporter);
-@EXPORT = qw(base_name dir_name html_encode html_encode_description);
+@EXPORT = qw(basename dirname html_encode html_encode_description);
 
-sub base_name { # {{{
+sub basename { # {{{
   (my $basename = $_[0]) =~ s#.*/##s;
   return $basename;
 } # }}}
 
-sub dir_name { # {{{
+sub dirname { # {{{
   my ($dirname, $basename) = ($_[0] =~ m#^(.*/)?(.*)#s);
   $dirname = './' if not defined $dirname or $dirname eq '';
   $dirname =~ s#(.)/*\z#$1#s;
