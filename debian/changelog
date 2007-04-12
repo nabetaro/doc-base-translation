@@ -1,3 +1,9 @@
+doc-base (0.8.2) unstable; urgency=low
+
+  * install-docs: yet another typo fixed.
+
+ -- Robert Luberda <robert@debian.org>  Thu, 12 Apr 2007 21:40:07 +0200
+
 doc-base (0.8.1) unstable; urgency=low
 
   * Fix a typo that cuased broken omf files being generated in some cases 

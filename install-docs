@@ -182,7 +182,7 @@ file, and usually correspond to the package name.
     # remove old docs # {{{
     ($docid = shift) or die "argument missing for `remove'\n";
     ($#ARGV == -1) or warn ("ignoring additional arguments for `remove'\n");
-    ($file eq "-") and warn("ignoring invalid argument for `remove'\n") and exit (0);
+    ($docid eq "-") and warn("ignoring invalid argument for `remove'\n") and exit (0);
 
     if ( ! read_status_file(1) ) {
       warn("Document `$docid' is not installed, cannot remove.\n");
