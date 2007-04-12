@@ -1,45 +1,20 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 
-
+use warnings;
 use lib 'perl';
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
+use Debian::DocBase::Programs::Dhelp;
+use Debian::DocBase::Programs::Dwww;
+use Debian::DocBase::Programs::Scrollkeeper;
+
 =head1 NAME
 
 install-docs - manage online Debian documentation
 
 =cut
 
-# ---beginning-of-configuration-part---
-
-$omf_locations = "omf";
-
-$dwww_update = "/usr/bin/update-menus";
-$dhelp_parse = "/usr/sbin/dhelp_parse";
-$scrollkeeper_update = "/usr/bin/scrollkeeper-update";
-$scrollkeeper_gen_seriesid = "/usr/bin/scrollkeeper-gen-seriesid";
-$scrollkeeper_map_file = "/usr/share/doc-base/data/scrollkeeper.map";
-
-
-my %omf_mime_types = ( 
-                            'html'        => 'mime="text/html"',
-                            'text'        => 'mime="text/plain"',
-                            'pdf'         => 'mime="application/pdf"',
-                            'postscript'  => 'mime="application/postscript"',
-                            'dvi'         => 'mime="application/x-dvi"',
-                            'docbook-xml' => 'mime="text/xml" dtd="-//OASIS//DTD DocBook XML V4.1.2//EN"'
-                  );
-
-my @omf_formats = (
-                        'html',
-                        'docbook-xml',
-                        'pdf',
-                        'postscript',
-                        'dvi',
-                        'text' 
-                 );
-    
 
 
 # set umask explicitly
@@ -113,8 +88,6 @@ Install the documentation described by the control file I<file>.
     read_status_file(1);
     read_list_file();
 
-    # read in doc-base -> scrollkeeper mappings
-    %mapping = read_map($scrollkeeper_map_file);
 
     # update status
     $status{'Control-File'} = $file;
@@ -206,152 +179,6 @@ exit 0;
 
 # -------------------------------
 
-# Registering to dhelp
-sub register_dhelp { # {{{
-
-  my $format_data;
-  for $format_data (@format_list) {
-    next unless $$format_data{'format'} eq 'html'; # dhelp only understand html
-    # get directory of index file
-    my $file = &basename($$format_data{'index'});
-    my $dir = dirname($$format_data{'index'});
-    $dir =~ m|^/| or 
-      die "Index file has to be specified with absolute path: $$format_data{'index'}";
-
-    # ensure the documentation is in an area dhelp can deal with
-    if ( $dir !~ m|^/usr/share/doc| ) {
-      print "register_dhelp: skipping $dir/$file
-            because dhelp only knows about /usr/share/doc\n"
-      if $verbose;
-      last; # we can have only one Format:HTML section
-    }
-
-    my @dhelp_data;
-    my $dhelp_file = "$dir/.dhelp";
-    # dhelp file already exists?
-    if (-f $dhelp_file) {
-      # is this file from us?
-      #if (not exists $list{$dhelp_file}) {
-        # no, skip action -- actually we could probably tolerate this condition
-        #warn "warning: skipping foreign dhelp file $dhelp_file";
-        #next;
-      #}
-
-      # yes, read in the file
-      $dhelp_data = read_dhelp_file($dhelp_file);
-
-      # take a look at the contents
-      my $i;
-      for ( $i = 0; $i <= $#$dhelp_data; $i++ ) {
-        if ($$dhelp_data[$i]{'filename'} =~ /^\s*\Q$file\E\s*$/o) {
-          # remove this entry; we'll add it back below
-          print "register_dhelp: found entry for $file in $dhelp_file, replacing\n"
-          if $verbose;
-          splice(@$dhelp_data, $i, 1);
-        }
-      }
-    } else {
-      # no file yet, let's make an empty ref to fill in below
-      $dhelp_data = [];
-    }
-
-
-    # last minute data munging,
-    # FIXME when we finally get a real document hierarchy
-    my $dhelp_section;
-    ( $dhelp_section = $$doc_data{'section'} ) =~ tr/A-Z/a-z/;
-    $dhelp_section =~ s|^apps/||;
-    $dhelp_section =~ s/^(howto|faq)$/\U$&\E/;
-    # now push our data onto the array (undefs are ok)
-    push(@$dhelp_data, {
-      'filename'    => $file,
-      'directory'   => $dhelp_section,
-      'linkname'    => $$doc_data{'title'},
-      'description' => $$doc_data{'abstract'},
-      }
-    );
-
-    # remove the dhelp_file and any other installed dhelp files 
-    # (since the location could change and we can have only one file for document-id)
-    # note: remove_files zeroes %list
-    $list{$dhelp_file} = 1;  remove_files();
-    
-    print "Updating $dhelp_file\n" if $verbose;
-    add_file($dhelp_file);
-    write_dhelp_file($dhelp_file, $dhelp_data);
-
-    if (-x $dhelp_parse) {
-      print "Executing $dhelp_parse -a $dir\n" if $verbose;
-      if (system("$dhelp_parse -a $dir") != 0) {
-        warn "warning: error occured during execution of $dhelp_parse -a $dir";
-      }
-    } else {
-      print "Skipping $dhelp_parse, program not found\n" if $verbose;
-    }
-    # set status
-    $status{'Registered-to-dhelp'} = 1;
-    $status_changed = 1;
-
-    # we can have only one Format:HTML section the document
-    last;
-  }
-
-} # }}}
-
-# Registering to dwww:
-sub register_dwww { # {{{
-  for $format_data (@format_list) {
-    $update_dwww = 1;
-    # set status
-    $status{'Registered-to-dwww'} = 1;
-    $status_changed = 1;
-  }
-
-  if ($update_dwww) {
-    update_dwww_menus();
-  }
-} # }}}
-
-sub update_dwww_menus { # {{{
-  if ($do_dwww_update && -x $dwww_update) {
-    print "Executing $dwww_update\n" if $verbose;
-    if (system($dwww_update) != 0) {
-      warn "warning: error occured during execution of $dwww_update";
-    }
-  }
-} # }}}
-
-sub remove_files { # {{{
-  for $file (keys %list) {
-    next unless -f $file;
-
-    # dhelp file?
-    if ($file =~ /\.dhelp$/o) { # yes
-
-      my $dir = dirname($file);
-
-      if (-x $dhelp_parse) {
-        # call dhelp to notice removal of document
-        print "Executing $dhelp_parse -d $dir\n" if $verbose;
-        if (system("$dhelp_parse -d $dir") != 0) {
-          warn "warning: error occured during execution of $dhelp_parse -d $dir";
-        }
-      }
-
-      print "Removing dhelp file $file\n" if $verbose;
-      unlink($file) or die "$file: cannot remove file: $!";
-
-      next;
-    }
-
-    # not a dhelp file
-
-    print "Removing file $file\n" if $verbose;
-    unlink($file) or die "$file: cannot remove file: $!";
-  }
-  %list = ();
-  $list_changed = 1;
-} # }}}
 
 sub remove_data_files { # {{{
   my $status_file = "$DATA_DIR/$docid.status";
@@ -472,193 +299,7 @@ sub write_list_file { # {{{
   $list_changed = 0;
 } # }}}
 
-sub add_file { # {{{
-  my ($file) = @_;
 
-  return if $list{$file};
-
-  my $data_file = "$DATA_DIR/$docid.list";
-  open(L,">>$data_file")
-    or die "$data_file: cannot open for appending";
-  print L $file,"\n";
-  close(L) or die "$data_file: cannot close file";
-
-  $list{$file} = 1;
-} # }}}
-
-# -------------------------------
-
-# read a dhelp file, probably more flexibly than dhelp itself
-# input:
-#  file name
-# output:
-#  returns ref to array of hashes containing our data
-sub read_dhelp_file { # {{{
-  my ($dhelpfile) = @_;
-  my ($dhdata);     # array ref, to be returned holding all the dhelp data 
-  my (@rets);     # temporary array
-
-  open(FH, "<$dhelpfile") or die "open file '$dhelpfile': $!\n";
-  $_ = join('', <FH>);    # slurp in the file
-
-  while ( m{
-      <item>\s*     # item defines a block, required
-    (?:     # alternate everything group
-       (?:<directory>   # directory is starting, required
-   ([^<]+)    #   $1
-       )      # ... ending
-     |
-       (?:<dirtitle>    # dirtitle is starting, optional
-         ([^<]+)    #   $2 until next tag start
-       )      # ... ending
-     |
-       (?:<linkname>    # linkname is starting, optional
-         ([^<]+)    #   $3
-       )      # ... ending
-     |
-       (?:<filename>    # filename is starting, optional
-         ([^<]+)    #   $4
-       )      # ... ending
-     |
-       (?:<description>   # filename is starting, optional
-         (.*?)      #  $5, non greedy
-       </description>)    # ... ending
-     )*     # end alternating
-       \s*</item>   # spaces ok, item ends
-      }gscx )
-    {
-      @rets =  ($1, $2, $3, $4, $5);
-      @rets = map { chomp; s/^\s+//; s/\s+$//; $_; }  @rets;
-      # push a hashref of our dhelp data item onto the $dhdata array
-      push(@$dhdata, {
-          'directory'   => $rets[0],
-          'dirtitle'    => $rets[1],
-          'linkname'    => $rets[2],
-          'filename'    => $rets[3],
-          'description' => $rets[4],
-          'converted'   => 1,      # the entry is already HTML-encoded,
-                                   # we shouldn'try recode it on writing
-         });
-    }
-
-  close FH;
-  return $dhdata;
-} # }}}
-
-
-sub write_dhelp_file { # {{{
-  my ($file, $data) = @_;
-
-  open(FH, ">$file") or die "cannot create dhelp file '$file': $!\n";
-  foreach $rec (@$data) {
-    my $do_html_convert = not (defined $$rec{'converted'} or $$rec{'converted'});
-    print FH "<item>\n";
-    foreach $field ((
-      'directory', 'dtitle', 'linkname', 'filename'
-           )) {
-      if ($field ne 'linkname') {        
-        print FH "<$field>$$rec{$field}\n" if length($$rec{$field});
-      } else {   
-        print FH "<$field>" . &html_encode($$rec{$field}, $do_html_convert) ."\n" if length($$rec{$field});
-     }
-    }
-    print FH "<description>\n" . &html_encode_description($$rec{description}, $do_html_convert) . "\n</description>\n"
-      if length($$rec{'description'});
-    print FH "</item>\n\n";
-  }
-  close FH;
-} # }}}
-
-# -------------------------------
-
-sub remove_omf_files { # {{{
-  my $omf_file = $status{'Scrollkeeper-omf-file'};
-  my $omf_dir = dirname($omf_file);
-  unlink($omf_file) or die "$omf_file: could not delete file: $!";
-
-  #check to see if the directory is now empty. if so, kill it.
-  opendir(DIR, $omf_dir);
-  if (readdir DIR == 0) {
-    rmdir($omf_dir) or die "$omf_dir: could not delete directory: $!";
-  }
-  closedir DIR;
-} # }}}
-
-sub register_scrollkeeper { # {{{
-  my $document = $$doc_data{'document'};
-  my $format_data;
-  for $omf_format(@omf_formats) {
-    for $format_data (@format_list) {
-      next unless $$format_data{'format'} eq $omf_format;
-
-      my $file = defined $$format_data{'index'} ? $$format_data{'index'} : $$format_data{'files'};
-      next unless -f $file;
-      my $format = $$format_data{'format'};
-      write_omf_file($file,$format);
-
-      #set status
-      $status{'Registered-to-scrollkeeper'} = 1;
-      $status_changed = 1;
-      update_scrollkeeper();
-
-      return; # only register the first format we found
-    }        
-      
-  }
-} # }}}
-
-sub update_scrollkeeper { # {{{
-  if ($do_dwww_update && -x $scrollkeeper_update) {
-    print "Executing $scrollkeeper_update\n" if $verbose;
-    if (system("$scrollkeeper_update -q >/dev/null 2>&1") != 0) {
-      warn "warning: error occurred during execution of $scrollkeeper_update -q\n";
-    }
-  }
-} # }}}
-
-sub write_omf_file { # {{{
-  my ($file, $format) = @_;
-  my $document = $$doc_data{'document'};
-  my $omf_file = "$omf_locations/$document/$document-C.omf";
-  my $date;
-  my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
-  $year += 1900;
-  if ($mday <10) {$mday = "0$mday";}
-  if ($mon <10) {$mon = "0$mon";}
-  $date = "$year-$mon-$mday";
-
-  chomp(my $serial_id = `$scrollkeeper_gen_seriesid`);
-
-  if (! -d "$omf_locations/$document") {
-    mkdir("$omf_locations/$document");
-  }
-
-  open(OMF, ">$omf_file")
-    or die "$omf_file: cannot open OMF file for writing: $!";
-  
-  #now for the boiler plate XML stuff
-  print OMF "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-  print OMF "<!DOCTYPE omf PUBLIC \"-//OMF//DTD Scrollkeeper OMF Variant V1.0//EN\" \"http://scrollkeeper.sourceforge.net/dtds/scrollkeeper-omf-1.0/scrollkeeper-omf.dtd\">\n";
-  print OMF "<omf>\n\t<resource>\n";
-
-  #now for the dynamic stuff
-  print OMF "\t\t<creator>".&html_encode($$doc_data{'author'}, 1)."</creator>\n";
-  print OMF "\t\t<title>".&html_encode($$doc_data{'title'}, 1)."</title>\n";
-  print OMF "\t\t<date>$date</date>\n";
-  print OMF "\t\t<subject category=\"".map_docbase_to_scrollkeeper($$doc_data{'section'})."\"/>\n";
-  print OMF "\t\t<description>".&html_encode($$doc_data{'abstract'}, 1)."</description>\n";
-  print OMF "\t\t<format $omf_mime_types{$format} />\n";
-  print OMF "\t\t<identifier url=\"$file\"/>\n";
-  print OMF "\t\t<language code=\"C\"/>\n";
-  print OMF "\t\t<relation seriesid=\"$serial_id\"/>\n";
-
-  #finish the boiler plate
-  print OMF "\t</resource>\n</omf>\n";
-  close(OMF) or die "$omf_file: cannot close OMF file: $!";
-  $status{'Scrollkeeper-omf-file'} = $omf_file;
-} # }}}
-
-# -------------------------------
 
 ##
 ## assuming filehandle IN is the control file, read a section (or
@@ -776,30 +417,6 @@ sub read_control_file { # {{{
   }
   close($fh);
 } # }}}
-
-# arguments: filename
-# reads a file that looks like:
-# foo: bar
-# returns: hash of lv -> rv
-sub read_map { # {{{
-  my ($file) = @_;
-  my $map;
-  open (MAP, "<$file") or die "Could not open $file: $!";
-  while(<MAP>) {
-          chomp;
-          my ($lv,$rv) = split(/: /);
-          $map{lc($lv)} = $rv;
-  }
-  close(MAP);
-  return %map;
-} # }}}
-
-# arguments: doc-base section
-# returns: scrollkeeper category
-sub map_docbase_to_scrollkeeper { # {{{
-  return $mapping{lc($_[0])};
-} # }}}
-  
 
 =head1 BUGS
 
