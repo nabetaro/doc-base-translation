@@ -1,3 +1,10 @@
+doc-base (0.8.3) unstable; urgency=low
+
+  * prerm: Oops, the first letter from the `else' word went somehow 
+    missing (closes: #419045).
+
+ -- Robert Luberda <robert@debian.org>  Fri, 13 Apr 2007 19:40:06 +0200
+
 doc-base (0.8.2) unstable; urgency=low
 
   * install-docs: yet another typo fixed.

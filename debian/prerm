@@ -15,7 +15,7 @@ remove_docs ( ) {
   if which install-docs >/dev/null 2>&1; then
     install-docs ${VERBOSE} --no-update-menus -r $package || true
     install-docs ${VERBOSE} -r install-docs-man || true
-  lse
+  else    
     echo "cannot find install-docs on path" 1>&2
   fi
 }
