@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 44 2007-04-12 18:09:10Z robert $
+# $Id: Scrollkeeper.pm 57 2007-04-13 19:18:32Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -86,16 +86,15 @@ sub remove_omf_files { # {{{
 } # }}}
 
 sub register_scrollkeeper { # {{{
-  my $document = $$doc_data{'document'};
+  my $document = $doc->document_id();
   my $format_data;
   for my $omf_format (@omf_formats) {
-    for $format_data (@format_list) {
-      next unless $$format_data{'format'} eq $omf_format;
+    $format_data = $doc->format($omf_format);
+      next unless defined $format_data;
 
       my $file = defined $$format_data{'index'} ? $$format_data{'index'} : $$format_data{'files'};
       next unless -f $file;
-      my $format = $$format_data{'format'};
-      write_omf_file($file,$format);
+      write_omf_file($file,$omf_format);
 
       #set status
       $status{'Registered-to-scrollkeeper'} = 1;
@@ -103,7 +102,6 @@ sub register_scrollkeeper { # {{{
       update_scrollkeeper();
 
       return; # only register the first format we found
-    }        
       
   }
 } # }}}
@@ -119,7 +117,7 @@ sub update_scrollkeeper { # {{{
 
 sub write_omf_file { # {{{
   my ($file, $format) = @_;
-  my $document = $$doc_data{'document'};
+  my $document = $doc->document_id();
   my $omf_file = "$omf_locations/$document/$document-C.omf";
   my $date;
   my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
@@ -143,11 +141,11 @@ sub write_omf_file { # {{{
   print OMF "<omf>\n\t<resource>\n";
 
   #now for the dynamic stuff
-  print OMF "\t\t<creator>".&html_encode($$doc_data{'author'}, 1)."</creator>\n";
-  print OMF "\t\t<title>".&html_encode($$doc_data{'title'}, 1)."</title>\n";
+  print OMF "\t\t<creator>".&html_encode($doc->author(), 1)."</creator>\n";
+  print OMF "\t\t<title>".&html_encode($doc->title(), 1)."</title>\n";
   print OMF "\t\t<date>$date</date>\n";
-  print OMF "\t\t<subject category=\"".map_docbase_to_scrollkeeper($$doc_data{'section'})."\"/>\n";
-  print OMF "\t\t<description>".&html_encode($$doc_data{'abstract'}, 1)."</description>\n";
+  print OMF "\t\t<subject category=\"".map_docbase_to_scrollkeeper($doc->section())."\"/>\n";
+  print OMF "\t\t<description>".&html_encode($doc->abstract(), 1)."</description>\n";
   print OMF "\t\t<format $omf_mime_types{$format} />\n";
   print OMF "\t\t<identifier url=\"$file\"/>\n";
   print OMF "\t\t<language code=\"C\"/>\n";

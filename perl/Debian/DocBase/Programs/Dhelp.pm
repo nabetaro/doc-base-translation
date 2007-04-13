@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 45 2007-04-12 19:03:29Z robert $
+# $Id: Dhelp.pm 57 2007-04-13 19:18:32Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -11,7 +11,7 @@ use warnings;
 
 use vars qw(@ISA @EXPORT);  
 @ISA = qw(Exporter);
-@EXPORT = qw(register_dhelp read_dhelp_file write_dhelp_file add_file remove_files);
+@EXPORT = qw(register_dhelp  add_file remove_files);
 
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
@@ -21,92 +21,85 @@ our $dhelp_parse = "/usr/sbin/dhelp_parse";
 # Registering to dhelp
 sub register_dhelp { # {{{
 
-  my $format_data;
-  for $format_data (@format_list) {
-    next unless $$format_data{'format'} eq 'html'; # dhelp only understand html
-    # get directory of index file
-    my $file = &basename($$format_data{'index'});
-    my $dir = &dirname($$format_data{'index'});
-    $dir =~ m|^/| or 
+  my $format_data = $doc->format('html');
+  return unless defined $format_data;
+  my $file = &basename($$format_data{'index'});
+  my $dir = &dirname($$format_data{'index'});
+  $dir =~ m|^/| or 
       die "Index file has to be specified with absolute path: $$format_data{'index'}";
 
-    # ensure the documentation is in an area dhelp can deal with
-    if ( $dir !~ m|^/usr/share/doc| ) {
-      print "register_dhelp: skipping $dir/$file
-            because dhelp only knows about /usr/share/doc\n"
+ # ensure the documentation is in an area dhelp can deal with
+ if ( $dir !~ m|^/usr/share/doc| ) {
+  print "register_dhelp: skipping $dir/$file
+         because dhelp only knows about /usr/share/doc\n"
       if $verbose;
-      last; # we can have only one Format:HTML section
     }
 
-    my $dhelp_data;
-    my $dhelp_file = "$dir/.dhelp";
-    # dhelp file already exists?
-    if (-f $dhelp_file) {
-      # is this file from us?
-      #if (not exists $list{$dhelp_file}) {
-        # no, skip action -- actually we could probably tolerate this condition
-        #warn "warning: skipping foreign dhelp file $dhelp_file";
-        #next;
-      #}
+  my $dhelp_data;
+  my $dhelp_file = "$dir/.dhelp";
+  # dhelp file already exists?
+  if (-f $dhelp_file) {
+    # is this file from us?
+    #if (not exists $list{$dhelp_file}) {
+      # no, skip action -- actually we could probably tolerate this condition
+      #warn "warning: skipping foreign dhelp file $dhelp_file";
+      #next;
+    #}
 
-      # yes, read in the file
-      $dhelp_data = read_dhelp_file($dhelp_file);
+    # yes, read in the file
+    $dhelp_data = read_dhelp_file($dhelp_file);
 
-      # take a look at the contents
-      my $i;
-      for ( $i = 0; $i <= $#$dhelp_data; $i++ ) {
-        if ($$dhelp_data[$i]{'filename'} =~ /^\s*\Q$file\E\s*$/o) {
-          # remove this entry; we'll add it back below
-          print "register_dhelp: found entry for $file in $dhelp_file, replacing\n"
-          if $verbose;
-          splice(@$dhelp_data, $i, 1);
-        }
+    # take a look at the contents
+    my $i;
+    for ( $i = 0; $i <= $#$dhelp_data; $i++ ) {
+      if ($$dhelp_data[$i]{'filename'} =~ /^\s*\Q$file\E\s*$/o) {
+        # remove this entry; we'll add it back below
+        print "register_dhelp: found entry for $file in $dhelp_file, replacing\n"
+        if $verbose;
+        splice(@$dhelp_data, $i, 1);
       }
-    } else {
-      # no file yet, let's make an empty ref to fill in below
-      $dhelp_data = [];
     }
-
-
-    # last minute data munging,
-    # FIXME when we finally get a real document hierarchy
-    my $dhelp_section;
-    ( $dhelp_section = $$doc_data{'section'} ) =~ tr/A-Z/a-z/;
-    $dhelp_section =~ s|^apps/||;
-    $dhelp_section =~ s/^(howto|faq)$/\U$&\E/;
-    # now push our data onto the array (undefs are ok)
-    push(@$dhelp_data, {
-      'filename'    => $file,
-      'directory'   => $dhelp_section,
-      'linkname'    => $$doc_data{'title'},
-      'description' => $$doc_data{'abstract'},
-      }
-    );
-
-    # remove the dhelp_file and any other installed dhelp files 
-    # (since the location could change and we can have only one file for document-id)
-    # note: remove_files zeroes %list
-    $list{$dhelp_file} = 1;  remove_files();
-    
-    print "Updating $dhelp_file\n" if $verbose;
-    add_file($dhelp_file);
-    write_dhelp_file($dhelp_file, $dhelp_data);
-
-    if (-x $dhelp_parse) {
-      print "Executing $dhelp_parse -a $dir\n" if $verbose;
-      if (system("$dhelp_parse -a $dir") != 0) {
-        warn "warning: error occured during execution of $dhelp_parse -a $dir";
-      }
-    } else {
-      print "Skipping $dhelp_parse, program not found\n" if $verbose;
-    }
-    # set status
-    $status{'Registered-to-dhelp'} = 1;
-    $status_changed = 1;
-
-    # we can have only one Format:HTML section the document
-    last;
+  } else {
+    # no file yet, let's make an empty ref to fill in below
+    $dhelp_data = [];
   }
+
+
+  # last minute data munging,
+  # FIXME when we finally get a real document hierarchy
+  my $dhelp_section;
+  ( $dhelp_section = $doc->section()) =~ tr/A-Z/a-z/;
+  $dhelp_section =~ s|^apps/||;
+  $dhelp_section =~ s/^(howto|faq)$/\U$&\E/;
+  # now push our data onto the array (undefs are ok)
+  push(@$dhelp_data, {
+    'filename'    => $file,
+    'directory'   => $dhelp_section,
+    'linkname'    => $doc->title(),
+    'description' => $doc->abstract()
+    }
+  );
+
+  # remove the dhelp_file and any other installed dhelp files 
+  # (since the location could change and we can have only one file for document-id)
+  # note: remove_files zeroes %list
+  $list{$dhelp_file} = 1;  remove_files();
+  
+  print "Updating $dhelp_file\n" if $verbose;
+  add_file($dhelp_file);
+  write_dhelp_file($dhelp_file, $dhelp_data);
+
+  if (-x $dhelp_parse) {
+    print "Executing $dhelp_parse -a $dir\n" if $verbose;
+    if (system("$dhelp_parse -a $dir") != 0) {
+      warn "warning: error occured during execution of $dhelp_parse -a $dir";
+    }
+  } else {
+    print "Skipping $dhelp_parse, program not found\n" if $verbose;
+  }
+  # set status
+  $status{'Registered-to-dhelp'} = 1;
+  $status_changed = 1;
 
 } # }}}
 
@@ -151,7 +144,7 @@ sub read_dhelp_file { # {{{
       }gscx )
     {
       @rets =  ($1, $2, $3, $4, $5);
-      @rets = map { chomp; s/^\s+//; s/\s+$//; $_; }  @rets;
+      @rets = map { $_="" unless defined $_; chomp; s/^\s+//; s/\s+$//; $_; }  @rets;
       # push a hashref of our dhelp data item onto the $dhdata array
       push(@$dhdata, {
           'directory'   => $rets[0],

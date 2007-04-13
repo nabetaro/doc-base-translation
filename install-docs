@@ -2,6 +2,7 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 
 use warnings;
+use strict;
 use lib 'perl';
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
@@ -48,7 +49,7 @@ description of the control file syntax and grammar.
 =over 4
 
 =cut
-
+my $arg;
 while ($arg = shift) {
 
   if (($arg eq '-v') or ($arg eq '--verbose')) {
@@ -82,12 +83,13 @@ Install the documentation described by the control file I<file>.
 
 =cut
     # install new docs # {{{
-    ($file = shift) or die "argument missing for `install'\n";
+    (my $file = shift) or die "argument missing for `install'\n";
     ($#ARGV == -1) or warn ("ignoring additional arguments for `install'\n");
     ($file eq "-") and warn("ignoring invalid argument for `install'\n") and exit (0);
     $warn_nonexistent_files = 1;
 
-    read_control_file($file);
+    $doc = Debian::DocBase::DocBaseFile->new($file);
+    $docid = $doc->document_id();
     read_status_file(1);
     read_list_file();
 
@@ -118,7 +120,7 @@ file, and usually correspond to the package name.
     # remove old docs # {{{
     ($docid = shift) or die "argument missing for `remove'\n";
     ($#ARGV == -1) or warn ("ignoring additional arguments for `remove'\n");
-    ($file eq "-") and warn("ignoring invalid argument for `remove'\n") and exit (0);
+    ($docid eq "-") and warn("ignoring invalid argument for `remove'\n") and exit (0);
 
     if ( ! read_status_file(1) ) {
       warn("Document `$docid' is not installed, cannot remove.\n");
