@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 59 2007-04-14 09:12:02Z robert $
+# $Id: Scrollkeeper.pm 60 2007-04-14 19:25:41Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -72,8 +72,9 @@ sub map_docbase_to_scrollkeeper { # {{{
 
 
 
-sub remove_omf_files { # {{{
-  my $omf_file = $doc->status('Scrollkeeper-omf-file');
+sub remove_omf_files($) { # {{{
+  my $doc = shift;
+  my $omf_file = $doc->get_status('Scrollkeeper-omf-file');
   my $omf_dir = dirname($omf_file);
   unlink($omf_file) or die "$omf_file: could not delete file: $!";
 
@@ -85,8 +86,9 @@ sub remove_omf_files { # {{{
   closedir DIR;
 } # }}}
 
-sub register_scrollkeeper { # {{{
-  my $document = $doc->document_id();
+sub register_scrollkeeper($){ # {{{
+  my $doc      = shift;
+  my $docid = $doc->document_id();
   my $format_data;
   for my $omf_format (@omf_formats) {
     $format_data = $doc->format($omf_format);
@@ -94,10 +96,10 @@ sub register_scrollkeeper { # {{{
 
       my $file = defined $$format_data{'index'} ? $$format_data{'index'} : $$format_data{'files'};
       next unless -f $file;
-      write_omf_file($file,$omf_format);
+      write_omf_file($doc, $file,$omf_format);
 
       #set status
-      $doc->status('Registered-to-scrollkeeper',  1);
+      $doc->set_status('Registered-to-scrollkeeper',  1);
       update_scrollkeeper();
 
       return; # only register the first format we found
@@ -114,10 +116,10 @@ sub update_scrollkeeper { # {{{
   }
 } # }}}
 
-sub write_omf_file { # {{{
-  my ($file, $format) = @_;
-  my $document = $doc->document_id();
-  my $omf_file = "$omf_locations/$document/$document-C.omf";
+sub write_omf_file($$$) { # {{{
+  my ($doc, $file, $format) = @_;
+  my $docid = $doc->document_id();
+  my $omf_file = "$omf_locations/$docid/$docid-C.omf";
   my $date;
   my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
   $year += 1900;
@@ -127,8 +129,8 @@ sub write_omf_file { # {{{
 
   chomp(my $serial_id = `$scrollkeeper_gen_seriesid`);
 
-  if (! -d "$omf_locations/$document") {
-    mkdir("$omf_locations/$document") or die "can't create dir $omf_locations/$document: $!";
+  if (! -d "$omf_locations/$docid") {
+    mkdir("$omf_locations/$docid") or die "can't create dir $omf_locations/$docid: $!";
   }
 
   open(OMF, ">$omf_file")
@@ -153,7 +155,8 @@ sub write_omf_file { # {{{
   #finish the boiler plate
   print OMF "\t</resource>\n</omf>\n";
   close(OMF) or die "$omf_file: cannot close OMF file: $!";
-  $doc->status('Scrollkeeper-omf-file', $omf_file);
+
+  $doc->set_status('Scrollkeeper-omf-file', $omf_file);
 } # }}}
 
 

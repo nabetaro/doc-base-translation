@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 59 2007-04-14 09:12:02Z robert $
+# $Id: Document.pm 60 2007-04-14 19:25:41Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -13,7 +13,8 @@ use Carp;
 use Dumpvalue;
 
 my %documents = ();
-sub new {
+
+sub new { # {{{
     my $class      = shift;
     my $documentId = shift;
     return $documents{$documentId} if defined  $documents{$documentId};
@@ -34,70 +35,60 @@ sub new {
     $self->_read_status_file($documentId);
     $documents{$documentId} = $self;
     return $self;
-}
+} # }}}
 
-sub document_id() {
+sub document_id() { # {{{
   my $self = shift;
   return $self->{'DOCUMENT_ID'};
-}
+} # }}}
 
-sub abstract() {
+sub abstract() { # {{{
   my $self = shift;
   return $self->{'CONTROL_FILE'}->{'ABSTRACT'};
-}  
+} # }}}
 
-sub title() {
+sub title() { # {{{
   my $self = shift;
   return $self->{'CONTROL_FILE'}->{'TITLE'};
-}  
+} # }}}
 
-sub section() {
+sub section() { # {{{
   my $self = shift;
   return $self->{'CONTROL_FILE'}->{'SECTION'};
-}  
+} # }}}
 
-sub author() {
+sub author() { # {{{
   my $self = shift;
   return $self->{'CONTROL_FILE'}->{'AUTHOR'};
-}  
+}   # }}}
 
-sub status() {
+sub get_status() { # {{{
+  my $self = shift;
+  my $key  = shift;
+  return $self->{'STATUS_DICT'}->{$key};
+}   # }}}
+
+sub set_status() { # {{{
   my $self = shift;
   my $key  = shift;
   my $value = shift;
-  return $self->{'STATUS_DICT'}->{$key} unless defined $value;
-  $self->{'STATUS_CHANGED'} = 1;
-  $self->{'STATUS_DICT'}->{$key} = $value;
+  if (defined $value) {
+    $self->{'STATUS_DICT'}->{$key} = $value;
+  } else {
+     delete $self->{'STATUS_DICT'}->{$key};
+  }
+}   # }}}
 
-}  
-
-
-sub format($$) {
+sub format($$) { # {{{
   my $self = shift;
   my $format_name = shift;
   return $self->{'CONTROL_FILE'}->format($format_name);
-}
-sub status_changed() {
-  my $self = shift;
-  return $self->{'STATUS_CHANGED'};
-}  
-
-sub remove_data_files { # {{{
-  my $status_file = "$DATA_DIR/$docid.status";
-  if (-f $status_file) {
-    print "Removing status file $status_file\n" if $verbose;
-    unlink($status_file)
-      or die "$status_file: cannot remove status file: $!";
-  }
-
-  my $list_file = "$DATA_DIR/$docid.list";
-  if (-f $list_file) {
-    print "Removing list file $list_file\n" if $verbose;
-    unlink($list_file)
-      or die "$list_file: cannot remove status file: $!";
-  }
 } # }}}
 
+sub status_changed() { # {{{
+  my $self = shift;
+  return $self->{'STATUS_CHANGED'};
+}   # }}}
 
 sub _read_status_file { # {{{
   my $self  = shift;
@@ -132,22 +123,23 @@ sub _read_status_file { # {{{
 
 sub write_status { # {{{
   my $self = shift;
-  Dumpvalue->new()->dumpValue(\$self);
+  my $docid = $self->document_id();
+#  Dumpvalue->new()->dumpValue(\$self);
   return unless $self->status_changed();
 
   my $status_file = "$DATA_DIR/$docid.status";
- 
+
   if ($#{$self->{'CONTROL_FILE_NAMES'}} < 0) {
     unlink($status_file) if -e $status_file;
     return;
-  }  
+  }
 
 
   open(S,">$status_file")
     or croak "$status_file: cannot open status file for writing: $!";
   print S "Control-File: $self->{'CONTROL_FILE_NAMES'}[0]\n";
   my $status = $self->{'STATUS_DICT'};
-  for my $k (keys %$status) {
+  for my $k (sort keys %$status) {
     print S "$k: $$status{$k}\n";
   }
   close(S) or croak "$status_file: cannot close status file: $!";
@@ -155,9 +147,9 @@ sub write_status { # {{{
   $self->{'STATUS_CHANGED'} = 0;
 } # }}}
 
-
 sub display_status_information { # {{{
   my $self = shift;
+  my $docid = $self->document_id();
   my $status_file = "$DATA_DIR/$docid.status";
   return unless -f $status_file;
   print "---document-information---\n";
@@ -169,7 +161,7 @@ sub display_status_information { # {{{
   }
 ####  for my  $k (sort keys %$doc_data) {
 ####    next if $k eq 'document';
-####    my $kk = $k; 
+####    my $kk = $k;
 ####    substr($kk,0,1) =~ tr/a-z/A-Z/;
 ####    print "$kk: $$doc_data{$k}\n";
 ####  }
@@ -179,7 +171,7 @@ sub display_status_information { # {{{
 ####    print "Format: $$format_data{'format'}\n";
 ####    for my $k (sort keys %$format_data) {
 ####      next if $k eq 'format';
-####      my $kk = $k; 
+####      my $kk = $k;
 ####      substr($kk,0,1) =~ tr/a-z/A-Z/;
 ####      print "$kk: $$format_data{$k}\n";
 ####    }
@@ -191,22 +183,22 @@ sub display_status_information { # {{{
 ####  }
 } # }}}
 
-
-sub register() {
+sub register() { # {{{
   my $self          = shift;
   my $doc_base_file = shift;
 
  $self->{'CONTROL_FILE_NAMES'} = [$doc_base_file->{'FILE_NAME'}];
  $self->{'CONTROL_FILE'} = $doc_base_file;
  $self->{'STATUS_CHANGED'} = 1;
-}
+} # }}}
 
-sub unregister() {
+sub unregister() { # {{{
   my $self          = shift;
   my $doc_base_file = shift;
 
  $self->{'CONTROL_FILE_NAMES'} = [];
  $self->{'CONTROL_FILE'} = {};
  $self->{'STATUS_CHANGED'} = 1;
-}
+} # }}}
+
 1;

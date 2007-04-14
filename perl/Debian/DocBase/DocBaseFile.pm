@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 59 2007-04-14 09:12:02Z robert $
+# $Id: DocBaseFile.pm 60 2007-04-14 19:25:41Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -189,10 +189,17 @@ sub _read_control_file { # {{{
     
     $$format_data{'files'}
       or return $self->_error("`Files' value not specified for format $format");
+
+    # fixme check all the values 
+    $$format_data{'files'} =~ /^\// 
+          or return $self->_error("`Files' value has to be specified with absolute path: $$format_data{'files'}");
       
     if (grep { $_ eq $format } @need_index_formats) {
         $$format_data{'index'}
           or return $self->_error("`Index' value missing for format `" . $$format_data{'format'} . "'");
+        $$format_data{'index'} =~ /^\// 
+          or return $self->_error("`Index' value has to be specified with absolute path: $$format_data{'index'}");
+
        (-e $$format_data{'index'}) 
           or return $self->_error("file `$$format_data{'index'}' does not exist");
     } else {

@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Common.pm 59 2007-04-14 09:12:02Z robert $
+# $Id: Common.pm 60 2007-04-14 19:25:41Z robert $
 #
 
 package Debian::DocBase::Common;
@@ -12,7 +12,7 @@ use warnings;
 use vars qw(@ISA @EXPORT);  
 @ISA = qw(Exporter);
 @EXPORT = qw($DATA_DIR $do_dwww_update $warn_nonexistent_files @supported_formats @need_index_formats
-              $verbose  %list $list_changed $doc $docid);
+              $verbose);
 
 our $DATA_DIR = "/var/lib/doc-base/info";
 

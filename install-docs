@@ -49,6 +49,8 @@ description of the control file syntax and grammar.
 =over 4
 
 =cut
+my $doc= undef;
+my $docid = undef;
 my $arg;
 while ($arg = shift) {
 
@@ -95,9 +97,9 @@ Install the documentation described by the control file I<file>.
 
 
     # register documents to subsystems
-    register_dhelp();
-    register_dwww();
-    register_scrollkeeper();
+    register_dhelp($doc);
+    register_dwww($doc);
+    register_scrollkeeper($doc);
 
     $doc->write_status();
 
