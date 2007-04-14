@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 57 2007-04-13 19:18:32Z robert $
+# $Id: DocBaseFile.pm 59 2007-04-14 09:12:02Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -11,9 +11,13 @@ use warnings;
 use Debian::DocBase::Common;
 use Carp;
 
+my %files = ();
+
 sub new {
     my $class    = shift;
     my $filename = shift;
+    return $files{$filename} if defined  $files{$filename};
+
     my $self = {
         DOCUMENT_ID   => undef,
         ABSTRACT      => undef,
@@ -26,6 +30,7 @@ sub new {
     };
     bless($self, $class);
     $self->_parse($filename);
+    $files{$filename} = $self;
     return $self;
 }
 
@@ -135,7 +140,7 @@ sub _parse {
   my $fh   = undef;
 
   open($fh, $file) or 
-    return &Error("Cannot open control file $file for reading: $!\n");
+    return $self->_error("Cannot open control file $file for reading: $!\n");
   
   $self->_read_control_file($fh);
   close($fh);

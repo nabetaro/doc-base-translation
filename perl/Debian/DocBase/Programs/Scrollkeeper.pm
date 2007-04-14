@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 57 2007-04-13 19:18:32Z robert $
+# $Id: Scrollkeeper.pm 59 2007-04-14 09:12:02Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -73,7 +73,7 @@ sub map_docbase_to_scrollkeeper { # {{{
 
 
 sub remove_omf_files { # {{{
-  my $omf_file = $status{'Scrollkeeper-omf-file'};
+  my $omf_file = $doc->status('Scrollkeeper-omf-file');
   my $omf_dir = dirname($omf_file);
   unlink($omf_file) or die "$omf_file: could not delete file: $!";
 
@@ -97,8 +97,7 @@ sub register_scrollkeeper { # {{{
       write_omf_file($file,$omf_format);
 
       #set status
-      $status{'Registered-to-scrollkeeper'} = 1;
-      $status_changed = 1;
+      $doc->status('Registered-to-scrollkeeper',  1);
       update_scrollkeeper();
 
       return; # only register the first format we found
@@ -154,7 +153,7 @@ sub write_omf_file { # {{{
   #finish the boiler plate
   print OMF "\t</resource>\n</omf>\n";
   close(OMF) or die "$omf_file: cannot close OMF file: $!";
-  $status{'Scrollkeeper-omf-file'} = $omf_file;
+  $doc->status('Scrollkeeper-omf-file', $omf_file);
 } # }}}
 
 

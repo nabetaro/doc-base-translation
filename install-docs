@@ -6,7 +6,7 @@ use strict;
 use lib 'perl';
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
-use Debian::DocBase::StatusFile;
+use Debian::DocBase::Document;
 use Debian::DocBase::FilesListFile;
 use Debian::DocBase::DocBaseFile;
 use Debian::DocBase::Programs::Dhelp;
@@ -88,15 +88,10 @@ Install the documentation described by the control file I<file>.
     ($file eq "-") and warn("ignoring invalid argument for `install'\n") and exit (0);
     $warn_nonexistent_files = 1;
 
-    $doc = Debian::DocBase::DocBaseFile->new($file);
-    $docid = $doc->document_id();
-    read_status_file(1);
-    read_list_file();
-
-
-    # update status
-    $status{'Control-File'} = $file;
-    $status_changed = 1;
+    my $docfile = Debian::DocBase::DocBaseFile->new($file);
+    $docid = $docfile->document_id();
+    $doc = Debian::DocBase::Document->new($docid);
+    $doc->register($docfile);
 
 
     # register documents to subsystems
@@ -104,8 +99,8 @@ Install the documentation described by the control file I<file>.
     register_dwww();
     register_scrollkeeper();
 
-    write_list_file();
-    write_status_file(); 
+    $doc->write_status();
+
     exit(0); # }}}
 
   } elsif (($arg eq '-r') or ($arg eq '--remove')) {
@@ -118,25 +113,34 @@ file, and usually correspond to the package name.
 
 =cut
     # remove old docs # {{{
-    ($docid = shift) or die "argument missing for `remove'\n";
+    (my $file = shift) or die "argument missing for `remove'\n";
     ($#ARGV == -1) or warn ("ignoring additional arguments for `remove'\n");
-    ($docid eq "-") and warn("ignoring invalid argument for `remove'\n") and exit (0);
+    ($file eq "-") and warn("ignoring invalid argument for `remove'\n") and exit (0);
 
-    if ( ! read_status_file(1) ) {
-      warn("Document `$docid' is not installed, cannot remove.\n");
-      exit 0;
-    }
-    read_control_file($status{'Control-File'});
-    read_list_file();
+    $file = "/usr/share/doc-base/$file" unless $file =~ /\//;
 
-    # remove newly created files and unregister from menus
-    remove_files();
-    remove_omf_files() if $status{'Scrollkeeper-omf-file'};
-    update_dwww_menus() if $status{'Registered-to-dwww'};
-    update_scrollkeeper() if $status{'Registered-to-scrollkeeper'};
+    my $docfile = Debian::DocBase::DocBaseFile->new($file);
+    $docid = $docfile->document_id();
+    $doc = Debian::DocBase::Document->new($docid);
+    $doc->unregister($docfile);
 
-    # remove data files
-    remove_data_files(); 
+##    if ( ! read_status_file(1) ) {
+##      warn("Document `$docid' is not installed, cannot remove.\n");
+##      exit 0;
+##    }
+##    read_control_file($status{'Control-File'});
+##    read_list_file();
+##
+##    # remove newly created files and unregister from menus
+##    remove_files();
+##    remove_omf_files() if $status{'Scrollkeeper-omf-file'};
+##    update_dwww_menus() if $status{'Registered-to-dwww'};
+##    update_scrollkeeper() if $status{'Registered-to-scrollkeeper'};
+##
+##    # remove data files
+##    remove_data_files(); 
+    
+    $doc->write_status();
 
    exit 0; # }}}
 
@@ -151,11 +155,15 @@ Display the status of the document identifier I<docid>.
     ($docid = shift) or die "argument missing for `status'\n";
     ($#ARGV == -1) or die "too many arguments for `status'\n";
 
-    read_status_file();
-    read_list_file();
-    read_control_file($status{'Control-File'});
+    my $doc = Debian::DocBase::Document->new($docid);
+    $doc->display_status_information();
+    exit 0;
 
-    display_status_information(); # }}}
+#    read_status_file();
+#    read_list_file();
+#    read_control_file($status{'Control-File'});
+#
+#    display_status_information(); # }}}
 
   } elsif (($arg eq '-L') or ($arg eq '--listfiles')) {
 
@@ -169,12 +177,13 @@ List the files associated with the document identifier I<docid>.
     # display file listning # {{{
     ($docid = shift) or die "argument missing for `listfiles'\n";
     ($#ARGV == -1) or die "too many arguments for `listfiles'\n";
+    die ("unimplemented");
 
-    read_status_file();
-    read_list_file();
-
-    display_listing(); # }}}
-
+##    read_status_file();
+##    read_list_file();
+##
+##    display_listing(); # }}}
+##
   } else {
     die "invalid command line argument: $arg\n";
   }

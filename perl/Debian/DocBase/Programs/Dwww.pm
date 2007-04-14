@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dwww.pm 57 2007-04-13 19:18:32Z robert $
+# $Id: Dwww.pm 59 2007-04-14 09:12:02Z robert $
 #
 
 package Debian::DocBase::Programs::Dwww;
@@ -20,8 +20,8 @@ our $dwww_update = "/usr/bin/update-menus";
 # Registering to dwww:
 sub register_dwww { # {{{
   # set status
-  $status{'Registered-to-dwww'} = 1;
-  $status_changed = 1;
+#  $status{'Registered-to-dwww'} = 1;
+#  $status_changed = 1;
   update_dwww_menus();
 } # }}}
 

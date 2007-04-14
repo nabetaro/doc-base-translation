@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Utils.pm 44 2007-04-12 18:09:10Z robert $
+# $Id: Utils.pm 59 2007-04-14 09:12:02Z robert $
 #
 
 package Debian::DocBase::Utils;
@@ -8,7 +8,6 @@ package Debian::DocBase::Utils;
 use Exporter();
 use strict;
 use warnings;
-
 use vars qw(@ISA @EXPORT);  
 @ISA = qw(Exporter);
 @EXPORT = qw(basename dirname html_encode html_encode_description);

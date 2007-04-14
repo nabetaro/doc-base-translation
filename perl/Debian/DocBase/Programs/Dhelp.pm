@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 57 2007-04-13 19:18:32Z robert $
+# $Id: Dhelp.pm 59 2007-04-14 09:12:02Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -98,8 +98,7 @@ sub register_dhelp { # {{{
     print "Skipping $dhelp_parse, program not found\n" if $verbose;
   }
   # set status
-  $status{'Registered-to-dhelp'} = 1;
-  $status_changed = 1;
+  $doc->status('Registered-to-dhelp', 1);
 
 } # }}}
 
