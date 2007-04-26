@@ -24,6 +24,16 @@ install-docs - manage online Debian documentation
 # set umask explicitly
 umask 022;
 
+# constants
+my $MODE_INSTALL    = 'install';
+my $MODE_REMOVE     = 'remove';
+my $MODE_REREGISTER = 'reregister';
+my $MODE_STATUS     = 'status';
+
+my $mode = undef;
+my $docbasedir="/usr/share/doc-base";
+my $do_dwww_update = 1;
+
 =head1 SYNOPSIS
 
  install-docs [ -v, --verbose ]
@@ -49,10 +59,7 @@ description of the control file syntax and grammar.
 =over 4
 
 =cut
-my $doc= undef;
-my $docid = undef;
-my $arg;
-while ($arg = shift) {
+while (my $arg = shift @ARGV) {
 
   if (($arg eq '-v') or ($arg eq '--verbose')) {
 
@@ -84,26 +91,9 @@ and L<scrollkeeper-update(8)>.
 Install the documentation described by the control file I<file>.
 
 =cut
-    # install new docs # {{{
-    (my $file = shift) or die "argument missing for `install'\n";
-    ($#ARGV == -1) or warn ("ignoring additional arguments for `install'\n");
-    ($file eq "-") and warn("ignoring invalid argument for `install'\n") and exit (0);
-    $warn_nonexistent_files = 1;
-
-    my $docfile = Debian::DocBase::DocBaseFile->new($file);
-    $docid = $docfile->document_id();
-    $doc = Debian::DocBase::Document->new($docid);
-    $doc->register($docfile);
-
-
-    # register documents to subsystems
-    register_dhelp($doc);
-    register_dwww($doc);
-    register_scrollkeeper($doc);
-
-    $doc->write_status();
-
-    exit(0); # }}}
+    # install new docs 
+    &SetMode($MODE_INSTALL);
+    last;
 
   } elsif (($arg eq '-r') or ($arg eq '--remove')) {
 
@@ -115,36 +105,10 @@ file, and usually correspond to the package name.
 
 =cut
     # remove old docs # {{{
-    (my $file = shift) or die "argument missing for `remove'\n";
-    ($#ARGV == -1) or warn ("ignoring additional arguments for `remove'\n");
-    ($file eq "-") and warn("ignoring invalid argument for `remove'\n") and exit (0);
+    &SetMode($MODE_REMOVE);
+    last;
 
-    $file = "/usr/share/doc-base/$file" unless $file =~ /\//;
-
-    my $docfile = Debian::DocBase::DocBaseFile->new($file);
-    $docid = $docfile->document_id();
-    $doc = Debian::DocBase::Document->new($docid);
-    $doc->unregister($docfile);
-
-##    if ( ! read_status_file(1) ) {
-##      warn("Document `$docid' is not installed, cannot remove.\n");
-##      exit 0;
-##    }
-##    read_control_file($status{'Control-File'});
-##    read_list_file();
-##
-##    # remove newly created files and unregister from menus
-##    remove_files();
-##    remove_omf_files() if $status{'Scrollkeeper-omf-file'};
-##    update_dwww_menus() if $status{'Registered-to-dwww'};
-##    update_scrollkeeper() if $status{'Registered-to-scrollkeeper'};
-##
-##    # remove data files
-##    remove_data_files(); 
-    
-    $doc->write_status();
-
-   exit 0; # }}}
+     exit 0; # }}}
 
   } elsif (($arg eq '-s') or ($arg eq '--status')) {
 
@@ -153,19 +117,8 @@ file, and usually correspond to the package name.
 Display the status of the document identifier I<docid>.
 
 =cut
-    # display status # {{{
-    ($docid = shift) or die "argument missing for `status'\n";
-    ($#ARGV == -1) or die "too many arguments for `status'\n";
-
-    my $doc = Debian::DocBase::Document->new($docid);
-    $doc->display_status_information();
-    exit 0;
-
-#    read_status_file();
-#    read_list_file();
-#    read_control_file($status{'Control-File'});
-#
-#    display_status_information(); # }}}
+    &SetMode($MODE_STATUS);
+    last;
 
   } elsif (($arg eq '-L') or ($arg eq '--listfiles')) {
 
@@ -176,22 +129,16 @@ List the files associated with the document identifier I<docid>.
 =back
 
 =cut
-    # display file listning # {{{
-    ($docid = shift) or die "argument missing for `listfiles'\n";
-    ($#ARGV == -1) or die "too many arguments for `listfiles'\n";
-    die ("unimplemented");
+    warn "Ignoring deprecated command line argument: $arg\n";
+    exit 0;
 
-##    read_status_file();
-##    read_list_file();
-##
-##    display_listing(); # }}}
-##
   } else {
-    die "invalid command line argument: $arg\n";
+    die "Invalid command line argument: $arg\n";
   }
 }
 
-exit 0;
+
+
 
 =head1 BUGS
 
@@ -218,6 +165,85 @@ with this software, please join the mailing list
 
 =cut
 
-#Local Variables:
-#perl-indent-level:2
-#End:
+
+
+
+sub SetMode($) { # {{{
+  my $newmode = shift;
+
+  die "Conflicting modes: $mode != $newmode\n" if (defined $mode and $mode ne $newmode);
+
+  $mode = $newmode;
+  ($#ARGV == -1) and die "Arguments missing for `$mode'\n";
+} # }}}
+
+
+
+sub GetArguments() { # {{{
+
+  my @args = ();
+
+  return @args if ($#ARGV < 0);
+
+  if ($#ARGV == 0 and $ARGV[0] eq '-') {
+    # get list from stdin
+    @args = <STDIN>;
+  }  
+  else {
+    @args = @ARGV;
+  }
+
+  my $i = $#args;
+  while ($i >= 0) {
+    my $f = $args[$i];
+    $f = "$docbasedir/$f" if $f !~ /\//;
+    if (not -f $f) {
+        warn "Ignoring nonexistent file $f\n";
+        splice (@args, $i, 1);
+    } else {
+      $args[$i] = $f;
+    }   
+    $i--;  
+  } 
+  return @args;
+} # }}}
+
+
+
+### MAIN  # {{{
+
+my @documents = ();
+
+  die("Needs mode\n") unless defined $mode;
+
+  if ($mode eq $MODE_INSTALL or $mode eq $MODE_REMOVE or $mode eq $MODE_REREGISTER) {
+    my @args = &GetArguments();
+    foreach my $file (@args) {
+      my $docfile = Debian::DocBase::DocBaseFile->new($file);
+      my $docid   = $docfile->document_id();
+      my $doc     = Debian::DocBase::Document->new($docid);
+
+      $doc->unregister($docfile) if ($mode eq $MODE_REMOVE or $mode eq $MODE_REREGISTER);
+      $doc->register($docfile)   if ($mode eq $MODE_INSTALL or $mode eq $MODE_REREGISTER);
+      push (@documents, $doc);
+    }      
+  }
+
+  if ($mode eq $MODE_STATUS) {
+    my @args = &GetArguments();
+    foreach my $docid (@args) {
+      my $doc     = Debian::DocBase::Document->new($docid);
+      $doc->display_status_information();
+      push (@documents, $doc);
+    }
+  }
+    
+
+  if ($mode eq $MODE_INSTALL or $mode eq $MODE_REMOVE or $mode eq $MODE_REREGISTER)  {
+    &RegisterDhelp(@documents);
+    &RegisterScrollkeeper(@documents);
+    &RegisterDwww(@documents) if $do_dwww_update ;
+  }   
+
+  exit 0; 
+# }}}

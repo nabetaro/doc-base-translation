@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 60 2007-04-14 19:25:41Z robert $
+# $Id: Dhelp.pm 61 2007-04-26 20:40:12Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -11,11 +11,10 @@ use warnings;
 
 use vars qw(@ISA @EXPORT);  
 @ISA = qw(Exporter);
-@EXPORT = qw(register_dhelp);
+@EXPORT = qw(RegisterDhelp);
 
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
-use Cwd 'realpath';
 use File::Basename;
 use Carp;
 
@@ -23,10 +22,20 @@ our $usd_dir = "/usr/share/doc";
 
 our $dhelp_parse = "/usr/sbin/dhelp_parse";
 
-# Registering to dhelp
-sub register_dhelp { # {{{
-  my $doc = shift;
+# Registering documents to dhelp
+sub RegisterDhelp {  # {{{
+  my @documents = @_;
+  
 
+  foreach my $doc (@documents) {
+    &register_one_dhelp_document($doc);
+  }    
+
+} # }}}
+
+
+sub register_one_dhelp_document($) { # {{{
+  my $doc = shift;
   my @new_dhelp_data = ();
   my $docid = $doc->document_id();
 
@@ -42,7 +51,7 @@ carp "file = $file";
       carp "register_dhelp: skipping $file
            because dhelp only knows about /usr/share/doc\n"
             if $verbose;
-   } else {
+  } else {
 
     my $dir=$1;
     my $filename=$2;
@@ -65,7 +74,7 @@ carp "file = $file";
        })
      );
     }    
-  }    
+  }   
 
 
 ## update the files
@@ -74,7 +83,7 @@ carp "file = $file";
   my $exists_old_dhelp_file = (defined $old_dhelp_file and -f $old_dhelp_file);
   my $exists_new_dhelp_file = (defined $new_dhelp_file and -f $new_dhelp_file);
   my $same_files  = (defined $old_dhelp_file and defined $new_dhelp_file and
-                      $old_dhelp_file eq $new_dhelp_file);
+                    $old_dhelp_file eq $new_dhelp_file);
 
   read_dhelp_file($docid, $old_dhelp_file, \@dhelp_data) if $exists_old_dhelp_file;
 
@@ -92,10 +101,8 @@ carp "file = $file";
   }  
 
   $doc->set_status('Dhelp-file', $new_dhelp_file);
-  $doc->set_status('Registered-to-dhelp', 1);
 
 } # }}}
-
 
 # read an existing dhelp file ignoring any entries from our document
 sub read_dhelp_file($$$) { # {{{
@@ -156,7 +163,7 @@ sub generate_dhelp_item { # {{{
 } # }}}
 
 
-sub write_dhelp_file($$) {
+sub write_dhelp_file($$) { # {{{
   my $file = shift;
   my $dhelp_data = shift;
 
@@ -188,7 +195,7 @@ sub write_dhelp_file($$) {
   }
 
   return 1;
-}  
+} # }}}
 
 
 1;

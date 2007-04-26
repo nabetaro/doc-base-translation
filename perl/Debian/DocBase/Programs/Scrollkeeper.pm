@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 60 2007-04-14 19:25:41Z robert $
+# $Id: Scrollkeeper.pm 61 2007-04-26 20:40:12Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -11,7 +11,7 @@ use warnings;
 
 use vars qw(@ISA @EXPORT);  
 @ISA = qw(Exporter);
-@EXPORT = qw(register_scrollkeeper update_scrollkeeper remove_omf_files write_omf_file);
+@EXPORT = qw(RegisterScrollkeeper);
 
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
@@ -44,7 +44,43 @@ our @omf_formats = (
                  );
 
 our %mapping;
-    
+
+
+sub RegisterScrollkeeper() { # {{{
+  my @documents = @_;
+  my $do_update = 0;
+
+  foreach my $doc (@documents) {
+    my $format_data;
+
+    my $old_omf_file = $doc->get_status('Scrollkeeper-omf-file');
+    my $new_omf_file = undef;
+
+    for my $omf_format (@omf_formats) {
+      $format_data = $doc->format($omf_format);
+      next unless defined $format_data;
+
+      my $file = defined $$format_data{'index'} ? $$format_data{'index'} : $$format_data{'files'};
+      next unless -f $file;
+      $new_omf_file = write_omf_file($doc, $file,$omf_format);
+      $do_update    = 1;
+    }
+     
+    # remove old omf file;
+    if (defined $old_omf_file and not defined $new_omf_file) {
+      remove_omf_file($old_omf_file);
+      $do_update = 1;
+    }  
+
+    $doc->set_status('Scrollkeeper-omf-file', $new_omf_file);
+  }
+
+
+  update_scrollkeeper() if ($do_update);
+} # }}}
+
+
+
 
 # arguments: filename
 # reads a file that looks like:
@@ -69,52 +105,29 @@ sub map_docbase_to_scrollkeeper { # {{{
   return $mapping{lc($_[0])};
 } # }}}
   
-
-
-
-sub remove_omf_files($) { # {{{
-  my $doc = shift;
-  my $omf_file = $doc->get_status('Scrollkeeper-omf-file');
-  my $omf_dir = dirname($omf_file);
-  unlink($omf_file) or die "$omf_file: could not delete file: $!";
-
-  #check to see if the directory is now empty. if so, kill it.
-  opendir(DIR, $omf_dir);
-  if (readdir DIR == 0) {
-    rmdir($omf_dir) or die "$omf_dir: could not delete directory: $!";
-  }
-  closedir DIR;
-} # }}}
-
-sub register_scrollkeeper($){ # {{{
-  my $doc      = shift;
-  my $docid = $doc->document_id();
-  my $format_data;
-  for my $omf_format (@omf_formats) {
-    $format_data = $doc->format($omf_format);
-      next unless defined $format_data;
-
-      my $file = defined $$format_data{'index'} ? $$format_data{'index'} : $$format_data{'files'};
-      next unless -f $file;
-      write_omf_file($doc, $file,$omf_format);
-
-      #set status
-      $doc->set_status('Registered-to-scrollkeeper',  1);
-      update_scrollkeeper();
-
-      return; # only register the first format we found
-      
-  }
-} # }}}
-
 sub update_scrollkeeper { # {{{
-  if ($do_dwww_update && -x $scrollkeeper_update) {
+  if (-x $scrollkeeper_update) {
     print "Executing $scrollkeeper_update\n" if $verbose;
     if (system("$scrollkeeper_update -q >/dev/null 2>&1") != 0) {
       warn "warning: error occurred during execution of $scrollkeeper_update -q\n";
     }
   }
 } # }}}
+
+sub remove_omf_file($) { # {{{
+  my $omf_file = shift;
+  my $omf_dir = dirname($omf_file);
+  unlink($omf_file) or &croak ("$omf_file: could not delete file: $!");
+
+  #check to see if the directory is now empty. if so, kill it.
+  opendir(DIR, $omf_dir);
+  if (readdir DIR == 0) {
+    rmdir($omf_dir) or &croak ("$omf_dir: could not delete directory: $!");
+  }
+  closedir DIR;
+} # }}}
+
+
 
 sub write_omf_file($$$) { # {{{
   my ($doc, $file, $format) = @_;
@@ -156,7 +169,7 @@ sub write_omf_file($$$) { # {{{
   print OMF "\t</resource>\n</omf>\n";
   close(OMF) or die "$omf_file: cannot close OMF file: $!";
 
-  $doc->set_status('Scrollkeeper-omf-file', $omf_file);
+  return $omf_file;
 } # }}}
 
 
