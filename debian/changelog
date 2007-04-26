@@ -1,3 +1,29 @@
+doc-base (0.8.4~unreleased) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+  * Split install-docs into modules to made the code more manageable.
+  * Add support for (de)registering multiple documents in one install-docs
+    invokation (closes: #114692).
+  * Remove `Registed-to-XXX' statuses from control files, remove *.list files,
+    deprecate the -L/--listfiles option. Names of the generated files are now
+    keep in the control file in `Scrollkeeper-omf-files' and `Dhelp-files'
+    fields.
+  * Change semantics of -r/--remove option: its arguments should be the names 
+    of previoulsy installed doc-base files, and not the documents IDs.
+  * Pass a list of all registed files to dhelp (closes: #128493).
+  * Create dhelp files only in top-level documentation dirs
+    (i.e. /usr/share/doc/$package instead of /u/s/d/$package/something).
+    According to dhelp's documentation this is the right thing to do.
+    Avoids problems with symlinks in like #21678.
+  * Add a special `x-doc-base-id' tag to generated dhelp files to make it
+    possible to distinguish items in the dhelp files. When installing new
+    documents existing files are no longer overwritten (closes: #204195), but on
+    the other hand on documents removal the dhelp files may not be removed,
+    which possibly reintroduces bugs like #59850.
+  * 
+
+ -- Robert Luberda <robert@debian.org>  Thu, 26 Apr 2007 23:26:19 +0200
+
 doc-base (0.8.3) unstable; urgency=low
 
   * prerm: Oops, the first letter from the `else' word went somehow 

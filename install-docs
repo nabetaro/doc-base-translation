@@ -1,5 +1,18 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
+# $Id: install-docs 62 2007-04-26 21:29:31Z robert $
+
+use warnings;
+use strict;
+use lib 'perl';
+use Debian::DocBase::Common;
+use Debian::DocBase::Utils;
+use Debian::DocBase::Document;
+use Debian::DocBase::FilesListFile;
+use Debian::DocBase::DocBaseFile;
+use Debian::DocBase::Programs::Dhelp;
+use Debian::DocBase::Programs::Dwww;
+use Debian::DocBase::Programs::Scrollkeeper;
 
 =head1 NAME
 
@@ -7,93 +20,28 @@ install-docs - manage online Debian documentation
 
 =cut
 
-# ---beginning-of-configuration-part---
 
-$DATA_DIR = "/var/lib/doc-base/info";
-$omf_locations = "/var/lib/doc-base/omf";
-
-$dwww_update = "/usr/bin/update-menus";
-$dhelp_parse = "/usr/sbin/dhelp_parse";
-$scrollkeeper_update = "/usr/bin/scrollkeeper-update";
-$scrollkeeper_gen_seriesid = "/usr/bin/scrollkeeper-gen-seriesid";
-$scrollkeeper_map_file = "/usr/share/doc-base/data/scrollkeeper.map";
-
-$do_dwww_update = 1;
-my $warn_nonexistent_files = 0;
-
-
-# All formats handled by the doc-base
-my @supported_formats =  (
-                            'html',
-                            'text',
-                            'pdf',
-                            'postscript',
-                            'info',
-                            'dvi',
-                            'debiandoc-sgml'
-                      );
-
-# Formats which need the Index: field
-my @need_index_formats = (
-                            'html',
-                            'info'
-                         );
-
-my %omf_mime_types = ( 
-                            'html'        => 'mime="text/html"',
-                            'text'        => 'mime="text/plain"',
-                            'pdf'         => 'mime="application/pdf"',
-                            'postscript'  => 'mime="application/postscript"',
-                            'dvi'         => 'mime="application/x-dvi"',
-                            'docbook-xml' => 'mime="text/xml" dtd="-//OASIS//DTD DocBook XML V4.1.2//EN"'
-                  );
-
-my @omf_formats = (
-                        'html',
-                        'docbook-xml',
-                        'pdf',
-                        'postscript',
-                        'dvi',
-                        'text' 
-                 );
-    
-
-# ---end-of-configuration-part---
-
-# This would normally be just 'use File::Basename;'. However, install-docs
-# often gets called opportunistically by packages if it's present, and
-# there's no way for those packages to make sure that perl is configured
-# when doing so, so it's possible that standard modules will not be usable.
-
-sub basename {
-  (my $basename = $_[0]) =~ s#.*/##s;
-  return $basename;
-}
-
-sub dirname {
-  my ($dirname, $basename) = ($_[0] =~ m#^(.*/)?(.*)#s);
-  $dirname = './' if not defined $dirname or $dirname eq '';
-  $dirname =~ s#(.)/*\z#$1#s;
-  unless (length $basename) {
-    ($dirname) = ($dirname =~ m#^(.*/)?#s);
-    $dirname = './' if not defined $dirname or $dirname eq '';
-    $dirname =~ s#(.)/*\z#$1#s;
-  }
-  return $dirname;
-}
 
 # set umask explicitly
 umask 022;
 
+# constants
+my $MODE_INSTALL    = 'install';
+my $MODE_REMOVE     = 'remove';
+my $MODE_REREGISTER = 'reregister';
+my $MODE_STATUS     = 'status';
+
+my $mode = undef;
+my $docbasedir="/usr/share/doc-base";
+my $do_dwww_update = 1;
+
 =head1 SYNOPSIS
 
- install-docs [ -v, --verbose ]
-              [ --no-update-menus ]
-              -i --install | 
-              -r --remove  |
-              -s --status  |
-              -L --listfiles
-                <doc-id | file>
+ install-docs [ -v | --verbose ] [ --no-update-menus ] -i | --install file [ file ... ]
+
+ install-docs [ -v | --verbose ] [ --no-update-menus ] -r | --remove file [ file ... ]
+
+ install-docs [ -v | --verbose ] -s | --status docid [ docid ... ]
 
 =head1 DESCRIPTION
 
@@ -110,8 +58,7 @@ description of the control file syntax and grammar.
 =over 4
 
 =cut
-
-while ($arg = shift) {
+while (my $arg = shift @ARGV) {
 
   if (($arg eq '-v') or ($arg eq '--verbose')) {
 
@@ -138,41 +85,18 @@ and L<scrollkeeper-update(8)>.
 
   if (($arg eq '-i') or ($arg eq '--install')) {
 
-=item B<-i> I<file> | B<--install> I<file>
+=item B<-i> | B<--install> I<file> [ I<file ...> ]
 
 Install the documentation described by the control file I<file>.
 
 =cut
-    # install new docs # {{{
-    ($file = shift) or die "argument missing for `install'\n";
-    ($#ARGV == -1) or warn ("ignoring additional arguments for `install'\n");
-    ($file eq "-") and warn("ignoring invalid argument for `install'\n") and exit (0);
-    $warn_nonexistent_files = 1;
-
-    read_control_file($file);
-    read_status_file(1);
-    read_list_file();
-
-    # read in doc-base -> scrollkeeper mappings
-    %mapping = read_map($scrollkeeper_map_file);
-
-    # update status
-    $status{'Control-File'} = $file;
-    $status_changed = 1;
-
-
-    # register documents to subsystems
-    register_dhelp();
-    register_dwww();
-    register_scrollkeeper();
-
-    write_list_file();
-    write_status_file(); 
-    exit(0); # }}}
+    # install new docs 
+    &SetMode($MODE_INSTALL);
+    last;
 
   } elsif (($arg eq '-r') or ($arg eq '--remove')) {
 
-=item B<-r> I<docid> | B<--remove> I<docid>
+=item B<-r> | B<--remove> I<file> [ I<file ...> ]
 
 Remove the documentation identified by the document identifier
 I<docid>.  Document identifiers are tags which are set in the control
@@ -180,718 +104,44 @@ file, and usually correspond to the package name.
 
 =cut
     # remove old docs # {{{
-    ($docid = shift) or die "argument missing for `remove'\n";
-    ($#ARGV == -1) or warn ("ignoring additional arguments for `remove'\n");
-    ($docid eq "-") and warn("ignoring invalid argument for `remove'\n") and exit (0);
+    &SetMode($MODE_REMOVE);
+    last;
 
-    if ( ! read_status_file(1) ) {
-      warn("Document `$docid' is not installed, cannot remove.\n");
-      exit 0;
-    }
-    read_control_file($status{'Control-File'});
-    read_list_file();
-
-    # remove newly created files and unregister from menus
-    remove_files();
-    remove_omf_files() if $status{'Scrollkeeper-omf-file'};
-    update_dwww_menus() if $status{'Registered-to-dwww'};
-    update_scrollkeeper() if $status{'Registered-to-scrollkeeper'};
-
-    # remove data files
-    remove_data_files(); 
-
-   exit 0; # }}}
+     exit 0; # }}}
 
   } elsif (($arg eq '-s') or ($arg eq '--status')) {
 
-=item B<-s> I<docid> | B<--status> I<docid>
+=item B<-s> | B<--status> I<docid> [ I<docid ...> ]
 
 Display the status of the document identifier I<docid>.
 
 =cut
-    # display status # {{{
-    ($docid = shift) or die "argument missing for `status'\n";
-    ($#ARGV == -1) or die "too many arguments for `status'\n";
-
-    read_status_file();
-    read_list_file();
-    read_control_file($status{'Control-File'});
-
-    display_status_information(); # }}}
+    &SetMode($MODE_STATUS);
+    last;
 
   } elsif (($arg eq '-L') or ($arg eq '--listfiles')) {
 
-=item B<-L> I<docid> | B<--listfiles> I<docid>
+=item B<-L> | B<--listfiles> I<docid> [ I<docid ...> ]
 
-List the files associated with the document identifier I<docid>.
+Deprecated option. Does nothing.
 
 =back
 
 =cut
-    # display file listning # {{{
-    ($docid = shift) or die "argument missing for `listfiles'\n";
-    ($#ARGV == -1) or die "too many arguments for `listfiles'\n";
-
-    read_status_file();
-    read_list_file();
-
-    display_listing(); # }}}
+    warn "Ignoring deprecated command line argument: $arg\n";
+    exit 0;
 
   } else {
-    die "invalid command line argument: $arg\n";
+    die "Invalid command line argument: $arg\n";
   }
 }
 
-exit 0;
 
-# -------------------------------
 
-# Registering to dhelp
-sub register_dhelp { # {{{
-
-  my $format_data;
-  for $format_data (@format_list) {
-    next unless $$format_data{'format'} eq 'html'; # dhelp only understand html
-    # get directory of index file
-    my $file = basename($$format_data{'index'});
-    my $dir = dirname($$format_data{'index'});
-    $dir =~ m|^/| or 
-      die "Index file has to be specified with absolute path: $$format_data{'index'}";
-
-    # ensure the documentation is in an area dhelp can deal with
-    if ( $dir !~ m|^/usr/share/doc| ) {
-      print "register_dhelp: skipping $dir/$file
-            because dhelp only knows about /usr/share/doc\n"
-      if $verbose;
-      last; # we can have only one Format:HTML section
-    }
-
-    my @dhelp_data;
-    my $dhelp_file = "$dir/.dhelp";
-    # dhelp file already exists?
-    if (-f $dhelp_file) {
-      # is this file from us?
-      #if (not exists $list{$dhelp_file}) {
-        # no, skip action -- actually we could probably tolerate this condition
-        #warn "warning: skipping foreign dhelp file $dhelp_file";
-        #next;
-      #}
-
-      # yes, read in the file
-      $dhelp_data = read_dhelp_file($dhelp_file);
-
-      # take a look at the contents
-      my $i;
-      for ( $i = 0; $i <= $#$dhelp_data; $i++ ) {
-        if ($$dhelp_data[$i]{'filename'} =~ /^\s*\Q$file\E\s*$/o) {
-          # remove this entry; we'll add it back below
-          print "register_dhelp: found entry for $file in $dhelp_file, replacing\n"
-          if $verbose;
-          splice(@$dhelp_data, $i, 1);
-        }
-      }
-    } else {
-      # no file yet, let's make an empty ref to fill in below
-      $dhelp_data = [];
-    }
-
-
-    # last minute data munging,
-    # FIXME when we finally get a real document hierarchy
-    my $dhelp_section;
-    ( $dhelp_section = $$doc_data{'section'} ) =~ tr/A-Z/a-z/;
-    $dhelp_section =~ s|^apps/||;
-    $dhelp_section =~ s/^(howto|faq)$/\U$&\E/;
-    # now push our data onto the array (undefs are ok)
-    push(@$dhelp_data, {
-      'filename'    => $file,
-      'directory'   => $dhelp_section,
-      'linkname'    => $$doc_data{'title'},
-      'description' => $$doc_data{'abstract'},
-      }
-    );
-
-    # remove the dhelp_file and any other installed dhelp files 
-    # (since the location could change and we can have only one file for document-id)
-    # note: remove_files zeroes %list
-    $list{$dhelp_file} = 1;  remove_files();
-    
-    print "Updating $dhelp_file\n" if $verbose;
-    add_file($dhelp_file);
-    write_dhelp_file($dhelp_file, $dhelp_data);
-
-    if (-x $dhelp_parse) {
-      print "Executing $dhelp_parse -a $dir\n" if $verbose;
-      if (system("$dhelp_parse -a $dir") != 0) {
-        warn "warning: error occured during execution of $dhelp_parse -a $dir";
-      }
-    } else {
-      print "Skipping $dhelp_parse, program not found\n" if $verbose;
-    }
-    # set status
-    $status{'Registered-to-dhelp'} = 1;
-    $status_changed = 1;
-
-    # we can have only one Format:HTML section the document
-    last;
-  }
-
-} # }}}
-
-# Registering to dwww:
-sub register_dwww { # {{{
-  for $format_data (@format_list) {
-    $update_dwww = 1;
-    # set status
-    $status{'Registered-to-dwww'} = 1;
-    $status_changed = 1;
-  }
-
-  if ($update_dwww) {
-    update_dwww_menus();
-  }
-} # }}}
-
-sub update_dwww_menus { # {{{
-  if ($do_dwww_update && -x $dwww_update) {
-    print "Executing $dwww_update\n" if $verbose;
-    if (system($dwww_update) != 0) {
-      warn "warning: error occured during execution of $dwww_update";
-    }
-  }
-} # }}}
-
-sub remove_files { # {{{
-  for $file (keys %list) {
-    next unless -f $file;
-
-    # dhelp file?
-    if ($file =~ /\.dhelp$/o) { # yes
-
-      my $dir = dirname($file);
-
-      if (-x $dhelp_parse) {
-        # call dhelp to notice removal of document
-        print "Executing $dhelp_parse -d $dir\n" if $verbose;
-        if (system("$dhelp_parse -d $dir") != 0) {
-          warn "warning: error occured during execution of $dhelp_parse -d $dir";
-        }
-      }
-
-      print "Removing dhelp file $file\n" if $verbose;
-      unlink($file) or die "$file: cannot remove file: $!";
-
-      next;
-    }
-
-    # not a dhelp file
-
-    print "Removing file $file\n" if $verbose;
-    unlink($file) or die "$file: cannot remove file: $!";
-  }
-  %list = ();
-  $list_changed = 1;
-} # }}}
-
-sub remove_data_files { # {{{
-  my $status_file = "$DATA_DIR/$docid.status";
-  if (-f $status_file) {
-    print "Removing status file $status_file\n" if $verbose;
-    unlink($status_file)
-      or die "$status_file: cannot remove status file: $!";
-  }
-
-  my $list_file = "$DATA_DIR/$docid.list";
-  if (-f $list_file) {
-    print "Removing list file $list_file\n" if $verbose;
-    unlink($list_file)
-      or die "$list_file: cannot remove status file: $!";
-  }
-} # }}}
-
-# -------------------------------
-
-sub read_status_file { # {{{
-  my ($ignore) = @_;
-
-  my $status_file = "$DATA_DIR/$docid.status";
-  if (not -f $status_file) {
-    return(0) if $ignore;
-
-    warn "Document `$docid' is not installed.\n";
-    exit 1;
-  }
-
-  open(S,"$status_file")
-    or die "$status_file: cannot open status file for reading: $!";
-  while (<S>) {
-    chomp;
-    next if /^\s*$/o;
-    /^\s*(\S+):\s*(.*\S)\s*$/
-      or die "syntax error in status file: $_";
-    $status{$1} = $2;
-  }
-  close(S)
-    or die "$status_file: cannot close status file: $!";
-} # }}}
-
-sub write_status_file { # {{{
-  return unless $status_changed;
-
-  my $status_file = "$DATA_DIR/$docid.status";
-
-  open(S,">$status_file")
-    or die "$status_file: cannot open status file for writing: $!";
-  for $k (keys %status) {
-    print S "$k: $status{$k}\n";
-  }
-  close(S) or die "$status_file: cannot close status file: $!";
-
-  $status_changed = 0;
-} # }}}
-
-sub display_status_information { # {{{
-  print "---document-information---\n";
-  print "Document: $$doc_data{'document'}\n";
-  for $k (sort keys %$doc_data) {
-    next if $k eq 'document';
-    $kk = $k; 
-    substr($kk,0,1) =~ tr/a-z/A-Z/;
-    print "$kk: $$doc_data{$k}\n";
-  }
-  for $format_data (@format_list) {
-    print "\n";
-    print "---format-description---\n";
-    print "Format: $$format_data{'format'}\n";
-    for $k (sort keys %$format_data) {
-      next if $k eq 'format';
-      $kk = $k; 
-      substr($kk,0,1) =~ tr/a-z/A-Z/;
-      print "$kk: $$format_data{$k}\n";
-    }
-  }
-  print "\n";
-  print "---status-information---\n";
-  for $k (sort keys %status) {
-    print "$k: $status{$k}\n";
-  }
-} # }}}
-
-sub display_listing { # {{{
-  for $k (sort keys %list) {
-    print "$k\n";
-  }
-} # }}}
-
-sub read_list_file { # {{{
-  my $list_file = "$DATA_DIR/$docid.list";
-  return unless -f $list_file;
-
-  open(L,"$list_file") 
-    or die "$list_file: cannot open list file for reading: $!";
-  while (<L>) {
-    chomp;
-    next if /^\s*$/o;
-    $list{$_} = 1;
-  }
-  close(L) or die "$list_file: cannot close file: $!";
-} # }}}
-
-sub write_list_file { # {{{
-  return unless $list_changed;
-
-  my $list_file = "$DATA_DIR/$docid.list";
-
-  open(L,">$list_file")
-    or die "$list_file: cannot open list file for writing: $!";
-  for $k (keys %list) {
-    print L "$k\n";
-  }
-  close(L) or die "$list_file: cannot close file: $!";
-
-  $list_changed = 0;
-} # }}}
-
-sub add_file { # {{{
-  my ($file) = @_;
-
-  return if $list{$file};
-
-  my $data_file = "$DATA_DIR/$docid.list";
-  open(L,">>$data_file")
-    or die "$data_file: cannot open for appending";
-  print L $file,"\n";
-  close(L) or die "$data_file: cannot close file";
-
-  $list{$file} = 1;
-} # }}}
-
-# -------------------------------
-
-# read a dhelp file, probably more flexibly than dhelp itself
-# input:
-#  file name
-# output:
-#  returns ref to array of hashes containing our data
-sub read_dhelp_file { # {{{
-  my ($dhelpfile) = @_;
-  my ($dhdata);     # array ref, to be returned holding all the dhelp data 
-  my (@rets);     # temporary array
-
-  open(FH, "<$dhelpfile") or die "open file '$dhelpfile': $!\n";
-  $_ = join('', <FH>);    # slurp in the file
-
-  while ( m{
-      <item>\s*     # item defines a block, required
-    (?:     # alternate everything group
-       (?:<directory>   # directory is starting, required
-   ([^<]+)    #   $1
-       )      # ... ending
-     |
-       (?:<dirtitle>    # dirtitle is starting, optional
-         ([^<]+)    #   $2 until next tag start
-       )      # ... ending
-     |
-       (?:<linkname>    # linkname is starting, optional
-         ([^<]+)    #   $3
-       )      # ... ending
-     |
-       (?:<filename>    # filename is starting, optional
-         ([^<]+)    #   $4
-       )      # ... ending
-     |
-       (?:<description>   # filename is starting, optional
-         (.*?)      #  $5, non greedy
-       </description>)    # ... ending
-     )*     # end alternating
-       \s*</item>   # spaces ok, item ends
-      }gscx )
-    {
-      @rets =  ($1, $2, $3, $4, $5);
-      @rets = map { chomp; s/^\s+//; s/\s+$//; $_; }  @rets;
-      # push a hashref of our dhelp data item onto the $dhdata array
-      push(@$dhdata, {
-          'directory'   => $rets[0],
-          'dirtitle'    => $rets[1],
-          'linkname'    => $rets[2],
-          'filename'    => $rets[3],
-          'description' => $rets[4],
-          'converted'   => 1,      # the entry is already HTML-encoded,
-                                   # we shouldn'try recode it on writing
-         });
-    }
-
-  close FH;
-  return $dhdata;
-} # }}}
-
-
-sub html_encode { # {{{
-  my $text        = shift;
-  my $do_convert  = shift;
-
-  return $text unless $do_convert;
-
-  $text =~ s/&/&amp;/g;
-  $text =~ s/</&lt;/g;
-  $text =~ s/>/&gt;/g;
-  $text =~ s/"/&quot;/g;
-  no locale; # always use byte semantics for this regex range
-  # We take gratuitous advantage of the first 256 Unicode codepoints
-  # happening to coincide with ISO-8859-1 so that we can HTML-encode
-  # ISO-8859-1 characters without using any non-pragmatic modules.
-  $text =~ s/([^\0-\x7f])/sprintf('&#%d;', ord $1)/eg;
-  return $text;
-} # }}}
-
-sub html_encode_description { # {{{
-  my $text        = shift;
-  my $do_convert  = shift;
-
-  return $text unless $do_convert;
-
-  $text = &html_encode($text, $do_convert);
-  my @lines=split(/\n/, $text);
-  $text = "";
-  my $in_pre = 0;
-  foreach $_  (@lines) {
-    s/^\s//;
-    if (/^\s/) {
-      $_ = "<pre>\n$_" unless $in_pre;
-      $in_pre = 1;
-    } else {
-      $_ = "$_\n<\\pre>" if $in_pre;
-      $in_pre = 0;
-    }  
-    s/^\.\s*$/<br>&nbsp;<br>/;
-    s/(http|ftp)s?:\/([\w\/~\.%#-])+[\w\/]/<a href="$&">$&<\/a>/g;
-
-    $text .= $_ . "\n";
-   }
-  $text .= "</pre>\n" if $in_pre;
-  return $text;
-} # }}}
-
-
-sub write_dhelp_file { # {{{
-  my ($file, $data) = @_;
-
-  open(FH, ">$file") or die "cannot create dhelp file '$file': $!\n";
-  foreach $rec (@$data) {
-    my $do_html_convert = not (defined $$rec{'converted'} or $$rec{'converted'});
-    print FH "<item>\n";
-    foreach $field ((
-      'directory', 'dtitle', 'linkname', 'filename'
-           )) {
-      if ($field ne 'linkname') {        
-        print FH "<$field>$$rec{$field}\n" if length($$rec{$field});
-      } else {   
-        print FH "<$field>" . &html_encode($$rec{$field}, $do_html_convert) ."\n" if length($$rec{$field});
-     }
-    }
-    print FH "<description>\n" . &html_encode_description($$rec{description}, $do_html_convert) . "\n</description>\n"
-      if length($$rec{'description'});
-    print FH "</item>\n\n";
-  }
-  close FH;
-} # }}}
-
-# -------------------------------
-
-sub remove_omf_files { # {{{
-  my $omf_file = $status{'Scrollkeeper-omf-file'};
-  my $omf_dir = dirname($omf_file);
-  unlink($omf_file) or die "$omf_file: could not delete file: $!";
-
-  #check to see if the directory is now empty. if so, kill it.
-  opendir(DIR, $omf_dir);
-  if (readdir DIR == 0) {
-    rmdir($omf_dir) or die "$omf_dir: could not delete directory: $!";
-  }
-  closedir DIR;
-} # }}}
-
-sub register_scrollkeeper { # {{{
-  my $document = $$doc_data{'document'};
-  my $format_data;
-  for $omf_format(@omf_formats) {
-    for $format_data (@format_list) {
-      next unless $$format_data{'format'} eq $omf_format;
-
-      my $file = defined $$format_data{'index'} ? $$format_data{'index'} : $$format_data{'files'};
-      next unless -f $file;
-      my $format = $$format_data{'format'};
-      write_omf_file($file,$format);
-
-      #set status
-      $status{'Registered-to-scrollkeeper'} = 1;
-      $status_changed = 1;
-      update_scrollkeeper();
-
-      return; # only register the first format we found
-    }        
-      
-  }
-} # }}}
-
-sub update_scrollkeeper { # {{{
-  if ($do_dwww_update && -x $scrollkeeper_update) {
-    print "Executing $scrollkeeper_update\n" if $verbose;
-    if (system("$scrollkeeper_update -q >/dev/null 2>&1") != 0) {
-      warn "warning: error occurred during execution of $scrollkeeper_update -q\n";
-    }
-  }
-} # }}}
-
-sub write_omf_file { # {{{
-  my ($file, $format) = @_;
-  my $document = $$doc_data{'document'};
-  my $omf_file = "$omf_locations/$document/$document-C.omf";
-  my $date;
-  my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
-  $year += 1900;
-  if ($mday <10) {$mday = "0$mday";}
-  if ($mon <10) {$mon = "0$mon";}
-  $date = "$year-$mon-$mday";
-
-  chomp(my $serial_id = `$scrollkeeper_gen_seriesid`);
-
-  if (! -d "$omf_locations/$document") {
-    mkdir("$omf_locations/$document");
-  }
-
-  open(OMF, ">$omf_file")
-    or die "$omf_file: cannot open OMF file for writing: $!";
-  
-  #now for the boiler plate XML stuff
-  print OMF "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-  print OMF "<!DOCTYPE omf PUBLIC \"-//OMF//DTD Scrollkeeper OMF Variant V1.0//EN\" \"http://scrollkeeper.sourceforge.net/dtds/scrollkeeper-omf-1.0/scrollkeeper-omf.dtd\">\n";
-  print OMF "<omf>\n\t<resource>\n";
-
-  #now for the dynamic stuff
-  print OMF "\t\t<creator>".&html_encode($$doc_data{'author'}, 1)."</creator>\n";
-  print OMF "\t\t<title>".&html_encode($$doc_data{'title'}, 1)."</title>\n";
-  print OMF "\t\t<date>$date</date>\n";
-  print OMF "\t\t<subject category=\"".map_docbase_to_scrollkeeper($$doc_data{'section'})."\"/>\n";
-  print OMF "\t\t<description>".&html_encode($$doc_data{'abstract'}, 1)."</description>\n";
-  print OMF "\t\t<format $omf_mime_types{$format} />\n";
-  print OMF "\t\t<identifier url=\"$file\"/>\n";
-  print OMF "\t\t<language code=\"C\"/>\n";
-  print OMF "\t\t<relation seriesid=\"$serial_id\"/>\n";
-
-  #finish the boiler plate
-  print OMF "\t</resource>\n</omf>\n";
-  close(OMF) or die "$omf_file: cannot close OMF file: $!";
-  $status{'Scrollkeeper-omf-file'} = $omf_file;
-} # }}}
-
-# -------------------------------
-
-##
-## assuming filehandle IN is the control file, read a section (or
-## "stanza") of the doc-base control file and adds data in that
-## section to the hash reference passed as an argument.  Returns 1 if
-## there is data and 0 if it was empty
-##
-sub read_control_file_section { # {{{
-  my $fh = shift;
-  my ($pfields) = @_;
-
-  my $empty = 1;
-  my ($cf,$v);
-  while (<$fh>) {
-    chomp;
-    s/\s*$//;                   # trim trailing whitespace
-
-    # empty line?
-    if (/^\s*$/o) {
-      if ($empty) {
-        next;
-      } else {
-        last;
-      }
-    }
-
-    $empty = 0;
-
-    # new field?
-    if (/^(\S+)\s*:\s*(.*)$/) {
-      ($cf,$v) = ($1,$2);
-      $cf = lc $cf;
-      #print STDERR "$cf -> $v\n";
-      if (exists $$pfields{$cf}) {
-        warn "warning: $cf: overwriting previous setting of control field";
-      }
-      $$pfields{$cf} = $v;
-    } elsif (/^\s+(\S.*)$/) {
-      $v = $&;
-      defined($cf) or die "syntax error in control file: no field specified";
-      #print STDERR "$cf -> $v (continued)\n";
-      $$pfields{$cf} .= "\n$v";
-    } else {
-      die "syntax error in control file: $_";
-    }
-  }
-
-  return not $empty;
-} # }}}
-
-# reads control file specified as argument
-# output:
-#    sets $docid
-#    sets $doc_data to point to a hash containing the document data
-#    sets @format_list, a list of pointers to hashes containing the format data
-sub read_control_file { # {{{
-  my ($file) = @_;
-
-  my $fh=$file; 
-  open($fh, $file) or 
-    open($fh, "/usr/share/doc-base/$file") or
-    die "$file: cannot open control file for reading: $!\n";
-
-  $doc_data = {};
-  read_control_file_section($fh, $doc_data) or die "error: empty control file";
-  if (defined $$doc_data{'version'}) {
-      warn "skipping $file, because of unsupported Version field\n" if ($verbose);
-      exit 0;
-  }      
-  # check for required information
-  ($docid = $$doc_data{'document'}) 
-    or die "error in control file: `Document' value not specified";
-  $$doc_data{'title'}
-    or die "error in control file: `Title' value not specified";
-  $$doc_data{'section'}
-    or die "error in control file: `Section' value not specified";
-
-  undef @format_list;
-  $format_data = {};
-  while (read_control_file_section($fh, $format_data)) {
-    # adjust control fields
-    $$format_data{'format'} =~ tr/A-Z/a-z/;
-    # check for required information
-    $$format_data{'format'}
-      or die "error in control file: `Format' value not specified";
-    $$format_data{'files'}
-      or die "error in control file: `Files' value not specified";
-      
-    if ($verbose) {
-      grep { $_ eq $$format_data{'format'} } @supported_formats
-        or  warn "warning: ignoring unknown format `$$format_data{'format'}'";
-    }
-    if (grep { $_ eq $$format_data{'format'}} @need_index_formats) {
-      $$format_data{'index'}
-         or die "error in control file: `Index' value missing for format `" . $$format_data{'format'} . "'"
-    } 
-
-    my $ok = 1;
-    if ($warn_nonexistent_files) {
-      if (defined $$format_data{'index'} && ! -e $$format_data{'index'}) {
-        warn "warning: file `$$format_data{'index'}' does not exist" if ($verbose);
-        $ok = 0;
-      }
-      my @globlist = glob($$format_data{'files'});
-      # if the mask doesn't contain any meta-characters, then glob simply returns its argument 
-      pop @globlist if ($#globlist == 0 && ! -f $globlist[0]);
-      if ($#globlist < 0) {
-        warn "warning: file mask `$$format_data{'files'}' does not match any files" if ($verbose);
-        $ok = 0;
-      }    
-    }
-
-    push(@format_list,$format_data) if $ok;
-    $format_data = {};
-  }
-  close($fh);
-} # }}}
-
-# arguments: filename
-# reads a file that looks like:
-# foo: bar
-# returns: hash of lv -> rv
-sub read_map { # {{{
-  my ($file) = @_;
-  my $map;
-  open (MAP, "<$file") or die "Could not open $file: $!";
-  while(<MAP>) {
-          chomp;
-          my ($lv,$rv) = split(/: /);
-          $map{lc($lv)} = $rv;
-  }
-  close(MAP);
-  return %map;
-} # }}}
-
-# arguments: doc-base section
-# returns: scrollkeeper category
-sub map_docbase_to_scrollkeeper { # {{{
-  return $mapping{lc($_[0])};
-} # }}}
-  
 
 =head1 BUGS
 
-None known, but a much more robust system is being planned as the next
-generation of doc-base.
+See <URL:http://bugs.debian.org/doc-base>.
 
 =head1 SEE ALSO
 
@@ -913,6 +163,85 @@ with this software, please join the mailing list
 
 =cut
 
-#Local Variables:
-#perl-indent-level:2
-#End:
+
+
+
+sub SetMode($) { # {{{
+  my $newmode = shift;
+
+  die "Conflicting modes: $mode != $newmode\n" if (defined $mode and $mode ne $newmode);
+
+  $mode = $newmode;
+  ($#ARGV == -1) and die "Arguments missing for `$mode'\n";
+} # }}}
+
+
+
+sub GetArguments() { # {{{
+
+  my @args = ();
+
+  return @args if ($#ARGV < 0);
+
+  if ($#ARGV == 0 and $ARGV[0] eq '-') {
+    # get list from stdin
+    @args = <STDIN>;
+  }  
+  else {
+    @args = @ARGV;
+  }
+
+  my $i = $#args;
+  while ($i >= 0) {
+    my $f = $args[$i];
+    $f = "$docbasedir/$f" if $f !~ /\//;
+    if (not -f $f) {
+        warn "Ignoring nonexistent file $f\n";
+        splice (@args, $i, 1);
+    } else {
+      $args[$i] = $f;
+    }   
+    $i--;  
+  } 
+  return @args;
+} # }}}
+
+
+
+### MAIN  # {{{
+
+my @documents = ();
+
+  die("Needs mode\n") unless defined $mode;
+
+  if ($mode eq $MODE_INSTALL or $mode eq $MODE_REMOVE or $mode eq $MODE_REREGISTER) {
+    my @args = &GetArguments();
+    foreach my $file (@args) {
+      my $docfile = Debian::DocBase::DocBaseFile->new($file);
+      my $docid   = $docfile->document_id();
+      my $doc     = Debian::DocBase::Document->new($docid);
+
+      $doc->unregister($docfile) if ($mode eq $MODE_REMOVE or $mode eq $MODE_REREGISTER);
+      $doc->register($docfile)   if ($mode eq $MODE_INSTALL or $mode eq $MODE_REREGISTER);
+      push (@documents, $doc);
+    }      
+  }
+
+  if ($mode eq $MODE_STATUS) {
+    my @args = &GetArguments();
+    foreach my $docid (@args) {
+      my $doc     = Debian::DocBase::Document->new($docid);
+      $doc->display_status_information();
+      push (@documents, $doc);
+    }
+  }
+    
+
+  if ($mode eq $MODE_INSTALL or $mode eq $MODE_REMOVE or $mode eq $MODE_REREGISTER)  {
+    &RegisterDhelp(@documents);
+    &RegisterScrollkeeper(@documents);
+    &RegisterDwww(@documents) if $do_dwww_update ;
+  }   
+
+  exit 0; 
+# }}}
