@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 60 2007-04-14 19:25:41Z robert $
+# $Id: Document.pm 63 2007-04-28 22:41:18Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -11,13 +11,14 @@ use warnings;
 use Debian::DocBase::Common;
 use Carp;
 use Dumpvalue;
+#use Scalar::Util qw(weaken);
 
-my %documents = ();
+our %DOCUMENTS = ();
 
 sub new { # {{{
     my $class      = shift;
     my $documentId = shift;
-    return $documents{$documentId} if defined  $documents{$documentId};
+    return $DOCUMENTS{$documentId} if defined  $DOCUMENTS{$documentId};
 
     my $self = {
         DOCUMENT_ID   => $documentId,
@@ -33,8 +34,20 @@ sub new { # {{{
     };
     bless($self, $class);
     $self->_read_status_file($documentId);
-    $documents{$documentId} = $self;
+    $DOCUMENTS{$documentId} = $self;
+#  weaken $DOCUMENTS{$documentId};
     return $self;
+} # }}}
+
+sub DESTROY { # {{{
+  my $self = shift;
+  delete $DOCUMENTS{$self->document_id()};
+  carp "Removing " .$self->document_id() . "\n"
+} # }}}
+
+# class function: return list of all proceseed documents
+sub GetDocumentList() { # {{{
+  return values %DOCUMENTS;
 } # }}}
 
 sub document_id() { # {{{
@@ -187,9 +200,9 @@ sub register() { # {{{
   my $self          = shift;
   my $doc_base_file = shift;
 
- $self->{'CONTROL_FILE_NAMES'} = [$doc_base_file->{'FILE_NAME'}];
- $self->{'CONTROL_FILE'} = $doc_base_file;
- $self->{'STATUS_CHANGED'} = 1;
+  $self->{'CONTROL_FILE_NAMES'} = [$doc_base_file->{'FILE_NAME'}];
+  $self->{'CONTROL_FILE'} = $doc_base_file;
+  $self->{'STATUS_CHANGED'} = 1;
 } # }}}
 
 sub unregister() { # {{{

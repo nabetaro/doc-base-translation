@@ -1,18 +1,26 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
-# $Id: install-docs 62 2007-04-26 21:29:31Z robert $
+#
+# $Id: install-docs 63 2007-04-28 22:41:18Z robert $
 
 use warnings;
 use strict;
 use lib 'perl';
-use Debian::DocBase::Common;
-use Debian::DocBase::Utils;
-use Debian::DocBase::Document;
-use Debian::DocBase::FilesListFile;
-use Debian::DocBase::DocBaseFile;
-use Debian::DocBase::Programs::Dhelp;
-use Debian::DocBase::Programs::Dwww;
-use Debian::DocBase::Programs::Scrollkeeper;
+
+
+# declared in Debian::DocBase::InstallDocs;
+use vars qw($fully_functional $verbose $MODE_INSTALL $MODE_REMOVE $MODE_REREGISTER $MODE_STATUS);
+
+BEGIN {
+  $fully_functional = eval {
+                              require Pod::Usage;
+                              import Pod::Usage qw(pod2usage);
+                              require Debian::DocBase::InstallDocs;
+                              import Debian::DocBase::InstallDocs;
+                              1;
+                        }; 
+  warn $@ if $@;
+}
 
 =head1 NAME
 
@@ -26,22 +34,22 @@ install-docs - manage online Debian documentation
 umask 022;
 
 # constants
-my $MODE_INSTALL    = 'install';
-my $MODE_REMOVE     = 'remove';
-my $MODE_REREGISTER = 'reregister';
-my $MODE_STATUS     = 'status';
-
-my $mode = undef;
 my $docbasedir="/usr/share/doc-base";
 my $do_dwww_update = 1;
+my $force_reregister_flagfile = "/var/lib/doc-base/info/FORCE-REREGISTER.flag";
 
 =head1 SYNOPSIS
 
- install-docs [ -v | --verbose ] [ --no-update-menus ] -i | --install file [ file ... ]
+ install-docs [options] -i | --install file [ file ... ]
 
- install-docs [ -v | --verbose ] [ --no-update-menus ] -r | --remove file [ file ... ]
+ install-docs [options] -r | --remove file [ file ... ]
 
- install-docs [ -v | --verbose ] -s | --status docid [ docid ... ]
+ install-docs [options] -R | --register-all
+
+ install-docs [options] -s | --status docid [ docid ... ]
+ 
+ install-docs -h | --help
+
 
 =head1 DESCRIPTION
 
@@ -58,9 +66,14 @@ description of the control file syntax and grammar.
 =over 4
 
 =cut
+
+#### Parse arguments loop #####
+#
+exit(1) if not $fully_functional and $#ARGV < 0;
+pod2usage(-verbose => 0, -exitval => 1) if $#ARGV < 0 ;
 while (my $arg = shift @ARGV) {
 
-  if (($arg eq '-v') or ($arg eq '--verbose')) {
+  if (($arg eq '-v') or ($arg eq '--verbose')) { # {{{ 
 
 =item B<-v> | B<--verbose>
 
@@ -68,10 +81,9 @@ Operate verbosely.
 
 =cut
     $verbose = 1;
-    next;
-  }
-
-  if ($arg eq '--no-update-menus') {
+    next;  # }}}
+  
+   } elsif ($arg eq '--no-update-menus') { # {{{
 
 =item B<--no-update-menus>
 
@@ -80,10 +92,28 @@ and L<scrollkeeper-update(8)>.
 
 =cut
     $do_dwww_update = 0;
-    next;
-  }
+    next; # }}}
 
-  if (($arg eq '-i') or ($arg eq '--install')) {
+   } elsif (($arg eq '-h') or ($arg eq '--help')) { # {{{ 
+
+=item B<-h> | B<--help>
+
+Show a short help message.
+
+
+=cut
+    pod2usage(-verbose => 1, -exitval => 0);
+    # NOT REACHED  # }}}
+
+=back
+
+=head1 ACTIONS
+
+=over 4
+
+=cut
+
+   } elsif (($arg eq '-i') or ($arg eq '--install')) { # {{{
 
 =item B<-i> | B<--install> I<file> [ I<file ...> ]
 
@@ -91,35 +121,57 @@ Install the documentation described by the control file I<file>.
 
 =cut
     # install new docs 
-    &SetMode($MODE_INSTALL);
-    last;
+    ($#ARGV == -1) and die "Arguments missing for `install'\n";
+    &CheckFunctionality();
+    if (! -e $force_reregister_flagfile) {
+        &SetMode($MODE_INSTALL, @ARGV);
+    } else {     
+        &SetMode($MODE_REREGISTER); 
+    }      
+    last; # }}}
 
-  } elsif (($arg eq '-r') or ($arg eq '--remove')) {
+  } elsif (($arg eq '-r') or ($arg eq '--remove')) { # {{{
 
 =item B<-r> | B<--remove> I<file> [ I<file ...> ]
 
-Remove the documentation identified by the document identifier
-I<docid>.  Document identifiers are tags which are set in the control
+Remove the documentation identified by the control file
+I<file>.  
+
+=cut
+    # remove old docs # 
+    ($#ARGV == -1) and die "Arguments missing for `remove'\n";
+    &CheckFunctionality();
+    &SetMode($MODE_REMOVE, @ARGV);
+    last; # }}}
+
+  } elsif (($arg eq '-R') or ($arg eq '--register-all')) { # {{{ 
+
+=item B<-R> | B<--register-all>
+
+Display the status of the document identifier I<docid>.
+Document identifiers are tags which are set in the control
 file, and usually correspond to the package name.
 
 =cut
-    # remove old docs # {{{
-    &SetMode($MODE_REMOVE);
-    last;
+    ($#ARGV == -1) or die "Too many arguments missing for `register-all'\n";
+    &CheckFunctionality();
+    &SetMode($MODE_REREGISTER);
+    last; # }}}
 
-     exit 0; # }}}
-
-  } elsif (($arg eq '-s') or ($arg eq '--status')) {
+  } elsif (($arg eq '-s') or ($arg eq '--status')) {  # {{{
 
 =item B<-s> | B<--status> I<docid> [ I<docid ...> ]
 
 Display the status of the document identifier I<docid>.
+Document identifiers are tags which are set in the control
+file, and usually correspond to the package name.
 
 =cut
-    &SetMode($MODE_STATUS);
-    last;
+    ($#ARGV == -1) and die "Arguments missing for `status'\n";
+    &SetMode($MODE_STATUS, @ARGV);
+    last; # }}}
 
-  } elsif (($arg eq '-L') or ($arg eq '--listfiles')) {
+  } elsif (($arg eq '-L') or ($arg eq '--listfiles')) { # {{{
 
 =item B<-L> | B<--listfiles> I<docid> [ I<docid ...> ]
 
@@ -130,14 +182,32 @@ Deprecated option. Does nothing.
 =cut
     warn "Ignoring deprecated command line argument: $arg\n";
     exit 0;
+ # }}}
 
-  } else {
-    die "Invalid command line argument: $arg\n";
-  }
+  } else { # {{{ default: die
+    pod2usage(-msg => "Invalid argument: $arg", -verbose => 0, -exitval => 1);
+  } # }}}
+
 }
 
 
+sub CheckFunctionality() { # {{{
+  if (not $fully_functional) {
+    open F, "> $force_reregister_flagfile" 
+      or die "Cannot create $force_reregister_flagfile: $!\n";
+    print F "x";
+    close F;
+    exit 0;
+  }    
+} # }}}
 
+
+#### Main function
+&InstallDocsMain($do_dwww_update);
+
+unlink ($force_reregister_flagfile) if -e $force_reregister_flagfile;
+
+__DATA__
 
 =head1 BUGS
 
@@ -166,82 +236,5 @@ with this software, please join the mailing list
 
 
 
-sub SetMode($) { # {{{
-  my $newmode = shift;
-
-  die "Conflicting modes: $mode != $newmode\n" if (defined $mode and $mode ne $newmode);
-
-  $mode = $newmode;
-  ($#ARGV == -1) and die "Arguments missing for `$mode'\n";
-} # }}}
 
 
-
-sub GetArguments() { # {{{
-
-  my @args = ();
-
-  return @args if ($#ARGV < 0);
-
-  if ($#ARGV == 0 and $ARGV[0] eq '-') {
-    # get list from stdin
-    @args = <STDIN>;
-  }  
-  else {
-    @args = @ARGV;
-  }
-
-  my $i = $#args;
-  while ($i >= 0) {
-    my $f = $args[$i];
-    $f = "$docbasedir/$f" if $f !~ /\//;
-    if (not -f $f) {
-        warn "Ignoring nonexistent file $f\n";
-        splice (@args, $i, 1);
-    } else {
-      $args[$i] = $f;
-    }   
-    $i--;  
-  } 
-  return @args;
-} # }}}
-
-
-
-### MAIN  # {{{
-
-my @documents = ();
-
-  die("Needs mode\n") unless defined $mode;
-
-  if ($mode eq $MODE_INSTALL or $mode eq $MODE_REMOVE or $mode eq $MODE_REREGISTER) {
-    my @args = &GetArguments();
-    foreach my $file (@args) {
-      my $docfile = Debian::DocBase::DocBaseFile->new($file);
-      my $docid   = $docfile->document_id();
-      my $doc     = Debian::DocBase::Document->new($docid);
-
-      $doc->unregister($docfile) if ($mode eq $MODE_REMOVE or $mode eq $MODE_REREGISTER);
-      $doc->register($docfile)   if ($mode eq $MODE_INSTALL or $mode eq $MODE_REREGISTER);
-      push (@documents, $doc);
-    }      
-  }
-
-  if ($mode eq $MODE_STATUS) {
-    my @args = &GetArguments();
-    foreach my $docid (@args) {
-      my $doc     = Debian::DocBase::Document->new($docid);
-      $doc->display_status_information();
-      push (@documents, $doc);
-    }
-  }
-    
-
-  if ($mode eq $MODE_INSTALL or $mode eq $MODE_REMOVE or $mode eq $MODE_REREGISTER)  {
-    &RegisterDhelp(@documents);
-    &RegisterScrollkeeper(@documents);
-    &RegisterDwww(@documents) if $do_dwww_update ;
-  }   
-
-  exit 0; 
-# }}}

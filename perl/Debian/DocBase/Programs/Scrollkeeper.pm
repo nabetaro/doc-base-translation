@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 61 2007-04-26 20:40:12Z robert $
+# $Id: Scrollkeeper.pm 63 2007-04-28 22:41:18Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -76,7 +76,7 @@ sub RegisterScrollkeeper() { # {{{
   }
 
 
-  update_scrollkeeper() if ($do_update);
+  &Execute($scrollkeeper_update, '-q') if ($do_update);
 } # }}}
 
 
@@ -105,15 +105,6 @@ sub map_docbase_to_scrollkeeper { # {{{
   return $mapping{lc($_[0])};
 } # }}}
   
-sub update_scrollkeeper { # {{{
-  if (-x $scrollkeeper_update) {
-    print "Executing $scrollkeeper_update\n" if $verbose;
-    if (system("$scrollkeeper_update -q >/dev/null 2>&1") != 0) {
-      warn "warning: error occurred during execution of $scrollkeeper_update -q\n";
-    }
-  }
-} # }}}
-
 sub remove_omf_file($) { # {{{
   my $omf_file = shift;
   my $omf_dir = dirname($omf_file);
@@ -126,7 +117,6 @@ sub remove_omf_file($) { # {{{
   }
   closedir DIR;
 } # }}}
-
 
 
 sub write_omf_file($$$) { # {{{
@@ -155,11 +145,11 @@ sub write_omf_file($$$) { # {{{
   print OMF "<omf>\n\t<resource>\n";
 
   #now for the dynamic stuff
-  print OMF "\t\t<creator>".&html_encode($doc->author(), 1)."</creator>\n";
-  print OMF "\t\t<title>".&html_encode($doc->title(), 1)."</title>\n";
+  print OMF "\t\t<creator>".&HTMLEncode($doc->author(), 1)."</creator>\n";
+  print OMF "\t\t<title>".&HTMLEncode($doc->title(), 1)."</title>\n";
   print OMF "\t\t<date>$date</date>\n";
   print OMF "\t\t<subject category=\"".map_docbase_to_scrollkeeper($doc->section())."\"/>\n";
-  print OMF "\t\t<description>".&html_encode($doc->abstract(), 1)."</description>\n";
+  print OMF "\t\t<description>".&HTMLEncode($doc->abstract(), 1)."</description>\n";
   print OMF "\t\t<format $omf_mime_types{$format} />\n";
   print OMF "\t\t<identifier url=\"$file\"/>\n";
   print OMF "\t\t<language code=\"C\"/>\n";

@@ -53,8 +53,8 @@ case "$1" in
         reinstall_docs
     else
         # only register our stuff
-        install-docs ${VERBOSE} --no-update-menus -i /usr/share/$package/$package
-        install-docs ${VERBOSE} -i /usr/share/$package/install-docs-man
+        install-docs ${VERBOSE} -i /usr/share/$package/$package	\
+				-i /usr/share/$package/install-docs-man
     fi
     ;;
 esac

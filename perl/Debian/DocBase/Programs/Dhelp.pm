@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 61 2007-04-26 20:40:12Z robert $
+# $Id: Dhelp.pm 63 2007-04-28 22:41:18Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -65,12 +65,12 @@ carp "file = $file";
     $dhelp_section =~ s/^(howto|faq)$/\U$&\E/;
     # now push our data onto the array (undefs are ok)
     push(@new_dhelp_data, &generate_dhelp_item({
-       '2_directory'     => &html_encode($dhelp_section, 1),
+       '2_directory'     => &HTMLEncode($dhelp_section, 1),
        '1_x-doc-base-id' => $docid, 
        '3_linkname'      => $doc->title(),
        '4_filename'      => $filename,
        '5_documents'     => $$format_data{'files'},
-       '6_description'   => &html_encode_description($doc->abstract(), 1)
+       '6_description'   => &HTMLEncodeDescription($doc->abstract(), 1)
        })
      );
     }    
@@ -170,12 +170,7 @@ sub write_dhelp_file($$) { # {{{
   my $dir = &dirname($file);
 
   if (-f $file) {
-    if (-x $dhelp_parse) {
-      carp "Executing $dhelp_parse -d $dir\n" if $verbose;
-      if (system("$dhelp_parse -d $dir") != 0) {
-        carp "warning: error occured during execution of $dhelp_parse -d $dir";
-      }
-    }
+    &Execute($dhelp_parse, '-d', $dir);
     unlink $file or croak "can't unlink $file: $!"
   }
 
@@ -185,14 +180,7 @@ sub write_dhelp_file($$) { # {{{
   print FH join("\n\n", @$dhelp_data);
   close FH;
 
-  if (-x $dhelp_parse) {
-    print "Executing $dhelp_parse -a $dir\n" if $verbose;
-    if (system("$dhelp_parse -a $dir") != 0) {
-      warn "warning: error occured during execution of $dhelp_parse -a $dir";
-    }
-  } else {
-    carp "Skipping $dhelp_parse, program not found\n" if $verbose;
-  }
+  &Execute($dhelp_parse, '-a', $dir);
 
   return 1;
 } # }}}

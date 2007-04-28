@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dwww.pm 61 2007-04-26 20:40:12Z robert $
+# $Id: Dwww.pm 63 2007-04-28 22:41:18Z robert $
 #
 
 package Debian::DocBase::Programs::Dwww;
@@ -14,6 +14,7 @@ use vars qw(@ISA @EXPORT);
 @EXPORT = qw(RegisterDwww);
 
 use Debian::DocBase::Common;
+use Debian::DocBase::Utils;
 
 our $dwww_update = "/usr/bin/update-menus";
 
@@ -22,15 +23,5 @@ sub RegisterDwww { # {{{
   my @documents = @_;
   $#documents < 0 and return;
  
-  &update_dwww_menus();
+  &Execute($dwww_update);
 } # }}}
-
-sub update_dwww_menus { # {{{
-  if (-x $dwww_update) {
-    print "Executing $dwww_update\n" if $verbose;
-    if (system($dwww_update) != 0) {
-      warn "warning: error occured during execution of $dwww_update";
-    }
-  }
-} # }}}
-

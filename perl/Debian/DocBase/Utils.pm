@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Utils.pm 59 2007-04-14 09:12:02Z robert $
+# $Id: Utils.pm 63 2007-04-28 22:41:18Z robert $
 #
 
 package Debian::DocBase::Utils;
@@ -8,29 +8,14 @@ package Debian::DocBase::Utils;
 use Exporter();
 use strict;
 use warnings;
-use vars qw(@ISA @EXPORT);  
+use vars qw(@ISA @EXPORT);
+use Carp;
 @ISA = qw(Exporter);
-@EXPORT = qw(basename dirname html_encode html_encode_description);
+@EXPORT = qw(Execute HTMLEncode HTMLEncodeDescription Inform Debug Warn Error);
 
-sub basename { # {{{
-  (my $basename = $_[0]) =~ s#.*/##s;
-  return $basename;
-} # }}}
+use Debian::DocBase::Common;
 
-sub dirname { # {{{
-  my ($dirname, $basename) = ($_[0] =~ m#^(.*/)?(.*)#s);
-  $dirname = './' if not defined $dirname or $dirname eq '';
-  $dirname =~ s#(.)/*\z#$1#s;
-  unless (length $basename) {
-    ($dirname) = ($dirname =~ m#^(.*/)?#s);
-    $dirname = './' if not defined $dirname or $dirname eq '';
-    $dirname =~ s#(.)/*\z#$1#s;
-  }
-  return $dirname;
-} # }}}
-
-
-sub html_encode { # {{{
+sub HTMLEncode { # {{{
   my $text        = shift;
   my $do_convert  = shift;
 
@@ -48,7 +33,7 @@ sub html_encode { # {{{
   return $text;
 } # }}}
 
-sub html_encode_description { # {{{
+sub HTMLEncodeDescription { # {{{
   my $text        = shift;
   my $do_convert  = shift;
 
@@ -66,7 +51,7 @@ sub html_encode_description { # {{{
     } else {
       $_ = "$_\n<\\pre>" if $in_pre;
       $in_pre = 0;
-    }  
+    }
     s/^\.\s*$/<br>&nbsp;<br>/;
     s/(http|ftp)s?:\/([\w\/~\.%#-])+[\w\/]/<a href="$&">$&<\/a>/g;
 
@@ -75,5 +60,40 @@ sub html_encode_description { # {{{
   $text .= "</pre>\n" if $in_pre;
   return $text;
 } # }}}
+
+sub Execute() { # {{{
+  my @args = @_;
+  my $sargs = join " ", @args;
+
+  croak "Internal error: no arguments passed to Execute" if $#args < 0;
+
+  if (-x $args[0]) {
+    &Debug ("Executing `$sargs'");
+    if (system(@args) != 0) {
+      &Warn ("error occured during execution of `$sargs'");
+    }
+  } else {
+    &Debug ("Skipping execution of `$sargs'");
+  }   
+} # }}}
+
+
+sub Debug() { # {{{
+  print STDOUT join ' ', @_ if $debug;
+} # }}}
+
+sub Inform() { # {{{
+  print STDOUT join ' ', @_ if $verbose;
+} # }}}
+
+sub Warn() { # {{{
+  print STDERR join ' ', @_ if $verbose;
+} # }}}
+
+sub Error() { # {{{
+  print STDERR join ' ', @_ if $verbose;
+} # }}}
+
+
 
 1;
