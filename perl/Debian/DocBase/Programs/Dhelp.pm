@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 63 2007-04-28 22:41:18Z robert $
+# $Id: Dhelp.pm 64 2007-04-29 15:07:26Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -16,11 +16,9 @@ use vars qw(@ISA @EXPORT);
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
 use File::Basename;
-use Carp;
 
-our $usd_dir = "/usr/share/doc";
-
-our $dhelp_parse = "/usr/sbin/dhelp_parse";
+my $dhelp_parse = "/usr/sbin/dhelp_parse";
+my $usd_dir    = "/usr/share/doc";
 
 # Registering documents to dhelp
 sub RegisterDhelp {  # {{{
@@ -45,12 +43,10 @@ sub register_one_dhelp_document($) { # {{{
   if (defined $format_data) {
     my $file = $$format_data{'index'};
     $file =~ s/\/+/\//;
-carp "file = $file";
     # ensure the documentation is in an area dhelp can deal with
     if ( $file !~ /^$usd_dir\/([^\/]+)\/(.+)$/o ) {
-      carp "register_dhelp: skipping $file
-           because dhelp only knows about /usr/share/doc\n"
-            if $verbose;
+      &Warn ("register_dhelp: skipping $file
+           because dhelp only knows about /usr/share/doc");
   } else {
 
     my $dir=$1;
@@ -97,7 +93,7 @@ carp "file = $file";
   if (defined $new_dhelp_file) {
     push(@dhelp_data, @new_dhelp_data);
     @new_dhelp_data = ();
-    write_dhelp_file($new_dhelp_file, \@dhelp_data) if $exists_old_dhelp_file;
+    write_dhelp_file($new_dhelp_file, \@dhelp_data);
   }  
 
   $doc->set_status('Dhelp-file', $new_dhelp_file);
@@ -107,8 +103,9 @@ carp "file = $file";
 # read an existing dhelp file ignoring any entries from our document
 sub read_dhelp_file($$$) { # {{{
   my ($docid, $dhelp_file, $dhelp_data) = @_;
+  &Debug("Reading dhelp file: $dhelp_file");
 
-  open(FH, "<$dhelp_file") or croak "can't open file '$dhelp_file': $!\n";
+  open(FH, "<$dhelp_file") or return &Warn ("can't open file '$dhelp_file': $!\n");
   $_ = join('', <FH>);    # slurp in the file
 
 # <x-doc-base-id> may be anywhere in <item>
@@ -169,14 +166,16 @@ sub write_dhelp_file($$) { # {{{
 
   my $dir = &dirname($file);
 
+  &Debug("Writing dhelp file: $file");
+
   if (-f $file) {
     &Execute($dhelp_parse, '-d', $dir);
-    unlink $file or croak "can't unlink $file: $!"
+    unlink $file or &Warn ("can't unlink $file: $!");
   }
 
   return 0 if  ($#{$dhelp_data} < 0); # no data to write, the file already deleted
 
-  open (FH, ">$file") or croak "can't open file $file for wirting: $!";
+  open (FH, ">$file") or &Warn ("can't open file $file for wirting: $!");
   print FH join("\n\n", @$dhelp_data);
   close FH;
 

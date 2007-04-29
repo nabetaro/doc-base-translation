@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Utils.pm 63 2007-04-28 22:41:18Z robert $
+# $Id: Utils.pm 64 2007-04-29 15:07:26Z robert $
 #
 
 package Debian::DocBase::Utils;
@@ -39,7 +39,7 @@ sub HTMLEncodeDescription { # {{{
 
   return $text unless $do_convert;
 
-  $text = &html_encode($text, $do_convert);
+  $text = &HTMLEncode($text, $do_convert);
   my @lines=split(/\n/, $text);
   $text = "";
   my $in_pre = 0;
@@ -79,7 +79,7 @@ sub Execute() { # {{{
 
 
 sub Debug() { # {{{
-  print STDOUT join ' ', @_ if $debug;
+  print STDOUT (join ' ', @_  ). "\n" if $debug;
 } # }}}
 
 sub Inform() { # {{{

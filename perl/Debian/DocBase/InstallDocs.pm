@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 63 2007-04-28 22:41:18Z robert $
+# $Id: InstallDocs.pm 64 2007-04-29 15:07:26Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -11,13 +11,12 @@ use strict;
 use base qw(Exporter);
 use vars qw(@EXPORT);
 our @EXPORT = qw(SetMode InstallDocsMain
-                 $MODE_INSTALL $MODE_REMOVE $MODE_STATUS $MODE_REREGISTER $verbose);
+                 $MODE_INSTALL $MODE_REMOVE $MODE_STATUS $MODE_REREGISTER $verbose $debug);
 
 use Carp;
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
 use Debian::DocBase::Document;
-use Debian::DocBase::FilesListFile;
 use Debian::DocBase::DocBaseFile;
 use Debian::DocBase::Programs::Dhelp;
 use Debian::DocBase::Programs::Dwww;
@@ -42,7 +41,7 @@ sub SetMode($@) { # {{{
   my @args    = @_;
 
 
-  die "Conflicting modes: $mode != $newmode\n" if (defined $mode and $mode ne $newmode);
+  &croak("Internal error: mode already set: $mode, $newmode") if (defined $mode);
 
   $mode = $newmode;
 
@@ -135,7 +134,7 @@ sub InstallDocsMain($) { # {{{
 sub GetAllRegisteredDocumentIDs() { # {{{
   my @result = ();
   if (opendir(DIR, $DATA_DIR)) {
-    @result = grep { -f $DATA_DIR/$_ and s|^${DATA_DIR}/(\w+)\.status$|$1|o } readdir(DIR); 
+    @result = grep { -f "$DATA_DIR/$_" and s|^${DATA_DIR}/(\w+)\.status$|$1|o } readdir(DIR); 
     closedir DIR;
   }  
   return @result;
@@ -144,7 +143,7 @@ sub GetAllRegisteredDocumentIDs() { # {{{
 sub GetAllDocBaseFiles() { # {{{
   my @result = ();
   if (opendir(DIR, $CONTROL_DIR)) {
-    @result = grep { -f $CONTROL_DIR/$_ } readdir(DIR); 
+    @result = grep { -f "$CONTROL_DIR/$_" } readdir(DIR); 
     closedir DIR;
   }  
   return @result;

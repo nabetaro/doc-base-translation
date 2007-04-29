@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 63 2007-04-28 22:41:18Z robert $
+# $Id: Document.pm 64 2007-04-29 15:07:26Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -9,8 +9,8 @@ use strict;
 use warnings;
 
 use Debian::DocBase::Common;
+use Debian::DocBase::Utils;
 use Carp;
-use Dumpvalue;
 #use Scalar::Util qw(weaken);
 
 our %DOCUMENTS = ();
@@ -30,7 +30,8 @@ sub new { # {{{
         CONTROL_FILE_NAMES  => [], # temporary
         CONTROL_FILE  => {}, # temporary
         STATUS_DICT   => {},
-        STATUS_CHANGED=> 0
+        STATUS_CHANGED=> 0,
+        INVALID       => 1
     };
     bless($self, $class);
     $self->_read_status_file($documentId);
@@ -42,7 +43,6 @@ sub new { # {{{
 sub DESTROY { # {{{
   my $self = shift;
   delete $DOCUMENTS{$self->document_id()};
-  carp "Removing " .$self->document_id() . "\n"
 } # }}}
 
 # class function: return list of all proceseed documents
@@ -90,6 +90,7 @@ sub set_status() { # {{{
   } else {
      delete $self->{'STATUS_DICT'}->{$key};
   }
+  $self->write_status();
 }   # }}}
 
 sub format($$) { # {{{
@@ -107,40 +108,36 @@ sub _read_status_file { # {{{
   my $self  = shift;
   my $docid = $self->{'DOCUMENT_ID'};
   my $status_file = "$DATA_DIR/$docid.status";
-  return  unless -f $status_file;
-###  if (not -f $status_file) {
-###    return(0) if $ignore;
-###
-###    warn "Document `$docid' is not installed.\n";
-###    exit 1;
-###  }
-
-  my $status = {};
-  open(S,"$status_file")
-    or die "$status_file: cannot open status file for reading: $!";
-  while (<S>) {
-    chomp;
-    next if /^\s*$/o;
-    /^\s*(\S+):\s*(.*\S)\s*$/
-      or carp "syntax error in status file: $_" and return;
-    $$status{$1} = $2;
+  if (-f $status_file) {
+    &Debug ("Reading status file $status_file");
+    my $status = {};
+    open(S,"$status_file")
+      or return &Error("Cannot open status file $status_file for reading: $!");
+    while (<S>) {
+      chomp;
+      next if /^\s*$/o;
+      /^\s*(\S+):\s*(.*\S)\s*$/
+        or carp "syntax error in status file: $_" and return;
+      $$status{$1} = $2;
+    }
+    close(S)
+      or croak "$status_file: cannot close status file: $!";
+  
+    push(@{$self->{'CONTROL_FILE_NAMES'}}, $$status{'Control-File'});
+    delete $$status{'Control-File'};
+     $self->{'STATUS_DICT'} = $status;
   }
-  close(S)
-    or croak "$status_file: cannot close status file: $!";
-
-  push(@{$self->{'CONTROL_FILE_NAMES'}}, $$status{'Control-File'});
-  delete $$status{'Control-File'};
-   $self->{'STATUS_DICT'} = $status;
+  $self->{'INVALID'} = 0;
 
 } # }}}
 
 sub write_status { # {{{
   my $self = shift;
   my $docid = $self->document_id();
-#  Dumpvalue->new()->dumpValue(\$self);
-  return unless $self->status_changed();
+#  return unless $self->status_changed();
 
   my $status_file = "$DATA_DIR/$docid.status";
+  &Debug ("Writing status information into $status_file");
 
   if ($#{$self->{'CONTROL_FILE_NAMES'}} < 0) {
     unlink($status_file) if -e $status_file;

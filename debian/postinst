@@ -11,10 +11,35 @@ compat_ver=0.8.1
 bad_ver=0.7.13
 VERBOSE=
 
+ctrldir="/usr/share/$package"
+infodir="/var/lib/$package/info"
+
 if [ "$DEBUG" ]; then
     echo entering $package postinst
     set -x
 fi
+
+remove_obsolete( ) {
+	# remove dhelp files
+	find $infodir -maxdepth 1 -type f -name "*.list" | xargs grep -h '^/.*/.dhelp' |  \
+	while read f; do 
+		[ -e "$f" ] || continue;
+		[ -x /usr/sbin/dhelp_parse ] && /usr/sbin/dhelp_parse -d "`dirname "$f"`" || true
+		rm -f "$f"
+	done
+
+	find $infodir -maxdepth 1 -type f -name "*.list" | xargs rm -f
+	
+	# remove scrollkeeper files
+	find $infodir -maxdepth 1 -type f -name "*.status" | \
+	xargs sed -ne 's/^Scrollkeeper-omf-file: *\(.*-C.omf\) *$/\1/p'  |  \
+	while read f; do 
+		[ -e "$f" ] || continue;
+		rm -f "$f"
+		rmdir --ignore-fail-on-nonempty "`dirname "$f"`" || true
+	done
+}
+
 
 reinstall_docs ( ) {
     
@@ -22,21 +47,7 @@ reinstall_docs ( ) {
     num=`find /usr/share/$package/ -maxdepth 1 -type f | wc -l`
     echo "(re)registering $num documents from /usr/share/$package ..." >&2
 
-    for file in /var/lib/doc-base/info/*.status; do
-    	[ -f "$file" ] && install-docs ${VERBOSE} --no-update-menus -r "`basename "$file" .status`" || true
-    done
-
-    for file in /usr/share/$package/*; do
-        [ -f "$file" ] && install-docs ${VERBOSE} --no-update-menus -i "$file" || true  # don't abort on failure
-    done
-
-    if [ -x /usr/bin/update-menus ]; then
-        /usr/bin/update-menus
-    fi
-    
-    if [ -x /usr/bin/scrollkeeper-update ]; then
-        /usr/bin/scrollkeeper-update
-    fi
+    install-docs ${VERBOSE} --register-all || true  # don't abort on failure
 }
 
 case "$1" in
