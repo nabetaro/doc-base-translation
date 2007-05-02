@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 64 2007-04-29 15:07:26Z robert $
+# $Id: Document.pm 65 2007-05-02 12:03:51Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -10,6 +10,7 @@ use warnings;
 
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
+use Debian::DocBase::DocBaseFile qw(PARSE_FULL);
 use Carp;
 #use Scalar::Util qw(weaken);
 
@@ -28,7 +29,7 @@ sub new { # {{{
         SECTION       => undef,
         FORMAT_LIST   => {},
         CONTROL_FILE_NAMES  => [], # temporary
-        CONTROL_FILE  => {}, # temporary
+        CONTROL_FILE  => undef, # temporary
         STATUS_DICT   => {},
         STATUS_CHANGED=> 0,
         INVALID       => 1
@@ -57,23 +58,39 @@ sub document_id() { # {{{
 
 sub abstract() { # {{{
   my $self = shift;
+  return "" unless $self->_has_control_files();
+  $self->_read_control_files();
   return $self->{'CONTROL_FILE'}->{'ABSTRACT'};
 } # }}}
 
 sub title() { # {{{
   my $self = shift;
+  return "" unless $self->_has_control_files();
+  $self->_read_control_files();
   return $self->{'CONTROL_FILE'}->{'TITLE'};
 } # }}}
 
 sub section() { # {{{
   my $self = shift;
+  return "" unless $self->_has_control_files();
+  $self->_read_control_files();
   return $self->{'CONTROL_FILE'}->{'SECTION'};
 } # }}}
 
 sub author() { # {{{
   my $self = shift;
+  return "" unless $self->_has_control_files();
+  $self->_read_control_files();
   return $self->{'CONTROL_FILE'}->{'AUTHOR'};
 }   # }}}
+
+sub format($$) { # {{{
+  my $self = shift;
+  my $format_name = shift;
+  return undef unless $self->_has_control_files();
+  $self->_read_control_files();
+  return $self->{'CONTROL_FILE'}->format($format_name);
+} # }}}
 
 sub get_status() { # {{{
   my $self = shift;
@@ -93,11 +110,11 @@ sub set_status() { # {{{
   $self->write_status();
 }   # }}}
 
-sub format($$) { # {{{
+
+sub _has_control_files() {
   my $self = shift;
-  my $format_name = shift;
-  return $self->{'CONTROL_FILE'}->format($format_name);
-} # }}}
+  return $#{$self->{'CONTROL_FILE_NAMES'}} > -1;
+}  
 
 sub status_changed() { # {{{
   my $self = shift;
@@ -123,7 +140,7 @@ sub _read_status_file { # {{{
     close(S)
       or croak "$status_file: cannot close status file: $!";
   
-    push(@{$self->{'CONTROL_FILE_NAMES'}}, $$status{'Control-File'});
+    push(@{$self->{'CONTROL_FILE_NAMES'}}, $$status{'Control-File'}) if defined $$status{'Control-File'};
     delete $$status{'Control-File'};
      $self->{'STATUS_DICT'} = $status;
   }
@@ -134,27 +151,34 @@ sub _read_status_file { # {{{
 sub write_status { # {{{
   my $self = shift;
   my $docid = $self->document_id();
-#  return unless $self->status_changed();
 
   my $status_file = "$DATA_DIR/$docid.status";
   &Debug ("Writing status information into $status_file");
 
-  if ($#{$self->{'CONTROL_FILE_NAMES'}} < 0) {
-    unlink($status_file) if -e $status_file;
-    return;
-  }
 
 
   open(S,">$status_file")
     or croak "$status_file: cannot open status file for writing: $!";
-  print S "Control-File: $self->{'CONTROL_FILE_NAMES'}[0]\n";
+  print S "Control-File: $self->{'CONTROL_FILE_NAMES'}[0]\n" if $self->_has_control_files();
   my $status = $self->{'STATUS_DICT'};
   for my $k (sort keys %$status) {
     print S "$k: $$status{$k}\n";
   }
   close(S) or croak "$status_file: cannot close status file: $!";
 
+  if (-z $status_file) {
+    unlink $status_file;
+    &Debug ("Removing status file $status_file");
+  }    
+
   $self->{'STATUS_CHANGED'} = 0;
+} # }}}
+
+
+sub _read_control_files { # {{{
+  my $self = shift;
+
+  $self->{'CONTROL_FILE'} = Debian::DocBase::DocBaseFile->new($self->{'CONTROL_FILE_NAMES'}[0], PARSE_FULL) unless defined $self->{'CONTROL_FILE'};
 } # }}}
 
 sub display_status_information { # {{{
@@ -163,52 +187,74 @@ sub display_status_information { # {{{
   my $status_file = "$DATA_DIR/$docid.status";
   return unless -f $status_file;
   print "---document-information---\n";
+
+  $self->_read_control_files();
+
+  my $tmp = undef;
   print "Document: " . $self->document_id() ."\n";
-  print "Control-File: $self->{'CONTROL_FILE_NAMES'}[0]\n";
+  if ($self->_has_control_files()) {
+    print "Abstract: $tmp\n"  if (($tmp = $self->abstract()) ne "");
+    print "Author: $tmp\n"    if (($tmp = $self->author()) ne "");
+    print "Section: $tmp\n"   if (($tmp = $self->section()) ne "");
+    print "Title: $tmp\n"     if (($tmp = $self->title()) ne "");
+  
+    for my $format (@supported_formats) {
+      my $format_data = $self->format($format);
+      next unless $format_data;
+      print "\n";
+      print "---format-description---\n";
+      print "Format: $format_data->{'format'}\n";
+      print "Index: $tmp\n" if (defined ($tmp=$format_data->{'index'}));
+      print "Files: $tmp\n" if (defined ($tmp=$format_data->{'files'}));
+    }      
+  }    
+
+  print "\n";
+  print "---status-information---\n";
+  print "Control-File: $self->{'CONTROL_FILE_NAMES'}[0]\n" if $self->_has_control_files();
   my $status = $self->{'STATUS_DICT'};
-  for my $k (keys %$status) {
-    print "$k: $$status{$k}\n";
+  for my $k (sort keys %$status) {
+    print "$k: $status->{$k}\n";
   }
-####  for my  $k (sort keys %$doc_data) {
-####    next if $k eq 'document';
-####    my $kk = $k;
-####    substr($kk,0,1) =~ tr/a-z/A-Z/;
-####    print "$kk: $$doc_data{$k}\n";
-####  }
-####  for my $format_data (@format_list) {
-####    print "\n";
-####    print "---format-description---\n";
-####    print "Format: $$format_data{'format'}\n";
-####    for my $k (sort keys %$format_data) {
-####      next if $k eq 'format';
-####      my $kk = $k;
-####      substr($kk,0,1) =~ tr/a-z/A-Z/;
-####      print "$kk: $$format_data{$k}\n";
-####    }
-####  }
-####  print "\n";
-####  print "---status-information---\n";
-####  for my $k (sort keys %status) {
-####    print "$k: $status{$k}\n";
-####  }
 } # }}}
 
 sub register() { # {{{
   my $self          = shift;
   my $doc_base_file = shift;
 
-  $self->{'CONTROL_FILE_NAMES'} = [$doc_base_file->{'FILE_NAME'}];
+# FIXME: should check if new file name equals old file name
+  
+  if ($doc_base_file->invalid()) {
+    $self->unregister_all(); # FIXME, temporary
+    return &Warn($doc_base_file->source_file_name() . " contains errors, not registering");
+  }    
+    
+  $self->{'CONTROL_FILE_NAMES'} = [$doc_base_file->source_file_name()];
   $self->{'CONTROL_FILE'} = $doc_base_file;
   $self->{'STATUS_CHANGED'} = 1;
+  $self->write_status();
 } # }}}
 
 sub unregister() { # {{{
   my $self          = shift;
   my $doc_base_file = shift;
 
- $self->{'CONTROL_FILE_NAMES'} = [];
- $self->{'CONTROL_FILE'} = {};
- $self->{'STATUS_CHANGED'} = 1;
+  &Warn("File " . $doc_base_file->source_file_name() . "is not registered, cannot remove")
+    if ($#{$self->{'CONTROL_FILE_NAMES'}} < 0);
+      
+
+# FIXME: temporary
+  $self->unregister_all();  
+} # }}}
+
+sub unregister_all() { # {{{
+  my $self          = shift;
+  my $doc_base_file = shift;
+
+  $self->{'CONTROL_FILE_NAMES'} = [];
+  $self->{'CONTROL_FILE'} = {};
+  $self->{'STATUS_CHANGED'} = 1;
+  $self->write_status();
 } # }}}
 
 1;

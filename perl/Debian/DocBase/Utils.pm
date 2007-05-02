@@ -1,6 +1,6 @@
-# vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
+# vim:cindent:ts=2:sw=2:et:fdm=marker:cms=r #\ %s
 #
-# $Id: Utils.pm 64 2007-04-29 15:07:26Z robert $
+# $Id: Utils.pm 65 2007-05-02 12:03:51Z robert $
 #
 
 package Debian::DocBase::Utils;
@@ -91,7 +91,8 @@ sub Warn() { # {{{
 } # }}}
 
 sub Error() { # {{{
-  print STDERR join ' ', @_ if $verbose;
+  print STDERR join ' ', @_;
+  $exitval = 1;
 } # }}}
 
 

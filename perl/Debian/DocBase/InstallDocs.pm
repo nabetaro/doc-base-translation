@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 64 2007-04-29 15:07:26Z robert $
+# $Id: InstallDocs.pm 65 2007-05-02 12:03:51Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -128,13 +128,14 @@ sub InstallDocsMain($) { # {{{
   $doc  = undef;
   $docid = undef;
   $docfile = undef;
+
 } # }}}
 
 
 sub GetAllRegisteredDocumentIDs() { # {{{
   my @result = ();
   if (opendir(DIR, $DATA_DIR)) {
-    @result = grep { -f "$DATA_DIR/$_" and s|^${DATA_DIR}/(\w+)\.status$|$1|o } readdir(DIR); 
+    @result = grep { -f "$DATA_DIR/$_" and s|^(\w+)\.status$|$1|o } readdir(DIR); 
     closedir DIR;
   }  
   return @result;
@@ -143,7 +144,7 @@ sub GetAllRegisteredDocumentIDs() { # {{{
 sub GetAllDocBaseFiles() { # {{{
   my @result = ();
   if (opendir(DIR, $CONTROL_DIR)) {
-    @result = grep { -f "$CONTROL_DIR/$_" } readdir(DIR); 
+    @result = grep { $_ = "$CONTROL_DIR/$_" if -f "$CONTROL_DIR/$_" } readdir(DIR); 
     closedir DIR;
   }  
   return @result;

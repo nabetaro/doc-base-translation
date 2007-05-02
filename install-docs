@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs 64 2007-04-29 15:07:26Z robert $
+# $Id: install-docs 65 2007-05-02 12:03:51Z robert $
 
 use warnings;
 use strict;
@@ -9,12 +9,14 @@ use lib 'perl';
 
 
 # declared in Debian::DocBase::InstallDocs;
-use vars qw($fully_functional $verbose $debug $MODE_INSTALL $MODE_REMOVE $MODE_REREGISTER $MODE_STATUS);
+use vars qw($fully_functional $verbose $debug $exit_val $MODE_INSTALL $MODE_REMOVE $MODE_REREGISTER $MODE_STATUS);
 
 BEGIN {
   $fully_functional = eval {
                               require Pod::Usage;
                               import Pod::Usage qw(pod2usage);
+                              require Debian::DocBase::Common;
+                              import Debian::DocBase::Common;
                               require Debian::DocBase::InstallDocs;
                               import Debian::DocBase::InstallDocs;
                               1;
@@ -72,6 +74,12 @@ description of the control file syntax and grammar.
 exit(1) if not $fully_functional and $#ARGV < 0;
 pod2usage(-verbose => 0, -exitval => 1) if $#ARGV < 0 ;
 while (my $arg = shift @ARGV) {
+
+  # try to handle concatenation of options e.g. `-vdi' instead of `-v -d -i'
+  if ($arg =~ /^(-\w)(\w+)$/) {
+    $arg = $1;
+    unshift(@ARGV, "-".$2)
+  }      
 
   if (($arg eq '-v') or ($arg eq '--verbose')) { # {{{ 
 
@@ -131,7 +139,7 @@ Install the documentation described by the control file I<file>.
 
 =cut
     # install new docs 
-    ($#ARGV == -1) and die "Arguments missing for `install'\n";
+    ($#ARGV == -1) and die "Arguments missing for `install'";
     &CheckFunctionality();
     if (! -e $force_reregister_flagfile) {
         &SetMode($MODE_INSTALL, @ARGV);
@@ -149,7 +157,7 @@ I<file>.
 
 =cut
     # remove old docs # 
-    ($#ARGV == -1) and die "Arguments missing for `remove'\n";
+    ($#ARGV == -1) and die "Arguments missing for `remove'";
     &CheckFunctionality();
     &SetMode($MODE_REMOVE, @ARGV);
     last; # }}}
@@ -163,7 +171,7 @@ Document identifiers are tags which are set in the control
 file, and usually correspond to the package name.
 
 =cut
-    ($#ARGV == -1) or die "Too many arguments missing for `register-all'\n";
+    ($#ARGV == -1) or die "Too many arguments missing for `register-all'";
     &CheckFunctionality();
     &SetMode($MODE_REREGISTER);
     last; # }}}
@@ -177,7 +185,7 @@ Document identifiers are tags which are set in the control
 file, and usually correspond to the package name.
 
 =cut
-    ($#ARGV == -1) and die "Arguments missing for `status'\n";
+    ($#ARGV == -1) and die "Arguments missing for `status'";
     &SetMode($MODE_STATUS, @ARGV);
     last; # }}}
 
@@ -216,6 +224,8 @@ sub CheckFunctionality() { # {{{
 &InstallDocsMain($do_dwww_update);
 
 unlink ($force_reregister_flagfile) if -e $force_reregister_flagfile;
+
+exit ($exitval);
 
 __DATA__
 

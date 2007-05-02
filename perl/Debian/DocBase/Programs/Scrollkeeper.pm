@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 63 2007-04-28 22:41:18Z robert $
+# $Id: Scrollkeeper.pm 65 2007-05-02 12:03:51Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -15,6 +15,7 @@ use vars qw(@ISA @EXPORT);
 
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
+use File::Basename qw(dirname);
 
 
 our $omf_locations = "/var/lib/doc-base/omf";
@@ -43,12 +44,15 @@ our @omf_formats = (
                         'text' 
                  );
 
-our %mapping;
+our %mapping = (undef=>undef);
 
 
 sub RegisterScrollkeeper() { # {{{
   my @documents = @_;
   my $do_update = 0;
+
+  # read in doc-base -> scrollkeeper mappings unless already read
+  %mapping = &read_map($scrollkeeper_map_file);
 
   foreach my $doc (@documents) {
     my $format_data;
@@ -62,6 +66,7 @@ sub RegisterScrollkeeper() { # {{{
 
       my $file = defined $$format_data{'index'} ? $$format_data{'index'} : $$format_data{'files'};
       next unless -f $file;
+
       $new_omf_file = write_omf_file($doc, $file,$omf_format);
       $do_update    = 1;
     }
@@ -89,7 +94,7 @@ sub RegisterScrollkeeper() { # {{{
 sub read_map { # {{{
   my ($file) = @_;
   my %map;
-  open (MAP, "<$file") or die "Could not open $file: $!";
+  open (MAP, "<$file") or &croak( "Could not open $file: $!");
   while(<MAP>) {
           chomp;
           my ($lv,$rv) = split(/: /);
@@ -111,11 +116,12 @@ sub remove_omf_file($) { # {{{
   unlink($omf_file) or &croak ("$omf_file: could not delete file: $!");
 
   #check to see if the directory is now empty. if so, kill it.
-  opendir(DIR, $omf_dir);
-  if (readdir DIR == 0) {
-    rmdir($omf_dir) or &croak ("$omf_dir: could not delete directory: $!");
-  }
-  closedir DIR;
+  if (opendir(DIR, $omf_dir)) {
+    if (readdir DIR == 0) {
+      rmdir($omf_dir) or &croak ("$omf_dir: could not delete directory: $!");
+    } 
+    closedir DIR;
+  }    
 } # }}}
 
 
@@ -148,7 +154,7 @@ sub write_omf_file($$$) { # {{{
   print OMF "\t\t<creator>".&HTMLEncode($doc->author(), 1)."</creator>\n";
   print OMF "\t\t<title>".&HTMLEncode($doc->title(), 1)."</title>\n";
   print OMF "\t\t<date>$date</date>\n";
-  print OMF "\t\t<subject category=\"".map_docbase_to_scrollkeeper($doc->section())."\"/>\n";
+  print OMF "\t\t<subject category=\"".&map_docbase_to_scrollkeeper($doc->section())."\"/>\n";
   print OMF "\t\t<description>".&HTMLEncode($doc->abstract(), 1)."</description>\n";
   print OMF "\t\t<format $omf_mime_types{$format} />\n";
   print OMF "\t\t<identifier url=\"$file\"/>\n";
@@ -163,6 +169,4 @@ sub write_omf_file($$$) { # {{{
 } # }}}
 
 
-# read in doc-base -> scrollkeeper mappings
-%mapping = read_map($scrollkeeper_map_file);
 1;
