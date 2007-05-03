@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 65 2007-05-02 12:03:51Z robert $
+# $Id: Document.pm 66 2007-05-03 23:25:56Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -31,7 +31,6 @@ sub new { # {{{
         CONTROL_FILE_NAMES  => [], # temporary
         CONTROL_FILE  => undef, # temporary
         STATUS_DICT   => {},
-        STATUS_CHANGED=> 0,
         INVALID       => 1
     };
     bless($self, $class);
@@ -102,12 +101,20 @@ sub set_status() { # {{{
   my $self = shift;
   my $key  = shift;
   my $value = shift;
+  my $oldvalue = $self->{'STATUS_DICT'}->{$key};
+
   if (defined $value) {
     $self->{'STATUS_DICT'}->{$key} = $value;
   } else {
      delete $self->{'STATUS_DICT'}->{$key};
   }
-  $self->write_status();
+
+  if ( (defined $value xor defined $oldvalue)
+       or (defined $value and $value ne $oldvalue) ) {
+    $self->_write_status_file();
+  } else {
+    &Debug("Status of $key in " . $self->document_id() . " not changed");
+  }    
 }   # }}}
 
 
@@ -116,10 +123,6 @@ sub _has_control_files() {
   return $#{$self->{'CONTROL_FILE_NAMES'}} > -1;
 }  
 
-sub status_changed() { # {{{
-  my $self = shift;
-  return $self->{'STATUS_CHANGED'};
-}   # }}}
 
 sub _read_status_file { # {{{
   my $self  = shift;
@@ -148,7 +151,7 @@ sub _read_status_file { # {{{
 
 } # }}}
 
-sub write_status { # {{{
+sub _write_status_file { # {{{
   my $self = shift;
   my $docid = $self->document_id();
 
@@ -166,12 +169,12 @@ sub write_status { # {{{
   }
   close(S) or croak "$status_file: cannot close status file: $!";
 
+  # remove file if it's empty
   if (-z $status_file) {
     unlink $status_file;
     &Debug ("Removing status file $status_file");
   }    
 
-  $self->{'STATUS_CHANGED'} = 0;
 } # }}}
 
 
@@ -231,8 +234,7 @@ sub register() { # {{{
     
   $self->{'CONTROL_FILE_NAMES'} = [$doc_base_file->source_file_name()];
   $self->{'CONTROL_FILE'} = $doc_base_file;
-  $self->{'STATUS_CHANGED'} = 1;
-  $self->write_status();
+  $self->_write_status_file();
 } # }}}
 
 sub unregister() { # {{{
@@ -253,8 +255,7 @@ sub unregister_all() { # {{{
 
   $self->{'CONTROL_FILE_NAMES'} = [];
   $self->{'CONTROL_FILE'} = {};
-  $self->{'STATUS_CHANGED'} = 1;
-  $self->write_status();
+  $self->_write_status_file();
 } # }}}
 
 1;

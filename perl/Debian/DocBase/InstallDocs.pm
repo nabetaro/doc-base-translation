@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 65 2007-05-02 12:03:51Z robert $
+# $Id: InstallDocs.pm 66 2007-05-03 23:25:56Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -11,7 +11,8 @@ use strict;
 use base qw(Exporter);
 use vars qw(@EXPORT);
 our @EXPORT = qw(SetMode InstallDocsMain
-                 $MODE_INSTALL $MODE_REMOVE $MODE_STATUS $MODE_REREGISTER $verbose $debug);
+                 $MODE_INSTALL $MODE_REMOVE $MODE_STATUS $MODE_REREGISTER $MODE_CHECK 
+                 $verbose $debug);
 
 use Carp;
 use Debian::DocBase::Common;
@@ -28,6 +29,7 @@ our $MODE_INSTALL    = 'install';
 our $MODE_REMOVE     = 'remove';
 our $MODE_REREGISTER = 'reregister';
 our $MODE_STATUS     = 'status';
+our $MODE_CHECK      = 'check';
 
 our $mode       = undef;
 our @arguments  = undef;
@@ -44,6 +46,8 @@ sub SetMode($@) { # {{{
   &croak("Internal error: mode already set: $mode, $newmode") if (defined $mode);
 
   $mode = $newmode;
+
+  &Inform("Value of --rootdir option ignored") if ($mode ne $MODE_CHECK) and ($opt_rootdir ne "");
 
   if ($#args == 0 and $args[0] eq '-') {
     # get list from stdin
@@ -92,21 +96,40 @@ sub InstallDocsMain($) { # {{{
         $doc     = Debian::DocBase::Document->new($docid);
 
         $doc->unregister($docfile);
-        $doc->write_status();
       } 
     }
   } # }}}
 
   if ($mode eq $MODE_INSTALL or $mode eq $MODE_REREGISTER) { # {{{
     foreach $file (@arguments) {
-      next unless -f $file;
+      if (! -f $file) {
+        &Error("Can't read doc-base file `$file'");
+        next;
+      }        
       $docfile = Debian::DocBase::DocBaseFile->new($file, PARSE_FULL);
       $docid   = $docfile->document_id();
       next unless defined $docid;
       $doc     = Debian::DocBase::Document->new($docid);
 
-      $doc->register($docfile)   if ($mode eq $MODE_INSTALL or $mode eq $MODE_REREGISTER);
-      $doc->write_status();
+      $doc->register($docfile);
+    }
+  } # }}}
+
+  if ($mode eq $MODE_CHECK) { # {{{
+    foreach $file (@arguments) {
+      if (! -f $file) {
+        &Error("Can't read doc-base file `$file'");
+        next;
+      }        
+
+      $docfile = Debian::DocBase::DocBaseFile->new($file, PARSE_FULL);
+      if ($docfile->invalid()) {
+          &Inform("`$file' contains errors, won't be registered");
+      } elsif ((my $cnt = $docfile->warn_err_count()) > 0) { 
+          &Inform("`$file' contains $cnt warnings or non-fatal errors");
+      } else {
+          &Inform("No problems found while parsing `$file'");
+     }          
     }
   } # }}}
 
@@ -128,6 +151,9 @@ sub InstallDocsMain($) { # {{{
   $doc  = undef;
   $docid = undef;
   $docfile = undef;
+
+  # don't fail on reregistering docs
+  $exitval = 0 if $mode eq $MODE_REREGISTER;
 
 } # }}}
 

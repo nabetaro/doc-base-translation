@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 65 2007-05-02 12:03:51Z robert $
+# $Id: Scrollkeeper.pm 66 2007-05-03 23:25:56Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -9,7 +9,7 @@ use Exporter();
 use strict;
 use warnings;
 
-use vars qw(@ISA @EXPORT);  
+use vars qw(@ISA @EXPORT);
 @ISA = qw(Exporter);
 @EXPORT = qw(RegisterScrollkeeper);
 
@@ -26,7 +26,7 @@ our $scrollkeeper_gen_seriesid = "/usr/bin/scrollkeeper-gen-seriesid";
 our $scrollkeeper_map_file     = "/usr/share/doc-base/data/scrollkeeper.map";
 
 
-our %omf_mime_types = ( 
+our %omf_mime_types = (
                             'html'        => 'mime="text/html"',
                             'text'        => 'mime="text/plain"',
                             'pdf'         => 'mime="application/pdf"',
@@ -41,7 +41,7 @@ our @omf_formats = (
                         'pdf',
                         'postscript',
                         'dvi',
-                        'text' 
+                        'text'
                  );
 
 our %mapping = (undef=>undef);
@@ -59,23 +59,27 @@ sub RegisterScrollkeeper() { # {{{
 
     my $old_omf_file = $doc->get_status('Scrollkeeper-omf-file');
     my $new_omf_file = undef;
+    my $omf_category = &map_docbase_to_scrollkeeper($doc->section());
 
-    for my $omf_format (@omf_formats) {
-      $format_data = $doc->format($omf_format);
-      next unless defined $format_data;
+    if (defined $omf_category) {
+      for my $omf_format (@omf_formats) {
+        $format_data = $doc->format($omf_format);
+        next unless defined $format_data;
 
-      my $file = defined $$format_data{'index'} ? $$format_data{'index'} : $$format_data{'files'};
-      next unless -f $file;
+        my $file = defined $$format_data{'index'} ? $$format_data{'index'} : $$format_data{'files'};
+        next unless -f $file;
 
-      $new_omf_file = write_omf_file($doc, $file,$omf_format);
-      $do_update    = 1;
+        $new_omf_file = write_omf_file($doc, $file,$omf_format,$omf_category);
+        $do_update    = 1;
+        last; # register only the first format found
+      }
     }
-     
+
     # remove old omf file;
     if (defined $old_omf_file and not defined $new_omf_file) {
       remove_omf_file($old_omf_file);
       $do_update = 1;
-    }  
+    }
 
     $doc->set_status('Scrollkeeper-omf-file', $new_omf_file);
   }
@@ -109,24 +113,24 @@ sub read_map { # {{{
 sub map_docbase_to_scrollkeeper { # {{{
   return $mapping{lc($_[0])};
 } # }}}
-  
+
 sub remove_omf_file($) { # {{{
   my $omf_file = shift;
   my $omf_dir = dirname($omf_file);
-  unlink($omf_file) or &croak ("$omf_file: could not delete file: $!");
+  unlink($omf_file) or return &Error ("$omf_file: could not delete file: $!");
 
   #check to see if the directory is now empty. if so, kill it.
   if (opendir(DIR, $omf_dir)) {
-    if (readdir DIR == 0) {
-      rmdir($omf_dir) or &croak ("$omf_dir: could not delete directory: $!");
-    } 
+    if (grep { $_ !~ /^\.\.?$/ } readdir DIR) {
+      rmdir($omf_dir) or &Error ("$omf_dir: could not delete directory: $!");
+    }
     closedir DIR;
-  }    
+  }
 } # }}}
 
 
-sub write_omf_file($$$) { # {{{
-  my ($doc, $file, $format) = @_;
+sub write_omf_file($$$$) { # {{{
+  my ($doc, $file, $format, $category) = @_;
   my $docid = $doc->document_id();
   my $omf_file = "$omf_locations/$docid/$docid-C.omf";
   my $date;
@@ -144,7 +148,7 @@ sub write_omf_file($$$) { # {{{
 
   open(OMF, ">$omf_file")
     or die "$omf_file: cannot open OMF file for writing: $!";
-  
+
   #now for the boiler plate XML stuff
   print OMF "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
   print OMF "<!DOCTYPE omf PUBLIC \"-//OMF//DTD Scrollkeeper OMF Variant V1.0//EN\" \"http://scrollkeeper.sourceforge.net/dtds/scrollkeeper-omf-1.0/scrollkeeper-omf.dtd\">\n";
@@ -154,7 +158,7 @@ sub write_omf_file($$$) { # {{{
   print OMF "\t\t<creator>".&HTMLEncode($doc->author(), 1)."</creator>\n";
   print OMF "\t\t<title>".&HTMLEncode($doc->title(), 1)."</title>\n";
   print OMF "\t\t<date>$date</date>\n";
-  print OMF "\t\t<subject category=\"".&map_docbase_to_scrollkeeper($doc->section())."\"/>\n";
+  print OMF "\t\t<subject category=\"$category\"/>\n";
   print OMF "\t\t<description>".&HTMLEncode($doc->abstract(), 1)."</description>\n";
   print OMF "\t\t<format $omf_mime_types{$format} />\n";
   print OMF "\t\t<identifier url=\"$file\"/>\n";

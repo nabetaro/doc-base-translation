@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 65 2007-05-02 12:03:51Z robert $
+# $Id: DocBaseFile.pm 66 2007-05-03 23:25:56Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -45,6 +45,7 @@ sub new { # {{{
         FORMAT_LIST   => {},
         FILE_NAME     => $filename,
         PARSE_FLAG    => 0,
+        WARNERR_CNT   => 0, # errors/warnings count
         INVALID       => 1
     };
     bless($self, $class);
@@ -112,6 +113,10 @@ sub invalid() { # {{{
   return $self->{'INVALID'};
 } # }}}
 
+sub warn_err_count() { # {{{
+  my $self = shift;
+  return $self->{'WARNERR_CNT'};
+} # }}}
 
 # Parsing errors routine
 # The first argument should be
@@ -126,6 +131,7 @@ sub _prserr($$) { # {{{
   my $filepos =  "`" . $self->source_file_name()  . ((defined $.) ? "', line $." : "");
 
 
+  $self->{'WARNERR_CNT'}++;
   $self->{'INVALID'} = 1 if $flag != PRS_WARN_IGN;
 
   if ($flag == PRS_FATAL_ERR) {
@@ -290,8 +296,9 @@ sub _read_control_file { # {{{
        }
 
        # c) does the index file exist?
-       if (not -e $tmp) {
-        $self->_prserr(PRS_WARN_IGN, "file `$$format_data{'index'}' does not exist");
+       if (not -e $opt_rootdir.$tmp) {
+        $self->_prserr(PRS_WARN_IGN, "file `$$format_data{'index'}' does not exist" . 
+                       ($opt_rootdir eq "" ? "" : " (using `$opt_rootdir' as the root directory)"));
         next;
       }
     }
@@ -315,12 +322,14 @@ sub _read_control_file { # {{{
     }
 
    # c) do files exist ?
-   if (not grep { &bsd_glob($_, GLOB_NOSORT) }  @masks) {
-      $self->_prserr(PRS_WARN_IGN, "file mask `" . join(' ', @masks) . "' does not match any files");
+   if (not grep { &bsd_glob($opt_rootdir.$_, GLOB_NOSORT) }  @masks) {
+      $self->_prserr(PRS_WARN_IGN, "file mask `" . join(' ', @masks) . "' does not match any files" .
+                       ($opt_rootdir eq "" ? "" : " (using `$opt_rootdir' as the root directory)"));
       next;
    }
 
    $self->{FORMAT_LIST}->{$format} = $format_data;
+  } continue { 
    $format_data = {};
   }
 

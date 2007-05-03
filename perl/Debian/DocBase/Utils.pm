@@ -1,6 +1,6 @@
-# vim:cindent:ts=2:sw=2:et:fdm=marker:cms=r #\ %s
+# vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Utils.pm 65 2007-05-02 12:03:51Z robert $
+# $Id: Utils.pm 66 2007-05-03 23:25:56Z robert $
 #
 
 package Debian::DocBase::Utils;
@@ -78,20 +78,20 @@ sub Execute() { # {{{
 } # }}}
 
 
-sub Debug() { # {{{
-  print STDOUT (join ' ', @_  ). "\n" if $debug;
+sub Debug($) { # {{{
+  print STDOUT (join ' ', @_ ) . "\n" if $opt_debug;
 } # }}}
 
-sub Inform() { # {{{
-  print STDOUT join ' ', @_ if $verbose;
+sub Inform($) { # {{{
+  print STDOUT (join ' ', @_) . "\n";
 } # }}}
 
-sub Warn() { # {{{
-  print STDERR join ' ', @_ if $verbose;
+sub Warn($) { # {{{
+  print STDERR (join ' ', @_) . "\n" if $opt_verbose;
 } # }}}
 
-sub Error() { # {{{
-  print STDERR join ' ', @_;
+sub Error($) { # {{{
+  print STDERR (join ' ', @_) . "\n";
   $exitval = 1;
 } # }}}
 

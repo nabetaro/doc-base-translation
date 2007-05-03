@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs 65 2007-05-02 12:03:51Z robert $
+# $Id: install-docs 66 2007-05-03 23:25:56Z robert $
 
 use warnings;
 use strict;
@@ -9,7 +9,7 @@ use lib 'perl';
 
 
 # declared in Debian::DocBase::InstallDocs;
-use vars qw($fully_functional $verbose $debug $exit_val $MODE_INSTALL $MODE_REMOVE $MODE_REREGISTER $MODE_STATUS);
+use vars qw($fully_functional $opt_verbose $opt_debug $exitval $MODE_INSTALL $MODE_REMOVE $MODE_REREGISTER $MODE_STATUS $MODE_CHECK);
 
 BEGIN {
   $fully_functional = eval {
@@ -49,6 +49,8 @@ my $force_reregister_flagfile = "/var/lib/doc-base/info/FORCE-REREGISTER.flag";
  install-docs [options] -R | --register-all
 
  install-docs [options] -s | --status docid [ docid ... ]
+
+ install-docs [options] -c | --check file [ file ... ]
  
  install-docs -h | --help
 
@@ -88,7 +90,7 @@ while (my $arg = shift @ARGV) {
 Operate verbosely.
 
 =cut
-    $verbose = 1;
+    $opt_verbose = 1;
     next;  # }}}
 
    } elsif (($arg eq '-d') or ($arg eq '--debug')) { # {{{ 
@@ -112,6 +114,20 @@ and L<scrollkeeper-update(8)>.
     $do_dwww_update = 0;
     next; # }}}
 
+   } elsif ($arg eq '--rootdir') { # {{{
+
+=item B<--rootdir> I<dir>
+
+Set the root directory to I<dir> instead of `"I</>'. Usefull and valid only with 
+B<--check> (see `Actions' below).
+
+=cut
+    ($#ARGV == -1) and die "Arguments missing for `rootdir'";
+    $arg = shift @ARGV;
+    -d $arg or die "`$arg' does not exist or is not a directory";
+    ($opt_rootdir = $arg) =~ s/\/+$//;
+    next; # }}}
+
    } elsif (($arg eq '-h') or ($arg eq '--help')) { # {{{ 
 
 =item B<-h> | B<--help>
@@ -127,7 +143,18 @@ Show a short help message.
 
 =head1 ACTIONS
 
+Below is list of possible actions B<install-docs> could handle. 
+
+Each I<file> argument should be the full path for the doc-base control file (i.e.
+`/usr/share/doc-base/some_file'), however each I<docid> should be the document identifier
+(Document identifiers are set in the `Document' field of thecontrol file, and usually 
+ correspond to the package name.)
+
+If I<file> or I<docid> equals `B<->' (the minus sign), the list of
+arguments is read from the standard input.
+
 =over 4
+
 
 =cut
 
@@ -162,13 +189,24 @@ I<file>.
     &SetMode($MODE_REMOVE, @ARGV);
     last; # }}}
 
+  } elsif (($arg eq '-c') or ($arg eq '--check')) { # {{{
+
+=item B<-c> | B<--check> I<file> [ I<file ...> ]
+
+Check the control file I<file> and display number of possible problems found.  
+Use with I<--verbose> to get the actual locations of errors and warnings. 
+If I<--rootdir> was also given, 
+
+=cut
+    ($#ARGV == -1) and die "Arguments missing for `check'";
+    &SetMode($MODE_CHECK, @ARGV);
+    last; # }}}
+
   } elsif (($arg eq '-R') or ($arg eq '--register-all')) { # {{{ 
 
 =item B<-R> | B<--register-all>
 
-Display the status of the document identifier I<docid>.
-Document identifiers are tags which are set in the control
-file, and usually correspond to the package name.
+(Re)register all the documents from I</usr/share/doc-base>.
 
 =cut
     ($#ARGV == -1) or die "Too many arguments missing for `register-all'";
@@ -181,8 +219,6 @@ file, and usually correspond to the package name.
 =item B<-s> | B<--status> I<docid> [ I<docid ...> ]
 
 Display the status of the document identifier I<docid>.
-Document identifiers are tags which are set in the control
-file, and usually correspond to the package name.
 
 =cut
     ($#ARGV == -1) and die "Arguments missing for `status'";
@@ -229,15 +265,38 @@ exit ($exitval);
 
 __DATA__
 
+=head1 FILES
+
+=over 4
+
+=item I</usr/share/doc-base/>
+
+The location of doc-base control files installed by various packages.
+
+=item I</var/lib/doc-base/info/*.status>
+
+Statuses of registered documents.
+
+=item I</var/lib/doc-base/omf/> 
+
+The location of generated scrollkeeper OMF files.
+Note: I</usr/share/omf/doc-base> should be a symbolic link pointing to the directory.
+
+=item I</usr/share/doc/*/.dhelp>
+
+The location of generated dhelp files.
+
+=back  
+
 =head1 BUGS
 
 See <URL:http://bugs.debian.org/doc-base>.
 
 =head1 SEE ALSO
 
-dwww(8), scrollkeeper(7), Debian doc-base Manual
-F</usr/share/doc/doc-base/doc-base.html/index.html>, dhelp Manual
-F</usr/share/doc/dhelp/dhelp.html>
+dwww(8), scrollkeeper(7), 
+Debian doc-base Manual F</usr/share/doc/doc-base/doc-base.html/index.html>, 
+dhelp Manual F</usr/share/doc/dhelp/dhelp.html>
 
 =head1 AUTHOR
 

@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 64 2007-04-29 15:07:26Z robert $
+# $Id: Dhelp.pm 66 2007-05-03 23:25:56Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -46,7 +46,7 @@ sub register_one_dhelp_document($) { # {{{
     # ensure the documentation is in an area dhelp can deal with
     if ( $file !~ /^$usd_dir\/([^\/]+)\/(.+)$/o ) {
       &Warn ("register_dhelp: skipping $file
-           because dhelp only knows about /usr/share/doc");
+              because dhelp only knows about /usr/share/doc");
   } else {
 
     my $dir=$1;
@@ -60,12 +60,13 @@ sub register_one_dhelp_document($) { # {{{
     $dhelp_section =~ s|^apps/||;
     $dhelp_section =~ s/^(howto|faq)$/\U$&\E/;
     # now push our data onto the array (undefs are ok)
+    (my $documents =  $$format_data{'files'}) =~ s/\b\Q$usd_dir\E\/\Q$dir\E\///g;
     push(@new_dhelp_data, &generate_dhelp_item({
-       '2_directory'     => &HTMLEncode($dhelp_section, 1),
        '1_x-doc-base-id' => $docid, 
+       '2_directory'     => &HTMLEncode($dhelp_section, 1),
        '3_linkname'      => $doc->title(),
        '4_filename'      => $filename,
-       '5_documents'     => $$format_data{'files'},
+       '5_documents'     => $documents,
        '6_description'   => &HTMLEncodeDescription($doc->abstract(), 1)
        })
      );
@@ -76,34 +77,48 @@ sub register_one_dhelp_document($) { # {{{
 ## update the files
   my @dhelp_data = ();
   my $old_dhelp_file = $doc->get_status('Dhelp-file');
+  my @old_dhelp_data = ();
+
   my $exists_old_dhelp_file = (defined $old_dhelp_file and -f $old_dhelp_file);
   my $exists_new_dhelp_file = (defined $new_dhelp_file and -f $new_dhelp_file);
   my $same_files  = (defined $old_dhelp_file and defined $new_dhelp_file and
                     $old_dhelp_file eq $new_dhelp_file);
 
-  read_dhelp_file($docid, $old_dhelp_file, \@dhelp_data) if $exists_old_dhelp_file;
+  read_dhelp_file($docid, $old_dhelp_file, \@dhelp_data, \@old_dhelp_data) if $exists_old_dhelp_file;
 
   if (not $same_files) {
-    write_dhelp_file($old_dhelp_file, \@dhelp_data) if $exists_old_dhelp_file;
+    write_dhelp_file($old_dhelp_file, \@dhelp_data) if $exists_old_dhelp_file 
+                                                     and $#old_dhelp_data > -1;
 
     @dhelp_data = ();
-    read_dhelp_file($docid, $new_dhelp_file, \@dhelp_data) if $exists_new_dhelp_file 
+    read_dhelp_file($docid, $new_dhelp_file, \@dhelp_data, \@old_dhelp_data) if $exists_new_dhelp_file 
   }
 
   if (defined $new_dhelp_file) {
     push(@dhelp_data, @new_dhelp_data);
+
+    if ($#old_dhelp_data != $#new_dhelp_data
+        or grep {$old_dhelp_data[$_] ne $new_dhelp_data[$_]} (0..$#new_dhelp_data)) {
+      &Debug("`$new_dhelp_file' not changed, skipping its registration");
+    } else {
+      write_dhelp_file($new_dhelp_file, \@dhelp_data);
+   }       
+
     @new_dhelp_data = ();
-    write_dhelp_file($new_dhelp_file, \@dhelp_data);
   }  
 
   $doc->set_status('Dhelp-file', $new_dhelp_file);
 
 } # }}}
 
-# read an existing dhelp file ignoring any entries from our document
+# read an existing dhelp file
+# returns items from our document into @$our_dhelp_data
+# returns othher items in @other_dhelp_data
 sub read_dhelp_file($$$) { # {{{
-  my ($docid, $dhelp_file, $dhelp_data) = @_;
+  my ($docid, $dhelp_file, $other_dhelp_data, $our_dhelp_data) = @_;
   &Debug("Reading dhelp file: $dhelp_file");
+  @$other_dhelp_data = ();
+  @$our_dhelp_data  = ();
 
   open(FH, "<$dhelp_file") or return &Warn ("can't open file '$dhelp_file': $!\n");
   $_ = join('', <FH>);    # slurp in the file
@@ -127,8 +142,11 @@ sub read_dhelp_file($$$) { # {{{
     {
     # $1 is everything beetwen <item> and </item>
     # $2 is value of the <x-doc-base-id> tag
-    # add the item unless comes from our document
-      push (@$dhelp_data, $1) unless (defined $2 and $2 eq $docid);
+      if (defined $2 and $2 eq $docid) {
+        push (@$our_dhelp_data, $1);
+      } else {
+        push (@$other_dhelp_data, $1);
+      }
     }
 
   close FH;
@@ -149,7 +167,7 @@ sub generate_dhelp_item { # {{{
       next unless length ($value);
 
       if ($field eq 'description') {        
-        $result .= "<$field>$value\n</$field>\n";
+        $result .= "<$field>\n$value\n</$field>\n";
       } else {   
         $value =~ s/\n/ /mg;
         $result .= "<$field>$value\n";

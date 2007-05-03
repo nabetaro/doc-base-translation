@@ -4,6 +4,7 @@ doc-base (0.8.4~unreleased) UNRELEASED; urgency=low
   * Split install-docs into modules to made the code more manageable.
   * Add support for (de)registering multiple documents in one install-docs
     invokation (closes: #114692).
+  * Add -c/--check option to install-docs (closes: #35895).  
   * Remove `Registed-to-XXX' statuses from control files, remove *.list files,
     deprecate the -L/--listfiles option. Names of the generated files are now
     keep in the control file in `Scrollkeeper-omf-files' and `Dhelp-files'
