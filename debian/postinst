@@ -1,4 +1,5 @@
 #!/bin/sh
+# $Id: postinst 67 2007-05-05 07:19:44Z robert $
 # postinst for doc-base
 
 # Abort if any command returns an error value
@@ -6,7 +7,7 @@ set -e
 
 package=doc-base
 # upgrades prior to this version require complete re-registration
-compat_ver=0.8.1
+compat_ver=0.8.4
 # upgrades of the following version requires complete re-registration
 bad_ver=0.7.13
 VERBOSE=
@@ -19,8 +20,8 @@ if [ "$DEBUG" ]; then
     set -x
 fi
 
-remove_obsolete( ) {
-	# remove dhelp files
+remove_obsolete() {
+	# remove old dhelp files
 	find $infodir -maxdepth 1 -type f -name "*.list" | xargs grep -h '^/.*/.dhelp' |  \
 	while read f; do 
 		[ -e "$f" ] || continue;
@@ -28,9 +29,7 @@ remove_obsolete( ) {
 		rm -f "$f"
 	done
 
-	find $infodir -maxdepth 1 -type f -name "*.list" | xargs rm -f
-	
-	# remove scrollkeeper files
+	# remove old scrollkeeper files
 	find $infodir -maxdepth 1 -type f -name "*.status" | \
 	xargs sed -ne 's/^Scrollkeeper-omf-file: *\(.*-C.omf\) *$/\1/p'  |  \
 	while read f; do 
@@ -38,21 +37,30 @@ remove_obsolete( ) {
 		rm -f "$f"
 		rmdir --ignore-fail-on-nonempty "`dirname "$f"`" || true
 	done
+
+	# remove status/list files
+	find $infodir -maxdepth 1 -type f \( -name "*.status" -o name "*.list" \) | \
+	xargs rm -f
+	
 }
 
 
-reinstall_docs ( ) {
-    
-    # install all the existing doc-base control files
-    num=`find /usr/share/$package/ -maxdepth 1 -type f | wc -l`
-    echo "(re)registering $num documents from /usr/share/$package ..." >&2
-
+reinstall_docs () {
     install-docs ${VERBOSE} --register-all || true  # don't abort on failure
 }
 
+
 case "$1" in
   configure)
-    if [ "${2+set}" != set ] || [ -z "$2" ] || [ "$2" = "<unknown>" ] || [ ! -d /var/lib/doc-base/info ]; then
+
+
+    if dpkg --compare-versions "$2" lt-nl 0.8.4; then
+    	remove_obsolete
+    fi;		
+
+
+    if [ "${2+set}" != set ] || [ -z "$2" ] \
+    	|| [ "$2" = "<unknown>" ] || [ ! -d /var/lib/doc-base/info ]; then
         # first install, or upgrade from ancient version, or install from removed-but-not-purged state
         reinstall_docs
     elif dpkg --compare-versions $2 lt $compat_ver; then
@@ -64,8 +72,8 @@ case "$1" in
         reinstall_docs
     else
         # only register our stuff
-        install-docs ${VERBOSE} -i /usr/share/$package/$package	\
-				-i /usr/share/$package/install-docs-man
+        install-docs ${VERBOSE} -i $ctrldir/$package	\
+				-i $ctrldir/install-docs-man
     fi
     ;;
 esac

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 66 2007-05-03 23:25:56Z robert $
+# $Id: InstallDocs.pm 67 2007-05-05 07:19:44Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -74,11 +74,13 @@ sub InstallDocsMain($) { # {{{
 
   if ($mode eq $MODE_REREGISTER) { # {{{
       @arguments = &GetAllRegisteredDocumentIDs();
+      &Inform("Removing " . ($#arguments + 1) . " registered documents") unless $#arguments < 0;
       foreach $docid (@arguments) {
         $doc = Debian::DocBase::Document->new($docid);
         $doc->unregister_all();
       }
       @arguments = &GetAllDocBaseFiles();
+      &Inform("Registering " . ($#arguments + 1) . " installed documents") unless $#arguments < 0;
   } # }}}
 
   if ($mode eq $MODE_REMOVE) { # {{{

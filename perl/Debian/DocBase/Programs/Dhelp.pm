@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 66 2007-05-03 23:25:56Z robert $
+# $Id: Dhelp.pm 67 2007-05-05 07:19:44Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -60,7 +60,7 @@ sub register_one_dhelp_document($) { # {{{
     $dhelp_section =~ s|^apps/||;
     $dhelp_section =~ s/^(howto|faq)$/\U$&\E/;
     # now push our data onto the array (undefs are ok)
-    (my $documents =  $$format_data{'files'}) =~ s/\b\Q$usd_dir\E\/\Q$dir\E\///g;
+    (my $documents =  $$format_data{'files'}) =~ s/\B\Q$usd_dir\E\/\Q$dir\E\///g;
     push(@new_dhelp_data, &generate_dhelp_item({
        '1_x-doc-base-id' => $docid, 
        '2_directory'     => &HTMLEncode($dhelp_section, 1),
@@ -97,8 +97,8 @@ sub register_one_dhelp_document($) { # {{{
   if (defined $new_dhelp_file) {
     push(@dhelp_data, @new_dhelp_data);
 
-    if ($#old_dhelp_data != $#new_dhelp_data
-        or grep {$old_dhelp_data[$_] ne $new_dhelp_data[$_]} (0..$#new_dhelp_data)) {
+    if (($#old_dhelp_data != $#new_dhelp_data)
+        or defined grep {$old_dhelp_data[$_] ne $new_dhelp_data[$_]} (0..$#new_dhelp_data)) {
       &Debug("`$new_dhelp_file' not changed, skipping its registration");
     } else {
       write_dhelp_file($new_dhelp_file, \@dhelp_data);

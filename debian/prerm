@@ -1,10 +1,13 @@
 #!/bin/sh
+# $Id: prerm 67 2007-05-05 07:19:44Z robert $
 # prerm for doc-base
 
 # Abort if any command returns an error value
 set -e
 
 package=doc-base
+ctrldir="/usr/share/$package"
+infodir="/var/lib/$package/info"
 
 if [ "$DEBUG" ]; then
     echo entering $package prerm
@@ -13,7 +16,7 @@ fi
 
 remove_docs ( ) {
   if which install-docs >/dev/null 2>&1; then
-    install-docs ${VERBOSE}  -r $package install-docs-man 
+    install-docs ${VERBOSE}  -r $ctrldir/$package $ctrldir/install-docs-man 
   else    
     echo "cannot find install-docs on path" 1>&2
   fi

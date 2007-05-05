@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 66 2007-05-03 23:25:56Z robert $
+# $Id: Scrollkeeper.pm 67 2007-05-05 07:19:44Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -117,6 +117,7 @@ sub map_docbase_to_scrollkeeper { # {{{
 sub remove_omf_file($) { # {{{
   my $omf_file = shift;
   my $omf_dir = dirname($omf_file);
+  &Debug("Removing scrollkeeper OMF file `$omf_file'");
   unlink($omf_file) or return &Error ("$omf_file: could not delete file: $!");
 
   #check to see if the directory is now empty. if so, kill it.
@@ -143,11 +144,12 @@ sub write_omf_file($$$$) { # {{{
   chomp(my $serial_id = `$scrollkeeper_gen_seriesid`);
 
   if (! -d "$omf_locations/$docid") {
-    mkdir("$omf_locations/$docid") or die "can't create dir $omf_locations/$docid: $!";
+    mkdir("$omf_locations/$docid") or return &Error ("can't create dir $omf_locations/$docid: $!");
   }
 
+  &Debug("Writing scrollkeeper OMF file `$omf_file'");
   open(OMF, ">$omf_file")
-    or die "$omf_file: cannot open OMF file for writing: $!";
+    or return &Error("$omf_file: cannot open OMF file for writing: $!");
 
   #now for the boiler plate XML stuff
   print OMF "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";

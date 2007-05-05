@@ -1,52 +1,26 @@
 #!/usr/bin/make -f
+# vim:ts=2
 # rules file for doc-base
+# $Id: rules 68 2007-05-05 09:02:11Z robert $
 #
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
+
 package		:= doc-base
 
-# directory abstraction
-prefix		:= debian/$(package)
-sbindir		:= $(prefix)/usr/sbin
-sharedir	:= $(prefix)/usr/share/$(package)
-lintiandir	:= $(prefix)/usr/share/lintian/overrides
-
-# build abstraction
-install_file	:= install -o root -g root -m 644
-install_script	:= install -o root -g root -m 755
-
-# determine our version number
-DEB_VERSION	:= $(shell LC_ALL=C dpkg-parsechangelog | grep ^Version: | sed 's/^Version: *//')
-DEB_DATE	:= $(shell dpkg-parsechangelog | sed -n 's/^Date: *//p')
-# pretty-print the date; I wish this was dynamic like the top-level makefile but oh well
-DATE_EN		:= $(shell LC_ALL=C     date --date="$(DEB_DATE)" '+%d %B, %Y')
 
 build: build-stamp
 build-stamp:
 	dh_testdir
 	
-	perl -cw install-docs		# check perl script syntax
-	rm -f version.ent
-	echo "<!ENTITY version \"$(DEB_VERSION)\">" >> version.ent
-	echo "<!ENTITY date    \"$(DATE_EN)\">"        >> version.ent
-	nsgmls -wall -s -E20 doc-base.sgml	# check SGML syntax
-	debiandoc2html doc-base.sgml
-	debiandoc2text doc-base.sgml
-	pod2man --section=8 --center="Debian Utilities"		\
-		--release="doc-base v$(DEB_VERSION)"		\
-		--date="$(DATE_EN)"				\
-		install-docs > install-docs.8
-	pod2html --title "install-docs reference" 		\
-		< install-docs > install-docs.html
-	touch build-stamp
+	$(MAKE)
+	touch $@
 
 clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp
-	rm -rf doc-base.html doc-base.txt* install-docs.8 install-docs.html
-	rm -f pod2htm*.tmp version.ent
-	rm -f `find . -name "*~"`
+	$(MAKE) clean
 	dh_clean
 
 
@@ -57,12 +31,8 @@ install: build
 	dh_clean -k
 	dh_installdirs
 
-	$(install_script) install-docs $(sbindir)/
-	$(install_file) doc-base.desc $(sharedir)/doc-base
-	$(install_file) install-docs.desc $(sharedir)/install-docs-man
-	$(install_file) debian/lintian-overrides $(lintiandir)/$(package)
-	$(install_file) scrollkeeper.map $(sharedir)/data/
-	dh_link var/lib/doc-base/omf usr/share/omf/doc-base
+	$(MAKE) install DESTDIR=debian/$(package)
+	install -m644 debian/lintian-overrides debian/$(package)/usr/share/lintian/overrides/$(package)
 
 # Buily architecture-independent files here.
 binary-indep: build install
@@ -82,7 +52,7 @@ binary-indep: build install
 #	dh_installcron
 #	dh_installinfo
 #	dh_undocumented
-	dh_installman install-docs.8
+#	dh_installman 
 	dh_link
 	dh_compress
 	dh_fixperms

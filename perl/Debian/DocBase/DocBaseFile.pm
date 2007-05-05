@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 66 2007-05-03 23:25:56Z robert $
+# $Id: DocBaseFile.pm 67 2007-05-05 07:19:44Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -234,10 +234,10 @@ sub _read_control_file { # {{{
   # first find doc id
   $_ = <$fh>;
   return $self->_prserr(PRS_FATAL_ERR, "the first line does not contain valid `Document' field")
-    unless /^\s*Document\s*:\s*([\w\+\.\-]+)\s*$/i;
+    unless /^\s*Document\s*:\s*(\S+)\s*$/i;
   $self->{'DOCUMENT_ID'} = $tmp = $1;
   $self->_prserr(PRS_WARN_IGN, "invalid value of `Document' field")
-    if $tmp ne lc $tmp;
+    unless $tmp =~ /^[a-z0-9\.\+\-]+$/;
 
 
   return if $parseflag == PARSE_GETDOCID;
@@ -279,10 +279,10 @@ sub _read_control_file { # {{{
       next;
     }
 
-
+    my $index_value = undef;
     # Check `Index' field
     if (grep { $_ eq $format } @need_index_formats) {
-        $tmp = $$format_data{'index'};
+        $index_value = $tmp = $$format_data{'index'};
         $tmpnam = "Index";
 
         # a) does the field exist?
@@ -297,7 +297,7 @@ sub _read_control_file { # {{{
 
        # c) does the index file exist?
        if (not -e $opt_rootdir.$tmp) {
-        $self->_prserr(PRS_WARN_IGN, "file `$$format_data{'index'}' does not exist" . 
+        $self->_prserr(PRS_WARN_IGN, "file `$tmp' does not exist" . 
                        ($opt_rootdir eq "" ? "" : " (using `$opt_rootdir' as the root directory)"));
         next;
       }
@@ -313,20 +313,22 @@ sub _read_control_file { # {{{
       next;
     }
 
-    my @masks = split /\s+/, $tmp;
-    # b) do values start with / ?
-    my @invalid = grep { /^[^\/]/ } @masks;
-    if ($#invalid > -1) {
-      $self->_prserr(PRS_WARN_IGN, "`$tmpnam' value has to be specified with absolute path: " . join (' ', @invalid));
-      next;
-    }
+    if (not defined $index_value or $tmp ne $index_value) {
+      my @masks = split /\s+/, $tmp;
+      # b) do values start with / ?
+      my @invalid = grep { /^[^\/]/ } @masks;
+      if ($#invalid > -1) {
+        $self->_prserr(PRS_WARN_IGN, "`$tmpnam' value has to be specified with absolute path: " . join (' ', @invalid));
+        next;
+      }
 
-   # c) do files exist ?
-   if (not grep { &bsd_glob($opt_rootdir.$_, GLOB_NOSORT) }  @masks) {
-      $self->_prserr(PRS_WARN_IGN, "file mask `" . join(' ', @masks) . "' does not match any files" .
-                       ($opt_rootdir eq "" ? "" : " (using `$opt_rootdir' as the root directory)"));
-      next;
-   }
+      # c) do files exist ?
+      if (not grep { &bsd_glob($opt_rootdir.$_, GLOB_NOSORT) }  @masks) {
+        $self->_prserr(PRS_WARN_IGN, "file mask `" . join(' ', @masks) . "' does not match any files" .
+                         ($opt_rootdir eq "" ? "" : " (using `$opt_rootdir' as the root directory)"));
+        next;
+      }
+    }
 
    $self->{FORMAT_LIST}->{$format} = $format_data;
   } continue { 

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs 66 2007-05-03 23:25:56Z robert $
+# $Id: install-docs.in 68 2007-05-05 09:02:11Z robert $
 
 use warnings;
 use strict;
@@ -10,6 +10,8 @@ use lib 'perl';
 
 # declared in Debian::DocBase::InstallDocs;
 use vars qw($fully_functional $opt_verbose $opt_debug $exitval $MODE_INSTALL $MODE_REMOVE $MODE_REREGISTER $MODE_STATUS $MODE_CHECK);
+
+my $version='#VERSION#';
 
 BEGIN {
   $fully_functional = eval {
@@ -100,7 +102,7 @@ Operate verbosely.
 Print some debugging informations.
 
 =cut
-    $debug = 1;
+    $opt_debug = 1;
     next;  # }}}
   
    } elsif ($arg eq '--no-update-menus') { # {{{
