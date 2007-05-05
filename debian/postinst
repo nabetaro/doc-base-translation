@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: postinst 67 2007-05-05 07:19:44Z robert $
+# $Id: postinst 71 2007-05-05 09:42:43Z robert $
 # postinst for doc-base
 
 # Abort if any command returns an error value
@@ -35,11 +35,11 @@ remove_obsolete() {
 	while read f; do 
 		[ -e "$f" ] || continue;
 		rm -f "$f"
-		rmdir --ignore-fail-on-nonempty "`dirname "$f"`" || true
+		rmdir --ignore-fail-on-non-empty "`dirname "$f"`" || true
 	done
 
 	# remove status/list files
-	find $infodir -maxdepth 1 -type f \( -name "*.status" -o name "*.list" \) | \
+	find $infodir -maxdepth 1 -type f \( -name "*.status" -o -name "*.list" \) | \
 	xargs rm -f
 	
 }

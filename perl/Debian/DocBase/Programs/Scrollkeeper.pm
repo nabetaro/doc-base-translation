@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 67 2007-05-05 07:19:44Z robert $
+# $Id: Scrollkeeper.pm 72 2007-05-05 10:49:09Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -58,6 +58,7 @@ sub RegisterScrollkeeper() { # {{{
     my $format_data;
 
     my $old_omf_file = $doc->get_status('Scrollkeeper-omf-file');
+    my $omf_serial_id = undef; 
     my $new_omf_file = undef;
     my $omf_category = &map_docbase_to_scrollkeeper($doc->section());
 
@@ -69,19 +70,23 @@ sub RegisterScrollkeeper() { # {{{
         my $file = defined $$format_data{'index'} ? $$format_data{'index'} : $$format_data{'files'};
         next unless -f $file;
 
-        $new_omf_file = write_omf_file($doc, $file,$omf_format,$omf_category);
+        $omf_serial_id = $doc->get_status('Scrollkeeper-sid');
+        chomp ($omf_serial_id = `$scrollkeeper_gen_seriesid`) unless defined $omf_serial_id;
+        $new_omf_file = write_omf_file($doc, $file,$omf_format,$omf_category, $omf_serial_id);
         $do_update    = 1;
         last; # register only the first format found
       }
     }
 
-    # remove old omf file;
-    if (defined $old_omf_file and not defined $new_omf_file) {
+    # remove old omf file
+    # FIXME: $old_omf_file might be the same file as $new_omf_file even if $old_omf_file ne $new_omf_file
+    if (defined $old_omf_file and (not defined $new_omf_file or $old_omf_file ne $new_omf_file)) {
       remove_omf_file($old_omf_file);
       $do_update = 1;
     }
 
     $doc->set_status('Scrollkeeper-omf-file', $new_omf_file);
+    $doc->set_status('Scrollkeeper-sid', $omf_serial_id);
   }
 
 
@@ -131,7 +136,7 @@ sub remove_omf_file($) { # {{{
 
 
 sub write_omf_file($$$$) { # {{{
-  my ($doc, $file, $format, $category) = @_;
+  my ($doc, $file, $format, $category, $serial_id) = @_;
   my $docid = $doc->document_id();
   my $omf_file = "$omf_locations/$docid/$docid-C.omf";
   my $date;
@@ -141,7 +146,6 @@ sub write_omf_file($$$$) { # {{{
   if ($mon <10) {$mon = "0$mon";}
   $date = "$year-$mon-$mday";
 
-  chomp(my $serial_id = `$scrollkeeper_gen_seriesid`);
 
   if (! -d "$omf_locations/$docid") {
     mkdir("$omf_locations/$docid") or return &Error ("can't create dir $omf_locations/$docid: $!");
