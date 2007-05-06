@@ -323,14 +323,15 @@ and from the <file>prerm</file> script as well:
 <example>
   if [ "$1" = remove ] || [ "$1" = upgrade ]; then
     if which install-docs >/dev/null 2>&1; then
-      install-docs -r &lt;document-id&gt;
+      install-docs -r /usr/share/doc-base/&lt;document-id&gt;
     fi
   fi
 </example>
 
 <p>
 With that, <package>doc-base</package> will automatically register the
-online manuals to <package>dwww</package> and <package>dhelp</package>
+online manuals to <package>dww</package>, <package>dhelp</package>, 
+and <package>scrollkeeper</package>
 when the package is installed, and de-register the manuals when the
 package is removed.
 
@@ -344,8 +345,85 @@ messages such as
 dpkg: warning - unable to delete old file `<var>directory</var>': Directory not empty
 </example>
 
+<sect1>doc-base 0.8.4 features and incompatibilities
+<p>
+The semantics of the remove call has been changed in version 0.8.4:
+<prgn/install-docs -r/ require the full path of <em/control file/ to be passed.
+Previous syntax (i.e. passing only <em/document-id/) is still supported for backward compatibility.
+Older versions of <prgn/install-docs/ ignore the new syntax (only issue a warning, but don't fail). 
 
+<p>
+With 0.8.4 and later is possible to install (and remove) multiple documents in one call, like
+<example>
+install-docs -i /usr/share/doc-base/&lt;document-id_1&gt; \
+                /usr/share/doc-base/&lt;document-id_2&gt; \
+                /usr/share/doc-base/&lt;document-id_3&gt;
+</example>
+or even
+<example>
+cat &lt;&lt; EOF | install-docs -i -
+/usr/share/doc-base/&lt;document-id_1&gt;
+/usr/share/doc-base/&lt;document-id_2&gt;
+/usr/share/doc-base/&lt;document-id_3&gt;
+EOF
+</example>
+However <strong/older versions will fail/ on such a syntax, so it's necessary to add proper
+<em/Conflicts/ or <em/Depends/ line if you plan to use the feature in your package.
 
+</sect1>
+</sect>
+
+<sect id="checking_syntax">Checking Syntax of <em/Control Files/
+<p>
+
+With the new <tt/--check/ (<tt/-c/) option of <prgn/install-docs/ it is possible to check 
+the <em/control file/:
+
+<example>
+$ install-docs --check /usr/share/doc-base/doc-base 
+/usr/share/doc-base/doc-base: No problems found
+</example>
+
+<example>
+$ install-docs -c /usr/share/doc-base/xlogmaster
+Error in `/usr/share/doc-base/xlogmaster', line 15: `Index' value missing for format info
+/usr/share/doc-base/xlogmaster: Fatal error found, the file won't be registered
+</example>
+
+<example>
+$ install-docs -c /usr/share/doc-base/MC-FAQ /usr/share/doc-base/gnu-privacy-handbook
+/usr/share/doc-base/MC-FAQ: 1 warning(s) or non-fatal error(s) found
+/usr/share/doc-base/gnu-privacy-handbook: 1 warning(s) or non-fatal error(s) found
+</example>
+
+<p>
+More details about the warnings and non-fatal errors can be found using the <tt/--verbose/
+(<tt/-v/) option:
+<example>
+$ install-docs -v -c /usr/share/doc-base/MC-FAQ /usr/share/doc-base/gnu-privacy-handbook
+Warning in `/usr/share/doc-base/MC-FAQ', line 1: invalid value of `Document' field
+/usr/share/doc-base/MC-FAQ: 1 warning(s) or non-fatal error(s) found
+Warning in `/usr/share/doc-base/gnu-privacy-handbook', line 12: file `/usr/share/doc/gnupg-doc/GNU_Privacy_Handbook/html/book1.html' does not exist
+/usr/share/doc-base/gnu-privacy-handbook: 1 warning(s) or non-fatal error(s) found
+</example>
+
+<p>
+With the <tt/--rootdir/ option is possible to check non-installed packages:
+
+<example>
+$ dpkg-deb -x autoclass_3.3.4-6_i386.deb AUTOCLASS_UNPACKED
+$ install-docs --rootdir AUTOCLASS_UNPACKED -vc AUTOCLASS_UNPACKED/usr/share/doc-base/*
+AUTOCLASS_UNPACKED/usr/share/doc-base/autoclass-results: No problems found
+AUTOCLASS_UNPACKED/usr/share/doc-base/autoclass-theory: No problems found
+</example>
+
+If the <tt/--rootdir/ option was omitted, <prgn/install-docs/ would complain:
+<example>
+Warning in `AUTOCLASS_UNPACKED/usr/share/doc-base/autoclass-results', line 20: file mask `/usr/share/doc/autoclass/kdd-95.pdf' does not match any files
+Warning in `AUTOCLASS_UNPACKED/usr/share/doc-base/autoclass-theory', line 20: file mask `/usr/share/doc/autoclass/tr-fia-90-12-7-01.pdf' does not match any files
+</example>
+
+</sect>
 
 <chapt id="informations">Getting information about installed documents
 <p>
@@ -360,7 +438,7 @@ $ install-docs -s foo
 Document: foo
 Abstract: This manual is about foos, bars, and Debian.
 Author: Wile E. Coyote
-Section: debian
+Section: Debian
 Title: Debian Foo's Manual
 
 ---format-description---
@@ -374,22 +452,18 @@ Index: /usr/share/doc/foo/html-sgml/index.html
 
 ---status-information---
 Control-File: /usr/share/doc-base/foo
-Registered-to-dhelp: 1
-Registered-to-dwww: 1
+Dhelp-file: /usr/share/doc/foo/.dhelp
+Scrollkeeper-omf-file: /var/lib/doc-base/omf/foo/foo-C.omf
+Scrollkeeper-sid: 99999999-0000-8888-0000-1234567890ab
 </example>
 <p>
 
 In some cases, <package>doc-base</package> creates files when
-installing a document. For example, when a document is registered to
-dhelp a file `<tt/.dhelp/' is generated. You can check out which files
-have been created by <package>doc-base</package> with the `<tt/-L/' or
-`<tt/--listfiles/' options followed by the document ID. Here is an
-example:
-
-<example>
-$ install-docs -L foo
-/usr/share/doc/foo/html-sgml/.dhelp
-</example>
+installing a document. When a document is registered to
+<package/dhelp/ a file `<tt/.dhelp/' is generated, whereas for <package/scrollkeeper/
+package `<tt/*-C.omf/' is needed. Names of the generated files are recorded in the
+<em/Dhelp-file/ and <em/Scrollkeeper-omf-file/ fields. Lack of any of the fields means the 
+documents was not registered to appropriate package.
 <p>
 
 <chapt id="todo">TODO List

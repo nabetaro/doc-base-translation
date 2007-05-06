@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 67 2007-05-05 07:19:44Z robert $
+# $Id: Dhelp.pm 73 2007-05-06 10:54:35Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -99,9 +99,9 @@ sub register_one_dhelp_document($) { # {{{
 
     if (($#old_dhelp_data != $#new_dhelp_data)
         or defined grep {$old_dhelp_data[$_] ne $new_dhelp_data[$_]} (0..$#new_dhelp_data)) {
-      &Debug("`$new_dhelp_file' not changed, skipping its registration");
-    } else {
       write_dhelp_file($new_dhelp_file, \@dhelp_data);
+    } else {
+      &Debug("`$new_dhelp_file' not changed, skipping its registration");
    }       
 
     @new_dhelp_data = ();
@@ -193,7 +193,7 @@ sub write_dhelp_file($$) { # {{{
 
   return 0 if  ($#{$dhelp_data} < 0); # no data to write, the file already deleted
 
-  open (FH, ">$file") or &Warn ("can't open file $file for wirting: $!");
+  open (FH, ">$file") or return &Error ("can't open file $file for wirting: $!");
   print FH join("\n\n", @$dhelp_data);
   close FH;
 

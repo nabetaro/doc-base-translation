@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dwww.pm 63 2007-04-28 22:41:18Z robert $
+# $Id: Dwww.pm 73 2007-05-06 10:54:35Z robert $
 #
 
 package Debian::DocBase::Programs::Dwww;
@@ -17,11 +17,16 @@ use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
 
 our $dwww_update = "/usr/bin/update-menus";
+our $dwww_build_menu = "/usr/sbin/dwww-build-menu";
 
 # Registering to dwww:
 sub RegisterDwww { # {{{
   my @documents = @_;
   $#documents < 0 and return;
- 
-  &Execute($dwww_update);
+
+  if (-e $dwww_build_menu) {
+    &Execute($dwww_update) if $opt_update_menus;
+  } else {
+    &Debug("Skipping execution of $dwww_build_menu - dwww package doesn't seem to be installed");
+  }  
 } # }}}

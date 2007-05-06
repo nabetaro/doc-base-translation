@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: postinst 71 2007-05-05 09:42:43Z robert $
+# $Id: postinst 73 2007-05-06 10:54:35Z robert $
 # postinst for doc-base
 
 # Abort if any command returns an error value
@@ -46,9 +46,13 @@ remove_obsolete() {
 
 
 reinstall_docs () {
-    install-docs ${VERBOSE} --register-all || true  # don't abort on failure
+    install-docs ${VERBOSE} --install-all || true  # don't abort on failure
 }
 
+register_our_docs () {
+    install-docs ${VERBOSE} --install $ctrldir/$package	\
+		  		      $ctrldir/install-docs-man
+}
 
 case "$1" in
   configure)
@@ -72,8 +76,7 @@ case "$1" in
         reinstall_docs
     else
         # only register our stuff
-        install-docs ${VERBOSE} -i $ctrldir/$package	\
-				-i $ctrldir/install-docs-man
+	register_our_docs
     fi
     ;;
 esac

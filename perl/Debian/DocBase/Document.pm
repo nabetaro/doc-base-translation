@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 66 2007-05-03 23:25:56Z robert $
+# $Id: Document.pm 73 2007-05-06 10:54:35Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -10,7 +10,7 @@ use warnings;
 
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
-use Debian::DocBase::DocBaseFile qw(PARSE_FULL);
+use Debian::DocBase::DocBaseFile qw(PARSE_FULL PARSE_GETDOCID);
 use Carp;
 #use Scalar::Util qw(weaken);
 
@@ -118,11 +118,10 @@ sub set_status() { # {{{
 }   # }}}
 
 
-sub _has_control_files() {
+sub _has_control_files() { # {{{
   my $self = shift;
   return $#{$self->{'CONTROL_FILE_NAMES'}} > -1;
-}  
-
+} # }}}
 
 sub _read_status_file { # {{{
   my $self  = shift;
@@ -225,7 +224,19 @@ sub register() { # {{{
   my $self          = shift;
   my $doc_base_file = shift;
 
-# FIXME: should check if new file name equals old file name
+# FIXME: temporary check if two documents have the same id's
+# should be replaced with document merging
+  if ($#{$self->{'CONTROL_FILE_NAMES'}} == 0) {
+    my $oldfile = ${$self->{'CONTROL_FILE_NAMES'}}[0];
+    my $newfile = $doc_base_file->source_file_name();
+    if ($oldfile ne $newfile and -f $oldfile) {
+        my $olddoc = Debian::DocBase::DocBaseFile->new($oldfile, PARSE_GETDOCID);
+        if ($olddoc->document_id() eq $self->document_id()) {
+          return &ErrorNF("Error in `$newfile': Document " . $self->document_id()." already registered by `$oldfile'");
+        }
+    }
+  }      
+      
   
   if ($doc_base_file->invalid()) {
     $self->unregister_all(); # FIXME, temporary

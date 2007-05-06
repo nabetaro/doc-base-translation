@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: prerm 67 2007-05-05 07:19:44Z robert $
+# $Id: prerm 73 2007-05-06 10:54:35Z robert $
 # prerm for doc-base
 
 # Abort if any command returns an error value
@@ -16,7 +16,7 @@ fi
 
 remove_docs ( ) {
   if which install-docs >/dev/null 2>&1; then
-    install-docs ${VERBOSE}  -r $ctrldir/$package $ctrldir/install-docs-man 
+    install-docs ${VERBOSE}  --remove $ctrldir/$package $ctrldir/install-docs-man 
   else    
     echo "cannot find install-docs on path" 1>&2
   fi
@@ -24,8 +24,7 @@ remove_docs ( ) {
 
 remove_all_docs ( ) {
     if which install-docs >/dev/null 2>&1; then
-        echo "unregistering documentation ..."
-	find /usr/share/doc-base -maxdepth 1 -type f | install-docs ${VERBOSE}  -r - || true
+	install-docs ${VERBOSE}  --remove-all || true
 
     else
 	# error because this *is* the doc-base package

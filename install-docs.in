@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs.in 68 2007-05-05 09:02:11Z robert $
+# $Id: install-docs.in 73 2007-05-06 10:54:35Z robert $
 
 use warnings;
 use strict;
@@ -9,7 +9,8 @@ use lib 'perl';
 
 
 # declared in Debian::DocBase::InstallDocs;
-use vars qw($fully_functional $opt_verbose $opt_debug $exitval $MODE_INSTALL $MODE_REMOVE $MODE_REREGISTER $MODE_STATUS $MODE_CHECK);
+use vars qw($fully_functional $opt_verbose $opt_debug $opt_update_menus $exitval 
+            $MODE_INSTALL $MODE_REMOVE $MODE_REMOVE_ALL $MODE_INSTALL_ALL $MODE_STATUS $MODE_CHECK);
 
 my $version='#VERSION#';
 
@@ -44,16 +45,12 @@ my $force_reregister_flagfile = "/var/lib/doc-base/info/FORCE-REREGISTER.flag";
 
 =head1 SYNOPSIS
 
- install-docs [options] -i | --install file [ file ... ]
+ install-docs [options] -i,--install | -r,--remove | -c,--check file [ file ... ]
 
- install-docs [options] -r | --remove file [ file ... ]
+ install-docs [options] -I,--install-all | -R,--remove-all
 
- install-docs [options] -R | --register-all
+ install-docs [options] -s,--status docid [ docid ... ]
 
- install-docs [options] -s | --status docid [ docid ... ]
-
- install-docs [options] -c | --check file [ file ... ]
- 
  install-docs -h | --help
 
 
@@ -87,7 +84,7 @@ while (my $arg = shift @ARGV) {
 
   if (($arg eq '-v') or ($arg eq '--verbose')) { # {{{ 
 
-=item B<-v> | B<--verbose>
+=item B<-v>, B<--verbose>
 
 Operate verbosely.
 
@@ -97,14 +94,14 @@ Operate verbosely.
 
    } elsif (($arg eq '-d') or ($arg eq '--debug')) { # {{{ 
 
-=item B<-d> | B<--debug>
+=item B<-d>, B<--debug>
 
 Print some debugging informations.
 
 =cut
     $opt_debug = 1;
     next;  # }}}
-  
+
    } elsif ($arg eq '--no-update-menus') { # {{{
 
 =item B<--no-update-menus>
@@ -113,15 +110,15 @@ Inhibit running both L<update-menus(1)> (used for the L<dwww(8)> update program)
 and L<scrollkeeper-update(8)>.
 
 =cut
-    $do_dwww_update = 0;
+    $opt_update_menus = 0;
     next; # }}}
 
    } elsif ($arg eq '--rootdir') { # {{{
 
 =item B<--rootdir> I<dir>
 
-Set the root directory to I<dir> instead of `"I</>'. Usefull and valid only with 
-B<--check> (see `Actions' below).
+Set the root directory to I<dir> instead of `I</>'. Useful and valid only with 
+the B<--check> action.
 
 =cut
     ($#ARGV == -1) and die "Arguments missing for `rootdir'";
@@ -132,7 +129,7 @@ B<--check> (see `Actions' below).
 
    } elsif (($arg eq '-h') or ($arg eq '--help')) { # {{{ 
 
-=item B<-h> | B<--help>
+=item B<-h>, B<--help>
 
 Show a short help message.
 
@@ -145,15 +142,17 @@ Show a short help message.
 
 =head1 ACTIONS
 
-Below is list of possible actions B<install-docs> could handle. 
+Below is list of possible actions B<install-docs> could handle. There can be only one action 
+option passed to install-docs, moreover the action with its arguments must be the last option
+passed.
 
 Each I<file> argument should be the full path for the doc-base control file (i.e.
-`/usr/share/doc-base/some_file'), however each I<docid> should be the document identifier
-(Document identifiers are set in the `Document' field of thecontrol file, and usually 
- correspond to the package name.)
+`/usr/share/doc-base/some_file'), and each I<docid> should be the document identifier
+(Document identifiers are set in the `Document' field of the control file, and usually 
+correspond to the package name.)
 
 If I<file> or I<docid> equals `B<->' (the minus sign), the list of
-arguments is read from the standard input.
+arguments is read from the standard input (each file name or document id in separate line).
 
 =over 4
 
@@ -162,7 +161,7 @@ arguments is read from the standard input.
 
    } elsif (($arg eq '-i') or ($arg eq '--install')) { # {{{
 
-=item B<-i> | B<--install> I<file> [ I<file ...> ]
+=item B<-i> I<file> [I<file> ...],  B<--install> I<file> [I<file> ...]
 
 Install the documentation described by the control file I<file>.
 
@@ -173,13 +172,13 @@ Install the documentation described by the control file I<file>.
     if (! -e $force_reregister_flagfile) {
         &SetMode($MODE_INSTALL, @ARGV);
     } else {     
-        &SetMode($MODE_REREGISTER); 
+        &SetMode($MODE_INSTALL_ALL); 
     }      
     last; # }}}
 
   } elsif (($arg eq '-r') or ($arg eq '--remove')) { # {{{
 
-=item B<-r> | B<--remove> I<file> [ I<file ...> ]
+=item B<-r> I<file> [I<file> ...],  B<--remove> I<file> [I<file> ...]
 
 Remove the documentation identified by the control file
 I<file>.  
@@ -193,32 +192,46 @@ I<file>.
 
   } elsif (($arg eq '-c') or ($arg eq '--check')) { # {{{
 
-=item B<-c> | B<--check> I<file> [ I<file ...> ]
+=item B<-c> I<file> [I<file> ...],  B<--check> I<file> [I<file> ...]
 
 Check the control file I<file> and display number of possible problems found.  
 Use with I<--verbose> to get the actual locations of errors and warnings. 
-If I<--rootdir> was also given, 
+If I<--rootdir> was also given, its argument will be prepended to names of the files
+given if the `Files' and `Index' fields of the I<file>.
 
 =cut
     ($#ARGV == -1) and die "Arguments missing for `check'";
     &SetMode($MODE_CHECK, @ARGV);
     last; # }}}
 
-  } elsif (($arg eq '-R') or ($arg eq '--register-all')) { # {{{ 
+  } elsif (($arg eq '-R') or ($arg eq '--remove-all')) { # {{{ 
 
-=item B<-R> | B<--register-all>
+=item B<-R>,  B<--remove-all>
 
-(Re)register all the documents from I</usr/share/doc-base>.
+De-register all registered documents.
 
 =cut
-    ($#ARGV == -1) or die "Too many arguments missing for `register-all'";
+    ($#ARGV == -1) or die "Too many arguments missing for `remove-all'";
     &CheckFunctionality();
-    &SetMode($MODE_REREGISTER);
+    &SetMode($MODE_REMOVE_ALL);
     last; # }}}
+
+  } elsif (($arg eq '-I') or ($arg eq '--install-all')) { # {{{ 
+
+=item B<-I>, B<--install-all>
+
+(Re)register all documents from F</usr/share/doc-base>.
+
+=cut
+    ($#ARGV == -1) or die "Too many arguments missing for `install-all'";
+    &CheckFunctionality();
+    &SetMode($MODE_INSTALL_ALL);
+    last; # }}}
+
 
   } elsif (($arg eq '-s') or ($arg eq '--status')) {  # {{{
 
-=item B<-s> | B<--status> I<docid> [ I<docid ...> ]
+=item B<-s> I<docid> [I<docid> ...], B<--status> I<docid> [I<docid> ...]
 
 Display the status of the document identifier I<docid>.
 
@@ -229,7 +242,7 @@ Display the status of the document identifier I<docid>.
 
   } elsif (($arg eq '-L') or ($arg eq '--listfiles')) { # {{{
 
-=item B<-L> | B<--listfiles> I<docid> [ I<docid ...> ]
+=item B<-L> I<docid> [I<docid> ...], B<--listfiles> I<docid> [I<docid> ...]
 
 Deprecated option. Does nothing.
 
@@ -259,7 +272,7 @@ sub CheckFunctionality() { # {{{
 
 
 #### Main function
-&InstallDocsMain($do_dwww_update);
+&InstallDocsMain();
 
 unlink ($force_reregister_flagfile) if -e $force_reregister_flagfile;
 
@@ -267,24 +280,52 @@ exit ($exitval);
 
 __DATA__
 
+=head1 COMPATIBILITY ISSUES
+
+The following features were added in version 0.8.4, 
+please make sure to add proper 
+`I<Conflicts>' or `I<Depends>' lines if you would like to use them in your package's scripts:
+
+=over
+
+=item * 
+
+support for passing more than one argument to the B<-i> and B<-r> actions,
+
+=item * 
+
+reading arguments from the standard input, 
+
+=item * 
+
+B<-I>,B<--install-all>, B<-R>,B<---remove-all>, B<-c>,B<--check> actions,
+
+=item * 
+
+B<-d>,B<--debug>, B<-h>,B<--help> options.
+
+=back
+
+
+
 =head1 FILES
 
 =over 4
 
-=item I</usr/share/doc-base/>
+=item F</usr/share/doc-base/>
 
 The location of doc-base control files installed by various packages.
 
-=item I</var/lib/doc-base/info/*.status>
+=item F</var/lib/doc-base/info/*.status>
 
 Statuses of registered documents.
 
-=item I</var/lib/doc-base/omf/> 
+=item F</var/lib/doc-base/omf/> 
 
 The location of generated scrollkeeper OMF files.
-Note: I</usr/share/omf/doc-base> should be a symbolic link pointing to the directory.
+Note: F</usr/share/omf/doc-base> should be a symbolic link pointing to the directory.
 
-=item I</usr/share/doc/*/.dhelp>
+=item F</usr/share/doc/*/.dhelp>
 
 The location of generated dhelp files.
 
@@ -292,7 +333,7 @@ The location of generated dhelp files.
 
 =head1 BUGS
 
-See <URL:http://bugs.debian.org/doc-base>.
+See L<http://bugs.debian.org/doc-base>.
 
 =head1 SEE ALSO
 
@@ -313,9 +354,3 @@ with this software, please join the mailing list
 <debian-doc@lists.debian.org>.
 
 =cut
-
-
-
-
-
-

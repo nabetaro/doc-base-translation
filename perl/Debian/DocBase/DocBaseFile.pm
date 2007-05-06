@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 67 2007-05-05 07:19:44Z robert $
+# $Id: DocBaseFile.pm 73 2007-05-06 10:54:35Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -18,8 +18,8 @@ our %CONTROLFILES = ();
 
 # constants for _prserr function
 use constant PRS_FATAL_ERR    => 1;   # fatal error, marks documents as invalid
-use constant PRS_WARN_ERR     => 2;   # warning, marks document as invalid
-use constant PRS_WARN_IGN     => 3;   # ingored warning
+use constant PRS_ERR_IGN      => 2;   # error, marks documents as invalid
+use constant PRS_WARN         => 3;   # warning, marks document as invalid
 
 use base 'Exporter';
 our @EXPORT = qw(PARSE_GETDOCID PARSE_FULL); 
@@ -132,14 +132,14 @@ sub _prserr($$) { # {{{
 
 
   $self->{'WARNERR_CNT'}++;
-  $self->{'INVALID'} = 1 if $flag != PRS_WARN_IGN;
+  $self->{'INVALID'} = 1 if $flag != PRS_WARN;
 
   if ($flag == PRS_FATAL_ERR) {
     &Error("Error in $filepos: $msg");
-  } elsif ($flag == PRS_WARN_IGN) {
-    &Warn("Warning in $filepos: $msg (ignored)");
-  } elsif ($flag == PRS_WARN_ERR) {
-    &Warn("Warning in $filepos: $msg (ignored)");
+  } elsif ($flag == PRS_ERR_IGN) {
+    &ErrorNF("Error in $filepos: $msg");
+  } elsif ($flag == PRS_WARN) {
+    &Warn("Warning in $filepos: $msg");
   } else {
     croak ("Internal error: Unknown flag ($flag, $msg)");
   }    
@@ -202,7 +202,7 @@ sub _read_control_file_section { # {{{
       ($cf,$v) = ($1,$2);
       $cf = lc $cf;
       if (exists $$pfields{$cf}) {
-        return $self->_prserr(PRS_WARN_IGN, "overwriting previous setting of control field $cf");
+        return $self->_prserr(PRS_WARN, "overwriting previous setting of control field $cf");
       }
       $$pfields{$cf} = $v;
     } elsif (/^\s+(\S.*)$/) {
@@ -236,7 +236,7 @@ sub _read_control_file { # {{{
   return $self->_prserr(PRS_FATAL_ERR, "the first line does not contain valid `Document' field")
     unless /^\s*Document\s*:\s*(\S+)\s*$/i;
   $self->{'DOCUMENT_ID'} = $tmp = $1;
-  $self->_prserr(PRS_WARN_IGN, "invalid value of `Document' field")
+  $self->_prserr(PRS_WARN, "invalid value of `Document' field")
     unless $tmp =~ /^[a-z0-9\.\+\-]+$/;
 
 
@@ -247,7 +247,7 @@ sub _read_control_file { # {{{
   my $doc_data = {};
   $self->_read_control_file_section($fh, $doc_data) or die "error: empty control file";
   defined $$doc_data{'version'} and
-      return $self->_pwarn ("unsupported Version: $$doc_data{'version'}");
+      return $self->_prserr (PRS_WARN, "unsupported Version: $$doc_data{'version'}");
 
   $self->{TITLE} = $$doc_data{'title'}
     or return $self->_prserr(PRS_FATAL_ERR, "`Title' value not specified");
@@ -270,12 +270,11 @@ sub _read_control_file { # {{{
     $format =~ tr/A-Z/a-z/;
 
     if (defined $self->{FORMAT_LIST}->{$format}) {
-      $self->_prserr(PRS_WARN_IGN, "format $format already defined");
-      next;
+      return $self->_prserr(PRS_ERR_IGN, "format $format already defined");
     }
 
     if (not grep { $_ eq $format } @supported_formats) {
-      $self->_prserr(PRS_WARN_IGN, "format `$$format_data{'format'}' is not supported");
+      $self->_prserr(PRS_WARN, "format `$$format_data{'format'}' is not supported");
       next;
     }
 
@@ -291,13 +290,13 @@ sub _read_control_file { # {{{
 
         # b) does it start with / ?
         if ($$format_data{'index'} !~ /^\//) {
-          $self->_prserr(PRS_WARN_IGN, "`$tmpnam' value has to be specified with absolute path: $tmp");
+          $self->_prserr(PRS_WARN, "`$tmpnam' value has to be specified with absolute path: $tmp");
           next;
        }
 
        # c) does the index file exist?
        if (not -e $opt_rootdir.$tmp) {
-        $self->_prserr(PRS_WARN_IGN, "file `$tmp' does not exist" . 
+        $self->_prserr(PRS_WARN, "file `$tmp' does not exist" . 
                        ($opt_rootdir eq "" ? "" : " (using `$opt_rootdir' as the root directory)"));
         next;
       }
@@ -309,7 +308,7 @@ sub _read_control_file { # {{{
     $tmp    =  $$format_data{'files'};
     $tmpnam = "Files";
     if (not defined $tmp) {
-      $self->_prserr(PRS_WARN_IGN, "`$tmpnam' value not specified for format $format");
+      $self->_prserr(PRS_WARN, "`$tmpnam' value not specified for format $format");
       next;
     }
 
@@ -318,13 +317,13 @@ sub _read_control_file { # {{{
       # b) do values start with / ?
       my @invalid = grep { /^[^\/]/ } @masks;
       if ($#invalid > -1) {
-        $self->_prserr(PRS_WARN_IGN, "`$tmpnam' value has to be specified with absolute path: " . join (' ', @invalid));
+        $self->_prserr(PRS_WARN, "`$tmpnam' value has to be specified with absolute path: " . join (' ', @invalid));
         next;
       }
 
       # c) do files exist ?
       if (not grep { &bsd_glob($opt_rootdir.$_, GLOB_NOSORT) }  @masks) {
-        $self->_prserr(PRS_WARN_IGN, "file mask `" . join(' ', @masks) . "' does not match any files" .
+        $self->_prserr(PRS_WARN, "file mask `" . join(' ', @masks) . "' does not match any files" .
                          ($opt_rootdir eq "" ? "" : " (using `$opt_rootdir' as the root directory)"));
         next;
       }
@@ -335,7 +334,7 @@ sub _read_control_file { # {{{
    $format_data = {};
   }
 
-  return $self->_prserr(PRS_WARN_ERR, "no valid `Format' section found") if (keys %{$self->{FORMAT_LIST}} < 0);
+  return $self->_prserr(PRS_ERR_IGN, "no valid `Format' section found") if (keys %{$self->{FORMAT_LIST}} < 0);
 
  $self->{'INVALID'} = 0;
 } # }}}

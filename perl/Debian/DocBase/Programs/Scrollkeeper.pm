@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 72 2007-05-05 10:49:09Z robert $
+# $Id: Scrollkeeper.pm 73 2007-05-06 10:54:35Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -90,7 +90,7 @@ sub RegisterScrollkeeper() { # {{{
   }
 
 
-  &Execute($scrollkeeper_update, '-q') if ($do_update);
+  &Execute($scrollkeeper_update, '-q') if ($do_update and $opt_update_menus);
 } # }}}
 
 
@@ -127,7 +127,7 @@ sub remove_omf_file($) { # {{{
 
   #check to see if the directory is now empty. if so, kill it.
   if (opendir(DIR, $omf_dir)) {
-    if (grep { $_ !~ /^\.\.?$/ } readdir DIR) {
+    if (defined grep { $_ !~ /^\.\.?$/ } readdir DIR) {
       rmdir($omf_dir) or &Error ("$omf_dir: could not delete directory: $!");
     }
     closedir DIR;

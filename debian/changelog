@@ -2,12 +2,12 @@ doc-base (0.8.4~unreleased) UNRELEASED; urgency=low
 
   * NOT RELEASED YET
   * Split install-docs into modules to make the code more manageable.
-  * Try to avoid bugs like #278495: if our modules can't be loaded when 
+  * Try to avoid bugs like #278495: if our modules can't be loaded when
     (de)registering documentation files, create special flag file and
     reregister all the documents after install-docs is usable again.
   * Add support for (de)registering multiple documents in one install-docs
     invokation (closes: #114692).
-  * Add -c/--check option to install-docs (closes: #35895), also add --rootdir
+  * Add --check/-c option to install-docs (closes: #35895), also add --rootdir
     option.
   * Remove `Registered-to-XXX' statuses, remove *.list files, deprecate the
     -L/--listfiles option. Names of the generated files are now keep in
@@ -15,9 +15,16 @@ doc-base (0.8.4~unreleased) UNRELEASED; urgency=low
   * Change semantics of -r/--remove option: its arguments should be the names
     of previously installed doc-base files, and not the documents IDs. Still
     support the old semantics for backward compatibility.
+  * Introduce -I/--install-all, -R/--remove-all, -d/--debug, -h/--help options.
+
   * Change the build system, create Makefile and let it do all the work.
 
-  * Dhelp support:  
+  * doc-base.sgml:
+    + Update outuput of --status, remove reference to --listfiles.
+    + Add chapter about checking syntax of control files.
+    + Update syntax of --remove option.
+
+  * Dhelp support:
     + Pass a list of all registered files to dhelp (closes: #128493).
     + Create dhelp files only in top-level documentation dirs
       (i.e. /usr/share/doc/$package instead of /u/s/d/$package/something).
@@ -25,7 +32,7 @@ doc-base (0.8.4~unreleased) UNRELEASED; urgency=low
       Also this should avoid problems with symlinks like #21678.
     + Add a special `x-doc-base-id' tag to generated dhelp files to make it
       possible to distinguish items in the dhelp files. When installing new
-      documents existing files are no longer overwritten (closes: #204195), 
+      documents existing files are no longer overwritten (closes: #204195),
       but on the other hand on documents removal the dhelp files may not be
       removed, which possibly reintroduces bugs like #59850.
     + Don't call dhelp_parse {-d,-a} on files that weren't changed.
@@ -36,7 +43,10 @@ doc-base (0.8.4~unreleased) UNRELEASED; urgency=low
       for following registrations of the same document.
     + Call scrollkeeper-update only once in each invokation of install-docs.
 
- -- Robert Luberda <robert@debian.org>  Sat, 05 May 2007 12:27:58 +0200
+  * Dwww support:
+    + skip running update-menus if dwww package doesn't seem to be installed.
+
+ -- Robert Luberda <robert@debian.org>  Sun, 06 May 2007 12:08:47 +0200
 
 doc-base (0.8.3) unstable; urgency=low
 

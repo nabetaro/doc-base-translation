@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Utils.pm 66 2007-05-03 23:25:56Z robert $
+# $Id: Utils.pm 73 2007-05-06 10:54:35Z robert $
 #
 
 package Debian::DocBase::Utils;
@@ -11,7 +11,7 @@ use warnings;
 use vars qw(@ISA @EXPORT);
 use Carp;
 @ISA = qw(Exporter);
-@EXPORT = qw(Execute HTMLEncode HTMLEncodeDescription Inform Debug Warn Error);
+@EXPORT = qw(Execute HTMLEncode HTMLEncodeDescription Inform Debug Warn Error ErrorNF);
 
 use Debian::DocBase::Common;
 
@@ -95,6 +95,10 @@ sub Error($) { # {{{
   $exitval = 1;
 } # }}}
 
+# non-fatal error
+sub ErrorNF($) { # {{{
+  print STDERR (join ' ', @_) . "\n";
+} # }}}
 
 
 1;
