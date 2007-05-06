@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: postinst 73 2007-05-06 10:54:35Z robert $
+# $Id: postinst 74 2007-05-06 10:56:47Z robert $
 # postinst for doc-base
 
 # Abort if any command returns an error value
@@ -23,7 +23,7 @@ fi
 remove_obsolete() {
 	# remove old dhelp files
 	find $infodir -maxdepth 1 -type f -name "*.list" | xargs grep -h '^/.*/.dhelp' |  \
-	while read f; do 
+	while read f; do
 		[ -e "$f" ] || continue;
 		[ -x /usr/sbin/dhelp_parse ] && /usr/sbin/dhelp_parse -d "`dirname "$f"`" || true
 		rm -f "$f"
@@ -32,7 +32,7 @@ remove_obsolete() {
 	# remove old scrollkeeper files
 	find $infodir -maxdepth 1 -type f -name "*.status" | \
 	xargs sed -ne 's/^Scrollkeeper-omf-file: *\(.*-C.omf\) *$/\1/p'  |  \
-	while read f; do 
+	while read f; do
 		[ -e "$f" ] || continue;
 		rm -f "$f"
 		rmdir --ignore-fail-on-non-empty "`dirname "$f"`" || true
@@ -46,7 +46,7 @@ remove_obsolete() {
 
 
 reinstall_docs () {
-    install-docs ${VERBOSE} --install-all || true  # don't abort on failure
+    install-docs ${VERBOSE} --install-all
 }
 
 register_our_docs () {
@@ -60,7 +60,7 @@ case "$1" in
 
     if dpkg --compare-versions "$2" lt-nl 0.8.4; then
     	remove_obsolete
-    fi;		
+    fi		
 
 
     if [ "${2+set}" != set ] || [ -z "$2" ] \

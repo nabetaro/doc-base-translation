@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 73 2007-05-06 10:54:35Z robert $
+# $Id: Dhelp.pm 77 2007-05-06 13:22:47Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -13,6 +13,7 @@ use vars qw(@ISA @EXPORT);
 @ISA = qw(Exporter);
 @EXPORT = qw(RegisterDhelp);
 
+use Carp;
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
 use File::Basename;
@@ -188,12 +189,12 @@ sub write_dhelp_file($$) { # {{{
 
   if (-f $file) {
     &Execute($dhelp_parse, '-d', $dir);
-    unlink $file or &Warn ("can't unlink $file: $!");
+    unlink $file or &croak ("can't unlink $file: $!");
   }
 
   return 0 if  ($#{$dhelp_data} < 0); # no data to write, the file already deleted
 
-  open (FH, ">$file") or return &Error ("can't open file $file for wirting: $!");
+  open (FH, ">$file") or &croak  ("can't open file $file for wirting: $!");
   print FH join("\n\n", @$dhelp_data);
   close FH;
 

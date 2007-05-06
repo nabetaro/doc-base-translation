@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 73 2007-05-06 10:54:35Z robert $
+# $Id: Scrollkeeper.pm 77 2007-05-06 13:22:47Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -13,6 +13,7 @@ use vars qw(@ISA @EXPORT);
 @ISA = qw(Exporter);
 @EXPORT = qw(RegisterScrollkeeper);
 
+use Carp;
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
 use File::Basename qw(dirname);
@@ -148,12 +149,12 @@ sub write_omf_file($$$$) { # {{{
 
 
   if (! -d "$omf_locations/$docid") {
-    mkdir("$omf_locations/$docid") or return &Error ("can't create dir $omf_locations/$docid: $!");
+    mkdir("$omf_locations/$docid") or &croak ("can't create dir $omf_locations/$docid: $!");
   }
 
   &Debug("Writing scrollkeeper OMF file `$omf_file'");
   open(OMF, ">$omf_file")
-    or return &Error("$omf_file: cannot open OMF file for writing: $!");
+    or return &croak("$omf_file: cannot open OMF file for writing: $!");
 
   #now for the boiler plate XML stuff
   print OMF "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";

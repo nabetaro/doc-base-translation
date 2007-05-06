@@ -1,6 +1,5 @@
-doc-base (0.8.4~unreleased) UNRELEASED; urgency=low
+doc-base (0.8.4) unstable; urgency=low
 
-  * NOT RELEASED YET
   * Split install-docs into modules to make the code more manageable.
   * Try to avoid bugs like #278495: if our modules can't be loaded when
     (de)registering documentation files, create special flag file and
@@ -46,7 +45,7 @@ doc-base (0.8.4~unreleased) UNRELEASED; urgency=low
   * Dwww support:
     + skip running update-menus if dwww package doesn't seem to be installed.
 
- -- Robert Luberda <robert@debian.org>  Sun, 06 May 2007 12:08:47 +0200
+ -- Robert Luberda <robert@debian.org>  Sun, 06 May 2007 15:22:38 +0200
 
 doc-base (0.8.3) unstable; urgency=low
 

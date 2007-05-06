@@ -1,6 +1,6 @@
 # vim:ts=2
 # makefile for doc-base
-# $Id: Makefile 72 2007-05-05 10:49:09Z robert $
+# $Id: Makefile 75 2007-05-06 12:45:36Z robert $
 #
 # determine our version number
 DEB_VERSION     := $(shell LC_ALL=C dpkg-parsechangelog | grep ^Version: | sed 's/^Version: *//')
@@ -130,6 +130,7 @@ install: $(generated)
 	$(compress)                              $(DESTDIR)$(mandir)/install-docs.8
 
 	$(install_dir)                           $(DESTDIR)$(docdir)
+	$(install_file) $(bdir)/version.ent      $(DESTDIR)$(docdir)
 	$(install_file) doc-base.sgml            $(DESTDIR)$(docdir)
 	$(compress)                              $(DESTDIR)$(docdir)/doc-base.sgml
 
