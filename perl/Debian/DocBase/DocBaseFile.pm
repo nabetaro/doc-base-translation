@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 73 2007-05-06 10:54:35Z robert $
+# $Id: DocBaseFile.pm 79 2007-07-16 20:25:02Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -245,7 +245,9 @@ sub _read_control_file { # {{{
 
   # parse rest of the file
   my $doc_data = {};
-  $self->_read_control_file_section($fh, $doc_data) or die "error: empty control file";
+  $self->_read_control_file_section($fh, $doc_data) or 
+      return $self->_prserr(PRS_FATAL_ERR, "error: invalid control file");
+
   defined $$doc_data{'version'} and
       return $self->_prserr (PRS_WARN, "unsupported Version: $$doc_data{'version'}");
 

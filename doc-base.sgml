@@ -219,6 +219,11 @@ following fields are available:<taglist>
               <p>
 Title of the document; required field.</p>
             </item>
+            <tag><em>Author</em></tag>
+            <item>
+              <p>
+Author(s) of the document; optional field.</p>
+            </item>
             <tag><em>Abstract</em></tag>
             <item>
               <p>

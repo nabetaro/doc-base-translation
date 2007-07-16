@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 77 2007-05-06 13:22:47Z robert $
+# $Id: Dhelp.pm 79 2007-07-16 20:25:02Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -194,7 +194,7 @@ sub write_dhelp_file($$) { # {{{
 
   return 0 if  ($#{$dhelp_data} < 0); # no data to write, the file already deleted
 
-  open (FH, ">$file") or &croak  ("can't open file $file for wirting: $!");
+  open (FH, ">$file") or &croak  ("can't open file $file for writing: $!");
   print FH join("\n\n", @$dhelp_data);
   close FH;
 

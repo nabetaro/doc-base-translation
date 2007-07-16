@@ -1,3 +1,11 @@
+doc-base (0.8.5) unstable; urgency=low
+
+  * DocBaseFile.pm: don't die() on invalid doc-base files (closes: #425686).
+  * Fix a typo in Dhelp.pm.
+  * Document the Author field (closes: #427794).
+
+ -- Robert Luberda <robert@debian.org>  Tue, 17 Jul 2007 00:47:07 +0200
+
 doc-base (0.8.4) unstable; urgency=low
 
   * Split install-docs into modules to make the code more manageable.
