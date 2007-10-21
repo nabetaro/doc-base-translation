@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 79 2007-07-16 20:25:02Z robert $
+# $Id: Dhelp.pm 81 2007-10-21 11:33:05Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -65,7 +65,7 @@ sub register_one_dhelp_document($) { # {{{
     push(@new_dhelp_data, &generate_dhelp_item({
        '1_x-doc-base-id' => $docid, 
        '2_directory'     => &HTMLEncode($dhelp_section, 1),
-       '3_linkname'      => $doc->title(),
+       '3_linkname'      => substr ($doc->title(), 0, 50),
        '4_filename'      => $filename,
        '5_documents'     => $documents,
        '6_description'   => &HTMLEncodeDescription($doc->abstract(), 1)

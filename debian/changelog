@@ -1,3 +1,10 @@
+doc-base (0.8.6) UNRELEASED; urgency=low
+
+  * Check for unknown or duplicate fields in control files (closes: #423120).
+  * Don't fail on files ending with spaces (closes: #444889).
+
+ -- Robert Luberda <robert@debian.org>  Sun, 21 Oct 2007 13:31:27 +0200
+
 doc-base (0.8.5) unstable; urgency=low
 
   * DocBaseFile.pm: don't die() on invalid doc-base files (closes: #425686).

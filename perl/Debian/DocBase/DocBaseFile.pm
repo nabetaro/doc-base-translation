@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 79 2007-07-16 20:25:02Z robert $
+# $Id: DocBaseFile.pm 81 2007-10-21 11:33:05Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -21,8 +21,9 @@ use constant PRS_FATAL_ERR    => 1;   # fatal error, marks documents as invalid
 use constant PRS_ERR_IGN      => 2;   # error, marks documents as invalid
 use constant PRS_WARN         => 3;   # warning, marks document as invalid
 
+
 use base 'Exporter';
-our @EXPORT = qw(PARSE_GETDOCID PARSE_FULL); 
+our @EXPORT = qw(PARSE_GETDOCID PARSE_FULL);
 # constants for new and
 use constant PARSE_GETDOCID => 1;
 use constant PARSE_FULL     => 2;
@@ -33,8 +34,8 @@ sub new { # {{{
     my $parse_flag  = shift; # PARSE_FULL or PARSE_GETDOCID
     if (defined  $CONTROLFILES{$filename}) {
       $CONTROLFILES{$filename}->_parse($parse_flag);
-      return $CONTROLFILES{$filename} 
-    }      
+      return $CONTROLFILES{$filename}
+    }
 
     my $self = {
         DOCUMENT_ID   => undef,
@@ -142,7 +143,7 @@ sub _prserr($$) { # {{{
     &Warn("Warning in $filepos: $msg");
   } else {
     croak ("Internal error: Unknown flag ($flag, $msg)");
-  }    
+  }
 
   return undef;
 } # }}}
@@ -159,7 +160,7 @@ sub _parse { # {{{
   return if ($self->{'PARSE_FLAG'} == PARSE_FULL);
   return if ($self->{'PARSE_FLAG'} == $parseflag);
 
-  open($fh, $file) or
+  open($fh, "<", $file) or
     return $self->_prserr(PRS_FATAL_ERR, "cannot open file for reading: $!\n");
 
   $self->_read_control_file($parseflag, $fh);
@@ -173,51 +174,70 @@ sub _parse { # {{{
 ## assuming filehandle IN is the control file, read a section (or
 ## "stanza") of the doc-base control file and adds data in that
 ## section to the hash reference passed as an argument.  Returns 1 if
-## there is data and 0 if it was empty
+## there is data, 0 if it was empty or undef in case of parse error
 ##
-sub _read_control_file_section { # {{{
-  my $self = shift;
-  my $fh = shift;
-  my ($pfields) = @_;
+sub _read_control_file_section($$$$) { # {{{
+  my $self     = shift;
+  my $fh       = shift;    # file handle
+  my $pfields  = shift;    # read fields
+  my $fldstype = shift;    # $FLDTYPE_MAIN or $FLDTYPE_FORMAT
+
 
   my $empty = 1;
-  my ($cf,$v);
+  my ($origcf, $cf,$v);
   while (<$fh>) {
     chomp;
-    s/\s*$//;                   # trim trailing whitespace
+    s/\s*$//o;                   # trim trailing whitespace
 
     # empty line?
     if (/^\s*$/o) {
-      if ($empty) {
-        next;
-      } else {
-        last;
-      }
+      $empty ? next : last;
     }
 
     $empty = 0;
 
     # new field?
-    if (/^(\S+)\s*:\s*(.*)$/) {
-      ($cf,$v) = ($1,$2);
-      $cf = lc $cf;
-      if (exists $$pfields{$cf}) {
-        return $self->_prserr(PRS_WARN, "overwriting previous setting of control field $cf");
+    if (/^(\S+)\s*:\s*(.*)$/o) {
+      ($origcf, $cf, $v) = ($1, lc $1, $2);
+      if (exists $pfields->{$cf}) {
+        return $self->_prserr(PRS_FATAL_ERR, "control field `$origcf' already defined");
+      } elsif (not defined $FIELDS_DEF{$cf}) {
+        return $self->_prserr(PRS_FATAL_ERR, "unrecognised control field `$origcf'");
+      } elsif ($FIELDS_DEF{$cf}->{$FLDDEF_TYPE} != $fldstype) {
+        return $self->_prserr(PRS_FATAL_ERR, "field `$origcf' in incorrect section (missing empty line before the field?)");
       }
-      $$pfields{$cf} = $v;
-    } elsif (/^\s+(\S.*)$/) {
+      $pfields->{$cf} = $v;
+
+    } elsif (/^\s+(\S.*)$/o) {
       $v = $&;
       defined($cf) or return $self->_prserr(PRS_FATAL_ERR, "syntax error - no field specified");
-      #print STDERR "$cf -> $v (continued)\n";
+      $FIELDS_DEF{$cf}->{$FLDDEF_MULTILINE} or return $self->_prserr(PRS_FATAL_ERR, "field `$origcf' can't consist of multi lines");
+    #print STDERR "$cf -> $v (continued)\n";
       $$pfields{$cf} .= "\n$v";
     } else {
       return $self->_prserr(PRS_FATAL_ERR, "syntax error in control file: $_");
     }
   }
-
+  return $self->_check_required_fields($pfields, $fldstype) unless $empty and $fldstype == $FLDTYPE_FORMAT;
   return not $empty;
 } # }}}
 
+sub _check_required_fields($$$) { # {{{
+  my $self       = shift;
+  my $pfields    = shift;
+  my $fldstype   = shift;    # $FLDTYPE_MAIN or $FLDTYPE_FORMAT
+
+  foreach my $fldname (sort keys (%FIELDS_DEF)) {
+    if (
+        $FIELDS_DEF{$fldname} -> {$FLDDEF_TYPE} == $fldstype
+        and $FIELDS_DEF{$fldname} -> {$FLDDEF_REQUIRED}
+        and not exists $pfields->{$fldname}
+       ) {
+      return $self -> _prserr(PRS_FATAL_ERR, "`" . ucfirst($fldname) . "' value not specified");
+    }
+  }
+  return 1;
+} # }}}
 
 # reads control file specified as argument
 # output:
@@ -242,31 +262,24 @@ sub _read_control_file { # {{{
 
   return if $parseflag == PARSE_GETDOCID;
 
-
+  my $doc_data = {'document' => $self->{'DOCUMENT_ID'} };
   # parse rest of the file
-  my $doc_data = {};
-  $self->_read_control_file_section($fh, $doc_data) or 
-      return $self->_prserr(PRS_FATAL_ERR, "error: invalid control file");
+  $self->_read_control_file_section($fh, $doc_data, $FLDTYPE_MAIN) 
+    or return undef;
+  return $self->_prserr(PRS_WARN, "unsupported Version: $$doc_data{'version'}") if
+    defined $$doc_data{'version'};
 
-  defined $$doc_data{'version'} and
-      return $self->_prserr (PRS_WARN, "unsupported Version: $$doc_data{'version'}");
-
-  $self->{TITLE} = $$doc_data{'title'}
-    or return $self->_prserr(PRS_FATAL_ERR, "`Title' value not specified");
-  $self->{SECTION} = $$doc_data{'section'}
-    or return $self->_prserr(PRS_FATAL_ERR, "`Section' value not specified");
+  $self->{TITLE} = $$doc_data{'title'};
+  $self->{SECTION} = $$doc_data{'section'};
   $self->{ABSTRACT} = defined $$doc_data{'abstract'} ?  $$doc_data{'abstract'} : "";
   $self->{AUTHOR} = defined $$doc_data{'author'} ? $$doc_data{'author'} : "";
   undef $doc_data;
 
 
   my $format_data = {};
-  while ($self->_read_control_file_section($fh, $format_data)) {
+  my $status      = 0;
+  while ($status = $self->_read_control_file_section($fh, $format_data, $FLDTYPE_FORMAT)) {
     my $format = $$format_data{'format'};
-    # check for required information
-
-    $format
-      or return $self->_prserr(PRS_FATAL_ERR, "`Format' value not specified");
 
     # adjust control fields
     $format =~ tr/A-Z/a-z/;
@@ -275,14 +288,14 @@ sub _read_control_file { # {{{
       return $self->_prserr(PRS_ERR_IGN, "format $format already defined");
     }
 
-    if (not grep { $_ eq $format } @supported_formats) {
+    if (not grep { $_ eq $format } @SUPPORTED_FORMATS) {
       $self->_prserr(PRS_WARN, "format `$$format_data{'format'}' is not supported");
       next;
     }
 
     my $index_value = undef;
     # Check `Index' field
-    if (grep { $_ eq $format } @need_index_formats) {
+    if (grep { $_ eq $format } @NEED_INDEX_FORMATS) {
         $index_value = $tmp = $$format_data{'index'};
         $tmpnam = "Index";
 
@@ -298,7 +311,7 @@ sub _read_control_file { # {{{
 
        # c) does the index file exist?
        if (not -e $opt_rootdir.$tmp) {
-        $self->_prserr(PRS_WARN, "file `$tmp' does not exist" . 
+        $self->_prserr(PRS_WARN, "file `$tmp' does not exist" .
                        ($opt_rootdir eq "" ? "" : " (using `$opt_rootdir' as the root directory)"));
         next;
       }
@@ -332,9 +345,10 @@ sub _read_control_file { # {{{
     }
 
    $self->{FORMAT_LIST}->{$format} = $format_data;
-  } continue { 
+  } continue {
    $format_data = {};
   }
+  return undef unless defined $status;
 
   return $self->_prserr(PRS_ERR_IGN, "no valid `Format' section found") if (keys %{$self->{FORMAT_LIST}} < 0);
 

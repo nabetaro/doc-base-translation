@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 77 2007-05-06 13:22:47Z robert $
+# $Id: Scrollkeeper.pm 81 2007-10-21 11:33:05Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -135,6 +135,11 @@ sub remove_omf_file($) { # {{{
   }
 } # }}}
 
+sub _HTMLEncode($) { # {{{
+  my $text = shift;
+  $text =~ s/&/&amp;/g;
+  return &HTMLEncode($text, 1);
+} # }}}
 
 sub write_omf_file($$$$) { # {{{
   my ($doc, $file, $format, $category, $serial_id) = @_;
@@ -162,11 +167,11 @@ sub write_omf_file($$$$) { # {{{
   print OMF "<omf>\n\t<resource>\n";
 
   #now for the dynamic stuff
-  print OMF "\t\t<creator>".&HTMLEncode($doc->author(), 1)."</creator>\n";
-  print OMF "\t\t<title>".&HTMLEncode($doc->title(), 1)."</title>\n";
+  print OMF "\t\t<creator>".&_HTMLEncode($doc->author())."</creator>\n";
+  print OMF "\t\t<title>".&_HTMLEncode($doc->title())."</title>\n";
   print OMF "\t\t<date>$date</date>\n";
   print OMF "\t\t<subject category=\"$category\"/>\n";
-  print OMF "\t\t<description>".&HTMLEncode($doc->abstract(), 1)."</description>\n";
+  print OMF "\t\t<description>".&_HTMLEncode($doc->abstract())."</description>\n";
   print OMF "\t\t<format $omf_mime_types{$format} />\n";
   print OMF "\t\t<identifier url=\"$file\"/>\n";
   print OMF "\t\t<language code=\"C\"/>\n";

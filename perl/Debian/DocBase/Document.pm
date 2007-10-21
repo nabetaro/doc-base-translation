@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 73 2007-05-06 10:54:35Z robert $
+# $Id: Document.pm 81 2007-10-21 11:33:05Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -200,7 +200,7 @@ sub display_status_information { # {{{
     print "Section: $tmp\n"   if (($tmp = $self->section()) ne "");
     print "Title: $tmp\n"     if (($tmp = $self->title()) ne "");
   
-    for my $format (@supported_formats) {
+    for my $format (@SUPPORTED_FORMATS) {
       my $format_data = $self->format($format);
       next unless $format_data;
       print "\n";
