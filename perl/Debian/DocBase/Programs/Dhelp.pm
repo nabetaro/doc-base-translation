@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 81 2007-10-21 11:33:05Z robert $
+# $Id: Dhelp.pm 82 2007-10-21 17:37:56Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -22,12 +22,12 @@ my $dhelp_parse = "/usr/sbin/dhelp_parse";
 my $usd_dir    = "/usr/share/doc";
 
 # Registering documents to dhelp
-sub RegisterDhelp {  # {{{
+sub RegisterDhelp(\@) {  # {{{
   my @documents = @_;
   
 
   foreach my $doc (@documents) {
-    &register_one_dhelp_document($doc);
+    register_one_dhelp_document($doc);
   }    
 
 } # }}}
@@ -46,7 +46,7 @@ sub register_one_dhelp_document($) { # {{{
     $file =~ s/\/+/\//;
     # ensure the documentation is in an area dhelp can deal with
     if ( $file !~ /^$usd_dir\/([^\/]+)\/(.+)$/o ) {
-      &Warn ("register_dhelp: skipping $file
+      Warn ("register_dhelp: skipping $file
               because dhelp only knows about /usr/share/doc");
   } else {
 
@@ -62,13 +62,13 @@ sub register_one_dhelp_document($) { # {{{
     $dhelp_section =~ s/^(howto|faq)$/\U$&\E/;
     # now push our data onto the array (undefs are ok)
     (my $documents =  $$format_data{'files'}) =~ s/\B\Q$usd_dir\E\/\Q$dir\E\///g;
-    push(@new_dhelp_data, &generate_dhelp_item({
+    push(@new_dhelp_data, generate_dhelp_item({
        '1_x-doc-base-id' => $docid, 
-       '2_directory'     => &HTMLEncode($dhelp_section, 1),
-       '3_linkname'      => substr ($doc->title(), 0, 50),
+       '2_directory'     => HTMLEncode($dhelp_section),
+       '3_linkname'      => substr ($doc->title(), 0, 50), #
        '4_filename'      => $filename,
        '5_documents'     => $documents,
-       '6_description'   => &HTMLEncodeDescription($doc->abstract(), 1)
+       '6_description'   => HTMLEncodeDescription($doc->abstract())
        })
      );
     }    
@@ -102,7 +102,7 @@ sub register_one_dhelp_document($) { # {{{
         or defined grep {$old_dhelp_data[$_] ne $new_dhelp_data[$_]} (0..$#new_dhelp_data)) {
       write_dhelp_file($new_dhelp_file, \@dhelp_data);
     } else {
-      &Debug("`$new_dhelp_file' not changed, skipping its registration");
+      Debug("`$new_dhelp_file' not changed, skipping its registration");
    }       
 
     @new_dhelp_data = ();
@@ -117,11 +117,11 @@ sub register_one_dhelp_document($) { # {{{
 # returns othher items in @other_dhelp_data
 sub read_dhelp_file($$$) { # {{{
   my ($docid, $dhelp_file, $other_dhelp_data, $our_dhelp_data) = @_;
-  &Debug("Reading dhelp file: $dhelp_file");
+  Debug("Reading dhelp file: $dhelp_file");
   @$other_dhelp_data = ();
   @$our_dhelp_data  = ();
 
-  open(FH, "<$dhelp_file") or return &Warn ("can't open file '$dhelp_file': $!\n");
+  open(FH, "<$dhelp_file") or return Warn ("can't open file '$dhelp_file': $!\n");
   $_ = join('', <FH>);    # slurp in the file
 
 # <x-doc-base-id> may be anywhere in <item>
@@ -154,7 +154,7 @@ sub read_dhelp_file($$$) { # {{{
 } # }}}
 
 
-sub generate_dhelp_item { # {{{
+sub generate_dhelp_item($) { # {{{
   my $data = shift;
   my $result = "";
 
@@ -183,22 +183,22 @@ sub write_dhelp_file($$) { # {{{
   my $file = shift;
   my $dhelp_data = shift;
 
-  my $dir = &dirname($file);
+  my $dir = dirname($file);
 
-  &Debug("Writing dhelp file: $file");
+  Debug("Writing dhelp file: $file");
 
   if (-f $file) {
-    &Execute($dhelp_parse, '-d', $dir);
-    unlink $file or &croak ("can't unlink $file: $!");
+    Execute($dhelp_parse, '-d', $dir);
+    unlink $file or croak ("can't unlink $file: $!");
   }
 
   return 0 if  ($#{$dhelp_data} < 0); # no data to write, the file already deleted
 
-  open (FH, ">$file") or &croak  ("can't open file $file for writing: $!");
+  open (FH, ">$file") or croak  ("can't open file $file for writing: $!");
   print FH join("\n\n", @$dhelp_data);
   close FH;
 
-  &Execute($dhelp_parse, '-a', $dir);
+  Execute($dhelp_parse, '-a', $dir);
 
   return 1;
 } # }}}

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs.in 73 2007-05-06 10:54:35Z robert $
+# $Id: install-docs.in 82 2007-10-21 17:37:56Z robert $
 
 use warnings;
 use strict;
@@ -69,6 +69,17 @@ description of the control file syntax and grammar.
 =over 4
 
 =cut
+
+sub CheckFunctionality() { # {{{
+  if (not $fully_functional) {
+    open F, "> $force_reregister_flagfile" 
+      or die "Cannot create $force_reregister_flagfile: $!\n";
+    print F "x";
+    close F;
+    exit 0;
+  }    
+} # }}}
+
 
 #### Parse arguments loop #####
 #
@@ -168,11 +179,11 @@ Install the documentation described by the control file I<file>.
 =cut
     # install new docs 
     ($#ARGV == -1) and die "Arguments missing for `install'";
-    &CheckFunctionality();
+    CheckFunctionality();
     if (! -e $force_reregister_flagfile) {
-        &SetMode($MODE_INSTALL, @ARGV);
+        SetMode($MODE_INSTALL, @ARGV);
     } else {     
-        &SetMode($MODE_INSTALL_ALL); 
+        SetMode($MODE_INSTALL_ALL); 
     }      
     last; # }}}
 
@@ -186,8 +197,8 @@ I<file>.
 =cut
     # remove old docs # 
     ($#ARGV == -1) and die "Arguments missing for `remove'";
-    &CheckFunctionality();
-    &SetMode($MODE_REMOVE, @ARGV);
+    CheckFunctionality();
+    SetMode($MODE_REMOVE, @ARGV);
     last; # }}}
 
   } elsif (($arg eq '-c') or ($arg eq '--check')) { # {{{
@@ -201,7 +212,7 @@ given if the `Files' and `Index' fields of the I<file>.
 
 =cut
     ($#ARGV == -1) and die "Arguments missing for `check'";
-    &SetMode($MODE_CHECK, @ARGV);
+    SetMode($MODE_CHECK, @ARGV);
     last; # }}}
 
   } elsif (($arg eq '-R') or ($arg eq '--remove-all')) { # {{{ 
@@ -212,8 +223,8 @@ De-register all registered documents.
 
 =cut
     ($#ARGV == -1) or die "Too many arguments missing for `remove-all'";
-    &CheckFunctionality();
-    &SetMode($MODE_REMOVE_ALL);
+    CheckFunctionality();
+    SetMode($MODE_REMOVE_ALL);
     last; # }}}
 
   } elsif (($arg eq '-I') or ($arg eq '--install-all')) { # {{{ 
@@ -224,8 +235,8 @@ De-register all registered documents.
 
 =cut
     ($#ARGV == -1) or die "Too many arguments missing for `install-all'";
-    &CheckFunctionality();
-    &SetMode($MODE_INSTALL_ALL);
+    CheckFunctionality();
+    SetMode($MODE_INSTALL_ALL);
     last; # }}}
 
 
@@ -237,7 +248,7 @@ Display the status of the document identifier I<docid>.
 
 =cut
     ($#ARGV == -1) and die "Arguments missing for `status'";
-    &SetMode($MODE_STATUS, @ARGV);
+    SetMode($MODE_STATUS, @ARGV);
     last; # }}}
 
   } elsif (($arg eq '-L') or ($arg eq '--listfiles')) { # {{{
@@ -260,19 +271,9 @@ Deprecated option. Does nothing.
 }
 
 
-sub CheckFunctionality() { # {{{
-  if (not $fully_functional) {
-    open F, "> $force_reregister_flagfile" 
-      or die "Cannot create $force_reregister_flagfile: $!\n";
-    print F "x";
-    close F;
-    exit 0;
-  }    
-} # }}}
-
 
 #### Main function
-&InstallDocsMain();
+InstallDocsMain();
 
 unlink ($force_reregister_flagfile) if -e $force_reregister_flagfile;
 

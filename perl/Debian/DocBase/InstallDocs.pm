@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 73 2007-05-06 10:54:35Z robert $
+# $Id: InstallDocs.pm 82 2007-10-21 17:37:56Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -44,11 +44,11 @@ sub SetMode($@) { # {{{
   my @args    = @_;
 
 
-  &croak("Internal error: mode already set: $mode, $newmode") if (defined $mode);
+  croak("Internal error: mode already set: $mode, $newmode") if (defined $mode);
 
   $mode = $newmode;
 
-  &Inform("Value of --rootdir option ignored") if ($mode != $MODE_CHECK) and ($opt_rootdir ne "");
+  Inform("Value of --rootdir option ignored") if ($mode != $MODE_CHECK) and ($opt_rootdir ne "");
 
   if ($#args == 0 and $args[0] eq '-') {
     # get list from stdin
@@ -73,8 +73,8 @@ sub InstallDocsMain() { # {{{
   croak("Internal error: Unknown mode") unless defined $mode;
 
   if ($mode == $MODE_REMOVE_ALL or $mode == $MODE_INSTALL_ALL) { # {{{
-      @arguments = &GetAllRegisteredDocumentIDs();
-      &Inform("Removing " . ($#arguments + 1) . " registered documents") unless $#arguments < 0;
+      @arguments = GetAllRegisteredDocumentIDs();
+      Inform("Removing " . ($#arguments + 1) . " registered documents") unless $#arguments < 0;
       foreach $docid (@arguments) {
         $doc = Debian::DocBase::Document->new($docid);
         $doc->unregister_all();
@@ -82,18 +82,18 @@ sub InstallDocsMain() { # {{{
   } # }}}
 
   if ($mode == $MODE_INSTALL_ALL) { # {{{
-    @arguments = &GetAllDocBaseFiles();
-    &Inform("Registering " . ($#arguments + 1) . " installed documents") unless $#arguments < 0;
+    @arguments = GetAllDocBaseFiles();
+    Inform("Registering " . ($#arguments + 1) . " installed documents") unless $#arguments < 0;
   } # }}}
 
   if ($mode == $MODE_REMOVE) { # {{{
     foreach $file (@arguments) {
       if ($file !~ /\//) {
-        &Inform ("Ignoring nonregistered document $file") unless -f "$infodir/$file.status";
+        Inform ("Ignoring nonregistered document $file") unless -f "$infodir/$file.status";
         $doc     = Debian::DocBase::Document->new($file);
         $doc->unregister_all();
       } elsif (! -e $file) {
-        &Inform ("Ignoring deregisteration of nonexistant file $file");
+        Inform ("Ignoring deregisteration of nonexistant file $file");
       } else {
         $docfile = Debian::DocBase::DocBaseFile->new($file, PARSE_GETDOCID);
         $docid   = $docfile->document_id();
@@ -108,7 +108,7 @@ sub InstallDocsMain() { # {{{
   if ($mode == $MODE_INSTALL or $mode == $MODE_INSTALL_ALL) { # {{{
     foreach $file (@arguments) {
       if (! -f $file) {
-        &Error("Can't read doc-base file `$file'");
+        Error("Can't read doc-base file `$file'");
         next;
       }        
       $docfile = Debian::DocBase::DocBaseFile->new($file, PARSE_FULL);
@@ -123,17 +123,17 @@ sub InstallDocsMain() { # {{{
   if ($mode == $MODE_CHECK) { # {{{
     foreach $file (@arguments) {
       if (! -f $file) {
-        &Error("Can't read doc-base file `$file'");
+        Error("Can't read doc-base file `$file'");
         next;
       }        
 
       $docfile = Debian::DocBase::DocBaseFile->new($file, PARSE_FULL);
       if ($docfile->invalid()) {
-          &Inform("$file: Fatal error found, the file won't be registered");
+          Inform("$file: Fatal error found, the file won't be registered");
       } elsif ((my $cnt = $docfile->warn_err_count()) > 0) { 
-          &Inform("$file: $cnt warning(s) or non-fatal error(s) found");
+          Inform("$file: $cnt warning(s) or non-fatal error(s) found");
       } else {
-          &Inform("$file: No problems found");
+          Inform("$file: No problems found");
      }          
     }
   } # }}}
@@ -148,9 +148,9 @@ sub InstallDocsMain() { # {{{
   if ($mode == $MODE_INSTALL or $mode == $MODE_REMOVE 
       or $mode == $MODE_INSTALL_ALL or $mode == $MODE_REMOVE_ALL)  { # {{{
     my @documents = Debian::DocBase::Document->GetDocumentList();
-    &RegisterDhelp(@documents);
-    &RegisterScrollkeeper(@documents);
-    &RegisterDwww(@documents);
+    RegisterDhelp(@documents);
+    RegisterScrollkeeper(@documents);
+    RegisterDwww(@documents);
   } # }}}
 
   $file = undef;

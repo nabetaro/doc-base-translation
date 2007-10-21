@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 81 2007-10-21 11:33:05Z robert $
+# $Id: DocBaseFile.pm 82 2007-10-21 17:37:56Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -136,11 +136,11 @@ sub _prserr($$) { # {{{
   $self->{'INVALID'} = 1 if $flag != PRS_WARN;
 
   if ($flag == PRS_FATAL_ERR) {
-    &Error("Error in $filepos: $msg");
+    Error("Error in $filepos: $msg");
   } elsif ($flag == PRS_ERR_IGN) {
-    &ErrorNF("Error in $filepos: $msg");
+    ErrorNF("Error in $filepos: $msg");
   } elsif ($flag == PRS_WARN) {
-    &Warn("Warning in $filepos: $msg");
+    Warn("Warning in $filepos: $msg");
   } else {
     croak ("Internal error: Unknown flag ($flag, $msg)");
   }
@@ -200,11 +200,11 @@ sub _read_control_file_section($$$$) { # {{{
     if (/^(\S+)\s*:\s*(.*)$/o) {
       ($origcf, $cf, $v) = ($1, lc $1, $2);
       if (exists $pfields->{$cf}) {
-        return $self->_prserr(PRS_FATAL_ERR, "control field `$origcf' already defined");
+        $self->_prserr(PRS_WARN, "control field `$origcf' already defined");
       } elsif (not defined $FIELDS_DEF{$cf}) {
-        return $self->_prserr(PRS_FATAL_ERR, "unrecognised control field `$origcf'");
+        $self->_prserr(PRS_WARN, "unrecognised control field `$origcf'");
       } elsif ($FIELDS_DEF{$cf}->{$FLDDEF_TYPE} != $fldstype) {
-        return $self->_prserr(PRS_FATAL_ERR, "field `$origcf' in incorrect section (missing empty line before the field?)");
+        $self->_prserr(PRS_WARN, "field `$origcf' in incorrect section (missing empty line before the field?)");
       }
       $pfields->{$cf} = $v;
 

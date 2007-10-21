@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Utils.pm 73 2007-05-06 10:54:35Z robert $
+# $Id: Utils.pm 82 2007-10-21 17:37:56Z robert $
 #
 
 package Debian::DocBase::Utils;
@@ -15,11 +15,8 @@ use Carp;
 
 use Debian::DocBase::Common;
 
-sub HTMLEncode { # {{{
+sub HTMLEncode($) { # {{{
   my $text        = shift;
-  my $do_convert  = shift;
-
-  return $text unless $do_convert;
 
   $text =~ s/&/&amp;/g;
   $text =~ s/</&lt;/g;
@@ -33,13 +30,10 @@ sub HTMLEncode { # {{{
   return $text;
 } # }}}
 
-sub HTMLEncodeDescription { # {{{
+sub HTMLEncodeDescription($) { # {{{
   my $text        = shift;
-  my $do_convert  = shift;
 
-  return $text unless $do_convert;
-
-  $text = &HTMLEncode($text, $do_convert);
+  $text = HTMLEncode($text);
   my @lines=split(/\n/, $text);
   $text = "";
   my $in_pre = 0;
@@ -61,19 +55,19 @@ sub HTMLEncodeDescription { # {{{
   return $text;
 } # }}}
 
-sub Execute() { # {{{
+sub Execute(@) { # {{{
   my @args = @_;
   my $sargs = join " ", @args;
 
   croak "Internal error: no arguments passed to Execute" if $#args < 0;
 
   if (-x $args[0]) {
-    &Debug ("Executing `$sargs'");
+    Debug ("Executing `$sargs'");
     if (system(@args) != 0) {
-      &Warn ("error occured during execution of `$sargs'");
+      Warn ("error occured during execution of `$sargs'");
     }
   } else {
-    &Debug ("Skipping execution of `$sargs'");
+    Debug ("Skipping execution of `$sargs'");
   }   
 } # }}}
 

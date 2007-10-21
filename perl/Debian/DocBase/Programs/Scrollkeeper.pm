@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 81 2007-10-21 11:33:05Z robert $
+# $Id: Scrollkeeper.pm 82 2007-10-21 17:37:56Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -48,12 +48,12 @@ our @omf_formats = (
 our %mapping = (undef=>undef);
 
 
-sub RegisterScrollkeeper() { # {{{
+sub RegisterScrollkeeper(\@) { # {{{
   my @documents = @_;
   my $do_update = 0;
 
   # read in doc-base -> scrollkeeper mappings unless already read
-  %mapping = &read_map($scrollkeeper_map_file);
+  %mapping = read_map($scrollkeeper_map_file);
 
   foreach my $doc (@documents) {
     my $format_data;
@@ -61,7 +61,7 @@ sub RegisterScrollkeeper() { # {{{
     my $old_omf_file = $doc->get_status('Scrollkeeper-omf-file');
     my $omf_serial_id = undef; 
     my $new_omf_file = undef;
-    my $omf_category = &map_docbase_to_scrollkeeper($doc->section());
+    my $omf_category = map_docbase_to_scrollkeeper($doc->section());
 
     if (defined $omf_category) {
       for my $omf_format (@omf_formats) {
@@ -91,7 +91,7 @@ sub RegisterScrollkeeper() { # {{{
   }
 
 
-  &Execute($scrollkeeper_update, '-q') if ($do_update and $opt_update_menus);
+  Execute($scrollkeeper_update, '-q') if ($do_update and $opt_update_menus);
 } # }}}
 
 
@@ -101,10 +101,10 @@ sub RegisterScrollkeeper() { # {{{
 # reads a file that looks like:
 # foo: bar
 # returns: hash of lv -> rv
-sub read_map { # {{{
+sub read_map($) { # {{{
   my ($file) = @_;
   my %map;
-  open (MAP, "<$file") or &croak( "Could not open $file: $!");
+  open (MAP, "<$file") or croak( "Could not open $file: $!");
   while(<MAP>) {
           chomp;
           my ($lv,$rv) = split(/: /);
@@ -116,20 +116,20 @@ sub read_map { # {{{
 
 # arguments: doc-base section
 # returns: scrollkeeper category
-sub map_docbase_to_scrollkeeper { # {{{
+sub map_docbase_to_scrollkeeper($) { # {{{
   return $mapping{lc($_[0])};
 } # }}}
 
 sub remove_omf_file($) { # {{{
   my $omf_file = shift;
   my $omf_dir = dirname($omf_file);
-  &Debug("Removing scrollkeeper OMF file `$omf_file'");
-  unlink($omf_file) or return &Error ("$omf_file: could not delete file: $!");
+  Debug("Removing scrollkeeper OMF file `$omf_file'");
+  unlink($omf_file) or return Error ("$omf_file: could not delete file: $!");
 
   #check to see if the directory is now empty. if so, kill it.
   if (opendir(DIR, $omf_dir)) {
     if (defined grep { $_ !~ /^\.\.?$/ } readdir DIR) {
-      rmdir($omf_dir) or &Error ("$omf_dir: could not delete directory: $!");
+      rmdir($omf_dir) or Error ("$omf_dir: could not delete directory: $!");
     }
     closedir DIR;
   }
@@ -137,8 +137,8 @@ sub remove_omf_file($) { # {{{
 
 sub _HTMLEncode($) { # {{{
   my $text = shift;
-  $text =~ s/&/&amp;/g;
-  return &HTMLEncode($text, 1);
+  $text =~ s/&/(and)/g;     # scrollkeeper doesn't handle &amp; correctly, see Bug#429847
+  return HTMLEncode($text);
 } # }}}
 
 sub write_omf_file($$$$) { # {{{

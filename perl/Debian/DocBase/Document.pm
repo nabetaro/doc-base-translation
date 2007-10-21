@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 81 2007-10-21 11:33:05Z robert $
+# $Id: Document.pm 82 2007-10-21 17:37:56Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -113,7 +113,7 @@ sub set_status() { # {{{
        or (defined $value and $value ne $oldvalue) ) {
     $self->_write_status_file();
   } else {
-    &Debug("Status of $key in " . $self->document_id() . " not changed");
+    Debug("Status of $key in " . $self->document_id() . " not changed");
   }    
 }   # }}}
 
@@ -128,10 +128,10 @@ sub _read_status_file { # {{{
   my $docid = $self->{'DOCUMENT_ID'};
   my $status_file = "$DATA_DIR/$docid.status";
   if (-f $status_file) {
-    &Debug ("Reading status file $status_file");
+    Debug ("Reading status file $status_file");
     my $status = {};
     open(S,"$status_file")
-      or return &Error("Cannot open status file $status_file for reading: $!");
+      or return Error("Cannot open status file $status_file for reading: $!");
     while (<S>) {
       chomp;
       next if /^\s*$/o;
@@ -155,7 +155,7 @@ sub _write_status_file { # {{{
   my $docid = $self->document_id();
 
   my $status_file = "$DATA_DIR/$docid.status";
-  &Debug ("Writing status information into $status_file");
+  Debug ("Writing status information into $status_file");
 
 
 
@@ -171,7 +171,7 @@ sub _write_status_file { # {{{
   # remove file if it's empty
   if (-z $status_file) {
     unlink $status_file;
-    &Debug ("Removing status file $status_file");
+    Debug ("Removing status file $status_file");
   }    
 
 } # }}}
@@ -232,7 +232,7 @@ sub register() { # {{{
     if ($oldfile ne $newfile and -f $oldfile) {
         my $olddoc = Debian::DocBase::DocBaseFile->new($oldfile, PARSE_GETDOCID);
         if ($olddoc->document_id() eq $self->document_id()) {
-          return &ErrorNF("Error in `$newfile': Document " . $self->document_id()." already registered by `$oldfile'");
+          return ErrorNF("Error in `$newfile': Document " . $self->document_id()." already registered by `$oldfile'");
         }
     }
   }      
@@ -240,7 +240,7 @@ sub register() { # {{{
   
   if ($doc_base_file->invalid()) {
     $self->unregister_all(); # FIXME, temporary
-    return &Warn($doc_base_file->source_file_name() . " contains errors, not registering");
+    return Warn($doc_base_file->source_file_name() . " contains errors, not registering");
   }    
     
   $self->{'CONTROL_FILE_NAMES'} = [$doc_base_file->source_file_name()];
@@ -252,7 +252,7 @@ sub unregister() { # {{{
   my $self          = shift;
   my $doc_base_file = shift;
 
-  &Warn("File " . $doc_base_file->source_file_name() . "is not registered, cannot remove")
+  Warn("File " . $doc_base_file->source_file_name() . "is not registered, cannot remove")
     if ($#{$self->{'CONTROL_FILE_NAMES'}} < 0);
       
 
