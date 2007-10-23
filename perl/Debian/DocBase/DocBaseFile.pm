@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 82 2007-10-21 17:37:56Z robert $
+# $Id: DocBaseFile.pm 83 2007-10-23 07:01:35Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -211,7 +211,7 @@ sub _read_control_file_section($$$$) { # {{{
     } elsif (/^\s+(\S.*)$/o) {
       $v = $&;
       defined($cf) or return $self->_prserr(PRS_FATAL_ERR, "syntax error - no field specified");
-      $FIELDS_DEF{$cf}->{$FLDDEF_MULTILINE} or return $self->_prserr(PRS_FATAL_ERR, "field `$origcf' can't consist of multi lines");
+      not defined($FIELDS_DEF{$cf}) or $FIELDS_DEF{$cf}->{$FLDDEF_MULTILINE} or return $self->_prserr(PRS_FATAL_ERR, "field `$origcf' can't consist of multi lines");
     #print STDERR "$cf -> $v (continued)\n";
       $$pfields{$cf} .= "\n$v";
     } else {
@@ -301,7 +301,7 @@ sub _read_control_file { # {{{
 
         # a) does the field exist?
         defined $tmp
-          or return $self->_prserr(PRS_FATAL_ERR,"`$tmpnam' value missing for format $format");
+          or return $self->_prserr(PRS_FATAL_ERR,"`$tmpnam' value missing for format `$format'");
 
         # b) does it start with / ?
         if ($$format_data{'index'} !~ /^\//) {
@@ -323,7 +323,7 @@ sub _read_control_file { # {{{
     $tmp    =  $$format_data{'files'};
     $tmpnam = "Files";
     if (not defined $tmp) {
-      $self->_prserr(PRS_WARN, "`$tmpnam' value not specified for format $format");
+      $self->_prserr(PRS_WARN, "`$tmpnam' value not specified for format `$format'");
       next;
     }
 

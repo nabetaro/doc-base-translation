@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 82 2007-10-21 17:37:56Z robert $
+# $Id: Dhelp.pm 83 2007-10-23 07:01:35Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -21,8 +21,9 @@ use File::Basename;
 my $dhelp_parse = "/usr/sbin/dhelp_parse";
 my $usd_dir    = "/usr/share/doc";
 
+
 # Registering documents to dhelp
-sub RegisterDhelp(\@) {  # {{{
+sub RegisterDhelp(@) {  # {{{
   my @documents = @_;
   
 
@@ -58,14 +59,14 @@ sub register_one_dhelp_document($) { # {{{
     # FIXME when we finally get a real document hierarchy
     my $dhelp_section;
     ( $dhelp_section = $doc->section()) =~ tr/A-Z/a-z/;
-    $dhelp_section =~ s|^apps/||;
+    $dhelp_section =~ s|^app(lication)?s/||;
     $dhelp_section =~ s/^(howto|faq)$/\U$&\E/;
     # now push our data onto the array (undefs are ok)
     (my $documents =  $$format_data{'files'}) =~ s/\B\Q$usd_dir\E\/\Q$dir\E\///g;
     push(@new_dhelp_data, generate_dhelp_item({
        '1_x-doc-base-id' => $docid, 
        '2_directory'     => HTMLEncode($dhelp_section),
-       '3_linkname'      => substr ($doc->title(), 0, 50), #
+       '3_linkname'      => $doc->title(),
        '4_filename'      => $filename,
        '5_documents'     => $documents,
        '6_description'   => HTMLEncodeDescription($doc->abstract())
@@ -194,7 +195,7 @@ sub write_dhelp_file($$) { # {{{
 
   return 0 if  ($#{$dhelp_data} < 0); # no data to write, the file already deleted
 
-  open (FH, ">$file") or croak  ("can't open file $file for writing: $!");
+  open (FH, ">", "$file") or croak  ("can't open file $file for writing: $!");
   print FH join("\n\n", @$dhelp_data);
   close FH;
 

@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dwww.pm 82 2007-10-21 17:37:56Z robert $
+# $Id: Dwww.pm 83 2007-10-23 07:01:35Z robert $
 #
 
 package Debian::DocBase::Programs::Dwww;
@@ -20,7 +20,7 @@ our $dwww_update = "/usr/bin/update-menus";
 our $dwww_build_menu = "/usr/sbin/dwww-build-menu";
 
 # Registering to dwww:
-sub RegisterDwww(\@) { # {{{
+sub RegisterDwww(@) { # {{{
   my @documents = @_;
   $#documents < 0 and return;
 

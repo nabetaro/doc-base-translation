@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Common.pm 81 2007-10-21 11:33:05Z robert $
+# $Id: Common.pm 83 2007-10-23 07:01:35Z robert $
 
 
 package Debian::DocBase::Common;
@@ -95,7 +95,7 @@ our %FIELDS_DEF  = (
                 },
   'files'    => {
                   $FLDDEF_TYPE      => $FLDTYPE_FORMAT,
-                  $FLDDEF_REQUIRED  => 1,
+                  $FLDDEF_REQUIRED  => 0, # 
                   $FLDDEF_MULTILINE => 1
                 }
 );

@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 82 2007-10-21 17:37:56Z robert $
+# $Id: Scrollkeeper.pm 83 2007-10-23 07:01:35Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -48,7 +48,7 @@ our @omf_formats = (
 our %mapping = (undef=>undef);
 
 
-sub RegisterScrollkeeper(\@) { # {{{
+sub RegisterScrollkeeper(@) { # {{{
   my @documents = @_;
   my $do_update = 0;
 
