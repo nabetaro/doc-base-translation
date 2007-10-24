@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Utils.pm 82 2007-10-21 17:37:56Z robert $
+# $Id: Utils.pm 86 2007-10-24 23:06:43Z robert $
 #
 
 package Debian::DocBase::Utils;
@@ -11,7 +11,8 @@ use warnings;
 use vars qw(@ISA @EXPORT);
 use Carp;
 @ISA = qw(Exporter);
-@EXPORT = qw(Execute HTMLEncode HTMLEncodeDescription Inform Debug Warn Error ErrorNF);
+@EXPORT = qw(Execute HTMLEncode HTMLEncodeDescription Inform Debug Warn Error ErrorNF 
+            IgnoreRestoreSignals);
 
 use Debian::DocBase::Common;
 
@@ -94,5 +95,22 @@ sub ErrorNF($) { # {{{
   print STDERR (join ' ', @_) . "\n";
 } # }}}
 
+sub IgnoreRestoreSignals($$) {
+  my $mode      = shift;
+  my $actions   = shift;
+
+  Debug(ucfirst $mode . " signals");
+
+  foreach my $sig ('INT', 'QUIT', 'HUP', 'TSTP', 'TERM') {
+    if ($mode eq "ignore") {
+      $actions->{$sig} = $SIG{$sig} if defined $SIG{$sig};
+      $SIG{$sig} = "IGNORE";
+    } elsif ($mode eq "restore") {
+      $SIG{$sig} = defined $actions->{$sig} ? $actions->{$sig} : "DEFAULT";
+    } else {
+       croak "Invalid argument of IgnoreRestoreSignals: $mode";
+    }       
+  }
+}
 
 1;

@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 85 2007-10-24 21:57:28Z robert $
+# $Id: Dhelp.pm 86 2007-10-24 23:06:43Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -340,6 +340,8 @@ sub SetDocStatusDhelpFile($$;$) { # {{{
 # Main function of the module
 sub RegisterDhelp(@) {  # {{{
   my @documents = @_;
+  
+  %dhelp_documents = ();
 
 
   foreach my $doc (@documents) {
@@ -350,6 +352,9 @@ sub RegisterDhelp(@) {  # {{{
   foreach my $dir (sort keys %dhelp_documents) {
     GenerateNewDhelpFile($dir);
   }
+
+  my %sigactions = {};
+  IgnoreRestoreSignals("ignore", \%sigactions);
 
   my @dirs = ();
   # unregister old documents
@@ -386,6 +391,13 @@ sub RegisterDhelp(@) {  # {{{
 
   # register dirs
   ExecuteDhelpParse("-a", \@dirs);
+
+  
+  IgnoreRestoreSignals("restore", \%sigactions);
+
+  undef %sigactions;
+  undef $tmpdirname;
+  undef %dhelp_documents;
 
 } # }}}
 
