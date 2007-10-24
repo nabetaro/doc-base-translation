@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 82 2007-10-21 17:37:56Z robert $
+# $Id: Document.pm 84 2007-10-24 20:32:16Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -130,7 +130,7 @@ sub _read_status_file { # {{{
   if (-f $status_file) {
     Debug ("Reading status file $status_file");
     my $status = {};
-    open(S,"$status_file")
+    open(S, "<", $status_file)
       or return Error("Cannot open status file $status_file for reading: $!");
     while (<S>) {
       chomp;
@@ -154,25 +154,30 @@ sub _write_status_file { # {{{
   my $self = shift;
   my $docid = $self->document_id();
 
-  my $status_file = "$DATA_DIR/$docid.status";
+  my $status_file     = "$DATA_DIR/$docid.status";
+  my $tmp_status_file = "$status_file.tmp";
   Debug ("Writing status information into $status_file");
 
 
 
-  open(S,">$status_file")
-    or croak "$status_file: cannot open status file for writing: $!";
+  open(S, ">", $tmp_status_file)
+    or croak "$tmp_status_file: cannot open status file for writing: $!";
   print S "Control-File: $self->{'CONTROL_FILE_NAMES'}[0]\n" if $self->_has_control_files();
   my $status = $self->{'STATUS_DICT'};
-  for my $k (sort keys %$status) {
+  for my $k (sort keys   %$status) {
     print S "$k: $$status{$k}\n";
   }
-  close(S) or croak "$status_file: cannot close status file: $!";
+  close(S) or croak "$tmp_status_file: cannot close status file: $!";
 
   # remove file if it's empty
-  if (-z $status_file) {
+  if (-z $tmp_status_file) {
+    unlink $tmp_status_file;
     unlink $status_file;
     Debug ("Removing status file $status_file");
-  }    
+  } else {
+    rename $tmp_status_file, $status_file 
+      or croak "Can't rename $tmp_status_file to $status_file: $!";
+  }
 
 } # }}}
 
