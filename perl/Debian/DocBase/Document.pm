@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 84 2007-10-24 20:32:16Z robert $
+# $Id: Document.pm 87 2007-10-27 21:17:08Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -97,24 +97,29 @@ sub get_status() { # {{{
   return $self->{'STATUS_DICT'}->{$key};
 }   # }}}
 
-sub set_status() { # {{{
-  my $self = shift;
-  my $key  = shift;
-  my $value = shift;
-  my $oldvalue = $self->{'STATUS_DICT'}->{$key};
+sub set_status($%) { # {{{
+  my $self      = shift;
+  my %status    = @_;
 
-  if (defined $value) {
-    $self->{'STATUS_DICT'}->{$key} = $value;
-  } else {
-     delete $self->{'STATUS_DICT'}->{$key};
+  my $changed = 0;
+
+  foreach my $key (keys %status) {
+    my $oldvalue = $self->{'STATUS_DICT'}->{$key};
+    my $value   = $status{$key};
+  
+    if (defined $value) {
+      $self->{'STATUS_DICT'}->{$key} = $value;
+    } else {
+       delete $self->{'STATUS_DICT'}->{$key};
+    }
+
+    $changed = 1 if ( (defined $value xor defined $oldvalue)
+                   or (defined $value and $value ne $oldvalue) );
   }
 
-  if ( (defined $value xor defined $oldvalue)
-       or (defined $value and $value ne $oldvalue) ) {
-    $self->_write_status_file();
-  } else {
-    Debug("Status of $key in " . $self->document_id() . " not changed");
-  }    
+  $changed ? $self->_write_status_file() 
+           : Debug("Status of `" . join ("', `", keys %status) . "' in " . 
+                    $self->document_id() . " not changed");
 }   # }}}
 
 
@@ -250,7 +255,6 @@ sub register() { # {{{
     
   $self->{'CONTROL_FILE_NAMES'} = [$doc_base_file->source_file_name()];
   $self->{'CONTROL_FILE'} = $doc_base_file;
-  $self->_write_status_file();
 } # }}}
 
 sub unregister() { # {{{
@@ -271,6 +275,11 @@ sub unregister_all() { # {{{
 
   $self->{'CONTROL_FILE_NAMES'} = [];
   $self->{'CONTROL_FILE'} = {};
+} # }}}
+
+sub save_changes($) { # {{{
+  my $self = shift;
+
   $self->_write_status_file();
 } # }}}
 

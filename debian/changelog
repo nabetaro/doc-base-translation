@@ -5,8 +5,9 @@ doc-base (0.8.5.1) UNRELEASED; urgency=low
   * Use prototypes.
   * Rewrite Dhelp.pm to minimise invokations of dhelp_parse
   * Ignore signals in Dhelp.pm
+  *  Try to minimze number of write_Status_file
 
- -- Robert Luberda <robert@debian.org>  Thu, 25 Oct 2007 01:04:12 +0200
+ -- Robert Luberda <robert@debian.org>  Sat, 27 Oct 2007 23:16:37 +0200
 
 doc-base (0.8.5) unstable; urgency=low
 

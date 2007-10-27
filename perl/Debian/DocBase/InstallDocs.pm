@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 82 2007-10-21 17:37:56Z robert $
+# $Id: InstallDocs.pm 87 2007-10-27 21:17:08Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -148,6 +148,9 @@ sub InstallDocsMain() { # {{{
   if ($mode == $MODE_INSTALL or $mode == $MODE_REMOVE 
       or $mode == $MODE_INSTALL_ALL or $mode == $MODE_REMOVE_ALL)  { # {{{
     my @documents = Debian::DocBase::Document->GetDocumentList();
+    foreach my $doc (@documents) {
+      $doc -> save_changes();
+    }
     RegisterDhelp(@documents);
     RegisterScrollkeeper(@documents);
     RegisterDwww(@documents);

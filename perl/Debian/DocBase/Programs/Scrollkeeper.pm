@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 83 2007-10-23 07:01:35Z robert $
+# $Id: Scrollkeeper.pm 87 2007-10-27 21:17:08Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -86,8 +86,8 @@ sub RegisterScrollkeeper(@) { # {{{
       $do_update = 1;
     }
 
-    $doc->set_status('Scrollkeeper-omf-file', $new_omf_file);
-    $doc->set_status('Scrollkeeper-sid', $omf_serial_id);
+    $doc->set_status( 'Scrollkeeper-omf-file' => $new_omf_file, 
+                      'Scrollkeeper-sid'      =>  $omf_serial_id);
   }
 
 
