@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 86 2007-10-24 23:06:43Z robert $
+# $Id: Dhelp.pm 88 2007-10-27 22:20:32Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -78,6 +78,7 @@ sub AddDocumentToHash($) { # {{{
       $new_dir=$1;
 
       _add_document_helper($TYPE_NEW, $new_dir, $doc);
+      Debug("Will add dhelp entry for doc `$docid' in dir `$new_dir'");
     }
   }
 
@@ -85,6 +86,7 @@ sub AddDocumentToHash($) { # {{{
       and (not defined $new_dir
            or $old_dir ne $new_dir)) {
     _add_document_helper($TYPE_OLD, $old_dir, $doc);
+    Debug("Will remove old dhelp entry for doc `$docid' from dir `$old_dir'");
   }
 
 } # }}}
@@ -340,6 +342,8 @@ sub SetDocStatusDhelpFile($$;$) { # {{{
 # Main function of the module
 sub RegisterDhelp(@) {  # {{{
   my @documents = @_;
+
+  Debug("RegisterDhelp started");
   
   %dhelp_documents = ();
 
@@ -353,8 +357,7 @@ sub RegisterDhelp(@) {  # {{{
     GenerateNewDhelpFile($dir);
   }
 
-  my %sigactions = {};
-  IgnoreRestoreSignals("ignore", \%sigactions);
+  IgnoreSignals();
 
   my @dirs = ();
   # unregister old documents
@@ -393,11 +396,12 @@ sub RegisterDhelp(@) {  # {{{
   ExecuteDhelpParse("-a", \@dirs);
 
   
-  IgnoreRestoreSignals("restore", \%sigactions);
+  RestoreSignals();
 
-  undef %sigactions;
   undef $tmpdirname;
   undef %dhelp_documents;
+
+  Debug("RegisterDhelp finished");
 
 } # }}}
 

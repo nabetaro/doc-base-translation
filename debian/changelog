@@ -4,10 +4,11 @@ doc-base (0.8.5.1) UNRELEASED; urgency=low
   * Don't fail on files ending with spaces (closes: #444889).
   * Use prototypes.
   * Rewrite Dhelp.pm to minimise invokations of dhelp_parse
-  * Ignore signals in Dhelp.pm
+  * Ignore/restore signals in Utils.pm
   *  Try to minimze number of write_Status_file
+  * 
 
- -- Robert Luberda <robert@debian.org>  Sat, 27 Oct 2007 23:16:37 +0200
+ -- Robert Luberda <robert@debian.org>  Sun, 28 Oct 2007 00:20:11 +0200
 
 doc-base (0.8.5) unstable; urgency=low
 

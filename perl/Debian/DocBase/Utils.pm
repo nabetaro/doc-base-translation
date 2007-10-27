@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Utils.pm 86 2007-10-24 23:06:43Z robert $
+# $Id: Utils.pm 88 2007-10-27 22:20:32Z robert $
 #
 
 package Debian::DocBase::Utils;
@@ -12,7 +12,7 @@ use vars qw(@ISA @EXPORT);
 use Carp;
 @ISA = qw(Exporter);
 @EXPORT = qw(Execute HTMLEncode HTMLEncodeDescription Inform Debug Warn Error ErrorNF 
-            IgnoreRestoreSignals);
+            IgnoreSignals RestoreSignals);
 
 use Debian::DocBase::Common;
 
@@ -95,22 +95,50 @@ sub ErrorNF($) { # {{{
   print STDERR (join ' ', @_) . "\n";
 } # }}}
 
-sub IgnoreRestoreSignals($$) {
+{ # IgnoreSignals, RestoreSignals # {{{
+  
+our %sigactions = ('ignore_cnt' => 0);
+
+sub _IgnoreRestoreSignals($) { # {{{
   my $mode      = shift;
-  my $actions   = shift;
+
+  my $ign_cnt   = undef;
+
+
+  if ($mode eq "ignore") {
+    $ign_cnt = $sigactions{'ignore_cnt'}++;
+  } elsif ($mode eq "restore") {
+    $ign_cnt = --$sigactions{'ignore_cnt'};
+  } else {  
+     croak "Invalid argument of IgnoreRestoreSignals: $mode";
+  }       
+  
+  croak "Invalid ign_cnt (" . $ign_cnt . ") in IgnoreRestoreSignals(" . $mode . ")"
+    if $ign_cnt < 0;
+
+  return unless $ign_cnt == 0;
 
   Debug(ucfirst $mode . " signals");
 
   foreach my $sig ('INT', 'QUIT', 'HUP', 'TSTP', 'TERM') {
     if ($mode eq "ignore") {
-      $actions->{$sig} = $SIG{$sig} if defined $SIG{$sig};
+      $sigactions{$sig} = $SIG{$sig} if defined $SIG{$sig};
       $SIG{$sig} = "IGNORE";
     } elsif ($mode eq "restore") {
-      $SIG{$sig} = defined $actions->{$sig} ? $actions->{$sig} : "DEFAULT";
+      $SIG{$sig} = defined $sigactions{$sig} ? $sigactions{$sig} : "DEFAULT";
     } else {
        croak "Invalid argument of IgnoreRestoreSignals: $mode";
     }       
   }
+} # }}}
+
+sub IgnoreSignals() {
+  return _IgnoreRestoreSignals("ignore");
 }
 
+
+sub RestoreSignals() {
+  return _IgnoreRestoreSignals("restore");
+}
+} # }}}
 1;

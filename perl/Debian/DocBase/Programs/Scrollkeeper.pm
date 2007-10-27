@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 87 2007-10-27 21:17:08Z robert $
+# $Id: Scrollkeeper.pm 88 2007-10-27 22:20:32Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -51,6 +51,8 @@ our %mapping = (undef=>undef);
 sub RegisterScrollkeeper(@) { # {{{
   my @documents = @_;
   my $do_update = 0;
+  
+  Debug("RegisterScrollkeeper started");
 
   # read in doc-base -> scrollkeeper mappings unless already read
   %mapping = read_map($scrollkeeper_map_file);
@@ -92,6 +94,9 @@ sub RegisterScrollkeeper(@) { # {{{
 
 
   Execute($scrollkeeper_update, '-q') if ($do_update and $opt_update_menus);
+
+  
+  Debug("RegisterScrollkeeper finished");
 } # }}}
 
 

@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 87 2007-10-27 21:17:08Z robert $
+# $Id: Document.pm 88 2007-10-27 22:20:32Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -174,6 +174,7 @@ sub _write_status_file { # {{{
   }
   close(S) or croak "$tmp_status_file: cannot close status file: $!";
 
+  IgnoreSignals();
   # remove file if it's empty
   if (-z $tmp_status_file) {
     unlink $tmp_status_file;
@@ -183,6 +184,7 @@ sub _write_status_file { # {{{
     rename $tmp_status_file, $status_file 
       or croak "Can't rename $tmp_status_file to $status_file: $!";
   }
+  RestoreSignals();
 
 } # }}}
 
