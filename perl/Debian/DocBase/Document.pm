@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 88 2007-10-27 22:20:32Z robert $
+# $Id: Document.pm 89 2007-10-28 10:46:04Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -129,27 +129,29 @@ sub _has_control_files() { # {{{
 } # }}}
 
 sub _read_status_file { # {{{
-  my $self  = shift;
-  my $docid = $self->{'DOCUMENT_ID'};
+  my $self        = shift;
+  my $docid       = $self->{'DOCUMENT_ID'};
   my $status_file = "$DATA_DIR/$docid.status";
+
   if (-f $status_file) {
-    Debug ("Reading status file $status_file");
+    Debug ("Reading status file `$status_file'");
     my $status = {};
     open(S, "<", $status_file)
-      or return Error("Cannot open status file $status_file for reading: $!");
+      or return Error("Cannot open status file `$status_file' for reading: $!");
+
     while (<S>) {
       chomp;
       next if /^\s*$/o;
-      /^\s*(\S+):\s*(.*\S)\s*$/
-        or carp "syntax error in status file: $_" and return;
+      /^\s*(\S+):\s*"?(.*?)"?\s*$/o
+        or return Warn("Syntax error in status file `$status_file': $_");
       $$status{$1} = $2;
     }
     close(S)
-      or croak "$status_file: cannot close status file: $!";
+      or croak "Cannot close status file `$status_file': $!";
   
     push(@{$self->{'CONTROL_FILE_NAMES'}}, $$status{'Control-File'}) if defined $$status{'Control-File'};
     delete $$status{'Control-File'};
-     $self->{'STATUS_DICT'} = $status;
+    $self->{'STATUS_DICT'} = $status;
   }
   $self->{'INVALID'} = 0;
 
@@ -161,28 +163,27 @@ sub _write_status_file { # {{{
 
   my $status_file     = "$DATA_DIR/$docid.status";
   my $tmp_status_file = "$status_file.tmp";
-  Debug ("Writing status information into $status_file");
-
+  Debug ("Writing status information into `$status_file'");
 
 
   open(S, ">", $tmp_status_file)
-    or croak "$tmp_status_file: cannot open status file for writing: $!";
-  print S "Control-File: $self->{'CONTROL_FILE_NAMES'}[0]\n" if $self->_has_control_files();
+    or croak "Cannot open status file `$tmp_status_file' for writing: $!";
+  print S "Control-File: \"$self->{'CONTROL_FILE_NAMES'}[0]\"\n" if $self->_has_control_files();
   my $status = $self->{'STATUS_DICT'};
   for my $k (sort keys   %$status) {
-    print S "$k: $$status{$k}\n";
+    print S "$k: \"$$status{$k}\"\n";
   }
-  close(S) or croak "$tmp_status_file: cannot close status file: $!";
+  close(S) or croak "Cannot close status file `$tmp_status_file': $!";
 
   IgnoreSignals();
   # remove file if it's empty
   if (-z $tmp_status_file) {
     unlink $tmp_status_file;
     unlink $status_file;
-    Debug ("Removing status file $status_file");
+    Debug ("Removing status file `$status_file'");
   } else {
     rename $tmp_status_file, $status_file 
-      or croak "Can't rename $tmp_status_file to $status_file: $!";
+      or croak "Can't rename `$tmp_status_file' to `$status_file': $!";
   }
   RestoreSignals();
 
@@ -234,36 +235,39 @@ sub display_status_information { # {{{
 
 sub register() { # {{{
   my $self          = shift;
-  my $doc_base_file = shift;
+  my $db_file       = shift;
+  my $db_file_name  = $db_file->source_file_name();
+
+  Debug("Registering `$db_file_name'");
 
 # FIXME: temporary check if two documents have the same id's
 # should be replaced with document merging
   if ($#{$self->{'CONTROL_FILE_NAMES'}} == 0) {
     my $oldfile = ${$self->{'CONTROL_FILE_NAMES'}}[0];
-    my $newfile = $doc_base_file->source_file_name();
-    if ($oldfile ne $newfile and -f $oldfile) {
+    if ($oldfile ne $db_file_name and -f $oldfile) {
+
         my $olddoc = Debian::DocBase::DocBaseFile->new($oldfile, PARSE_GETDOCID);
         if ($olddoc->document_id() eq $self->document_id()) {
-          return ErrorNF("Error in `$newfile': Document " . $self->document_id()." already registered by `$oldfile'");
+          return ErrorNF("Error in `$db_file_name': Document " . $self->document_id() . " already registered by `$oldfile'");
         }
     }
   }      
       
   
-  if ($doc_base_file->invalid()) {
+  if ($db_file->invalid()) {
     $self->unregister_all(); # FIXME, temporary
-    return Warn($doc_base_file->source_file_name() . " contains errors, not registering");
+    return Warn($db_file->source_file_name() . " contains errors, not registering");
   }    
     
-  $self->{'CONTROL_FILE_NAMES'} = [$doc_base_file->source_file_name()];
-  $self->{'CONTROL_FILE'} = $doc_base_file;
+  $self->{'CONTROL_FILE_NAMES'}   = [$db_file_name];
+  $self->{'CONTROL_FILE'}         = $db_file;
 } # }}}
 
 sub unregister() { # {{{
   my $self          = shift;
   my $doc_base_file = shift;
 
-  Warn("File " . $doc_base_file->source_file_name() . "is not registered, cannot remove")
+  Warn("File `" . $doc_base_file->source_file_name() . "' is not registered, cannot remove")
     if ($#{$self->{'CONTROL_FILE_NAMES'}} < 0);
       
 
@@ -273,7 +277,8 @@ sub unregister() { # {{{
 
 sub unregister_all() { # {{{
   my $self          = shift;
-  my $doc_base_file = shift;
+
+  Debug('Unregistering all control files from document `' . $self->document_id() . "'");
 
   $self->{'CONTROL_FILE_NAMES'} = [];
   $self->{'CONTROL_FILE'} = {};

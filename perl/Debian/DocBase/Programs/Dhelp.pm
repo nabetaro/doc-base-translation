@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 88 2007-10-27 22:20:32Z robert $
+# $Id: Dhelp.pm 89 2007-10-28 10:46:04Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -20,38 +20,53 @@ use File::Basename;
 use File::Temp qw/tempdir/;
 use File::Copy qw/copy/;
 
-my $dhelp_parse = "/usr/sbin/dhelp_parse";
-my $usd_dir     = "/usr/share/doc";
-my $dhelp_fname = ".dhelp";
 
-# hash of { dhelp_dir ==> (new|old) ==>array of documents which for this file }
-my %dhelp_documents = ();
-my $TYPE_NEW      = "type_new";
-my $TYPE_OLD      = "type_old";
-my $FILE_EXISTS   = "file_exists";
-my $FILE_CHANGED  = "file_changed";
-my $REMOVE_FILE   = "remove_file";
-my $TMP_FILE_NAME = "tmp_file_name";
+my $DHELP_PARSE     = "/usr/sbin/dhelp_parse";
+my $USD_DIR         = "/usr/share/doc";
+my $DHELP_FNAME     = ".dhelp";
 
-my $tmpdirname    = undef;
+# %DHELP_DOCUMENTS is a hash of hashes containing informations about directories, 
+# in which we generate .dhelp files.
+# Keys of the hash are the dirs, without the /usr/share/doc/ prefix.
+#
+# The structure of the hash:
+# $dhelp_dir => { 
+#   # Set by AddDocumentToHash():
+#     $TYPE_OLD      => array of $docs, which used to register .dhelp file in this dir
+#     $TYPE_NEW      => array of $docs, which register .dhelp file in this dir
+#   # Set by GenerateNewDhelpItem():
+#     $FILE_EXISTS   => 1, iff .dhelp file already exists in /usr/share/doc/$dhelp_dir
+#     $FILE_CHANGED  => 1, iff contents of .dhelp file has changed
+#     $REMOVE_FILE   => 1, iff .dhelp file should be removed
+#     $TMP_FILE_NAME => name of the temporary file with new contents of .dhelp file
+# }
+my %DHELP_DOCUMENTS = ();
+my $TYPE_NEW        = "type_new";
+my $TYPE_OLD        = "type_old";
+my $FILE_EXISTS     = "file_exists";
+my $FILE_CHANGED    = "file_changed";
+my $REMOVE_FILE     = "remove_file";
+my $TMP_FILE_NAME   = "tmp_file_name";
+
+my $tmpdirname      = undef;
 
 
 # adds one document to %dhelp_document
 sub _add_document_helper($$$) { # {{{
   my ($type, $dhelp_dir, $doc) = @_;
 
-    if (not exists $dhelp_documents{$dhelp_dir}) {
-      $dhelp_documents{$dhelp_dir} = { $type => [$doc] };
-    } elsif (not exists $dhelp_documents{$dhelp_dir }->{$type}) {
-      $dhelp_documents{$dhelp_dir}->{$type} = [$doc];
+    if (not exists $DHELP_DOCUMENTS{$dhelp_dir}) {
+      $DHELP_DOCUMENTS{$dhelp_dir} = { $type => [$doc] };
+    } elsif (not exists $DHELP_DOCUMENTS{$dhelp_dir }->{$type}) {
+      $DHELP_DOCUMENTS{$dhelp_dir}->{$type} = [$doc];
     } else {
-      push (@{$dhelp_documents{$dhelp_dir}->{$type}}, $doc);
+      push (@{$DHELP_DOCUMENTS{$dhelp_dir}->{$type}}, $doc);
     }
 } # }}}
 
 
 
-# adds document to %dhelp_documents
+# adds document to %DHELP_DOCUMENTS
 sub AddDocumentToHash($) { # {{{
   my $doc = shift;
   my $docid = $doc->document_id();
@@ -60,8 +75,8 @@ sub AddDocumentToHash($) { # {{{
   my $old_dir        = undef;
   if (defined $old_dhelp_file) {
     $old_dir    =  $old_dhelp_file;
-    $old_dir    =~ s/^\Q$usd_dir\E\/+//o;
-    $old_dir    =~ s/\/+\Q$dhelp_fname\E$//o;
+    $old_dir    =~ s/^\Q$USD_DIR\E\/+//o;
+    $old_dir    =~ s/\/+\Q$DHELP_FNAME\E$//o;
   }
   my $new_dir = undef;
 
@@ -70,7 +85,7 @@ sub AddDocumentToHash($) { # {{{
     my $file = $$format_data{'index'};
     $file =~ s/\/+/\//;
     # ensure the documentation is in an area dhelp can deal with
-    if ( $file !~ /^$usd_dir\/([^\/]+)\/(.+)$/o ) {
+    if ( $file !~ /^$USD_DIR\/([^\/]+)\/(.+)$/o ) {
       Warn ("RegisterDhelp: skipping $file
               because dhelp only knows about /usr/share/doc");
     } else {
@@ -140,9 +155,9 @@ sub WriteDhelpFile($$) { # {{{
 
   return 0 if  ($#{$dhelp_data} < 0); # no data to write, the file already deleted
 
-  open (FH, ">", "$file") or croak  ("can't open file $file for writing: $!");
+  open (FH, ">", "$file") or croak  ("Cannot open file $file for writing: $!");
   print FH join("\n\n", @$dhelp_data) . "\n";
-  close FH;
+  close FH or croak "Cannot close dhelp file `$file'";
 
   return 1;
 } # }}}
@@ -194,14 +209,14 @@ sub GenerateDhelpItemFromDoc($$) { # {{{
   my $filename = $$format_data{'index'};
   defined($filename) or croak "Internal error: no index";
   $filename =~ s/\/+/\//;
-  $filename =~ s/^$usd_dir\/([^\/])+\/(.+)$/$2/o;
+  $filename =~ s/^$USD_DIR\/([^\/])+\/(.+)$/$2/o;
 
   my $dhelp_section;
   ( $dhelp_section = $doc->section()) =~ tr/A-Z/a-z/;
   $dhelp_section =~ s|^app(lication)?s/||;
   $dhelp_section =~ s/^(howto|faq)$/\U$&\E/;
   # now push our data onto the array (undefs are ok)
-  (my $documents =  $$format_data{'files'}) =~ s/\B\Q$usd_dir\E\/\Q$dir\E\///g;
+  (my $documents =  $$format_data{'files'}) =~ s/\B\Q$USD_DIR\E\/\Q$dir\E\///g;
 
 
   my $data = "<item>\n";
@@ -217,12 +232,12 @@ sub GenerateDhelpItemFromDoc($$) { # {{{
 
 
 # generates new dhelp file
-# takes into account all documents from $dhelp_documents{$dir}->{ $(TYPE_OLD|TYPE_NEW) }
-# sets  $dhelp_documents{$dir}->{ $(FILE_EXISTS | FILE_CHANGED | REMOVE_FILE | TMP_FILE_NAME) } statuses
+# takes into account all documents from $DHELP_DOCUMENTS{$dir}->{ $(TYPE_OLD|TYPE_NEW) }
+# sets  $DHELP_DOCUMENTS{$dir}->{ $(FILE_EXISTS | FILE_CHANGED | REMOVE_FILE | TMP_FILE_NAME) } statuses
 sub GenerateNewDhelpFile($) { # {{{
   my $dir              = shift;
 
-  my $file             = "$usd_dir/$dir/$dhelp_fname";
+  my $file             = "$USD_DIR/$dir/$DHELP_FNAME";
   my @other_dhelp_data = (); # array of dhelp_items without document_id assigned
   my %dhelp_data       = (); # hash of (document_id => dhelp_item_for_this_document_id)
   my $file_exists      = (-f $file);
@@ -233,12 +248,12 @@ sub GenerateNewDhelpFile($) { # {{{
   # read existing dhelp file
   if ($file_exists) {
     ReadDhelpFile($file, \%dhelp_data, \@other_dhelp_data);
-    $dhelp_documents{$dir}->{$FILE_EXISTS} = 1;
+    $DHELP_DOCUMENTS{$dir}->{$FILE_EXISTS} = 1;
   }
 
   # remove old dhelp file contents
-  if (exists $dhelp_documents{$dir}->{$TYPE_OLD}) {
-    for my $doc ( @{$dhelp_documents{$dir}->{$TYPE_OLD}}) {
+  if (exists $DHELP_DOCUMENTS{$dir}->{$TYPE_OLD}) {
+    for my $doc ( @{$DHELP_DOCUMENTS{$dir}->{$TYPE_OLD}}) {
       $doc_id       = $doc->document_id();
       $file_changed = 1 if exists $dhelp_data{$doc_id};
       delete $dhelp_data{$doc_id};
@@ -246,8 +261,8 @@ sub GenerateNewDhelpFile($) { # {{{
   }
 
   # generate new dhelp file contents
-  if (exists $dhelp_documents{$dir}->{$TYPE_NEW}) {
-    for my $doc ( @{$dhelp_documents{$dir}->{$TYPE_NEW}}) {
+  if (exists $DHELP_DOCUMENTS{$dir}->{$TYPE_NEW}) {
+    for my $doc ( @{$DHELP_DOCUMENTS{$dir}->{$TYPE_NEW}}) {
       $doc_id     = $doc->document_id();
       $item_data  = GenerateDhelpItemFromDoc($doc, $dir);
       if (not exists $dhelp_data{$doc_id} or $dhelp_data{$doc_id} ne $item_data) {
@@ -263,7 +278,7 @@ sub GenerateNewDhelpFile($) { # {{{
     return 1;
   }
 
-  $dhelp_documents{$dir}->{$FILE_CHANGED} = 1;
+  $DHELP_DOCUMENTS{$dir}->{$FILE_CHANGED} = 1;
 
   # add new items to @other_dhelp_data
   foreach my $key (sort keys %dhelp_data) {
@@ -273,7 +288,7 @@ sub GenerateNewDhelpFile($) { # {{{
   if ($#other_dhelp_data < 0) {
     Debug("Dhelp file `$file' will be removed");
     # file contents is empty, should be removed
-    $dhelp_documents{$dir}->{$REMOVE_FILE} = 1 if $file_exists;
+    $DHELP_DOCUMENTS{$dir}->{$REMOVE_FILE} = 1 if $file_exists;
     return 1;
   }
 
@@ -281,7 +296,7 @@ sub GenerateNewDhelpFile($) { # {{{
   my $tmpfile = GetTmpFileName($dir);
   WriteDhelpFile($tmpfile, \@other_dhelp_data);
     Debug("Dhelp file `$file' will be updated");
-  $dhelp_documents{$dir}->{$TMP_FILE_NAME} = $tmpfile;
+  $DHELP_DOCUMENTS{$dir}->{$TMP_FILE_NAME} = $tmpfile;
 } # }}}
 
 
@@ -293,8 +308,8 @@ sub ExecuteDhelpParse($$) { # {{{
 
   return 0 if $#{$dirs} < 0;
 
-  my @args =  grep { $_ = $usd_dir . "/" .$_ } @$dirs;
-  Execute($dhelp_parse, $arg, @args);
+  my @args =  grep { $_ = $USD_DIR . "/" .$_ } @$dirs;
+  Execute($DHELP_PARSE, $arg, @args);
   undef @args;
 } # }}}
 
@@ -343,9 +358,11 @@ sub SetDocStatusDhelpFile($$;$) { # {{{
 sub RegisterDhelp(@) {  # {{{
   my @documents = @_;
 
+  $#documents < 0 and return;
+
   Debug("RegisterDhelp started");
   
-  %dhelp_documents = ();
+  %DHELP_DOCUMENTS = ();
 
 
   foreach my $doc (@documents) {
@@ -353,7 +370,7 @@ sub RegisterDhelp(@) {  # {{{
 #    register_one_dhelp_document($doc);
   }
 
-  foreach my $dir (sort keys %dhelp_documents) {
+  foreach my $dir (sort keys %DHELP_DOCUMENTS) {
     GenerateNewDhelpFile($dir);
   }
 
@@ -361,24 +378,24 @@ sub RegisterDhelp(@) {  # {{{
 
   my @dirs = ();
   # unregister old documents
-  foreach my $dir (sort keys %dhelp_documents) {
-    next unless exists $dhelp_documents{$dir}->{$FILE_CHANGED};
-    next unless exists $dhelp_documents{$dir}->{$FILE_EXISTS};
+  foreach my $dir (sort keys %DHELP_DOCUMENTS) {
+    next unless exists $DHELP_DOCUMENTS{$dir}->{$FILE_CHANGED};
+    next unless exists $DHELP_DOCUMENTS{$dir}->{$FILE_EXISTS};
     push (@dirs, $dir);
   }
   ExecuteDhelpParse("-d", \@dirs);
 
   # move temporary dirs
   @dirs = ();
-  foreach my $dir (sort keys %dhelp_documents) {
-    my $file = "$usd_dir/$dir/$dhelp_fname";
+  foreach my $dir (sort keys %DHELP_DOCUMENTS) {
+    my $file = "$USD_DIR/$dir/$DHELP_FNAME";
 
-    if (exists $dhelp_documents{$dir}->{$FILE_CHANGED}) {
+    if (exists $DHELP_DOCUMENTS{$dir}->{$FILE_CHANGED}) {
 
-      if (exists $dhelp_documents{$dir}->{$REMOVE_FILE}) {
+      if (exists $DHELP_DOCUMENTS{$dir}->{$REMOVE_FILE}) {
         unlink $file or croak "Can't unlink $file: $!";
-      } elsif (exists $dhelp_documents{$dir}->{$TMP_FILE_NAME}) {
-        my $tmp_file = $dhelp_documents{$dir}->{$TMP_FILE_NAME};
+      } elsif (exists $DHELP_DOCUMENTS{$dir}->{$TMP_FILE_NAME}) {
+        my $tmp_file = $DHELP_DOCUMENTS{$dir}->{$TMP_FILE_NAME};
 
         rename_or_copy ($tmp_file, $file) or
           croak "Can't rename `$tmp_file' to `$file': $!";
@@ -388,8 +405,8 @@ sub RegisterDhelp(@) {  # {{{
     }
 
     # set documents as registered
-    SetDocStatusDhelpFile($dhelp_documents{$dir}->{$TYPE_OLD}, undef, $file);
-    SetDocStatusDhelpFile($dhelp_documents{$dir}->{$TYPE_NEW}, $file);
+    SetDocStatusDhelpFile($DHELP_DOCUMENTS{$dir}->{$TYPE_OLD}, undef, $file);
+    SetDocStatusDhelpFile($DHELP_DOCUMENTS{$dir}->{$TYPE_NEW}, $file);
   }
 
   # register dirs
@@ -399,7 +416,7 @@ sub RegisterDhelp(@) {  # {{{
   RestoreSignals();
 
   undef $tmpdirname;
-  undef %dhelp_documents;
+  undef %DHELP_DOCUMENTS;
 
   Debug("RegisterDhelp finished");
 

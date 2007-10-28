@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 83 2007-10-23 07:01:35Z robert $
+# $Id: DocBaseFile.pm 89 2007-10-28 10:46:04Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -13,6 +13,7 @@ use File::Glob ':glob';
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
 use Scalar::Util qw(weaken);
+use Carp;
 
 our %CONTROLFILES = ();
 
@@ -69,8 +70,10 @@ sub document_id() { # {{{
 } # }}}
 
 sub _check_parsed() { # {{{
-  my $self = shift;
-  croak ("Internal error") if $self->{'PARSE_FLAG'} != PARSE_FULL;
+  my $self      = shift;
+  my $filename  = $self->source_file_name();
+  croak ('Internal error: file `' . (defined $filename ?  $filename : "") . "' not parsed") 
+    if $self->{'PARSE_FLAG'} != PARSE_FULL;
 } # }}}
 
 sub abstract() { # {{{

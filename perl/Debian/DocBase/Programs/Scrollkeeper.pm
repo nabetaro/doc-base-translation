@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 88 2007-10-27 22:20:32Z robert $
+# $Id: Scrollkeeper.pm 89 2007-10-28 10:46:04Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -51,6 +51,8 @@ our %mapping = (undef=>undef);
 sub RegisterScrollkeeper(@) { # {{{
   my @documents = @_;
   my $do_update = 0;
+
+  $#documents < 0 and return;
   
   Debug("RegisterScrollkeeper started");
 
@@ -109,7 +111,7 @@ sub RegisterScrollkeeper(@) { # {{{
 sub read_map($) { # {{{
   my ($file) = @_;
   my %map;
-  open (MAP, "<$file") or croak( "Could not open $file: $!");
+  open (MAP, "<", $file) or croak "Cannot open `$file' for reading: $!";
   while(<MAP>) {
           chomp;
           my ($lv,$rv) = split(/: /);
@@ -134,7 +136,7 @@ sub remove_omf_file($) { # {{{
   #check to see if the directory is now empty. if so, kill it.
   if (opendir(DIR, $omf_dir)) {
     if (defined grep { $_ !~ /^\.\.?$/ } readdir DIR) {
-      rmdir($omf_dir) or Error ("$omf_dir: could not delete directory: $!");
+      rmdir($omf_dir) or Error ("Could not delete directory `$omf_dir': $!");
     }
     closedir DIR;
   }
@@ -159,12 +161,12 @@ sub write_omf_file($$$$) { # {{{
 
 
   if (! -d "$omf_locations/$docid") {
-    mkdir("$omf_locations/$docid") or &croak ("can't create dir $omf_locations/$docid: $!");
+    mkdir("$omf_locations/$docid") or croak "Cannot create dir `$omf_locations/$docid': $!";
   }
 
   &Debug("Writing scrollkeeper OMF file `$omf_file'");
-  open(OMF, ">$omf_file")
-    or return &croak("$omf_file: cannot open OMF file for writing: $!");
+  open(OMF, ">", $omf_file)
+    or croak("Cannot open OMF file `$omf_file' for writing: $!");
 
   #now for the boiler plate XML stuff
   print OMF "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
@@ -184,7 +186,7 @@ sub write_omf_file($$$$) { # {{{
 
   #finish the boiler plate
   print OMF "\t</resource>\n</omf>\n";
-  close(OMF) or die "$omf_file: cannot close OMF file: $!";
+  close(OMF) or croak "Cannot close OMF file `$omf_file': $!";
 
   return $omf_file;
 } # }}}

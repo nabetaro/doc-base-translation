@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 88 2007-10-27 22:20:32Z robert $
+# $Id: InstallDocs.pm 89 2007-10-28 10:46:04Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -89,11 +89,11 @@ sub InstallDocsMain() { # {{{
   if ($mode == $MODE_REMOVE) { # {{{
     foreach $file (@arguments) {
       if ($file !~ /\//) {
-        Inform ("Ignoring nonregistered document $file") unless -f "$infodir/$file.status";
+        Inform ("Ignoring nonregistered document `$file'") unless -f "$infodir/$file.status";
         $doc     = Debian::DocBase::Document->new($file);
         $doc->unregister_all();
       } elsif (! -e $file) {
-        Inform ("Ignoring deregisteration of nonexistant file $file");
+        Inform ("Ignoring deregistration of nonexistant file `$file'");
       } else {
         $docfile = Debian::DocBase::DocBaseFile->new($file, PARSE_GETDOCID);
         $docid   = $docfile->document_id();

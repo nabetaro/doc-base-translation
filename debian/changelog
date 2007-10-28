@@ -1,14 +1,23 @@
-doc-base (0.8.5.1) UNRELEASED; urgency=low
+doc-base (0.8.6) unstable; urgency=low
 
-  * Check for unknown or duplicate fields in control files (closes: #423120).
-  * Don't fail on files ending with spaces (closes: #444889).
-  * Use prototypes.
-  * Rewrite Dhelp.pm to minimise invokations of dhelp_parse
-  * Ignore/restore signals in Utils.pm
-  *  Try to minimze number of write_Status_file
-  * 
+  * Rewrite Dhelp.pm to improve performance and minimise number dhelp_parse
+    calls, which after its reimplementation in Ruby started to be extremally
+    slow (it took `install-docs -I' ages to finish). Now, dhelp_parse will
+    be called at most two times in each install-docs invokation.
+  * Use 3-args open(), and also quote fields' values in our status file in
+    order not to fail on control files containing spaces (closes: #444889).
+  * Implement more checks of doc-base files, like unknown fields, duplicated
+    fields, fields in wrong sections (closes: #423120). Turn them into
+    warnings, since if they are errors, too many packages will fail to
+    install.
+  * Document.pm: try to minimise number of write_status_file() calls.
+  * Ignore SIGINT and some other signals while doing critical operations.
+  * Scrollkeeper.pm: scrollkeeper doesn't like `&' character (see bug#429847),
+    replace it with `(and)'.
+  * More code refactoring, but still not finished: use prototypes, fix typos,
+    standarize messages, etc.
 
- -- Robert Luberda <robert@debian.org>  Sun, 28 Oct 2007 00:20:11 +0200
+ -- Robert Luberda <robert@debian.org>  Sun, 28 Oct 2007 12:00:37 +0100
 
 doc-base (0.8.5) unstable; urgency=low
 
