@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 89 2007-10-28 10:46:04Z robert $
+# $Id: DocBaseFile.pm 93 2007-10-28 17:01:07Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -257,7 +257,7 @@ sub _read_control_file { # {{{
   # first find doc id
   $_ = <$fh>;
   return $self->_prserr(PRS_FATAL_ERR, "the first line does not contain valid `Document' field")
-    unless /^\s*Document\s*:\s*(\S+)\s*$/i;
+    unless defined $_ and /^\s*Document\s*:\s*(\S+)\s*$/i;
   $self->{'DOCUMENT_ID'} = $tmp = $1;
   $self->_prserr(PRS_WARN, "invalid value of `Document' field")
     unless $tmp =~ /^[a-z0-9\.\+\-]+$/;
