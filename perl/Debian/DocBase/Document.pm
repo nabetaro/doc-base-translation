@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 89 2007-10-28 10:46:04Z robert $
+# $Id: Document.pm 94 2007-11-26 21:06:42Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -22,16 +22,13 @@ sub new { # {{{
     return $DOCUMENTS{$documentId} if defined  $DOCUMENTS{$documentId};
 
     my $self = {
-        DOCUMENT_ID   => $documentId,
-        ABSTRACT      => undef,
-        AUTHOR        => undef,
-        TITLE         => undef,
-        SECTION       => undef,
-        FORMAT_LIST   => {},
-        CONTROL_FILE_NAMES  => [], # temporary
-        CONTROL_FILE  => undef, # temporary
-        STATUS_DICT   => {},
-        INVALID       => 1
+        DOCUMENT_ID       => $documentId,
+        MAIN_DATA         => {},
+        FORMAT_LIST       => {},
+        CONTROL_FILES     => {},
+        STATUS_DICT       => {},
+        MERGED_CTRL_FILES => 0,
+        INVALID           => 1
     };
     bless($self, $class);
     $self->_read_status_file($documentId);
@@ -55,32 +52,45 @@ sub document_id() { # {{{
   return $self->{'DOCUMENT_ID'};
 } # }}}
 
+sub invalid() { # {{{
+  my $self = shift;
+  return $self->{'INVALID'};
+} # }}}
+
+sub _get_main_fld($$) {
+  my $self = shift;
+  my $fld  = shift;
+
+  carp "Internal error: Document " . $self->document_id(). " not yet merged"
+    unless $self->{'MERGED_CTRL_FILES'};
+
+  return "" if $self->invalid();
+
+  return "" unless $self->{'MAIN_DATA'}->{$fld};
+
+  return $self->{'MAIN_DATA'}->{$fld};
+}
+
+
+
 sub abstract() { # {{{
   my $self = shift;
-  return "" unless $self->_has_control_files();
-  $self->_read_control_files();
-  return $self->{'CONTROL_FILE'}->{'ABSTRACT'};
+  return $self->_get_main_fld($FLD_ABSTRACT);
 } # }}}
 
 sub title() { # {{{
   my $self = shift;
-  return "" unless $self->_has_control_files();
-  $self->_read_control_files();
-  return $self->{'CONTROL_FILE'}->{'TITLE'};
+  return $self->_get_main_fld($FLD_TITLE);
 } # }}}
 
 sub section() { # {{{
   my $self = shift;
-  return "" unless $self->_has_control_files();
-  $self->_read_control_files();
-  return $self->{'CONTROL_FILE'}->{'SECTION'};
+  return $self->_get_main_fld($FLD_SECTION);
 } # }}}
 
 sub author() { # {{{
   my $self = shift;
-  return "" unless $self->_has_control_files();
-  $self->_read_control_files();
-  return $self->{'CONTROL_FILE'}->{'AUTHOR'};
+  return $self->_get_main_fld($FLD_AUTHOR);
 }   # }}}
 
 sub format($$) { # {{{
@@ -88,7 +98,7 @@ sub format($$) { # {{{
   my $format_name = shift;
   return undef unless $self->_has_control_files();
   $self->_read_control_files();
-  return $self->{'CONTROL_FILE'}->format($format_name);
+  return $self->{'FORMAT_LIST'}->{$format_name};
 } # }}}
 
 sub get_status() { # {{{
@@ -106,7 +116,7 @@ sub set_status($%) { # {{{
   foreach my $key (keys %status) {
     my $oldvalue = $self->{'STATUS_DICT'}->{$key};
     my $value   = $status{$key};
-  
+
     if (defined $value) {
       $self->{'STATUS_DICT'}->{$key} = $value;
     } else {
@@ -117,20 +127,20 @@ sub set_status($%) { # {{{
                    or (defined $value and $value ne $oldvalue) );
   }
 
-  $changed ? $self->_write_status_file() 
-           : Debug("Status of `" . join ("', `", keys %status) . "' in " . 
+  $changed ? $self->_write_status_file()
+           : Debug("Status of `" . join ("', `", keys %status) . "' in " .
                     $self->document_id() . " not changed");
 }   # }}}
 
 
 sub _has_control_files() { # {{{
   my $self = shift;
-  return $#{$self->{'CONTROL_FILE_NAMES'}} > -1;
+  return $self->{'CONTROL_FILES'}
 } # }}}
 
 sub _read_status_file { # {{{
   my $self        = shift;
-  my $docid       = $self->{'DOCUMENT_ID'};
+  my $docid       = $self->document_id();
   my $status_file = "$DATA_DIR/$docid.status";
 
   if (-f $status_file) {
@@ -148,8 +158,15 @@ sub _read_status_file { # {{{
     }
     close(S)
       or croak "Cannot close status file `$status_file': $!";
-  
-    push(@{$self->{'CONTROL_FILE_NAMES'}}, $$status{'Control-File'}) if defined $$status{'Control-File'};
+
+    %{$self->{'CONTROL_FILES'}} = map { 
+                                    s/^"//;
+                                    s/"$//; 
+                                    Debug("Existing control file in status: $_");
+                                    (-f $_) ? ($_ => undef): Warn("Registered control file `$_' no longer exists")
+                                   } split(/\s*,\s*/, $status->{'Control-File'}) 
+                                      if $status->{'Control-File'};
+
     delete $$status{'Control-File'};
     $self->{'STATUS_DICT'} = $status;
   }
@@ -158,17 +175,19 @@ sub _read_status_file { # {{{
 } # }}}
 
 sub _write_status_file { # {{{
-  my $self = shift;
+  my $self  = shift;
   my $docid = $self->document_id();
 
   my $status_file     = "$DATA_DIR/$docid.status";
   my $tmp_status_file = "$status_file.tmp";
   Debug ("Writing status information into `$status_file'");
 
-
   open(S, ">", $tmp_status_file)
     or croak "Cannot open status file `$tmp_status_file' for writing: $!";
-  print S "Control-File: \"$self->{'CONTROL_FILE_NAMES'}[0]\"\n" if $self->_has_control_files();
+
+  my $control_files = '"' . join('", "', sort keys %{$self->{'CONTROL_FILES'}}) . '"';
+  print S "Control-File: $control_files\n" unless $control_files eq '""';
+
   my $status = $self->{'STATUS_DICT'};
   for my $k (sort keys   %$status) {
     print S "$k: \"$$status{$k}\"\n";
@@ -182,7 +201,7 @@ sub _write_status_file { # {{{
     unlink $status_file;
     Debug ("Removing status file `$status_file'");
   } else {
-    rename $tmp_status_file, $status_file 
+    rename $tmp_status_file, $status_file
       or croak "Can't rename `$tmp_status_file' to `$status_file': $!";
   }
   RestoreSignals();
@@ -190,10 +209,13 @@ sub _write_status_file { # {{{
 } # }}}
 
 
-sub _read_control_files { # {{{
+sub _read_control_files($) { # {{{
   my $self = shift;
 
-  $self->{'CONTROL_FILE'} = Debian::DocBase::DocBaseFile->new($self->{'CONTROL_FILE_NAMES'}[0], PARSE_FULL) unless defined $self->{'CONTROL_FILE'};
+  foreach my $cfname (sort keys %{$self->{'CONTROL_FILES'}}) {
+    $self->{'CONTROL_FILE'}->{$cfname} = Debian::DocBase::DocBaseFile->new($cfname, PARSE_FULL)
+      unless $self->{'CONTROL_FILES'}->{$cfname};
+  }
 } # }}}
 
 sub display_status_information { # {{{
@@ -212,21 +234,22 @@ sub display_status_information { # {{{
     print "Author: $tmp\n"    if (($tmp = $self->author()) ne "");
     print "Section: $tmp\n"   if (($tmp = $self->section()) ne "");
     print "Title: $tmp\n"     if (($tmp = $self->title()) ne "");
-  
+
     for my $format (@SUPPORTED_FORMATS) {
       my $format_data = $self->format($format);
       next unless $format_data;
       print "\n";
       print "---format-description---\n";
-      print "Format: $format_data->{'format'}\n";
-      print "Index: $tmp\n" if (defined ($tmp=$format_data->{'index'}));
-      print "Files: $tmp\n" if (defined ($tmp=$format_data->{'files'}));
-    }      
-  }    
+      print "Format: $format_data->{$FLD_FORMAT}\n";
+      print "Index: $tmp\n" if (defined ($tmp=$format_data->{$FLD_INDEX}));
+      print "Files: $tmp\n" if (defined ($tmp=$format_data->{$FLD_FILES}));
+    }
+  }
 
   print "\n";
   print "---status-information---\n";
-  print "Control-File: $self->{'CONTROL_FILE_NAMES'}[0]\n" if $self->_has_control_files();
+  print "Control-File: " . join(", ", sort keys  %{$self->{'CONTROL_FILES'}}) . "\n"
+    if $self->_has_control_files();
   my $status = $self->{'STATUS_DICT'};
   for my $k (sort keys %$status) {
     print "$k: $status->{$k}\n";
@@ -240,39 +263,28 @@ sub register() { # {{{
 
   Debug("Registering `$db_file_name'");
 
-# FIXME: temporary check if two documents have the same id's
-# should be replaced with document merging
-  if ($#{$self->{'CONTROL_FILE_NAMES'}} == 0) {
-    my $oldfile = ${$self->{'CONTROL_FILE_NAMES'}}[0];
-    if ($oldfile ne $db_file_name and -f $oldfile) {
+  if ($db_file->document_id() ne $self->document_id()) {
+    return Error("Invalid doc id");
+  }
 
-        my $olddoc = Debian::DocBase::DocBaseFile->new($oldfile, PARSE_GETDOCID);
-        if ($olddoc->document_id() eq $self->document_id()) {
-          return ErrorNF("Error in `$db_file_name': Document " . $self->document_id() . " already registered by `$oldfile'");
-        }
-    }
-  }      
-      
-  
   if ($db_file->invalid()) {
-    $self->unregister_all(); # FIXME, temporary
+    delete $self->{'CONTROL_FILES'}->{$db_file_name};
     return Warn($db_file->source_file_name() . " contains errors, not registering");
-  }    
-    
-  $self->{'CONTROL_FILE_NAMES'}   = [$db_file_name];
-  $self->{'CONTROL_FILE'}         = $db_file;
+  }
+
+  $self->{'CONTROL_FILES'}->{$db_file_name} = $db_file;
 } # }}}
 
 sub unregister() { # {{{
   my $self          = shift;
-  my $doc_base_file = shift;
+  my $db_file       = shift;
+  my $db_filename   = $db_file->source_file_name();
 
-  Warn("File `" . $doc_base_file->source_file_name() . "' is not registered, cannot remove")
-    if ($#{$self->{'CONTROL_FILE_NAMES'}} < 0);
-      
+  Warn("File `" . $db_filename . "' is not registered, cannot remove")
+    unless $self->{'CONTROL_FILES'}->{$db_filename};
 
-# FIXME: temporary
-  $self->unregister_all();  
+  delete $self->{'COMNTROL_FILES'}->{$db_filename};
+
 } # }}}
 
 sub unregister_all() { # {{{
@@ -280,11 +292,85 @@ sub unregister_all() { # {{{
 
   Debug('Unregistering all control files from document `' . $self->document_id() . "'");
 
-  $self->{'CONTROL_FILE_NAMES'} = [];
-  $self->{'CONTROL_FILE'} = {};
+  $self->{'CONTROL_FILES'} = {};
 } # }}}
 
-sub save_changes($) { # {{{
+sub WriteNewCtrlFile() {
+  my $self     = shift;
+  my $docid    = $self->document_id();
+  my $tmpfile  = $VAR_CTRL_DIR . "/." . $docid . ".tmp";
+  my $file     = $VAR_CTRL_DIR . "/" . $docid;
+  my $fld      = undef;
+
+  if ($self->invalid() && -e $file) {
+    Debug("Removing control file $file");
+    unlink $file or carp "Can't remove $file: $!";
+  }
+  return if $self->invalid();
+
+
+  open(F, '>', $tmpfile) or
+    carp ("Can't open $tmpfile for writing: $_");
+
+  foreach $fld (GetFldKeys($FLDTYPE_MAIN)) {
+    print F ucfirst($fld) . ": " .  $self->{'MAIN_DATA'}->{$fld} . "\n"
+      if $self->{'MAIN_DATA'}->{$fld};
+  }
+
+  print F "Control-Files: " . join (' ', sort keys %{$self->{'CONTROL_FILES'}}) . "\n";
+
+  foreach my $format (sort keys %{$self->{'FORMAT_LIST'}}) {
+    print F "\n";
+    foreach $fld (GetFldKeys($FLDTYPE_FORMAT)) {
+      print F ucfirst($fld) . ": " .  $self->{'FORMAT_LIST'}->{$format}->{$fld} . "\n"
+        if $self->{'FORMAT_LIST'}->{$format}->{$fld}; 
+    }
+  }
+
+  close F or carp "Can't close $file: $!";
+
+  rename $tmpfile, $file or carp "Can't rename $tmpfile to $file: $!";
+}
+
+sub MergeCtrlFiles($) {
+  my $self    = shift;
+
+  $self->_read_control_files();
+
+  $self->{'INVALID'}           = 1;
+  $self->{'MERGED_CTRL_FILES'} = 1;
+  $self->{'MAIN_DATA'}         = {};
+  $self->{'FORMAT_LIST'}       = {};
+
+  foreach my $db_file_name (sort keys %{$self->{'CONTROL_FILES'}}) {
+    print STDERR ">>> $db_file_name\n";
+    my $doc_data = $self->{'CONTROL_FILES'}->{$db_file_name};
+
+    # merge main sections' fields
+    foreach my $fld (GetFldKeys($FLDTYPE_MAIN)) {
+      my $old_val = $self->{'MAIN_DATA'}->{$fld};
+      my $new_val = $doc_data->GetFldValue($fld);
+      if ($new_val) {
+        if ($old_val and $old_val ne $new_val and
+            ($fld eq $FLD_DOCUMENT or $fld eq $FLD_SECTION)) {
+            return Error("merge error");
+          }
+        $self->{'MAIN_DATA'}->{$fld} = $new_val unless $old_val;
+      }
+    }
+
+    # merge formats
+    foreach my $format ($doc_data->GetFormatNames()) {
+      print STDERR ">> $format : " . join (" ", keys %{$self->{'FORMAT_LIST'}}) . "\n";
+      return Error("format $format already defined") if $self->{'FORMAT_LIST'}->{$format};
+      $self->{'FORMAT_LIST'}->{$format} = $doc_data->format($format);
+    }
+  }
+  $self->{'INVALID'}           = 0;
+}
+
+
+sub SaveStatusChanges($) { # {{{
   my $self = shift;
 
   $self->_write_status_file();

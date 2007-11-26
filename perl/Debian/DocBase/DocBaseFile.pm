@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 93 2007-10-28 17:01:07Z robert $
+# $Id: DocBaseFile.pm 94 2007-11-26 21:06:42Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -39,12 +39,8 @@ sub new { # {{{
     }
 
     my $self = {
-        DOCUMENT_ID   => undef,
-        ABSTRACT      => undef,
-        AUTHOR        => undef,
-        TITLE         => undef,
-        SECTION       => undef,
-        FORMAT_LIST   => {},
+        MAIN_DATA     => {},    # hash of main_fld=>value 
+        FORMAT_LIST   => {},    # array of format data hashes
         FILE_NAME     => $filename,
         PARSE_FLAG    => 0,
         WARNERR_CNT   => 0, # errors/warnings count
@@ -66,7 +62,7 @@ sub DESTROY { # {{{
 
 sub document_id() { # {{{
   my $self = shift;
-  return $self->{'DOCUMENT_ID'};
+  return $self->{'MAIN_DATA'}->{$FLD_DOCUMENT};
 } # }}}
 
 sub _check_parsed() { # {{{
@@ -76,29 +72,12 @@ sub _check_parsed() { # {{{
     if $self->{'PARSE_FLAG'} != PARSE_FULL;
 } # }}}
 
-sub abstract() { # {{{
+sub GetFldValue($$) {
   my $self = shift;
+  my $fld  = shift;
   $self->_check_parsed();
-  return $self->{'ABSTRACT'};
-} # }}}
-
-sub title() { # {{{
-  my $self = shift;
-  $self->_check_parsed();
-  return $self->{'TITLE'};
-} # }}}
-
-sub section() { # {{{
-  my $self = shift;
-  $self->_check_parsed();
-  return $self->{'SECTION'};
-} # }}}
-
-sub author() { # {{{
-  my $self = shift;
-  $self->_check_parsed();
-  return $self->{'AUTHOR'};
-} # }}}
+  return $self->{'MAIN_DATA'}->{$fld};
+ }
 
 sub format($$) { # {{{
   my $self = shift;
@@ -106,6 +85,12 @@ sub format($$) { # {{{
   $self->_check_parsed();
   return $self->{'FORMAT_LIST'}->{$format_name};
 } # }}}
+
+sub GetFormatNames($$) {
+  my $self   = shift;
+  my @fnames = sort keys %{$self->{'FORMAT_LIST'}};
+  return @fnames;
+}
 
 sub source_file_name() { # {{{
   my $self = shift;
@@ -164,7 +149,7 @@ sub _parse { # {{{
   return if ($self->{'PARSE_FLAG'} == $parseflag);
 
   open($fh, "<", $file) or
-    return $self->_prserr(PRS_FATAL_ERR, "cannot open file for reading: $!\n");
+    carp "Cannot open control file `$file' for reading: $!";
 
   $self->_read_control_file($parseflag, $fh);
 
@@ -204,10 +189,13 @@ sub _read_control_file_section($$$$) { # {{{
       ($origcf, $cf, $v) = ($1, lc $1, $2);
       if (exists $pfields->{$cf}) {
         $self->_prserr(PRS_WARN, "control field `$origcf' already defined");
+        next;
       } elsif (not defined $FIELDS_DEF{$cf}) {
         $self->_prserr(PRS_WARN, "unrecognised control field `$origcf'");
+        next;
       } elsif ($FIELDS_DEF{$cf}->{$FLDDEF_TYPE} != $fldstype) {
         $self->_prserr(PRS_WARN, "field `$origcf' in incorrect section (missing empty line before the field?)");
+        next;
       }
       $pfields->{$cf} = $v;
 
@@ -258,24 +246,21 @@ sub _read_control_file { # {{{
   $_ = <$fh>;
   return $self->_prserr(PRS_FATAL_ERR, "the first line does not contain valid `Document' field")
     unless defined $_ and /^\s*Document\s*:\s*(\S+)\s*$/i;
-  $self->{'DOCUMENT_ID'} = $tmp = $1;
+  $self->{'MAIN_DATA'} = { $FLD_DOCUMENT => ($tmp = $1) };
   $self->_prserr(PRS_WARN, "invalid value of `Document' field")
     unless $tmp =~ /^[a-z0-9\.\+\-]+$/;
 
 
   return if $parseflag == PARSE_GETDOCID;
 
-  my $doc_data = {'document' => $self->{'DOCUMENT_ID'} };
+  my $doc_data = $self->{'MAIN_DATA'};
   # parse rest of the file
   $self->_read_control_file_section($fh, $doc_data, $FLDTYPE_MAIN) 
     or return undef;
   return $self->_prserr(PRS_WARN, "unsupported Version: $$doc_data{'version'}") if
     defined $$doc_data{'version'};
 
-  $self->{TITLE} = $$doc_data{'title'};
-  $self->{SECTION} = $$doc_data{'section'};
-  $self->{ABSTRACT} = defined $$doc_data{'abstract'} ?  $$doc_data{'abstract'} : "";
-  $self->{AUTHOR} = defined $$doc_data{'author'} ? $$doc_data{'author'} : "";
+  $self->{'MAIN_SECTION'} = $doc_data;
   undef $doc_data;
 
 

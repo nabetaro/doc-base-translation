@@ -3,3 +3,4 @@ usr/share/doc-base/data
 usr/sbin
 var/lib/doc-base/info
 var/lib/doc-base/omf
+var/lib/doc-base/documents

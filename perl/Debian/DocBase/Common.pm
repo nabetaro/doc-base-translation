@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Common.pm 83 2007-10-23 07:01:35Z robert $
+# $Id: Common.pm 94 2007-11-26 21:06:42Z robert $
 
 
 package Debian::DocBase::Common;
@@ -11,17 +11,21 @@ use warnings;
 
 use vars    qw(@ISA @EXPORT);
 @ISA    = qw(Exporter);
-@EXPORT = qw($DATA_DIR $CONTROL_DIR @SUPPORTED_FORMATS @NEED_INDEX_FORMATS
+@EXPORT = qw($DATA_DIR $CONTROL_DIR $VAR_CTRL_DIR @SUPPORTED_FORMATS @NEED_INDEX_FORMATS
+             $FLD_DOCUMENT $FLD_VERSION $FLD_SECTION $FLD_TITLE $FLD_AUTHOR $FLD_ABSTRACT 
+             $FLD_FORMAT $FLD_INDEX $FLD_FILES 
              %FIELDS_DEF
                 $FLDDEF_TYPE
                   $FLDTYPE_MAIN $FLDTYPE_FORMAT
                 $FLDDEF_REQUIRED
                 $FLDDEF_MULTILINE
              $opt_verbose $opt_debug $exitval $opt_rootdir $opt_update_menus
+             GetFldKeys
             );
 
 our $DATA_DIR     = "/var/lib/doc-base/info";
 our $CONTROL_DIR  = "/usr/share/doc-base";
+our $VAR_CTRL_DIR = "/var/lib/doc-base/documents";
 
 # ---configuration-part---
 
@@ -42,66 +46,94 @@ our @NEED_INDEX_FORMATS = (
                             'info'
                          );
 
+
+our $FLD_DOCUMENT   = 'document';
+our $FLD_VERSION    = 'version';
+our $FLD_SECTION    = 'section';
+our $FLD_TITLE      = 'title';
+our $FLD_AUTHOR     = 'author';
+our $FLD_ABSTRACT   = 'abstract';
+our $FLD_FORMAT     = 'format';
+our $FLD_INDEX      = 'index';
+our $FLD_FILES      = 'files';
+
 # doc-base control file fields definitions
 our $FLDDEF_TYPE      = 'type';
   our $FLDTYPE_MAIN   = 1;
   our $FLDTYPE_FORMAT = 2;
 our $FLDDEF_REQUIRED  = 'required';
 our $FLDDEF_MULTILINE = 'multiline';
+our $FLDDEF_POSITION  = 'position';
 
 # Fields in doc-base file:
 our %FIELDS_DEF  = (
  # Main fields:
-  'document' => {
+  $FLD_DOCUMENT => {
+                  $FLDDEF_POSITION  => 0,
                   $FLDDEF_TYPE      => $FLDTYPE_MAIN,
                   $FLDDEF_REQUIRED  => 1,
                   $FLDDEF_MULTILINE => 0
                 },
-  'version'  => {
+  $FLD_VERSION  => {
+                  $FLDDEF_POSITION  => 1,
                   $FLDDEF_TYPE      => $FLDTYPE_MAIN,
                   $FLDDEF_REQUIRED  => 0,
                   $FLDDEF_MULTILINE => 0
                 },
-  'section'  => {
+  $FLD_SECTION  => {
+                  $FLDDEF_POSITION  => 2,
                   $FLDDEF_TYPE      => $FLDTYPE_MAIN,
                   $FLDDEF_REQUIRED  => 0,
                   $FLDDEF_MULTILINE => 0
                 },
-  'title'    => {
+  $FLD_TITLE    => {
+                  $FLDDEF_POSITION  => 3,
                   $FLDDEF_TYPE      => $FLDTYPE_MAIN,
                   $FLDDEF_REQUIRED  => 1,
                   $FLDDEF_MULTILINE => 1
                 },
-  'author'   => {
+  $FLD_AUTHOR   => {
+                  $FLDDEF_POSITION  => 4,
                   $FLDDEF_TYPE      => $FLDTYPE_MAIN,
                   $FLDDEF_REQUIRED  => 0,
                   $FLDDEF_MULTILINE => 1
                 },
-  'abstract' => {
+  $FLD_ABSTRACT => {
+                  $FLDDEF_POSITION  => 5,
                   $FLDDEF_TYPE      => $FLDTYPE_MAIN,
                   $FLDDEF_REQUIRED  => 0,
                   $FLDDEF_MULTILINE => 1
                 },
  # Format fields:  
-  'format'   => {
+  $FLD_FORMAT   => {
+                  $FLDDEF_POSITION  => 6,
                   $FLDDEF_TYPE      => $FLDTYPE_FORMAT,
                   $FLDDEF_REQUIRED  => 1,
                   $FLDDEF_MULTILINE => 0
                 },
-  'index'    => {
+  $FLD_INDEX    => {
+                  $FLDDEF_POSITION  => 7,
                   $FLDDEF_TYPE      => $FLDTYPE_FORMAT,
                   $FLDDEF_REQUIRED  => 0,
                   $FLDDEF_MULTILINE => 0
                 },
-  'files'    => {
+  $FLD_FILES    => {
+                  $FLDDEF_POSITION  => 8,
                   $FLDDEF_TYPE      => $FLDTYPE_FORMAT,
                   $FLDDEF_REQUIRED  => 0, # 
                   $FLDDEF_MULTILINE => 1
                 }
 );
 
+sub GetFldKeys($) {
+  my $fldtype = shift;
 
+  my @fldkeys = sort { $FIELDS_DEF{$a}->{$FLDDEF_POSITION} <=> $FIELDS_DEF{$b}->{$FLDDEF_POSITION} }
+                  grep  { $FIELDS_DEF{$_}->{$FLDDEF_TYPE} eq $fldtype }                   
+                    keys %FIELDS_DEF;
+  return @fldkeys;                  
 
+}
 
 # ---end-of-configuration-part---
 
