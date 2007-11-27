@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 94 2007-11-26 21:06:42Z robert $
+# $Id: InstallDocs.pm 95 2007-11-27 23:11:50Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -77,7 +77,7 @@ sub InstallDocsMain() { # {{{
       Inform("Removing " . ($#arguments + 1) . " registered documents") unless $#arguments < 0;
       foreach $docid (@arguments) {
         $doc = Debian::DocBase::Document->new($docid);
-        $doc->unregister_all();
+        $doc->UnregisterAll();
       }        
   } # }}}
 
@@ -88,10 +88,10 @@ sub InstallDocsMain() { # {{{
 
   if ($mode == $MODE_REMOVE) { # {{{
     foreach $file (@arguments) {
-      if ($file !~ /\//) {
+      if ($file !~ /\//) {  # file is document-id (for backward compatibility)
         Inform ("Ignoring nonregistered document `$file'") unless -f "$infodir/$file.status";
         $doc     = Debian::DocBase::Document->new($file);
-        $doc->unregister_all();
+        $doc->UnregisterAll();
       } elsif (! -e $file) {
         Inform ("Ignoring deregistration of nonexistant file `$file'");
       } else {
@@ -100,7 +100,7 @@ sub InstallDocsMain() { # {{{
         next unless defined $docid;
         $doc     = Debian::DocBase::Document->new($docid);
 
-        $doc->unregister($docfile);
+        $doc->Unregister($docfile);
       } 
     }
   } # }}}
@@ -116,7 +116,7 @@ sub InstallDocsMain() { # {{{
       next unless defined $docid;
       $doc     = Debian::DocBase::Document->new($docid);
 
-      $doc->register($docfile);
+      $doc->Register($docfile);
     }
   } # }}}
 
@@ -141,17 +141,19 @@ sub InstallDocsMain() { # {{{
   if ($mode == $MODE_STATUS) { # {{{
     foreach my $docid (@arguments) {
       $doc     = Debian::DocBase::Document->new($docid);
-      $doc->display_status_information();
+      $doc -> DisplayStatusInformation();
     }
   } # }}}
   
-  my @documents = Debian::DocBase::Document->GetDocumentList();
-  foreach my $doc (@documents) {
-    $doc -> MergeCtrlFiles();
-  }
 
   if ($mode == $MODE_INSTALL or $mode == $MODE_REMOVE 
       or $mode == $MODE_INSTALL_ALL or $mode == $MODE_REMOVE_ALL)  { # {{{
+
+    my @documents = Debian::DocBase::Document->GetDocumentList();
+      foreach my $doc (@documents) {
+        $doc -> MergeCtrlFiles();
+    }
+
     IgnoreSignals();
     foreach my $doc (@documents) {
       $doc -> WriteNewCtrlFile();

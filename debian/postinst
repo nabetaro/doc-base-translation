@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: postinst 74 2007-05-06 10:56:47Z robert $
+# $Id: postinst 95 2007-11-27 23:11:50Z robert $
 # postinst for doc-base
 
 # Abort if any command returns an error value
@@ -7,13 +7,14 @@ set -e
 
 package=doc-base
 # upgrades prior to this version require complete re-registration
-compat_ver=0.8.4
+compat_ver=0.8.7
 # upgrades of the following version requires complete re-registration
 bad_ver=0.7.13
 VERBOSE=
 
 ctrldir="/usr/share/$package"
 infodir="/var/lib/$package/info"
+docsdir="/var/lib/$package/documents"
 
 if [ "$DEBUG" ]; then
     echo entering $package postinst
@@ -21,7 +22,7 @@ if [ "$DEBUG" ]; then
 fi
 
 remove_obsolete() {
-	# remove old dhelp files
+	# remove old dhelp files (from versions <= 0.8.4)
 	find $infodir -maxdepth 1 -type f -name "*.list" | xargs grep -h '^/.*/.dhelp' |  \
 	while read f; do
 		[ -e "$f" ] || continue;
@@ -31,18 +32,31 @@ remove_obsolete() {
 
 	# remove old scrollkeeper files
 	find $infodir -maxdepth 1 -type f -name "*.status" | \
-	xargs sed -ne 's/^Scrollkeeper-omf-file: *\(.*-C.omf\) *$/\1/p'  |  \
+	xargs sed -ne 's/^Scrollkeeper-omf-file: *"*\(.*-C.omf\)"* *$/\1/p'  |  \
 	while read f; do
 		[ -e "$f" ] || continue;
 		rm -f "$f"
 		rmdir --ignore-fail-on-non-empty "`dirname "$f"`" || true
 	done
 
+
+	# remove newer dhelp files
+	find $infodir -maxdepth 1 -type f -name "*.status" | \
+	xargs sed -ne 's/^Dhelp-file: *"*\(.*\.dhelp\)"* *$/\1/p'  |  \
+	while read f; do
+		[ -e "$f" ] || continue;
+		rm -f "$f"
+	done
+
+
 	# remove status/list files
 	find $infodir -maxdepth 1 -type f \( -name "*.status" -o -name "*.list" \) | \
 	xargs rm -f
 	
+	# remove generated documents
+	find $docsdir -maxdepth 1 -type f  | xargs rm -f
 }
+
 
 
 reinstall_docs () {
@@ -58,20 +72,17 @@ case "$1" in
   configure)
 
 
-    if dpkg --compare-versions "$2" lt-nl 0.8.4; then
+    if dpkg --compare-versions "$2" lt-nl 0.8.7; then
     	remove_obsolete
     fi		
 
 
-    if [ "${2+set}" != set ] || [ -z "$2" ] \
-    	|| [ "$2" = "<unknown>" ] || [ ! -d /var/lib/doc-base/info ]; then
-        # first install, or upgrade from ancient version, or install from removed-but-not-purged state
-        reinstall_docs
-    elif dpkg --compare-versions $2 lt $compat_ver; then
+    if dpkg --compare-versions "$2" lt-nl "$compat_ver" ||
+      [ -z "`/bin/ls $infodir`" ]; then
 	# version is less than last compatable version, we need to
 	# re-register all the docs
         reinstall_docs
-    elif dpkg --compare-versions $2 eq $bad_ver; then
+    elif dpkg --compare-versions "$2" eq $bad_ver; then
         # bad version, ew, re-register
         reinstall_docs
     else

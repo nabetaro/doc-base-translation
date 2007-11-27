@@ -3,6 +3,7 @@ doc-base (0.8.7~a1) UNRELEASED; urgency=low
   * NOT RELEASED YET
   * DocBaseFile.pm: fix perl warning on empty control files
   * Preliminary support for merging files
+  * preinst: remove all generated files 
 
  -- Robert Luberda <robert@debian.org>  Sun, 28 Oct 2007 18:00:23 +0100
 

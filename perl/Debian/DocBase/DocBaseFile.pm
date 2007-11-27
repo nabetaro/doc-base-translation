@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 94 2007-11-26 21:06:42Z robert $
+# $Id: DocBaseFile.pm 95 2007-11-27 23:11:50Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -72,12 +72,12 @@ sub _check_parsed() { # {{{
     if $self->{'PARSE_FLAG'} != PARSE_FULL;
 } # }}}
 
-sub GetFldValue($$) {
+sub GetFldValue($$) { # {{{
   my $self = shift;
   my $fld  = shift;
   $self->_check_parsed();
   return $self->{'MAIN_DATA'}->{$fld};
- }
+} # }}}
 
 sub format($$) { # {{{
   my $self = shift;
@@ -86,11 +86,12 @@ sub format($$) { # {{{
   return $self->{'FORMAT_LIST'}->{$format_name};
 } # }}}
 
-sub GetFormatNames($$) {
+# returns list of all format names defined in control file
+sub GetFormatNames($$) { # {{{
   my $self   = shift;
   my @fnames = sort keys %{$self->{'FORMAT_LIST'}};
   return @fnames;
-}
+} # }}}
 
 sub source_file_name() { # {{{
   my $self = shift;
