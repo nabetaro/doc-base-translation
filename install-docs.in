@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs.in 96 2007-12-01 15:05:52Z robert $
+# $Id: install-docs.in 100 2007-12-02 13:24:50Z robert $
 
 use warnings;
 use strict;
@@ -157,7 +157,8 @@ option passed to install-docs, moreover the action with its arguments must be th
 passed.
 
 Each I<file> argument should be the full path for the doc-base control file (i.e.
-`/usr/share/doc-base/some_file'), and each I<docid> should be the document identifier
+`/usr/share/doc-base/some_file' or `/etc/doc-base/documents/some_file'), and each 
+I<docid> should be the document identifier
 (Document identifiers are set in the `Document' field of the control file, and usually 
 correspond to the package name.)
 
@@ -314,7 +315,15 @@ B<-d>,B<--debug>, B<-h>,B<--help> options.
 
 =item F</usr/share/doc-base/>
 
-The location of doc-base control files installed by various packages.
+The location of doc-base control files provided by various packages.
+
+=item F</etc/doc-base/documents/>
+
+The location of doc-base control files provided by local administrator.
+
+=item F</var/lib/doc-base/info/*.status>
+
+The location of registered control files.
 
 =item F</var/lib/doc-base/info/*.status>
 
@@ -324,10 +333,6 @@ Statuses of registered documents.
 
 The location of generated scrollkeeper OMF files.
 Note: F</usr/share/omf/doc-base> should be a symbolic link pointing to the directory.
-
-=item F</usr/share/doc/*/.dhelp>
-
-The location of generated dhelp files.
 
 =back  
 

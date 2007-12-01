@@ -1,6 +1,6 @@
 # vim:ts=2
 # makefile for doc-base
-# $Id: Makefile 96 2007-12-01 15:05:52Z robert $
+# $Id: Makefile 97 2007-12-01 18:58:59Z robert $
 #
 # determine our version number
 DEB_VERSION     := $(shell LC_ALL=C dpkg-parsechangelog | grep ^Version: | sed 's/^Version: *//')
@@ -117,6 +117,8 @@ install: $(generated)
 	$(install_dir)                           $(DESTDIR)$(sharedir)/data
 	$(install_file) data/scrollkeeper.map    $(DESTDIR)$(sharedir)/data/
 
+	$(install_dir)                           $(DESTDIR)$(sharedir)/data
+	$(install_file) data/doc-base.map        $(DESTDIR)$(sharedir)/data/
 
 	$(install_dir)                           $(DESTDIR)$(omfdir)
 	$(install_dir)                           $(DESTDIR)$(libdir)/omf

@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Utils.pm 88 2007-10-27 22:20:32Z robert $
+# $Id: Utils.pm 98 2007-12-02 13:18:47Z robert $
 #
 
 package Debian::DocBase::Utils;
@@ -12,7 +12,7 @@ use vars qw(@ISA @EXPORT);
 use Carp;
 @ISA = qw(Exporter);
 @EXPORT = qw(Execute HTMLEncode HTMLEncodeDescription Inform Debug Warn Error ErrorNF 
-            IgnoreSignals RestoreSignals);
+            IgnoreSignals RestoreSignals ReadMap);
 
 use Debian::DocBase::Common;
 
@@ -141,4 +141,23 @@ sub RestoreSignals() {
   return _IgnoreRestoreSignals("restore");
 }
 } # }}}
+
+
+
+sub ReadMap($$) { # {{{
+  my $file = shift;
+  my $map  = shift;
+  open (MAP, "<", $file) or croak "Cannot open `$file' for reading: $!";
+  while(<MAP>) {
+          chomp;
+          next if /^\s*$/;
+          next if /^#/;
+          my ($lv,$rv) = split(/\s*:\s*/, $_, 2);
+          $map->{lc($lv)} = $rv ? $rv : "";
+  }
+  close(MAP);
+} # }}}
+
+
+
 1;

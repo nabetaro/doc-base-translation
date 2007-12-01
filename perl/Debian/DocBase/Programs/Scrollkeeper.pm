@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 89 2007-10-28 10:46:04Z robert $
+# $Id: Scrollkeeper.pm 97 2007-12-01 18:58:59Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -57,7 +57,7 @@ sub RegisterScrollkeeper(@) { # {{{
   Debug("RegisterScrollkeeper started");
 
   # read in doc-base -> scrollkeeper mappings unless already read
-  %mapping = read_map($scrollkeeper_map_file);
+  ReadMap($scrollkeeper_map_file, \%mapping);
 
   foreach my $doc (@documents) {
     my $format_data;
@@ -108,18 +108,6 @@ sub RegisterScrollkeeper(@) { # {{{
 # reads a file that looks like:
 # foo: bar
 # returns: hash of lv -> rv
-sub read_map($) { # {{{
-  my ($file) = @_;
-  my %map;
-  open (MAP, "<", $file) or croak "Cannot open `$file' for reading: $!";
-  while(<MAP>) {
-          chomp;
-          my ($lv,$rv) = split(/: /);
-          $map{lc($lv)} = $rv;
-  }
-  close(MAP);
-  return %map;
-} # }}}
 
 # arguments: doc-base section
 # returns: scrollkeeper category
@@ -190,6 +178,5 @@ sub write_omf_file($$$$) { # {{{
 
   return $omf_file;
 } # }}}
-
 
 1;

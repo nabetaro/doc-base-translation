@@ -237,8 +237,9 @@ recommended field.</p>
             <item>
               <p>
 Section where the document belongs; this should follow the sections
-outlined in <url id="http://www.debian.org/doc/packaging-manuals/menu-policy/ch2.html#s2.1"
-name="The Debian Menu sub-policy">.  Required field.</p>
+outlined in chapter 3.5 of "Debian Menu Policy", which can be found 
+in the <url id="file:///usr/share/doc/menu/html/ch3.html#s3.5"
+name="/usr/share/doc/menu/html"> directory.  Required field.</p>
 
 
             </item>

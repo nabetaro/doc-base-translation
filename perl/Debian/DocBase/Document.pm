@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 96 2007-12-01 15:05:52Z robert $
+# $Id: Document.pm 98 2007-12-02 13:18:47Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -15,6 +15,7 @@ use Carp;
 #use Scalar::Util qw(weaken);
 
 our %DOCUMENTS = ();
+my %section_map = ();
 
 sub new { # {{{
     my $class      = shift;
@@ -309,7 +310,7 @@ sub Unregister($$) { # {{{
   my $db_filename   = $db_file->source_file_name();
 
   Warn("File `" . $db_filename . "' is not registered, cannot remove")
-    unless $self->{'CONTROL_FILES'}->{$db_filename};
+    unless exists ($self->{'CONTROL_FILES'}->{$db_filename});
 
   delete $self->{'CONTROL_FILES'}->{$db_filename};
 
@@ -365,6 +366,34 @@ sub WriteNewCtrlFile() { # {{{
   rename $tmpfile, $file or carp "Can't rename $tmpfile to $file: $!";
 } # }}}
 
+
+sub _MangleSection($) {
+  my $self      = shift;
+  my $section   = shift;
+
+  ReadMap($DOCBASE_SECTIONS_MAP, \%section_map) unless %section_map;
+
+  $section  = lc $section;
+  $section  =~ s/\s+/ /g;       $section  =~ s/\/+/\//g;
+  $section  =~ s/[\/\s]$//g;    $section  =~ s/^[\/\s]//g;
+  $section  =~ s/\b./\U$&\E/g;
+
+  my @sect_comps = split (/\/+/, $section);
+  my $result     = "";
+  my $from_map   = 0;
+
+  while ($#sect_comps > -1) {
+    my $tmp   =  shift(@sect_comps);
+    $result   =  ($result) ? $result . "/" .  $tmp : $tmp;
+
+    $tmp      = $section_map{lc $result};
+    $result   = $tmp if $tmp;
+  }
+
+  return $result if $result;
+  return "Unknown";
+}
+
 # merge contents of all available control files for the document
 #  into $self->{'MAIN_DATA'} and $self->{'FORMAT_LIST'}
 # Fields 'Document' and 'Section' must have the same value in all control files.
@@ -397,6 +426,8 @@ sub MergeCtrlFiles($) { # {{{
       my $old_val = $self->{'MAIN_DATA'}->{$fld};
       my $new_val = $doc_data->GetFldValue($fld);
       if ($new_val) {
+        $new_val = $self->_MangleSection($new_val) if $fld eq $FLD_SECTION;
+        
         if ($old_val and $old_val ne $new_val and
             ($fld eq $FLD_DOCUMENT or $fld eq $FLD_SECTION)) {
             return Error("Error while merging: inconsistent values of $fld");
