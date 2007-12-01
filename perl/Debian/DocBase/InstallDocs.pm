@@ -1,7 +1,8 @@
 #!/usr/bin/perl
+
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 95 2007-11-27 23:11:50Z robert $
+# $Id: InstallDocs.pm 96 2007-12-01 15:05:52Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -34,8 +35,6 @@ our $MODE_CHECK      = 6;
 
 our $mode       = undef;
 our @arguments  = undef;
-our  $docbasedir="/usr/share/doc-base";
-our  $infodir="/var/lib/doc-base/info";
 
 
 
@@ -89,7 +88,7 @@ sub InstallDocsMain() { # {{{
   if ($mode == $MODE_REMOVE) { # {{{
     foreach $file (@arguments) {
       if ($file !~ /\//) {  # file is document-id (for backward compatibility)
-        Inform ("Ignoring nonregistered document `$file'") unless -f "$infodir/$file.status";
+        Inform ("Ignoring nonregistered document `$file'") unless -f "$DATA_DIR/$file.status";
         $doc     = Debian::DocBase::Document->new($file);
         $doc->UnregisterAll();
       } elsif (! -e $file) {
@@ -150,7 +149,10 @@ sub InstallDocsMain() { # {{{
       or $mode == $MODE_INSTALL_ALL or $mode == $MODE_REMOVE_ALL)  { # {{{
 
     my @documents = Debian::DocBase::Document->GetDocumentList();
-      foreach my $doc (@documents) {
+
+    UnregisterDhelp(@documents);
+
+    foreach my $doc (@documents) {
         $doc -> MergeCtrlFiles();
     }
 
@@ -160,6 +162,7 @@ sub InstallDocsMain() { # {{{
       $doc -> SaveStatusChanges();
     }
     RestoreSignals();
+
     RegisterDhelp(@documents);
     RegisterScrollkeeper(@documents);
     RegisterDwww(@documents);
@@ -186,11 +189,20 @@ sub GetAllRegisteredDocumentIDs() { # {{{
 } # }}}
 
 sub GetAllDocBaseFiles() { # {{{
-  my @result = ();
+  my @global = ();
+  my @local  = ();
   if (opendir(DIR, $CONTROL_DIR)) {
-    @result = grep { $_ = "$CONTROL_DIR/$_" if -f "$CONTROL_DIR/$_" } readdir(DIR); 
+    @global = grep { $_ = "$CONTROL_DIR/$_" if -f "$CONTROL_DIR/$_" } readdir(DIR); 
     closedir DIR;
   }  
-  return @result;
+
+  if (opendir(DIR, $LOCAL_CONTROL_DIR)) {
+    @local = grep { $_ = "$LOCAL_CONTROL_DIR/$_" 
+                       if $_ ne "README"
+                          and $_ !~ /\.(bak|swp|~)$/o
+                          and -f "$LOCAL_CONTROL_DIR/$_" } readdir(DIR); 
+    closedir DIR;
+  }  
+  return (@global, @local);
 } # }}}
 1;

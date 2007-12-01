@@ -80,7 +80,8 @@ Additionally <package/doc-base/ registers the documentation with
  <url id="http://scrollkeeper.sourceforge.net/" name="scrollkeper">, thus making
 it possible to view the manuals using programs like <package/yelp/ or <package/khelpcenter/.
 
-<p>
+</chapt>
+
 
 <chapt id="interface">The packages interface
 <p>
@@ -93,6 +94,7 @@ register its manuals to <package>doc-base</package>. This is done by installing 
 <package>doc-base</package> <em/control file/ (see <ref id="control_files">) 
 and calling <prgn/install-docs/ from the <prgn/postinst/ script (see <ref id="registering_documents">).
 <p>
+</sect>
 
 <sect id="document_ids">Document IDs
 <p>
@@ -119,6 +121,7 @@ Legal characters for the document ID are lower case
 letters (a-z), digits (0-9), plus (+) or minus (-) signs, and dots
 (.) (the same characters allowed in package names).
 <p>
+</sect>
 
 <sect id="control_files">Control Files
 <p>
@@ -298,8 +301,6 @@ to actually handle the documentation.
 Of course, files in the <tt/Info/ format should be located in the <file>/usr/share/info</file> 
 directory.
 
-
-
 </sect2>
 </sect1>
 </sect>
@@ -333,8 +334,12 @@ and from the <file>prerm</file> script as well:
   fi
 </example>
 
+
+
 <p>
-With that, <package>doc-base</package> will automatically register the
+With that, <package>doc-base</package> will generate 
+<file>/var/lib/doc-base/documents/<var/&lt;document-id&gt;/</file> file and 
+register the
 online manuals to <package>dww</package>, <package>dhelp</package>, 
 and <package>scrollkeeper</package>
 when the package is installed, and de-register the manuals when the
@@ -343,37 +348,114 @@ package is removed.
 <p>
 Note that the call to remove the registered documentation from the
 <file>prerm</file> maintainer script is necessary for cases such as
-when the documentation directory changes and you want to avoid
-messages such as
+when the documentation directory changes.
+</sect>
 
-<example>
-dpkg: warning - unable to delete old file `<var>directory</var>': Directory not empty
-</example>
 
-<sect1>doc-base 0.8.4 features and incompatibilities
+<sect>doc-base 0.8.x features and incompatibilities
+<sect1>Remove call sematnics
 <p>
 The semantics of the remove call has been changed in version 0.8.4:
 <prgn/install-docs -r/ require the full path of <em/control file/ to be passed.
 Previous syntax (i.e. passing only <em/document-id/) is still supported for backward compatibility.
 Older versions of <prgn/install-docs/ ignore the new syntax (only issue a warning, but don't fail). 
+</sect1>
 
+<sect1>Registering multiple documents
 <p>
 With 0.8.4 and later is possible to install (and remove) multiple documents in one call, like
 <example>
-install-docs -i /usr/share/doc-base/&lt;document-id_1&gt; \
-                /usr/share/doc-base/&lt;document-id_2&gt; \
-                /usr/share/doc-base/&lt;document-id_3&gt;
+install-docs -i /usr/share/doc-base/&lt;document-id1&gt; \
+                /usr/share/doc-base/&lt;document-id2&gt; \
+                /usr/share/doc-base/&lt;document-id3&gt;
 </example>
 or even
 <example>
 cat &lt;&lt; EOF | install-docs -i -
-/usr/share/doc-base/&lt;document-id_1&gt;
-/usr/share/doc-base/&lt;document-id_2&gt;
-/usr/share/doc-base/&lt;document-id_3&gt;
+/usr/share/doc-base/&lt;document-id1&gt;
+/usr/share/doc-base/&lt;document-id2&gt;
+/usr/share/doc-base/&lt;document-id3&gt;
 EOF
 </example>
 However <strong/older versions will fail/ on such a syntax, so it's necessary to add proper
 <em/Conflicts/ or <em/Depends/ line if you plan to use the feature in your package.
+
+</sect1>
+
+<sect1>Spliting control files over multiple binary packages
+<p>
+Since version 0.8.7 is it possible to provide documents with the same <em/document-id/
+by more than one binary package. All such documents with be merged together and the merged document
+will be generated in <file>/var/lib/doc-base/documents/<em/document-id/</file> file. 
+This feature can be useful in cases when the same documentation, but in different formats, 
+is provided by two bianry packages. 
+
+<p>
+For example the <package/foo-text/ package could install the
+<file>/usr/share/doc-base/foo-text_foo</file> file with the following contents:
+
+<example>
+Document: foo
+Title: This is foo
+Author: John Foo &lt;foo@foo.net&gt;
+Abstract: Description of foo
+Section: Utils
+
+Format: text
+Files: /usr/share/foo-text/foo.txt.gz
+</example>
+
+and the <package/foo-html/ package could install  the following 
+<file>/usr/share/doc-base/foo-html_foo</file> file:
+
+<example>
+Document: foo
+Title: This is foo
+Author: John Foo &lt;foo@foo.net&gt;
+Abstract: Description of foo
+Section: Utils
+
+Format: HTML
+Index: /usr/share/foo-html/index.html
+Files: /usr/share/foo-html/*.html
+</example>
+
+When both packages are installed, <prgn/install-docs/ will merge contents of the two 
+files into <file>/var/lib/doc-base/documents/foo</file>:
+
+<example>
+Document: foo
+Title: This is foo
+Author: John Foo &lt;foo@foo.net&gt;
+Abstract: Description of foo
+Section: Utils
+
+Format: HTML
+Index: /usr/share/foo-html/index.html
+Files: /usr/share/foo-html/*.html
+
+Format: text
+Files: /usr/share/foo-text/foo.txt.gz
+</example>
+</sect1>
+
+
+
+<sect1>Registering local documents
+<p>
+Version 0.8.7 and futhers allow user to register local documentations. 
+
+In order to do this local administrators need to create their own control file
+(see <ref id="control_files">, place it in the
+ <file>/etc/doc-base/documents</file> directory, and then register it with 
+ <example>
+install-docs -i /etc/doc-base/documents/&lt;document-id&gt;
+</example>
+
+Before removing the file, it should be de-registered with
+ <example>
+install-docs -i /etc/doc-base/documents/&lt;document-id&gt;
+</example>
 
 </sect1>
 </sect>
@@ -429,6 +511,8 @@ Warning in `AUTOCLASS_UNPACKED/usr/share/doc-base/autoclass-theory', line 20: fi
 </example>
 
 </sect>
+</chapt>
+
 
 <chapt id="informations">Getting information about installed documents
 <p>
@@ -456,20 +540,21 @@ Files: /usr/share/doc/foo/html-sgml/*.html
 Index: /usr/share/doc/foo/html-sgml/index.html
 
 ---status-information---
-Control-File: /usr/share/doc-base/foo
-Dhelp-file: /usr/share/doc/foo/.dhelp
-Scrollkeeper-omf-file: /var/lib/doc-base/omf/foo/foo-C.omf
-Scrollkeeper-sid: 99999999-0000-8888-0000-1234567890ab
+Control-Files: "/usr/share/doc-base/foo"
+Scrollkeeper-omf-file: "/var/lib/doc-base/omf/foo/foo-C.omf"
+Scrollkeeper-sid: "99999999-0000-8888-0000-1234567890ab"
 </example>
 <p>
 
-In some cases, <package>doc-base</package> creates files when
-installing a document. When a document is registered to
-<package/dhelp/ a file `<tt/.dhelp/' is generated, whereas for <package/scrollkeeper/
-package `<tt/*-C.omf/' is needed. Names of the generated files are recorded in the
-<em/Dhelp-file/ and <em/Scrollkeeper-omf-file/ fields. Lack of any of the fields means the 
-documents was not registered to appropriate package.
+<package>doc-base</package> always creates 
+a <file>/var/lib/doc-base/documents/&lt;document-id&gt;</file> file when
+installing a document.
 <p>
+When a document is registered to <package/scrollkeeper/, <package/doc-base/ will create
+`<tt/*-C.omf/' file under the <file>/var/lib/doc-base/omf</file> directory. Name of the 
+generated file is recorded in the <em/Scrollkeeper-omf-file/ field. Lack of the field 
+means the documents was not registered to the package.
+</chapt>
 
 <chapt id="todo">TODO List
 <sect>Roadmap for 0.8.* releases
@@ -537,6 +622,7 @@ documents was not registered to appropriate package.
 </list>
 
 </sect>
+</chapt>
 
 </book>
 

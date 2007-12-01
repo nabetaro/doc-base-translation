@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs.in 82 2007-10-21 17:37:56Z robert $
+# $Id: install-docs.in 96 2007-12-01 15:05:52Z robert $
 
 use warnings;
 use strict;
@@ -39,7 +39,6 @@ install-docs - manage online Debian documentation
 umask 022;
 
 # constants
-my $docbasedir="/usr/share/doc-base";
 my $do_dwww_update = 1;
 my $force_reregister_flagfile = "/var/lib/doc-base/info/FORCE-REREGISTER.flag";
 

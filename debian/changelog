@@ -1,9 +1,21 @@
 doc-base (0.8.7~a1) UNRELEASED; urgency=low
 
-  * NOT RELEASED YET
-  * DocBaseFile.pm: fix perl warning on empty control files
-  * Preliminary support for merging files
-  * preinst: remove all generated files 
+  * Introduce /var/lib/doc-base/documents and dynamic generation of files
+    there in doc-base control file format.  Interfaces like dhelp, dwww,
+    or doc-central should use that dir instead  of /usr/share/doc.
+  * Add support for merging control files to allow multiple binary packages
+    provide the same documentation but in different formats.
+  * Add /etc/doc-base/documents in order to made it possible to register
+    local documents with doc-base  (closes: #213847)
+
+  * Dhelp.pm:
+    + don't generate .dhelp files, since dhelp 0.6 no longer supports them.
+    + add a code to register/unregister doc-base control files with dhelp,
+      but not enable it yet.
+
+  * postinst: Remove all already generated .dhelp files and reregister
+    installed documentation files.
+  * Documentation update.
 
  -- Robert Luberda <robert@debian.org>  Sun, 28 Oct 2007 18:00:23 +0100
 

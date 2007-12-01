@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 95 2007-11-27 23:11:50Z robert $
+# $Id: Document.pm 96 2007-12-01 15:05:52Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -177,10 +177,10 @@ sub _read_status_file { # {{{
                                     s/"$//;
                                     Debug("Existing control file in status: $_");
                                     (-f $_) ? ($_ => undef): Warn("Registered control file `$_' no longer exists")
-                                   } split(/\s*,\s*/, $status->{'Control-File'})
-                                      if $status->{'Control-File'};
+                                   } split(/\s*,\s*/, $status->{'Control-Files'})
+                                      if $status->{'Control-Files'};
 
-    delete $$status{'Control-File'};
+    delete $$status{'Control-Files'};
     $self->{'STATUS_DICT'} = $status;
   }
   $self->{'INVALID'} = 0;
@@ -200,7 +200,7 @@ sub _write_status_file { # {{{
     or croak "Cannot open status file `$tmp_status_file' for writing: $!";
 
   my $control_files = '"' . join('", "', sort keys %{$self->{'CONTROL_FILES'}}) . '"';
-  print S "Control-File: $control_files\n" unless $control_files eq '""';
+  print S "Control-Files: $control_files\n" unless $control_files eq '""';
 
   my $status = $self->{'STATUS_DICT'};
   for my $k (sort keys   %$status) {

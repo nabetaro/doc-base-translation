@@ -1,6 +1,6 @@
 # vim:ts=2
 # makefile for doc-base
-# $Id: Makefile 75 2007-05-06 12:45:36Z robert $
+# $Id: Makefile 96 2007-12-01 15:05:52Z robert $
 #
 # determine our version number
 DEB_VERSION     := $(shell LC_ALL=C dpkg-parsechangelog | grep ^Version: | sed 's/^Version: *//')
@@ -25,6 +25,7 @@ install_link    := ln -sf
 compress        := gzip -9f
 
 prefix          := /usr
+etcdir					:= /etc/doc-base
 sbindir         := $(prefix)/sbin
 mandir          := $(prefix)/share/man/man8
 sharedir        := $(prefix)/share/doc-base
@@ -123,6 +124,8 @@ install: $(generated)
 	rm -f                                    $(DESTDIR)$(omfdir)/doc-base
 	$(install_link) $(libdir)/omf            $(DESTDIR)$(omfdir)/doc-base
 
+	$(install_dir)                           $(DESTDIR)$(etcdir)/documents
+	$(install_file) data/README.local        $(DESTDIR)$(etcdir)/documents/README
 
 	@echo; echo "*** Installing docs:"
 	$(install_dir)                           $(DESTDIR)$(mandir)
