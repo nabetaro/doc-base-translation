@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 104 2007-12-22 12:14:54Z robert $
+# $Id: Document.pm 105 2007-12-22 12:22:29Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -351,7 +351,7 @@ sub WriteNewCtrlFile() { # {{{
       if $self->{'MAIN_DATA'}->{$fld};
   }
 
-  print F "Control-Files: " . $self->_GetControlFileNames(' ') . "\n" if $self->_has_control_files();
+#  print F "Control-Files: " . $self->_GetControlFileNames(' ') . "\n" if $self->_has_control_files();
 
   foreach my $format (sort keys %{$self->{'FORMAT_LIST'}}) {
     print F "\n";

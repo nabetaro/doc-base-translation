@@ -5,7 +5,7 @@ doc-base (0.8.8) unstable; urgency=low
   * Enable dhelp registation, conflicts with dhelp << 0.6.5.
   * Standards-Version: 3.7.3 (no changes).
 
- -- Robert Luberda <robert@debian.org>  Sat, 22 Dec 2007 10:36:12 +0100
+ -- Robert Luberda <robert@debian.org>  Sat, 22 Dec 2007 13:22:11 +0100
 
 doc-base (0.8.7) unstable; urgency=low
 
