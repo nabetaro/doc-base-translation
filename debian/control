@@ -2,14 +2,14 @@ Source: doc-base
 Section: doc
 Priority: optional
 Maintainer: Robert Luberda <robert@debian.org>
-Standards-Version: 3.7.2
+Standards-Version: 3.7.3
 Build-Depends-Indep: debiandoc-sgml (>= 1.1.37)
 Build-Depends: debhelper (>= 5.0.26)
 
 Package: doc-base
 Depends: ${perl:Depends}, scrollkeeper
 Suggests: dhelp | dwww | doc-central | yelp | khelpcenter
-Conflicts: dhelp (<< 0.3.14), dwww (<< 1.9.0)
+Conflicts: dhelp (<< 0.6.5), dwww (<< 1.9.0)
 Architecture: all
 Description: utilities to manage online documentation
  This package contains utilities to manage documentation installed on

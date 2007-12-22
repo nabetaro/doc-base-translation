@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 98 2007-12-02 13:18:47Z robert $
+# $Id: Document.pm 104 2007-12-22 12:14:54Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -380,14 +380,13 @@ sub _MangleSection($) {
 
   my @sect_comps = split (/\/+/, $section);
   my $result     = "";
-  my $from_map   = 0;
 
   while ($#sect_comps > -1) {
     my $tmp   =  shift(@sect_comps);
     $result   =  ($result) ? $result . "/" .  $tmp : $tmp;
 
-    $tmp      = $section_map{lc $result};
-    $result   = $tmp if $tmp;
+    $tmp      = lc $result;
+    $result   = $section_map{$tmp} if exists $section_map{$tmp};
   }
 
   return $result if $result;

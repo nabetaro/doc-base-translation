@@ -3,7 +3,7 @@
 
 set -e
 
-if [ "$1" = purge ]; then
+if [ "$1" = "remove" ]; then
     rm -rf /var/lib/doc-base
 fi
 

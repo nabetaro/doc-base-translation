@@ -2,7 +2,7 @@
 
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 97 2007-12-01 18:58:59Z robert $
+# $Id: InstallDocs.pm 102 2007-12-22 09:36:26Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -150,7 +150,7 @@ sub InstallDocsMain() { # {{{
 
     my @documents = Debian::DocBase::Document->GetDocumentList();
 
-#    UnregisterDhelp(@documents);
+    UnregisterDhelp(@documents);
 
     foreach my $doc (@documents) {
         $doc -> MergeCtrlFiles();
@@ -163,7 +163,7 @@ sub InstallDocsMain() { # {{{
     }
     RestoreSignals();
 
-#    RegisterDhelp(@documents);
+    RegisterDhelp(@documents);
     RegisterScrollkeeper(@documents);
     RegisterDwww(@documents);
   } # }}}

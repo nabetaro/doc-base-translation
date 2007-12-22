@@ -1,3 +1,12 @@
+doc-base (0.8.8) unstable; urgency=low
+
+  * Remove /var/lib/doc-base on package removal (closes: #454069).
+  * Strip  Apps and Applicatons prefixes from Section field values.
+  * Enable dhelp registation, conflicts with dhelp << 0.6.5.
+  * Standards-Version: 3.7.3 (no changes).
+
+ -- Robert Luberda <robert@debian.org>  Sat, 22 Dec 2007 10:36:12 +0100
+
 doc-base (0.8.7) unstable; urgency=low
 
   * Introduce /var/lib/doc-base/documents and dynamic generation of files

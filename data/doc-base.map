@@ -1,84 +1,59 @@
-Apps                                : Applications
+Apps                                :
+Applications                        :
 
-Applications/Hamradio               : Applications/Amateur Radio
-Hamradio                            : Applications/Amateur Radio
+Hamradio                            : Amateur Radio
 
-Applications/Databases              : Applications/Data Management
-Applications/Database               : Applications/Data Management
-Databases                           : Applications/Data Management
-Database                            : Applications/Data Management
+Databases                           : Data Management
+Database                            : Data Management
 
-Editors                             : Applications/Editors
+Educational                         : Education
 
-Education                           : Applications/Education
-Applications/Educational            : Applications/Education
-Educational                         : Applications/Education
+Emulators                           : Emulators
+Graphics                            : Graphics
 
-Emulators                           : Applications/Emulators
-Graphics                            : Applications/Graphics
+Net                                 : Network
+Comm                                : Network/Communication
+Mail                                : Network/Communication
 
-Applications/Net                    : Applications/Network
-Net                                 : Applications/Network
-Applications/Comm                   : Applications/Network/Communication
-Applications/Mail                   : Applications/Network/Communication
-Comm                                : Applications/Network/Communication
-Mail                                : Applications/Network/Communication
+Development                         : Programming
+Devel                               : Programming
+Libdevel                            : Programming
+Libs                                : Programming
+Programming                         : Programming
+Programming                         : Programming
+Contrib/Libs                        : Programming
+Non-Free/Devel                      : Programming
+Python                              : Programming/Python
+Lisp                                : Programming/Lisp
 
-Applications/Development            : Applications/Programming
-Applications/Devel                  : Applications/Programming
-Applications/Libdevel               : Applications/Programming
-Applications/Libs                   : Applications/Programming
-Development                         : Applications/Programming
-Devel                               : Applications/Programming
-Libdevel                            : Applications/Programming
-Libs                                : Applications/Programming
-Programming                         : Applications/Programming
-Programming                         : Applications/Programming
-Contrib/Libs                        : Applications/Programming/Contrib
-Non-Free/Devel                      : Applications/Programming/Non-free
-Applications/Python                 : Applications/Programming/Python
-Python                              : Applications/Programming/Python
+Science                             : Science
+Electronics                         : Science/Electronics
+Technical                           : Science/Electronics
+Math                                : Science/Mathematics
 
-Science                             : Applications/Science
-Applications/Electronics            : Applications/Science/Electronics
-Applications/Technical              : Applications/Science/Electronics
-Electronics                         : Applications/Science/Electronics
-Technical                           : Applications/Science/Electronics
-Applications/Math                   : Applications/Science/Mathematics
-Math                                : Applications/Science/Mathematics
+Shells                              : Shells
 
-Shells                              : Applications/Shells
+Audio                               : Sound
+Music                               : Sound
+Sound                               : Sound
 
-Applications/Audio                  : Applications/Sound
-Applications/Music                  : Applications/Sound
-Audio                               : Applications/Sound
-Music                               : Applications/Sound
-Sound                               : Applications/Sound
+System                              : System
+Admin                               : System/Administration
+Security                            : System/Security
 
-System                              : Applications/System
-Admin                               : Applications/System/Administration
-Applications/Admin                  : Applications/System/Administration
-Applications/Security               : Applications/System/Security
-Security                            : Applications/System/Security
-System/Security                     : Applications/System/Security
+Xshells                             : Terminal Emulators
 
-Applications/Xshells                : Applications/Terminal Emulators
-Xshells                             : Applications/Terminal Emulators
+Text                                : Text
 
-Text                                : Applications/Text
+Viewers                             : Viewers
 
-Viewers                             : Applications/Viewers
-
-Web                                 : Applications/Web Developement
-Applications/Web                    : Applications/Web Developement
-Applications/Web Developement/W3c   : Applications/Web Developement/W3
+Web                                 : Web Developement
+Web Developement/W3c                : Web Developement/W3
 
 
-Applications/Games                  : Games
 Games/Arcade                        : Games/Action
 Games/Tetris-Like                   : Games/Blocks
 
-Applications/Manpages               : Help
 Docs                                : Help
 Doc                                 : Help
 Manpages                            : Help
@@ -93,25 +68,20 @@ Screen/Save                         : Screen/Saving
 System/Admin                        : System/Administration
 System/Language-Environment         : System/Language Environment
 
-Applications/X11/Window Managers    : Window Managers
 Windowmanagers                      : Window Managers
 Windowmanager                       : Window Managers
 X11/Window Managers                 : Window Managers
 
 ### Invalid sections (not defined in menu section hierarchy)
-Interpreters                        : Applications/Interpreters
+Interpreters                        : Interpreters
 
-Applications/Misc                   : Applications/Miscelanous
-Misc                                : Applications/Miscelanous
+Misc                                : Miscelanous
 
-Applications/Tex                    : Applications/TeX
-Tex                                 : Applications/TeX
-Tools                               : Applications/Tools
+Tex                                 : TeX
+Tools                               : Tools
 
-Applications/Utils                  : Applications/Utilities
-Utilities                           : Applications/Utilities
-Utils                               : Applications/Utilities
+Utilities                           : Utilities
+Utils                               : Utilities
 
-X11                                 : Applications/X11
-Applications/Gnome                  : Applications/X11/Gnome
-Gnome                               : Applications/X11/Gnome
+X11                                 : X11
+Gnome                               : X11/Gnome
