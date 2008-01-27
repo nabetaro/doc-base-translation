@@ -1,3 +1,10 @@
+doc-base (0.8.9) unstable; urgency=low
+
+  * Fix typos in doc-base.map (closes: #460505).
+  * Update sections in scrollkeeper.map.
+
+ -- Robert Luberda <robert@debian.org>  Sun, 27 Jan 2008 13:36:37 +0100
+
 doc-base (0.8.8) unstable; urgency=low
 
   * Remove /var/lib/doc-base on package removal (closes: #454069).

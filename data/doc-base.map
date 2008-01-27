@@ -47,8 +47,8 @@ Text                                : Text
 
 Viewers                             : Viewers
 
-Web                                 : Web Developement
-Web Developement/W3c                : Web Developement/W3
+Web                                 : Web Development
+Web Development/W3c                 : Web Development/W3
 
 
 Games/Arcade                        : Games/Action
@@ -75,7 +75,7 @@ X11/Window Managers                 : Window Managers
 ### Invalid sections (not defined in menu section hierarchy)
 Interpreters                        : Interpreters
 
-Misc                                : Miscelanous
+Misc                                : Miscellaneous
 
 Tex                                 : TeX
 Tools                               : Tools
