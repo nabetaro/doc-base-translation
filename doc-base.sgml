@@ -3,6 +3,7 @@
        within the document -->
   <!ENTITY % versiondata SYSTEM "version.ent"> %versiondata;
 ]>
+
 <book>
 
 <title>Debian <package>doc-base</package> Manual
@@ -11,44 +12,41 @@
 <author>Robert Luberda <email/robert@debian.org/
 <version>ver. &version;, &date;
 
-<abstract>
-This manual describes what <package>doc-base</package> is and how it
-can be used to manage online manuals on Debian systems.
-</abstract>
+<abstract><!--{{{-->
+  This manual describes what <package>doc-base</package> is and how it
+  can be used to manage online manuals on Debian systems.
+</abstract><!--}}}-->
 
-<copyright>
-	<copyrightsummary>
-copyright &copy;1998, Christian Schwarz</copyrightsummary>
-	<copyrightsummary>
-copyright &copy;1999 &ndash 2002, Adam Di Carlo</copyrightsummary>
-	<copyrightsummary>
-copyright &copy;2006 &ndash 2007, Robert Luberda</copyrightsummary>
+<copyright><!--{{{-->
+  <copyrightsummary>copyright &copy;1998, Christian Schwarz</copyrightsummary>
+  <copyrightsummary>copyright &copy;1999 &ndash 2002, Adam Di Carlo</copyrightsummary>
+	<copyrightsummary>copyright &copy;2006 &ndash 2008, Robert Luberda</copyrightsummary>
 
-<p>
+  <p>This manual is free software; you may redistribute it and/or modify it
+     under the terms of the GNU General Public License as published by the
+     Free Software Foundation; either version 2, or (at your option) any
+     later version.
+  </p>
 
-This manual is free software; you may redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the
-Free Software Foundation; either version 2, or (at your option) any
-later version.
-<p>
 
-This is distributed in the hope that it will be useful, but
-<em>without any warranty</em>; without even the implied warranty of
-merchantability or fitness for a particular purpose.  See the GNU
-General Public License for more details.
-<p>
+  <p>This is distributed in the hope that it will be useful, but
+     <em>without any warranty</em>; without even the implied warranty of
+     merchantability or fitness for a particular purpose.  See the GNU
+     General Public License for more details.
+  </p>
 
-A copy of the GNU General Public License is available as
-<tt>/usr/share/common-licenses/GPL</tt> in the Debian GNU/Linux
-distribution or on the World Wide Web at the <url
-id="http://www.gnu.org/copyleft/gpl.html" name="GNU website">. You can
-also obtain it by writing to the Free Software Foundation, Inc.,
-51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA 
-      </copyright>
+  <p>A copy of the GNU General Public License is available as
+     <tt>/usr/share/common-licenses/GPL</tt> in the Debian GNU/Linux
+     distribution or on the World Wide Web at the <url
+     id="http://www.gnu.org/copyleft/gpl.html" name="GNU website">. You can
+     also obtain it by writing to the Free Software Foundation, Inc.,
+     51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+  </p>
+</copyright><!--}}}-->
 
 <toc detail="sect2">
 
-<chapt id="about">About <package>doc-base</package>
+<chapt id="about">About <package/doc-base/<!--{{{-->
 <p>
 
 Some time ago, there was a big discussion on the Debian mailing lists
@@ -80,23 +78,23 @@ Additionally <package/doc-base/ registers the documentation with
  <url id="http://scrollkeeper.sourceforge.net/" name="scrollkeper">, thus making
 it possible to view the manuals using programs like <package/yelp/ or <package/khelpcenter/.
 
-</chapt>
+</chapt><!--}}}-->
 
 
-<chapt id="interface">The packages interface
+<chapt id="interface">The packages interface<!--{{{-->
 <p>
 
-<sect>Introduction
+<sect>Introduction<!--{{{-->
 <p>
 
 Each Debian package that installs online manuals (in any format) should
 register its manuals to <package>doc-base</package>. This is done by installing a
-<package>doc-base</package> <em/control file/ (see <ref id="control_files">) 
+<package>doc-base</package> <em/control file/ (see <ref id="control_files">)
 and calling <prgn/install-docs/ from the <prgn/postinst/ script (see <ref id="registering_documents">).
 <p>
-</sect>
+</sect><!--}}}-->
 
-<sect id="document_ids">Document IDs
+<sect id="document_ids">Document IDs<!--{{{-->
 <p>
 
 Each document that is registered to <package>doc-base</package> must
@@ -121,16 +119,17 @@ Legal characters for the document ID are lower case
 letters (a-z), digits (0-9), plus (+) or minus (-) signs, and dots
 (.) (the same characters allowed in package names).
 <p>
-</sect>
+</sect><!--}}}-->
 
-<sect id="control_files">Control Files
+<sect id="control_files">Control Files<!--{{{-->
 <p>
 
 For each piece online documentation, <package>doc-base</package> needs a <em/control
 file/ that describes the documentation and the documentation file
 formats that are provided initially.
 <p>
-<sect1>Example
+<sect1>Example<!--{{{-->
+
 <p>
 Here is an example of a <em/control file/:
 <p>
@@ -142,7 +141,7 @@ Author: Christian Schwarz
 Abstract: This manual describes what doc-base is
  and how it can be used to
  manage online manuals on Debian systems.
-Section: Apps/Programming
+Section: Debian
 
 Format: DebianDoc-SGML
 Files: /usr/share/doc/doc-base/doc-base.sgml.gz
@@ -156,7 +155,7 @@ Files: /usr/share/doc/doc-base/doc-base.html/*.html
 </example>
 
 <p>
-If the <package/doc-base/ package provided necessary files in other formats, it would be possible 
+If the <package/doc-base/ package provided necessary files in other formats, it would be possible
 to add  more sections at the end of the <em/control file/:
 <example>
 
@@ -173,9 +172,9 @@ Format: Info
 Index: /usr/share/info/doc-base.info.gz
 Files: /usr/share/info/doc-base.info*.gz
 </example>
-</sect1>
+</sect1><!--}}}-->
 
-<sect1>Syntax of the control file
+<sect1>Syntax of the control file<!--{{{-->
 <p>
 As you can see from the above example, the syntax -- as is the whole
 design of <package>doc-base</package> -- is heavily influenced by dpkg. This is important
@@ -183,130 +182,481 @@ since every maintainer will have to work with <package>doc-base</package> and th
 should be simple to remember the basic ideas.
 <p>
 
-The syntax of the control file is simple: 
+The syntax of the control file is simple:
 <list compact>
   <item>The file consist of
-     <list compact>
+    <list compact>
       <item>exactly one main section providing base information about the registered manual
-        (see <ref id="main_section"> below);</item>
-      <item>one or more format sections (see <ref id="format_sections">) containing pointers 
-           to the registered documentation files.</item>
+            (see <ref id="main_section"> below);</item>
+      <item>one or more format sections (see <ref id="format_sections">) containing pointers
+            to the registered documentation files.</item>
     </list>
-  </item> 
+  </item>
   <item>Successive sections must be separated with empty lines.</item>
   <item>Non-empty lines use a `<tt/field-name: value/' syntax.</item>
   <item>The field names are case-insensitive.</item>
   <item>The field values are case-sensitive (except for the <em/Format/ field).</item>
   <item>Field values may be wrapped over several lines by making the first character of
         subsequent lines a space.
-   <list compact> 	
-    <item>If a multi-line value should contain an empty line,
-          a single dot (.) must be placed in the second column. 
-    <item>If the <em/Abstract/ field value should contain lines displayed verbatim,       
-          the lines must begin with two spaces.
-  </list>
- </item> 
-</list>  
+    <list compact> 	
+      <item>If a multi-line value should contain an empty line,
+            a single dot (.) must be placed in the second column.
+      <item>If the <em/Abstract/ field value should contain lines displayed verbatim,
+            the lines must begin with two spaces.
+    </list>
+  </item>
+  <item>The file should be encoded in UTF-8.</item>
+</list>
 
 <sect2 id="main_section">The main section
 <p>
 The first section of the control file describes the document.  The
-following fields are available:<taglist>
-            <tag><em>Document</em></tag>
-            <item>
-              <p>
-<qref id="document_ids">Document ID</qref>, required field; should be the first field.</p>
-            </item>
-            <tag><em>Title</em></tag>
-            <item>
-              <p>
-Title of the document; required field.</p>
-            </item>
-            <tag><em>Author</em></tag>
-            <item>
-              <p>
-Author(s) of the document; optional field.</p>
-            </item>
-            <tag><em>Abstract</em></tag>
-            <item>
-              <p>
-Short paragraph giving an overview of the document; optional but
-recommended field.</p>
-            </item>
-            <tag><em>Section</em></tag>
-            <item>
-              <p>
-Section where the document belongs; this should follow the sections
-outlined in chapter 3.5 of "Debian Menu Policy", which can be found 
-in the <url id="file:///usr/share/doc/menu/html/ch3.html#s3.5"
-name="/usr/share/doc/menu/html"> directory.  Required field.</p>
-
-
-            </item>
-          </taglist>
+following fields are available:
+<taglist>
+  <tag><em>Document</em></tag>
+    <item>
+      <p><qref id="document_ids">Document ID</qref>, required field; should be the first field.</p>
+    </item>
+  <tag><em>Title</em></tag>
+    <item>
+      <p>Title of the document; required field.</p>
+    </item>
+  <tag><em>Author</em></tag>
+    <item>
+      <p>Author(s) of the document; optional field.</p>
+    </item>
+  <tag><em>Abstract</em></tag>
+    <item>
+      <p>Short paragraph giving an overview of the document; optional but
+         recommended field.</p>
+    </item>
+  <tag><em>Section</em></tag>
+    <item>
+      <p>Section where the document belongs; see <ref id="section_field">.
+         Required field.</p>
+    </item>
+</taglist>
 </sect2>
 <sect2 id="format_sections"><em/Format/ sections
 <p>
 The next sections describe the different formats for the provided
 document which is described in the first section.  The following
-fields are available:<taglist>
-            <tag><em>Format</em></tag>
-            <item>
-              <p>
-Format for the document.  Required field.  The following formats
-are recognised:
-<list compact>
-  <item><tt/HTML/,</item>
-  <item><tt/Text/,</item>
-  <item><tt/PDF/,</item>
-  <item><tt/PostScript/,</item>
-  <item><tt/Info/,</item>
-  <item><tt/DVI/,</item>
-  <item>and <tt/DebianDoc-SGML/.</item>  
-</list>
-The values of this field are case-insensitive (e.g. both <tt/Text/ and <tt/text/ are valid).
-</p>
-            </item>
-            <tag><em>Index</em></tag>
-            <item>
-              <p>
-Index or top-level file for this document format.  Only applies to
-document formats <tt/HTML/ and <tt/Info/, and required if the format is <tt/HTML/ or <tt/Info/.
-<p>
-This field has to contain the absolute file name of the main page of the
-document. This file will be specified as the front page link when the
-document is registered.
-            </item>
-            <tag><em>Files</em></tag>
-            <item>
-              <p>
-Space separated list of filenames or POSIX shell globs (i.e. <tt/*/, <tt/?/, and <tt/[]/ meta-characters)
-representing the files which constitute the
-documentation in this format.  Required field.
-            </item>
-          </taglist>
+fields are available:
+<taglist>
+  <tag><em>Format</em></tag>
+    <item>
+      <p>Format for the document.  Required field.  The following formats
+         are recognised:
+          <list compact>
+            <item><tt/HTML/,</item>
+            <item><tt/Text/,</item>
+            <item><tt/PDF/,</item>
+            <item><tt/PostScript/,</item>
+            <item><tt/Info/,</item>
+            <item><tt/DVI/,</item>
+            <item>and <tt/DebianDoc-SGML/.</item>
+          </list>
+        The values of this field are case-insensitive (e.g. both <tt/Text/ and <tt/text/ are valid).
+      </p>
+    </item>
+  <tag><em>Index</em></tag>
+    <item>
+      <p>Index or top-level file for this document format.  Only applies to
+         document formats <tt/HTML/ and <tt/Info/, and required if the format is
+         <tt/HTML/ or <tt/Info/.</p>
+      <p>This field has to contain the absolute file name of the main page of the
+         document. This file will be specified as the front page link when the
+         document is registered.</p>
+    </item>
+  <tag><em>Files</em></tag>
+    <item>
+      <p>Space separated list of filenames or POSIX shell globs (i.e. <tt/*/, <tt/?/, and
+         <tt/[]/ meta-characters) representing the files which constitute the
+         documentation in this format.  Required field.</p>
+    </item>
+</taglist>
 
-<p>
-There must be at least one such a section. If there are more, each of them must register 
+<p>There must be at least one such a section. If there are more, each of them must register
 files in different formats (e.g. having two <tt/Format: HTML/ sections in one <em/control
-file/ is not allowed).
+file/ is not allowed).</p>
 
 <p>
 Except for the <tt/Info/ format the files referred in both <em/Index/ and <em/Files/
 fields should be placed somewhere under the <file>/usr/share/doc</file> hierarchy.
-If for some reason it's not possible, then the registering package should provide a symbolic 
+If for some reason it's not possible, then the registering package should provide a symbolic
 link pointing from the above hierarchy to the real files and register its documentation
 through the link, allowing <package/doc-base/, <package/dhelp/, or <package/dwww/ packages
 to actually handle the documentation.
 
-Of course, files in the <tt/Info/ format should be located in the <file>/usr/share/info</file> 
+Of course, files in the <tt/Info/ format should be located in the <file>/usr/share/info</file>
 directory.
 
 </sect2>
-</sect1>
-</sect>
+</sect1><!--}}}-->
 
-<sect id="registering_documents">Registering Documents Using <prgn>install-docs</prgn>
+
+<sect1 id="section_field"> The <tt/section/ field<!--{{{-->
+<p>
+
+      this should follow the sections
+         outlined in chapter 3.5 of "Debian Menu Policy", which can be found
+         in the <url id="file:///usr/share/doc/menu/html/ch3.html#s3.5"
+          name="/usr/share/doc/menu/html"> directory.
+The <tt/section/ field hold a slash-separated list of hierarchical sections
+components.
+<p>
+The <em/authoritative list of Debian's menu structure/ is maintained
+in the Debian Menu sub-policy document which is part of the Debian
+Policy package.
+<p>
+The menu structure below is included only for convenience and is not
+authoritative. If it disagrees with the structure in the Debian Menu
+sub-policy, please send a wishlist bug to the <tt/menu/ package.
+<p>
+Please do <em/not/ put your packages into any other sections.
+<p>
+  Here is the authoritative list of Debian's menu
+  structure. Packages must be placed in leaf sections.
+<p>
+<taglist>
+  <tag><tt>Accessibility</tt></tag>
+    <item>
+      <p>Documentation of tools to aid people with disabilities or for machines lacking usual input devices.</p>
+    </item>
+  <tag><tt>Amateur Radio</tt></tag>
+    <item>
+      <p>Anything relating to HAM radio.</p>
+    </item>
+  <tag><tt>Data Management</tt></tag>
+    <item>
+      <p>Interactive database programs, collection managers,
+         address books, bibliography tools, etc.</p>
+    </item>
+  <tag><tt><strong/Debian/</tt></tag>
+    <item>
+      Documentation of Debian specific tools, policies, etc.
+      <taglist>
+        <tag><tt><strong/Installation/</tt></tag>
+          <item>
+            Debian installation manual.
+          </item>
+      </taglist>
+    </item>
+  <tag><tt>Editors</tt></tag>
+    <item>
+      <p>Editors, other than office word processors, for
+         text-based information.</p>
+    </item>
+  <tag><tt>Education</tt></tag>
+    <item>
+      <p>Educational and training softwares.</p>
+    </item>
+  <tag><tt>Emulators</tt></tag>
+    <item>
+      <p>Software that allows you to run non-native
+         software or more than one OS at a time.</p>
+  </item>
+  <tag><tt>File Management</tt></tag>
+    <item>
+      <p>Tools for file management, archiving,
+         searching, CD/DVD burning, backup, etc.</p>
+    </item>
+  <tag><tt>Games</tt></tag>
+    <item>
+      Games and recreations
+      <taglist>
+        <tag><tt>Action</tt></tag>
+          <item>
+            <p>Games that involve a lot of action
+               and require fast reflexes.</p>
+          </item>
+        <tag><tt>Adventure</tt></tag>
+          <item>
+            <p>Role playing and adventure games,
+               interactive movies and stories, etc.</p>
+          </item>
+        <tag><tt>Blocks</tt></tag>
+          <item>
+            <p>Tetris-like games involving falling blocks.</p>
+          </item>
+        <tag><tt>Board</tt></tag>
+          <item>
+            <p>Games played on a board.</p>
+          </item>
+        <tag><tt>Card</tt></tag>
+          <item>
+            <p>Games involving a deck of cards.</p>
+          </item>
+        <tag><tt>Puzzles</tt></tag>
+          <item>
+            <p>Tests of ingenuity and logic.</p>
+          </item>
+        <tag><tt>Simulation</tt></tag>
+          <item>
+            <p>Simulations of the real world
+               in all detail and complexity.</p>
+          </item>
+        <tag><tt>Strategy</tt></tag>
+          <item>
+            <p>Games involving long-term strategic thinking.</p>
+          </item>
+        <tag><tt>Tools</tt></tag>
+          <item>
+            <p>Server browsers, configurators, editors, and other
+               game-related tools that are not games themselves.</p>
+          </item>
+        <tag><tt>Toys</tt></tag>
+          <item>
+            <p>Amusements, eye-candy, entertaining
+               demos, screen hacks (screensavers), etc.</p>
+          </item>
+      </taglist>
+    </item>
+  <tag><tt>Graphics</tt></tag>
+    <item>
+      <p>2D and 3D graphics manipulation software.</p>
+    </item>
+  <tag><tt>Help</tt></tag>
+    <item>
+      Programs that provide user documentation
+      <taglist>
+        <tag><tt><strong/Books/</tt></tag>
+          <item>
+            Books.
+          </item>
+        <tag><tt><strong/FAQ/</tt></tag>
+          <item>
+            Frequently Asked Questions.
+          </item>
+        <tag><tt><strong/HOWTO/</tt></tag>
+          <item>
+            Various HOWTOs.
+          </item>
+        <tag><tt><strong/RFC/</tt></tag>
+          <item>
+            RFCs 
+          </item>
+        <tag><tt><strong/Standards/</tt></tag>
+          <item>
+            Standards
+          </item>
+      </taglist>
+    </item>
+  <tag><tt>Mobile Devices</tt></tag>
+    <item>
+      <p>Software that allows you to interface with mobile
+         devices (phones, PDAs, etc.).</p>
+  </item>
+  <tag><tt>Network</tt></tag>
+  <item>
+    Network related software. This is a three-level
+    section, do not put entries directly here.
+    <taglist>
+      <tag><tt>Communication</tt></tag>
+        <item>
+          <p>Mail, USENET news, chat, instant messaging,
+             IP telephony, video conferencing software, etc.</p>
+        </item>
+      <tag><tt>File Transfer</tt></tag>
+        <item>
+          <p>File transfer software such as download
+             managers, FTP clients, P2P clients, etc.</p>
+        </item>
+      <tag><tt>Monitoring</tt></tag>
+        <item>
+          <p>Network monitoring software</p>
+        </item>
+      <tag><tt>Web Browsing</tt></tag>
+        <item>
+          <p>Web browsers, tools for offline browsing, etc.</p>
+        </item>
+      <tag><tt>Web News</tt></tag>
+        <item>
+          <p>Web feed (RSS, Atom, etc.) and podcast aggregators.</p>
+        </item>
+    </taglist>
+  </item>
+  <tag><tt>Office</tt></tag>
+    <item>
+      <p>Office suites, word processors, spreadsheets,
+         CRM, ERP, financial sofware, etc.</p>
+    </item>
+  <tag><tt>Programming</tt></tag>
+    <item>
+      Documentation of IDEs, debuggers, compilers, APIs, libraries, programming languages.
+
+      <taglist>
+        <tag><tt><strong/C/</tt></tag>
+          <item>
+            Documentation of IDEs, debuggers, compilers, etc. related to C programming language 
+          </item>
+        <tag><tt><strong/C++/</tt></tag>          
+          <item>
+            Documentation related to C++.
+          </item>
+        <tag><tt><strong/Java/</tt></tag>
+          <item>
+            Documentation related to Java.
+          </item>
+        <tag><tt><em/[other languages]/</tt></tag>
+          <item>
+            Similary documentation related to any other programming language should be put in
+            the subsection named like the language.
+          </item>
+      </taglist>
+    </item>
+  <tag><tt>Project Management</tt></tag>
+    <item>
+      <p>Timetable managers, group task trackers,
+         bug tracking software, etc.</p>
+  </item>
+  <tag><tt>Science</tt></tag>
+    <item>
+      Scientific and engineering-related software.
+      <taglist>
+        <tag><tt>Astronomy</tt></tag>
+          <item>
+            <p>Astronomy-related software.</p>
+          </item>
+        <tag><tt>Biology</tt></tag>
+          <item>
+            <p>Biology-related software.</p>
+          </item>
+        <tag><tt>Chemistry</tt></tag>
+          <item>
+            <p>Chemistry-related software.</p>
+          </item>
+        <tag><tt>Data Analysis</tt></tag>
+          <item>
+            <p>Software designed for processing, extracting,
+               and presenting generic scientific data.</p>
+          </item>
+        <tag><tt>Electronics</tt></tag>
+          <item>
+            <p>Circuit design tools, simulators and
+               assemblers for microprocessors, etc</p>
+          </item>
+        <tag><tt>Engineering</tt></tag>
+          <item>
+            <p>CAD, UML tools, diagram-drawing and
+               other engineering-related software.</p>
+          </item>
+        <tag><tt>Geoscience</tt></tag>
+          <item>
+            <p>Geoscience-related software.</p>
+          </item>
+        <tag><tt>Mathematics</tt></tag>
+          <item>
+            <p>Mathematics-related software.</p>
+          </item>
+        <tag><tt>Medicine</tt></tag>
+          <item>
+            <p>Medicine-related software.</p>
+          </item>
+        <tag><tt>Physics</tt></tag>
+          <item>
+            <p>Physics-related software.</p>
+          </item>
+        <tag><tt>Social</tt></tag>
+          <item>
+            <p>Social sciences-related software.</p>
+          </item>
+      </taglist>
+    </item>
+  <tag><tt>Screen</tt></tag>
+    <item>
+      Programs that affect the whole screen.
+      <taglist>
+        <tag><tt>Saving</tt></tag>
+          <item>
+            <p>Tools for blanking the screen. Entries of screen hacks and
+               configuration GUIs should go to other appropriate sections.</p>
+          </item>
+        <tag><tt>Locking</tt></tag>
+          <item>
+            <p>Tools for locking the screen.</p>
+          </item>
+      </taglist>
+    </item>
+  <tag><tt>Shells</tt></tag>
+    <item>
+      <p>Various shells to be used inside a terminal emulator.</p>
+    </item>
+  <tag><tt>Sound</tt></tag>
+    <item>
+      <p>Sound players, editors, and rippers/recorders.</p>
+    </item>
+  <tag><tt>System</tt></tag>
+    <item>
+      System related software.
+      <taglist>
+        <tag><tt>Administration</tt></tag>
+          <item>
+            <p>Administrative and system configuration utilities,
+               also tools for personal user settings.</p>
+          </item>
+        <tag><tt>Hardware</tt></tag>
+          <item>
+            <p>Tools for manipulating specific hardware,
+               especially non-standard laptop hardware.</p>
+          </item>
+        <tag><tt>Language Environment</tt></tag>
+          <item>
+            <p>This section is reserved for language-env as a
+               special case.</p>
+          </item>
+        <tag><tt>Monitoring</tt></tag>
+          <item>
+            <p>System information and monitoring tools, log viewers,
+               etc.</p>
+          </item>
+        <tag><tt>Package Management</tt></tag>
+          <item>
+            <p>Package managers and related tools.</p>
+          </item>
+        <tag><tt>Security</tt></tag>
+          <item>
+            <p>Security, cryptography and privacy related software,
+               antiviruses, tools to track and report bugs, etc.</p>
+          </item>
+      </taglist>
+    </item>
+  <tag><tt>Terminal Emulators</tt></tag>
+    <item>
+      <p>Graphical terminal emulators.</p>
+    </item>
+  <tag><tt>Text</tt></tag>
+    <item>
+      <p>Text oriented tools like dictionaries, OCR,
+         translation, text analysis software, etc.</p>
+    </item>
+  <tag><tt>TV and Radio</tt></tag>
+    <item>
+      <p>TV-in, TV-out, FM radio, teletext browsers, etc.</p>
+    </item>
+  <tag><tt>Viewers</tt></tag>
+    <item>
+      <p>Software for viewing images, documents
+         and other (non-video) media.</p>
+    </item>
+  <tag><tt>Video</tt></tag>
+    <item>
+      <p>Video players, editors, and rippers/recorders.</p>
+    </item>
+  <tag><tt>Web Development</tt></tag>
+    <item>
+      <p>Software for web site editing, web
+         programming, and site administration.</p>
+    </item>
+  <tag><tt>Window Managers</tt></tag>
+    <item>
+      <p>X window managers.</p>
+    </item>
+</taglist>
+</sect1><!--}}}-->
+</sect><!--}}}-->
+
+<sect id="registering_documents">Registering Documents Using <prgn>install-docs</prgn><!--{{{-->
 <p>
 
 In order to register a piece of online documentation to
@@ -338,10 +688,10 @@ and from the <file>prerm</file> script as well:
 
 
 <p>
-With that, <package>doc-base</package> will generate 
-<file>/var/lib/doc-base/documents/<var/&lt;document-id&gt;/</file> file and 
+With that, <package>doc-base</package> will generate
+<file>/var/lib/doc-base/documents/<var/&lt;document-id&gt;/</file> file and
 register the
-online manuals to <package>dww</package>, <package>dhelp</package>, 
+online manuals to <package>dww</package>, <package>dhelp</package>,
 and <package>scrollkeeper</package>
 when the package is installed, and de-register the manuals when the
 package is removed.
@@ -350,16 +700,16 @@ package is removed.
 Note that the call to remove the registered documentation from the
 <file>prerm</file> maintainer script is necessary for cases such as
 when the documentation directory changes.
-</sect>
+</sect><!--}}}-->
 
 
-<sect>doc-base 0.8.x features and incompatibilities
+<sect>doc-base 0.8.x features and incompatibilities<!--{{{-->
 <sect1>Remove call sematnics
 <p>
 The semantics of the remove call has been changed in version 0.8.4:
 <prgn/install-docs -r/ require the full path of <em/control file/ to be passed.
 Previous syntax (i.e. passing only <em/document-id/) is still supported for backward compatibility.
-Older versions of <prgn/install-docs/ ignore the new syntax (only issue a warning, but don't fail). 
+Older versions of <prgn/install-docs/ ignore the new syntax (only issue a warning, but don't fail).
 </sect1>
 
 <sect1>Registering multiple documents
@@ -387,9 +737,9 @@ However <strong/older versions will fail/ on such a syntax, so it's necessary to
 <p>
 Since version 0.8.7 is it possible to provide documents with the same <em/document-id/
 by more than one binary package. All such documents with be merged together and the merged document
-will be generated in <file>/var/lib/doc-base/documents/<em/document-id/</file> file. 
-This feature can be useful in cases when the same documentation, but in different formats, 
-is provided by two bianry packages. 
+will be generated in <file>/var/lib/doc-base/documents/<em/document-id/</file> file.
+This feature can be useful in cases when the same documentation, but in different formats,
+is provided by two bianry packages.
 
 <p>
 For example the <package/foo-text/ package could install the
@@ -400,13 +750,13 @@ Document: foo
 Title: This is foo
 Author: John Foo &lt;foo@foo.net&gt;
 Abstract: Description of foo
-Section: Utils
+Section: Text
 
 Format: text
 Files: /usr/share/foo-text/foo.txt.gz
 </example>
 
-and the <package/foo-html/ package could install  the following 
+and the <package/foo-html/ package could install  the following
 <file>/usr/share/doc-base/foo-html_foo</file> file:
 
 <example>
@@ -414,14 +764,14 @@ Document: foo
 Title: This is foo
 Author: John Foo &lt;foo@foo.net&gt;
 Abstract: Description of foo
-Section: Utils
+Section: Text
 
 Format: HTML
 Index: /usr/share/foo-html/index.html
 Files: /usr/share/foo-html/*.html
 </example>
 
-When both packages are installed, <prgn/install-docs/ will merge contents of the two 
+When both packages are installed, <prgn/install-docs/ will merge contents of the two
 files into <file>/var/lib/doc-base/documents/foo</file>:
 
 <example>
@@ -429,7 +779,7 @@ Document: foo
 Title: This is foo
 Author: John Foo &lt;foo@foo.net&gt;
 Abstract: Description of foo
-Section: Utils
+Section: Text
 
 Format: HTML
 Index: /usr/share/foo-html/index.html
@@ -444,11 +794,11 @@ Files: /usr/share/foo-text/foo.txt.gz
 
 <sect1>Registering local documents
 <p>
-Version 0.8.7 and futhers allow user to register local documentations. 
+Version 0.8.7 and futhers allow user to register local documentations.
 
 In order to do this local administrators need to create their own control file
 (see <ref id="control_files">, place it in the
- <file>/etc/doc-base/documents</file> directory, and then register it with 
+ <file>/etc/doc-base/documents</file> directory, and then register it with
  <example>
 install-docs -i /etc/doc-base/documents/&lt;document-id&gt;
 </example>
@@ -459,16 +809,16 @@ install-docs -i /etc/doc-base/documents/&lt;document-id&gt;
 </example>
 
 </sect1>
-</sect>
+</sect><!--}}}-->
 
-<sect id="checking_syntax">Checking Syntax of <em/Control Files/
+<sect id="checking_syntax">Checking Syntax of <em/Control Files/<!--{{{-->
 <p>
 
-With the new <tt/--check/ (<tt/-c/) option of <prgn/install-docs/ it is possible to check 
+With the new <tt/--check/ (<tt/-c/) option of <prgn/install-docs/ it is possible to check
 the <em/control file/:
 
 <example>
-$ install-docs --check /usr/share/doc-base/doc-base 
+$ install-docs --check /usr/share/doc-base/doc-base
 /usr/share/doc-base/doc-base: No problems found
 </example>
 
@@ -511,11 +861,11 @@ Warning in `AUTOCLASS_UNPACKED/usr/share/doc-base/autoclass-results', line 20: f
 Warning in `AUTOCLASS_UNPACKED/usr/share/doc-base/autoclass-theory', line 20: file mask `/usr/share/doc/autoclass/tr-fia-90-12-7-01.pdf' does not match any files
 </example>
 
-</sect>
-</chapt>
+</sect><!--}}}-->
+</chapt><!--}}}-->
 
 
-<chapt id="informations">Getting information about installed documents
+<chapt id="informations">Getting information about installed documents<!--{{{-->
 <p>
 
 If you want to get information about the status of an installed
@@ -547,83 +897,98 @@ Scrollkeeper-sid: "99999999-0000-8888-0000-1234567890ab"
 </example>
 <p>
 
-<package>doc-base</package> always creates 
+<package>doc-base</package> always creates
 a <file>/var/lib/doc-base/documents/&lt;document-id&gt;</file> file when
 installing a document.
 <p>
 When a document is registered to <package/scrollkeeper/, <package/doc-base/ will create
-`<tt/*-C.omf/' file under the <file>/var/lib/doc-base/omf</file> directory. Name of the 
-generated file is recorded in the <em/Scrollkeeper-omf-file/ field. Lack of the field 
+`<tt/*-C.omf/' file under the <file>/var/lib/doc-base/omf</file> directory. Name of the
+generated file is recorded in the <em/Scrollkeeper-omf-file/ field. Lack of the field
 means the documents was not registered to the package.
-</chapt>
+</chapt><!--}}}-->
 
-<chapt id="todo">TODO List
-<sect>Roadmap for 0.8.* releases
+
+<chapt id="todo">TODO List<!--{{{-->
+<sect>Roadmap for 0.8.* releases<!--{{{-->
 <p>
 <list>
-  <item> Make the <prgn/install-docs/ code more manageable (split into modules, etc.)
+  <item>
+    <p>
+      Internationalisation and po-debconf support. Unfortunately this
+      would require merging <em/Abstract/ and <em/Title/ fields into
+	    one <em/Description/ field.
+      See <url id="http://bugs.debian.org/171373" name="Bug#171363">,
+          <url id="http://bugs.debian.org/171375" name="Bug#171375">,
+      and <url id="http://bugs.debian.org/171378" name="Bug#171378">.
+    </p>
+  </item>
 
-  <item> Add support for merging doc-base files with the same <tt/Document-Id/s in order 
-         to allow two or more binary packages provide the same documentation, but in 
-	 different formats. <prgn/install-docs/ should dynamically
-	 generate appropriate files somewhere under <file>/var/lib/doc-base</file> directory.
+  <item>
+    <p>
+      Introduce some new fields, like <em/Package/
+      (<url id="http://bugs.debian.org/71955" name="Bug#71955">),
+       or <em/SortSkip/
+      (<url id="http://bugs.debian.org/187590" name="Bug#187590">).
+    </p>
+  </item>
 
-  <item> Internationalisation and po-debconf support. Unfortunately this 
-         would require merging <em/Abstract/ and <em/Title/ fields into
-	 one <em/Description/ field.
-        See <url id="http://bugs.debian.org/171373" name="Bug#171363">,
-             <url id="http://bugs.debian.org/171375" name="Bug#171375">,
-        and <url id="http://bugs.debian.org/171378" name="Bug#171378">.
-
-  <item> Introduce some new fields, like <em/Package/ 
-   (<url id="http://bugs.debian.org/71955" name="Bug#71955">),
-   or <em/SortSkip/ 
-   (<url id="http://bugs.debian.org/187590" name="Bug#187590">).
-
-  <item> Redesigning sections hierarchy, see
-      <url id="http://bugs.debian.org/109431" name="Bug#109431">.
-
-</list>
-</sect>
-
-<sect>Old TODO entries
-<p>
-<list>
-  <item> Policy: document the <package>doc-base</package> document registration file
-  format separately (or SUBDOC it) as a proposed Debian documentation
-  system policy.  
-
-  <item> Policy: define a first-cut standard as the document
-  hierarchy. 
-
-  <item> Documentation update: show clean and minimal use of
-  <prgn>install-docs</prgn> from maintainer script.
-
-  <item> It is <em>extremely</em> difficult to deal coherently with a
-  misnamed control file, or a mismatch between a control file and the
-  document field.  This hit me in the transition between <package>doc-base</package> 0.4
-  to 0.5 (in 0.4 I had added, in a file install-docs-man, a document
-  ID named install-doc-man).  Something needs to be done about that.
-
-  <item> Determine a cleaner way to manage the various little files
-  such as <file>.dhelp</file> and <package>doc-base</package> status
-  files.  This also involves behaviour on remove or purge of the
-  <package>doc-base</package> packages.  I believe derived files such
-  as <file>.dhelp</file> will eventually go away, since packages
-  should understand the <package>doc-base</package> document
-  registration control file format directly.
-
+  <item>
+    <p>
+      Possibly allow documents to appear in multiple sections,
+      see <url id="http://bugs.debian.org/cgi-bin/bugreport.cgi?msg=54;bug=109431" 
+      name="Steve M. Robbins' mail">.
+    </p>
+  </item>
   
-  <item> Automated format conversion, including user preferences. 
-        (For example, convert texinfo source to GNU info or PostScript,
-	optionally compress or remove HTML manuals which are also available in
-	GNU info format, etc. etc.)
+</list>
+</sect><!--}}}-->
 
+<sect>Old TODO entries<!--{{{-->
+<p>
+<list>
+  <item>
+    <p>
+      Policy: document the <package>doc-base</package> document registration file
+      format separately (or SUBDOC it) as a proposed Debian documentation
+      system policy.
+    </p>
+  </item>
 
+  <item>
+    <p>
+      Policy: define a first-cut standard as the document hierarchy.
+    </p>
+  </item>
+
+  <item>
+    <p>
+      Documentation update: show clean and minimal use of
+      <prgn>install-docs</prgn> from maintainer script.
+    </p>
+  </item>
+
+  <item>
+    <p>
+      It is <em>extremely</em> difficult to deal coherently with a
+      misnamed control file, or a mismatch between a control file and the
+      document field.  This hit me in the transition between <package>doc-base</package>
+      0.4 to 0.5 (in 0.4 I had added, in a file install-docs-man, a document
+      ID named install-doc-man).  Something needs to be done about that.
+    </p>
+  </item>
+
+  <item>
+    <p>
+      Automated format conversion, including user preferences.
+      (For example, convert texinfo source to GNU info or PostScript,
+	    optionally compress or remove HTML manuals which are also available in
+	    GNU info format, etc. etc.)
+    </p>
+  </item>
 </list>
 
-</sect>
-</chapt>
+</sect><!--}}}-->
+</chapt><!--}}}-->
 
 </book>
 
@@ -642,4 +1007,6 @@ sgml-declaration:nil
 sgml-local-catalogs:nil
 sgml-local-ecat-files:nil
 End:
+$Id$
+vim:ts=2:et:sts=2:sw=2:fdm=marker 
 -->
