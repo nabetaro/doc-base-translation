@@ -297,27 +297,15 @@ directory.
 
 <sect1 id="section_field"> The <tt/section/ field<!--{{{-->
 <p>
-
-      this should follow the sections
-         outlined in chapter 3.5 of "Debian Menu Policy", which can be found
-         in the <url id="file:///usr/share/doc/menu/html/ch3.html#s3.5"
-          name="/usr/share/doc/menu/html"> directory.
 The <tt/section/ field hold a slash-separated list of hierarchical sections
-components.
+components. The hierarchy is mostly based on the sections outlined in chapter 2.1 of
+the <url id="http://www.debian.org/doc/packaging-manuals/menu-policy/ch2.html#s2.1"
+ name="Debian Menu Policy">, however the top-level <tt/Applications/ component was removed
+and a few <package/doc-base/-specific sections were added.
 <p>
-The <em/authoritative list of Debian's menu structure/ is maintained
-in the Debian Menu sub-policy document which is part of the Debian
-Policy package.
+The full section list is presented below.
 <p>
-The menu structure below is included only for convenience and is not
-authoritative. If it disagrees with the structure in the Debian Menu
-sub-policy, please send a wishlist bug to the <tt/menu/ package.
-<p>
-Please do <em/not/ put your packages into any other sections.
-<p>
-  Here is the authoritative list of Debian's menu
-  structure. Packages must be placed in leaf sections.
-<p>
+<!-- section list begin -->
 <taglist>
   <tag><tt>Accessibility</tt></tag>
     <item>
@@ -332,19 +320,13 @@ Please do <em/not/ put your packages into any other sections.
       <p>Interactive database programs, collection managers,
          address books, bibliography tools, etc.</p>
     </item>
-  <tag><tt><strong/Debian/</tt></tag>
+  <tag><tt>Debian</tt></tag>
     <item>
       Documentation of Debian specific tools, policies, etc.
-      <taglist>
-        <tag><tt><strong/Installation/</tt></tag>
-          <item>
-            Debian installation manual.
-          </item>
-      </taglist>
     </item>
   <tag><tt>Editors</tt></tag>
     <item>
-      <p>Editors, other than office word processors, for
+      <p>Documentation of editors, other than office word processors, for
          text-based information.</p>
     </item>
   <tag><tt>Education</tt></tag>
@@ -361,9 +343,9 @@ Please do <em/not/ put your packages into any other sections.
       <p>Tools for file management, archiving,
          searching, CD/DVD burning, backup, etc.</p>
     </item>
-  <tag><tt>Games</tt></tag>
+  <tag><tt>Games</tt></tag> <!--skip-->
     <item>
-      Games and recreations
+      Games and recreations. Entries should be placed in appropriate subsection.
       <taglist>
         <tag><tt>Action</tt></tag>
           <item>
@@ -408,7 +390,7 @@ Please do <em/not/ put your packages into any other sections.
         <tag><tt>Toys</tt></tag>
           <item>
             <p>Amusements, eye-candy, entertaining
-               demos, screen hacks (screensavers), etc.</p>
+               demos, screen hacks (screen-savers), etc.</p>
           </item>
       </taglist>
     </item>
@@ -418,25 +400,25 @@ Please do <em/not/ put your packages into any other sections.
     </item>
   <tag><tt>Help</tt></tag>
     <item>
-      Programs that provide user documentation
+      Documentation of programs that provide user documentation.
       <taglist>
-        <tag><tt><strong/Books/</tt></tag>
+        <tag><tt>Books</tt></tag>
           <item>
             Books.
           </item>
-        <tag><tt><strong/FAQ/</tt></tag>
+        <tag><tt>FAQ</tt></tag>
           <item>
             Frequently Asked Questions.
           </item>
-        <tag><tt><strong/HOWTO/</tt></tag>
+        <tag><tt>HOWTO</tt></tag>
           <item>
             Various HOWTOs.
           </item>
-        <tag><tt><strong/RFC/</tt></tag>
+        <tag><tt>RFC</tt></tag>
           <item>
             RFCs 
           </item>
-        <tag><tt><strong/Standards/</tt></tag>
+        <tag><tt>Standards</tt></tag>
           <item>
             Standards
           </item>
@@ -447,7 +429,7 @@ Please do <em/not/ put your packages into any other sections.
       <p>Software that allows you to interface with mobile
          devices (phones, PDAs, etc.).</p>
   </item>
-  <tag><tt>Network</tt></tag>
+  <tag><tt>Network</tt></tag> <!--skip-->
   <item>
     Network related software. This is a three-level
     section, do not put entries directly here.
@@ -479,40 +461,30 @@ Please do <em/not/ put your packages into any other sections.
   <tag><tt>Office</tt></tag>
     <item>
       <p>Office suites, word processors, spreadsheets,
-         CRM, ERP, financial sofware, etc.</p>
+         CRM, ERP, financial software, etc.</p>
     </item>
   <tag><tt>Programming</tt></tag>
     <item>
-      Documentation of IDEs, debuggers, compilers, APIs, libraries, programming languages.
-
-      <taglist>
-        <tag><tt><strong/C/</tt></tag>
-          <item>
-            Documentation of IDEs, debuggers, compilers, etc. related to C programming language 
-          </item>
-        <tag><tt><strong/C++/</tt></tag>          
-          <item>
-            Documentation related to C++.
-          </item>
-        <tag><tt><strong/Java/</tt></tag>
-          <item>
-            Documentation related to Java.
-          </item>
-        <tag><tt><em/[other languages]/</tt></tag>
-          <item>
-            Similary documentation related to any other programming language should be put in
-            the subsection named like the language.
-          </item>
-      </taglist>
-    </item>
+      IDEs, debuggers, compilers, APIs, libraries, programming languages. Documentation related
+      to only one specific language should be put in subsection named like the language, 
+      for example:
+      <list>
+          <item><tt>C</tt></item>
+          <item><tt>C++</tt></item>
+          <item><tt>Java</tt></item>
+          <item><tt>Perl</tt></item>
+          <item><tt>Python</tt></item>
+          <item><tt>Ruby</tt></item>
+    </list>          
   <tag><tt>Project Management</tt></tag>
     <item>
       <p>Timetable managers, group task trackers,
          bug tracking software, etc.</p>
   </item>
-  <tag><tt>Science</tt></tag>
+  <tag><tt>Science</tt></tag> <!--skip-->
     <item>
-      Scientific and engineering-related software.
+      Documentation of scientific and engineering-related software.
+      Please use appropriate subsection.
       <taglist>
         <tag><tt>Astronomy</tt></tag>
           <item>
@@ -565,7 +537,7 @@ Please do <em/not/ put your packages into any other sections.
     </item>
   <tag><tt>Screen</tt></tag>
     <item>
-      Programs that affect the whole screen.
+      Programs that affect the whole screen. 
       <taglist>
         <tag><tt>Saving</tt></tag>
           <item>
@@ -586,9 +558,9 @@ Please do <em/not/ put your packages into any other sections.
     <item>
       <p>Sound players, editors, and rippers/recorders.</p>
     </item>
-  <tag><tt>System</tt></tag>
+  <tag><tt>System</tt></tag> <!--skip-->
     <item>
-      System related software.
+      System related software. Place entries in one of she subsections.
       <taglist>
         <tag><tt>Administration</tt></tag>
           <item>
@@ -653,6 +625,7 @@ Please do <em/not/ put your packages into any other sections.
       <p>X window managers.</p>
     </item>
 </taglist>
+<!-- section list end -->
 </sect1><!--}}}-->
 </sect><!--}}}-->
 
@@ -704,7 +677,7 @@ when the documentation directory changes.
 
 
 <sect>doc-base 0.8.x features and incompatibilities<!--{{{-->
-<sect1>Remove call sematnics
+<sect1>Remove call semantics
 <p>
 The semantics of the remove call has been changed in version 0.8.4:
 <prgn/install-docs -r/ require the full path of <em/control file/ to be passed.
@@ -733,13 +706,13 @@ However <strong/older versions will fail/ on such a syntax, so it's necessary to
 
 </sect1>
 
-<sect1>Spliting control files over multiple binary packages
+<sect1>Splitting control files over multiple binary packages
 <p>
 Since version 0.8.7 is it possible to provide documents with the same <em/document-id/
 by more than one binary package. All such documents with be merged together and the merged document
 will be generated in <file>/var/lib/doc-base/documents/<em/document-id/</file> file.
 This feature can be useful in cases when the same documentation, but in different formats,
-is provided by two bianry packages.
+is provided by two binary packages.
 
 <p>
 For example the <package/foo-text/ package could install the
@@ -794,7 +767,7 @@ Files: /usr/share/foo-text/foo.txt.gz
 
 <sect1>Registering local documents
 <p>
-Version 0.8.7 and futhers allow user to register local documentations.
+Version 0.8.7 and furthers allow user to register local documentations.
 
 In order to do this local administrators need to create their own control file
 (see <ref id="control_files">, place it in the
@@ -939,6 +912,13 @@ means the documents was not registered to the package.
       name="Steve M. Robbins' mail">.
     </p>
   </item>
+
+  <item>
+    <p>
+      Possibly index documentation with swish++ that could be used by frontends like 
+      <package/dhelp/ or <package/dwww/.
+    </p>
+  </item>
   
 </list>
 </sect><!--}}}-->
@@ -1007,6 +987,6 @@ sgml-declaration:nil
 sgml-local-catalogs:nil
 sgml-local-ecat-files:nil
 End:
-$Id$
+$Id: doc-base.sgml 113 2008-02-22 23:16:04Z robert $
 vim:ts=2:et:sts=2:sw=2:fdm=marker 
 -->

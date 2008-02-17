@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Utils.pm 98 2007-12-02 13:18:47Z robert $
+# $Id: Utils.pm 111 2008-02-17 18:56:44Z robert $
 #
 
 package Debian::DocBase::Utils;
@@ -23,11 +23,6 @@ sub HTMLEncode($) { # {{{
   $text =~ s/</&lt;/g;
   $text =~ s/>/&gt;/g;
   $text =~ s/"/&quot;/g;
-  no locale; # always use byte semantics for this regex range
-  # We take gratuitous advantage of the first 256 Unicode codepoints
-  # happening to coincide with ISO-8859-1 so that we can HTML-encode
-  # ISO-8859-1 characters without using any non-pragmatic modules.
-  $text =~ s/([^\0-\x7f])/sprintf('&#%d;', ord $1)/eg;
   return $text;
 } # }}}
 
@@ -144,16 +139,18 @@ sub RestoreSignals() {
 
 
 
-sub ReadMap($$) { # {{{
-  my $file = shift;
-  my $map  = shift;
+sub ReadMap($$;$) { # {{{
+  my $file    = shift;
+  my $map     = shift;
+  my $defval  = shift;
+  $defval     = "" unless $defval;
   open (MAP, "<", $file) or croak "Cannot open `$file' for reading: $!";
   while(<MAP>) {
           chomp;
           next if /^\s*$/;
           next if /^#/;
           my ($lv,$rv) = split(/\s*:\s*/, $_, 2);
-          $map->{lc($lv)} = $rv ? $rv : "";
+          $map->{lc($lv)} = $rv ? $rv : $defval;
   }
   close(MAP);
 } # }}}

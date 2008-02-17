@@ -2,7 +2,7 @@
 
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 102 2007-12-22 09:36:26Z robert $
+# $Id: InstallDocs.pm 113 2008-02-22 23:16:04Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -94,7 +94,7 @@ sub InstallDocsMain() { # {{{
       } elsif (! -e $file) {
         Inform ("Ignoring deregistration of nonexistant file `$file'");
       } else {
-        $docfile = Debian::DocBase::DocBaseFile->new($file, PARSE_GETDOCID);
+        $docfile = Debian::DocBase::DocBaseFile->new($file, PARSE_GETDOCID, 0);
         $docid   = $docfile->document_id();
         next unless defined $docid;
         $doc     = Debian::DocBase::Document->new($docid);
@@ -110,7 +110,7 @@ sub InstallDocsMain() { # {{{
         Error("Can't read doc-base file `$file'");
         next;
       }        
-      $docfile = Debian::DocBase::DocBaseFile->new($file, PARSE_FULL);
+      $docfile = Debian::DocBase::DocBaseFile->new($file, PARSE_FULL, $opt_verbose);
       $docid   = $docfile->document_id();
       next unless defined $docid;
       $doc     = Debian::DocBase::Document->new($docid);
@@ -126,7 +126,7 @@ sub InstallDocsMain() { # {{{
         next;
       }        
 
-      $docfile = Debian::DocBase::DocBaseFile->new($file, PARSE_FULL);
+      $docfile = Debian::DocBase::DocBaseFile->new($file, PARSE_FULL, 1);
       if ($docfile->invalid()) {
           Inform("$file: Fatal error found, the file won't be registered");
       } elsif ((my $cnt = $docfile->warn_err_count()) > 0) { 
@@ -150,7 +150,7 @@ sub InstallDocsMain() { # {{{
 
     my @documents = Debian::DocBase::Document->GetDocumentList();
 
-    UnregisterDhelp(@documents);
+    UnregisterDhelp(@documents) unless $mode == $MODE_INSTALL_ALL;
 
     foreach my $doc (@documents) {
         $doc -> MergeCtrlFiles();
@@ -163,7 +163,7 @@ sub InstallDocsMain() { # {{{
     }
     RestoreSignals();
 
-    RegisterDhelp(@documents);
+    RegisterDhelp($mode == $MODE_INSTALL_ALL, @documents);
     RegisterScrollkeeper(@documents);
     RegisterDwww(@documents);
   } # }}}

@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 95 2007-11-27 23:11:50Z robert $
+# $Id: DocBaseFile.pm 111 2008-02-17 18:56:44Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -29,12 +29,15 @@ our @EXPORT = qw(PARSE_GETDOCID PARSE_FULL);
 use constant PARSE_GETDOCID => 1;
 use constant PARSE_FULL     => 2;
 
+my %valid_sections = ();
+
 sub new { # {{{
-    my $class       = shift;
-    my $filename    = shift;
-    my $parse_flag  = shift; # PARSE_FULL or PARSE_GETDOCID
+    my $class         = shift;
+    my $filename      = shift;
+    my $parse_flag    = shift; # PARSE_FULL or PARSE_GETDOCID
+    my $do_add_checks = shift;
     if (defined  $CONTROLFILES{$filename}) {
-      $CONTROLFILES{$filename}->_parse($parse_flag);
+      $CONTROLFILES{$filename}->_Parse($parse_flag);
       return $CONTROLFILES{$filename}
     }
 
@@ -43,11 +46,12 @@ sub new { # {{{
         FORMAT_LIST   => {},    # array of format data hashes
         FILE_NAME     => $filename,
         PARSE_FLAG    => 0,
+        DO_ADD_CHECKS => $do_add_checks ? 1 : 0,
         WARNERR_CNT   => 0, # errors/warnings count
         INVALID       => 1
     };
     bless($self, $class);
-    $self->_parse($parse_flag);
+    $self->_Parse($parse_flag);
     $CONTROLFILES{$filename} = $self;
     weaken $CONTROLFILES{$filename};
     return $self;
@@ -65,7 +69,7 @@ sub document_id() { # {{{
   return $self->{'MAIN_DATA'}->{$FLD_DOCUMENT};
 } # }}}
 
-sub _check_parsed() { # {{{
+sub _CheckParsed() { # {{{
   my $self      = shift;
   my $filename  = $self->source_file_name();
   croak ('Internal error: file `' . (defined $filename ?  $filename : "") . "' not parsed") 
@@ -75,14 +79,14 @@ sub _check_parsed() { # {{{
 sub GetFldValue($$) { # {{{
   my $self = shift;
   my $fld  = shift;
-  $self->_check_parsed();
+  $self->_CheckParsed();
   return $self->{'MAIN_DATA'}->{$fld};
 } # }}}
 
 sub format($$) { # {{{
   my $self = shift;
   my $format_name = shift;
-  $self->_check_parsed();
+  $self->_CheckParsed();
   return $self->{'FORMAT_LIST'}->{$format_name};
 } # }}}
 
@@ -110,9 +114,9 @@ sub warn_err_count() { # {{{
 
 # Parsing errors routine
 # The first argument should be
-#     FATAL_PARSE_ERROR, which sets global exit status to 1 and {'INVALID'} to 1
-#  or PARSE_ERROR       , INVALID to 1
-#  or PARSE_WARNING     , does not change INVALID
+#     PRS_FATAL_ERR, which sets global exit status to 1 and {'INVALID'} to 1
+#  or PRS_ERR      , INVALID to 1
+#  or PRS_WARN     , does not change INVALID
 # The second argument should be the message
 sub _prserr($$) { # {{{
   my $self = shift;
@@ -138,7 +142,7 @@ sub _prserr($$) { # {{{
 } # }}}
 
 
-sub _parse { # {{{
+sub _Parse { # {{{
   my $self      = shift;
   my $parseflag = shift;
   my $file      = $self->{FILE_NAME};
@@ -152,12 +156,29 @@ sub _parse { # {{{
   open($fh, "<", $file) or
     carp "Cannot open control file `$file' for reading: $!";
 
-  $self->_read_control_file($parseflag, $fh);
+  $self->_ReadControlFile($parseflag, $fh);
 
   $self->{'PARSE_FLAG'} = $parseflag;
 
   close($fh);
 } # }}}
+
+
+# Check if input is UTF-8 encoded.  If it's not recode and warn
+# Parameters: $line- input line
+#             $fld - original field name
+sub _CheckUTF8($$) {
+  my ($self, $line, $fld) = @_;
+  my $is_utf8_expr= '^(?:[\x{00}-\x{7f}]|[\x{80}-\x{255}]{2,})*$';
+
+  return $line if length($line) > 30000;
+
+  if ($line !~ /$is_utf8_expr/o) {
+      $self->_prserr(PRS_WARN, "line in field `$fld' seems not to be UTF-8 encoded, recoding");
+      utf8::encode($line);
+  }
+  return $line;
+}  
 
 ##
 ## assuming filehandle IN is the control file, read a section (or
@@ -165,7 +186,7 @@ sub _parse { # {{{
 ## section to the hash reference passed as an argument.  Returns 1 if
 ## there is data, 0 if it was empty or undef in case of parse error
 ##
-sub _read_control_file_section($$$$) { # {{{
+sub _ReadControlFileSection($$$$) { # {{{
   my $self     = shift;
   my $fh       = shift;    # file handle
   my $pfields  = shift;    # read fields
@@ -198,23 +219,40 @@ sub _read_control_file_section($$$$) { # {{{
         $self->_prserr(PRS_WARN, "field `$origcf' in incorrect section (missing empty line before the field?)");
         next;
       }
-      $pfields->{$cf} = $v;
+      $pfields->{$cf} = $self->_CheckUTF8($v, $origcf);
 
     } elsif (/^\s+(\S.*)$/o) {
       $v = $&;
       defined($cf) or return $self->_prserr(PRS_FATAL_ERR, "syntax error - no field specified");
       not defined($FIELDS_DEF{$cf}) or $FIELDS_DEF{$cf}->{$FLDDEF_MULTILINE} or return $self->_prserr(PRS_FATAL_ERR, "field `$origcf' can't consist of multi lines");
     #print STDERR "$cf -> $v (continued)\n";
-      $$pfields{$cf} .= "\n$v";
+      $$pfields{$cf} .= "\n" . $self->_CheckUTF8($v, $origcf);
     } else {
       return $self->_prserr(PRS_FATAL_ERR, "syntax error in control file: $_");
     }
   }
-  return $self->_check_required_fields($pfields, $fldstype) unless $empty and $fldstype == $FLDTYPE_FORMAT;
+  return $self->_CheckRequiredFields($pfields, $fldstype) unless $empty and $fldstype == $FLDTYPE_FORMAT;
   return not $empty;
 } # }}}
 
-sub _check_required_fields($$$) { # {{{
+sub _CheckSection($$) { # {{{
+  my $self          = shift;
+  my $orig_section  = shift;
+
+  ReadMap($DOCBASE_VALID_SECTIONS_LIST, \%valid_sections, 1) unless %valid_sections;
+  my $section  = lc $orig_section;
+  $section  =~ s/[\/\s]+$//g;    
+  $section  =~ s/^[\/\s]+//g;
+
+  while ($section) {
+    return if $valid_sections{$section};
+    last unless $section =~ s/\/[^\/]+$//;
+  }
+
+ $self->_prserr(PRS_WARN, "unknown section: `$orig_section'\n");
+} # }}}
+
+sub _CheckRequiredFields($$$) { # {{{
   my $self       = shift;
   my $pfields    = shift;
   my $fldstype   = shift;    # $FLDTYPE_MAIN or $FLDTYPE_FORMAT
@@ -236,7 +274,7 @@ sub _check_required_fields($$$) { # {{{
 #    sets $docid
 #    sets $doc_data to point to a hash containing the document data
 #    sets @format_list, a list of pointers to hashes containing the format data
-sub _read_control_file { # {{{
+sub _ReadControlFile { # {{{
   my $self      = shift;
   my $parseflag = shift;
   my $fh        = shift;
@@ -256,10 +294,13 @@ sub _read_control_file { # {{{
 
   my $doc_data = $self->{'MAIN_DATA'};
   # parse rest of the file
-  $self->_read_control_file_section($fh, $doc_data, $FLDTYPE_MAIN) 
+  $self->_ReadControlFileSection($fh, $doc_data, $FLDTYPE_MAIN) 
     or return undef;
   return $self->_prserr(PRS_WARN, "unsupported Version: $$doc_data{'version'}") if
     defined $$doc_data{'version'};
+
+  $self->_CheckSection($doc_data->{$FLD_SECTION}) if $self->{'DO_ADD_CHECKS'};
+
 
   $self->{'MAIN_SECTION'} = $doc_data;
   undef $doc_data;
@@ -267,7 +308,7 @@ sub _read_control_file { # {{{
 
   my $format_data = {};
   my $status      = 0;
-  while ($status = $self->_read_control_file_section($fh, $format_data, $FLDTYPE_FORMAT)) {
+  while ($status = $self->_ReadControlFileSection($fh, $format_data, $FLDTYPE_FORMAT)) {
     my $format = $$format_data{'format'};
 
     # adjust control fields

@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 105 2007-12-22 12:22:29Z robert $
+# $Id: Document.pm 111 2008-02-17 18:56:44Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -402,6 +402,7 @@ sub _MangleSection($) {
 #  than one control file.
 sub MergeCtrlFiles($) { # {{{
   my $self    = shift;
+  my $doc_id  = $self->document_id();
 
   $self->_read_control_files();
 
@@ -411,11 +412,12 @@ sub MergeCtrlFiles($) { # {{{
   $self->{'FORMAT_LIST'}       = {};
 
   foreach my $db_file_name ($self->_GetControlFileNames()) {
-    my $doc_data = $self->{'CONTROL_FILES'}->{$db_file_name};
+    my $doc_data  = $self->{'CONTROL_FILES'}->{$db_file_name};
+    my $doc_fname = $doc_data->source_file_name();
 
     if ($doc_data->document_id() ne $self->document_id()) {
-      Warn("Document id in `" . $doc_data->source_file_name() ."' does not match our document id (" .
-                  $doc_data->document_id() . ' != ' . $self->document_id() . ")");
+      Warn("Document id in `" . $doc_fname ."' does not match our document id (" .
+                  $doc_id . ' != ' . $self->document_id() . ")");
       $self->Unregister($doc_data);
       next;
     }
@@ -429,15 +431,15 @@ sub MergeCtrlFiles($) { # {{{
         
         if ($old_val and $old_val ne $new_val and
             ($fld eq $FLD_DOCUMENT or $fld eq $FLD_SECTION)) {
-            return Error("Error while merging: inconsistent values of $fld");
-          }
+            return Error("Error while merging $doc_id with $doc_fname: inconsistent values of $fld");
+        }            
         $self->{'MAIN_DATA'}->{$fld} = $new_val unless $old_val;
       }
     }
 
     # merge formats
     foreach my $format ($doc_data->GetFormatNames()) {
-      return Error("format $format already defined") if $self->{'FORMAT_LIST'}->{$format};
+      return Error("Error while merging $doc_id with $doc_fname: format $format already defined") if $self->{'FORMAT_LIST'}->{$format};
       $self->{'FORMAT_LIST'}->{$format} = $doc_data->format($format);
     }
   }

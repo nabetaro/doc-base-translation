@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: postinst 103 2007-12-22 09:42:22Z robert $
+# $Id: postinst 113 2008-02-22 23:16:04Z robert $
 # postinst for doc-base
 
 # Abort if any command returns an error value
@@ -7,7 +7,7 @@ set -e
 
 package=doc-base
 # upgrades prior to this version require complete re-registration
-compat_ver=0.8.8
+compat_ver=0.8.10
 # upgrades of the following version requires complete re-registration
 bad_ver=0.7.13
 VERBOSE=

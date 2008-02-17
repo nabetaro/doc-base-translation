@@ -1,3 +1,20 @@
+doc-base (0.8.10) unstable; urgency=low
+
+  * doc-base.sgml:
+    + define real section hierarchy (closes: #109431), strongly based on the
+      menu one with a few doc-base specific sections added;
+    + doc-base files should be UTF-8 encoded.
+    + review TODO list.
+  * DocBaseFile.pm:
+    + try to recode files to UTF-8 at install time,
+    + warn on unknown doc-base sections.
+  * Utils.pm: Remove latin1 encoding support from HTMLEncode.
+  * While reregistering all documents run `dhelp_parse -r' to avoid index++
+    runs.
+  * Build with debhelper v6.
+
+ -- Robert Luberda <robert@debian.org>  Fri, 22 Feb 2008 23:59:05 +0100
+
 doc-base (0.8.9) unstable; urgency=low
 
   * Fix typos in doc-base.map (closes: #460505).
@@ -8,8 +25,8 @@ doc-base (0.8.9) unstable; urgency=low
 doc-base (0.8.8) unstable; urgency=low
 
   * Remove /var/lib/doc-base on package removal (closes: #454069).
-  * Strip  Apps and Applicatons prefixes from Section field values.
-  * Enable dhelp registation, conflicts with dhelp << 0.6.5.
+  * Strip Apps and Applications prefixes from Section field values.
+  * Enable dhelp registration, conflicts with dhelp << 0.6.5.
   * Standards-Version: 3.7.3 (no changes).
 
  -- Robert Luberda <robert@debian.org>  Sat, 22 Dec 2007 13:22:11 +0100
@@ -21,7 +38,7 @@ doc-base (0.8.7) unstable; urgency=low
     or doc-central should use that dir instead  of /usr/share/doc.
   * Add support for merging control files to allow multiple binary packages
     provide the same documentation but in different formats.
-  * Try to standarize values of the Section: field.
+  * Try to standardise values of the Section: field.
   * Add /etc/doc-base/documents in order to made it possible to register
     local documents with doc-base  (closes: #213847).
 
@@ -30,7 +47,7 @@ doc-base (0.8.7) unstable; urgency=low
     + add a code to register/unregister doc-base control files with dhelp,
       but not enable it yet.
 
-  * postinst: Remove all already generated .dhelp files and reregister
+  * postinst: Remove all already generated .dhelp files and re-register
     installed documentation files.
   * Documentation update.
 
@@ -39,9 +56,9 @@ doc-base (0.8.7) unstable; urgency=low
 doc-base (0.8.6) unstable; urgency=low
 
   * Rewrite Dhelp.pm to improve performance and minimise number dhelp_parse
-    calls, which after its reimplementation in Ruby started to be extremally
+    calls, which after its reimplementation in Ruby started to be extremely
     slow (it took `install-docs -I' ages to finish). Now, dhelp_parse will
-    be called at most two times in each install-docs invokation.
+    be called at most two times in each install-docs invocation.
   * Use 3-args open(), and also quote fields' values in our status file in
     order not to fail on control files containing spaces (closes: #444889).
   * Implement more checks of doc-base files, like unknown fields, duplicated
@@ -53,7 +70,7 @@ doc-base (0.8.6) unstable; urgency=low
   * Scrollkeeper.pm: scrollkeeper doesn't like `&' character (see bug#429847),
     replace it with `(and)'.
   * More code refactoring, but still not finished: use prototypes, fix typos,
-    standarize messages, etc.
+    standardise messages, etc.
 
  -- Robert Luberda <robert@debian.org>  Sun, 28 Oct 2007 12:00:37 +0100
 
@@ -70,9 +87,9 @@ doc-base (0.8.4) unstable; urgency=low
   * Split install-docs into modules to make the code more manageable.
   * Try to avoid bugs like #278495: if our modules can't be loaded when
     (de)registering documentation files, create special flag file and
-    reregister all the documents after install-docs is usable again.
+    re-register all the documents after install-docs is usable again.
   * Add support for (de)registering multiple documents in one install-docs
-    invokation (closes: #114692).
+    invocation (closes: #114692).
   * Add --check/-c option to install-docs (closes: #35895), also add --rootdir
     option.
   * Remove `Registered-to-XXX' statuses, remove *.list files, deprecate the
@@ -86,7 +103,7 @@ doc-base (0.8.4) unstable; urgency=low
   * Change the build system, create Makefile and let it do all the work.
 
   * doc-base.sgml:
-    + Update outuput of --status, remove reference to --listfiles.
+    + Update output of --status, remove reference to --listfiles.
     + Add chapter about checking syntax of control files.
     + Update syntax of --remove option.
 
@@ -107,7 +124,7 @@ doc-base (0.8.4) unstable; urgency=low
     + Fix broken non-empty directories check.
     + Save generated series id in `Scrollkeeper-sid' status field and use it
       for following registrations of the same document.
-    + Call scrollkeeper-update only once in each invokation of install-docs.
+    + Call scrollkeeper-update only once in each invocation of install-docs.
 
   * Dwww support:
     + skip running update-menus if dwww package doesn't seem to be installed.
@@ -129,7 +146,7 @@ doc-base (0.8.2) unstable; urgency=low
 
 doc-base (0.8.1) unstable; urgency=low
 
-  * Fix a typo that cuased broken omf files being generated in some cases 
+  * Fix a typo that caused broken omf files being generated in some cases 
     (closes: #418861).
 
  -- Robert Luberda <robert@debian.org>  Thu, 12 Apr 2007 18:49:39 +0200
@@ -306,7 +323,7 @@ doc-base (0.7.14) unstable; urgency=low
   * fix a bug introduced in last version, thanks to bug hunting by 
     David Kimdon; closes: #171202
   * dhelp registration was busted in 0.7.13, so if we're upgrading from
-    that version, take the time to reregister all docreg files
+    that version, take the time to re-register all docreg files
 
  -- Adam Di Carlo <aph@debian.org>  Sun,  1 Dec 2002 17:30:05 -0500
 
@@ -352,7 +369,7 @@ doc-base (0.7.11) unstable; urgency=low
     needed 
 
     - Note that the stipulation that programs cannot reference files in
-      /usr/share/doc [13.3] is not honored because that is required by
+      /usr/share/doc [13.3] is not honoured because that is required by
       dhelp; complaints about that should be directed towards dhelp.
 
  -- Adam Di Carlo <aph@debian.org>  Sun, 21 Oct 2001 01:38:04 -0400
@@ -412,7 +429,7 @@ doc-base (0.7.7) unstable; urgency=low
   * dhelp now has a different program, dhelp_parse_fsstnd, to deal with
     /usr/doc vs /usr/share/doc, so use it
   * debian/control: conflict with dhelp (<< 0.3.14)
-  * prerm, postinst: implement tech committe solution on /usr/doc symlink
+  * prerm, postinst: implement tech committee solution on /usr/doc symlink
 
  -- Adam Di Carlo <aph@debian.org>  Sat, 25 Sep 1999 16:34:11 -0400
 
@@ -446,7 +463,7 @@ doc-base (0.7.4) unstable; urgency=low
   * install-docs: skip dhelp when directory != /usr/doc or 
     /usr/share/doc (closes Bug#32034)
   * changes for Policy 3.0.0 (no /usr/doc compat symlinks)
-  * debian/control: removed perl-base dependancy -- it's required!
+  * debian/control: removed perl-base dependency -- it's required!
     (thanks to Raphael Hertzog)
 
  -- Adam Di Carlo <aph@debian.org>  Sat, 10 Jul 1999 21:45:41 -0400

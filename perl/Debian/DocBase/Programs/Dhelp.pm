@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 96 2007-12-01 15:05:52Z robert $
+# $Id: Dhelp.pm 113 2008-02-22 23:16:04Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -20,16 +20,14 @@ use Debian::DocBase::Utils;
 my $DHELP_PARSE     = "/usr/sbin/dhelp_parse";
 
 # executes `/usr/sbin/dhelp_parse $arg $@dirs' 
-# $arg should be `-d' or `-a'
+# $arg should be `-d' or `-a' or `-r'
 sub ExecuteDhelpParse($$) { # {{{
   my $arg   = shift;
   my $dirs  = shift;
 
-  return 0 if $#{$dirs} < 0;
+  return 0 if $#{$dirs} < 0 and $arg ne '-r';
 
-  IgnoreSignals();
-  Execute($DHELP_PARSE, $arg, @$dirs);
-  RestoreSignals();
+  Execute($DHELP_PARSE, $arg, @$dirs) if ($opt_update_menus);
   
 } # }}}
 
@@ -52,16 +50,16 @@ sub GetDocFileList($$) {
 # Unregistering documents from dhelp
 # Must be called BEFORE the new contents is written 
 # to /var/lib/doc-base/documents/
-sub UnregisterDhelp(@) {  # {{{
-  my @documents = @_;
-  my @docfiles  = ();
+ sub UnregisterDhelp(@) {  # {{{
+  my @documents     = @_;
+  my @docfiles      = ();
 
   $#documents < 0 and return;
 
   Debug("UnregisterDhelp started");
 
   GetDocFileList(\@documents, \@docfiles);
-  
+
   ExecuteDhelpParse("-d", \@docfiles);
 
   Debug("UnregisterDhelp finished");
@@ -73,22 +71,29 @@ sub UnregisterDhelp(@) {  # {{{
 # Registering documents to dhelp
 # Must be called before AFTER new contents is written 
 # to /var/lib/doc-base/documents/
-sub RegisterDhelp(@) {  # {{{
-  my @documents = @_;
-  my @docfiles  = ();
+sub RegisterDhelp($@) {  # {{{
+  my $register_all  = shift;
+  my @documents     = @_;
+  my @docfiles      = ();
 
   $#documents < 0 and return;
 
   Debug("RegisterDhelp started");
   
-  GetDocFileList(\@documents, \@docfiles);
+  if ($register_all) {
+    ExecuteDhelpParse("-r", ());
+  }
+  else
+  {
+    GetDocFileList(\@documents, \@docfiles);
   
-  ExecuteDhelpParse("-a", \@docfiles);
+    ExecuteDhelpParse("-a", \@docfiles);
+  }    
 
   Debug("RegisterDhelp finished");
 
   undef @docfiles;
 
-} # }}}
+} # }}} 
 
 1;

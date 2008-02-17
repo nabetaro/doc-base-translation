@@ -11,7 +11,6 @@ Educational                         : Education
 Emulators                           : Emulators
 Graphics                            : Graphics
 
-Net                                 : Network
 Comm                                : Network/Communication
 Mail                                : Network/Communication
 
@@ -26,7 +25,6 @@ Non-Free/Devel                      : Programming
 Python                              : Programming/Python
 Lisp                                : Programming/Lisp
 
-Science                             : Science
 Electronics                         : Science/Electronics
 Technical                           : Science/Electronics
 Math                                : Science/Mathematics
@@ -37,15 +35,12 @@ Audio                               : Sound
 Music                               : Sound
 Sound                               : Sound
 
-System                              : System
 Admin                               : System/Administration
 Security                            : System/Security
 
 Xshells                             : Terminal Emulators
 
 Text                                : Text
-
-Viewers                             : Viewers
 
 Web                                 : Web Development
 Web Development/W3c                 : Web Development/W3
@@ -57,7 +52,7 @@ Games/Tetris-Like                   : Games/Blocks
 Docs                                : Help
 Doc                                 : Help
 Manpages                            : Help
-Book                                : Help/Book
+Book                                : Help/Books
 Faq                                 : Help/FAQ
 Howto                               : Help/HOWTO
 Rfc                                 : Help/RFC
@@ -73,15 +68,11 @@ Windowmanager                       : Window Managers
 X11/Window Managers                 : Window Managers
 
 ### Invalid sections (not defined in menu section hierarchy)
-Interpreters                        : Interpreters
 
+Net                                 : Network
+Science                             : Science
 Misc                                : Miscellaneous
-
 Tex                                 : TeX
 Tools                               : Tools
-
-Utilities                           : Utilities
 Utils                               : Utilities
-
-X11                                 : X11
 Gnome                               : X11/Gnome
