@@ -7,8 +7,8 @@ Build-Depends-Indep: debiandoc-sgml (>= 1.1.37)
 Build-Depends: debhelper (>= 6)
 
 Package: doc-base
-Depends: ${perl:Depends}, scrollkeeper
-Suggests: dhelp | dwww | doc-central | yelp | khelpcenter
+Depends: ${perl:Depends}, libuuid-perl, dpkg (>= 1.14.17)
+Suggests: dhelp | dwww | doc-central | yelp | khelpcenter, scrollkeeper
 Conflicts: dhelp (<< 0.6.7), dwww (<< 1.9.0)
 Architecture: all
 Description: utilities to manage online documentation

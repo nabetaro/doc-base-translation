@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: prerm 73 2007-05-06 10:54:35Z robert $
+# $Id: prerm 115 2008-03-31 18:16:38Z robert $
 # prerm for doc-base
 
 # Abort if any command returns an error value
@@ -13,14 +13,6 @@ if [ "$DEBUG" ]; then
     echo entering $package prerm
     set -x
 fi
-
-remove_docs ( ) {
-  if which install-docs >/dev/null 2>&1; then
-    install-docs ${VERBOSE}  --remove $ctrldir/$package $ctrldir/install-docs-man 
-  else    
-    echo "cannot find install-docs on path" 1>&2
-  fi
-}
 
 remove_all_docs ( ) {
     if which install-docs >/dev/null 2>&1; then
@@ -39,7 +31,6 @@ case "$1" in
     remove_all_docs
     ;;
   upgrade)
-    remove_docs
     ;;
   failed-upgrade)
     # Prepare to upgrade from version $2 of this package TO THIS VERSION.

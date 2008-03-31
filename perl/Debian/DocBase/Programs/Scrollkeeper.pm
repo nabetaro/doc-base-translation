@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 97 2007-12-01 18:58:59Z robert $
+# $Id: Scrollkeeper.pm 115 2008-03-31 18:16:38Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -17,6 +17,7 @@ use Carp;
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
 use File::Basename qw(dirname);
+use UUID;
 
 
 our $omf_locations = "/var/lib/doc-base/omf";
@@ -47,6 +48,13 @@ our @omf_formats = (
 
 our %mapping = (undef=>undef);
 
+sub GetUUID() {
+  my ($uuid, $retval);
+  UUID::generate($uuid);
+  UUID::unparse($uuid, $retval);
+  return $retval;
+}
+
 
 sub RegisterScrollkeeper(@) { # {{{
   my @documents = @_;
@@ -76,9 +84,10 @@ sub RegisterScrollkeeper(@) { # {{{
         next unless -f $file;
 
         $omf_serial_id = $doc->get_status('Scrollkeeper-sid');
-        chomp ($omf_serial_id = `$scrollkeeper_gen_seriesid`) unless defined $omf_serial_id;
-        $new_omf_file = write_omf_file($doc, $file,$omf_format,$omf_category, $omf_serial_id);
-        $do_update    = 1;
+#        chomp ($omf_serial_id = `$scrollkeeper_gen_seriesid`) unless defined $omf_serial_id;
+        $omf_serial_id =  GetUUID() unless $omf_serial_id;
+        $new_omf_file  = write_omf_file($doc, $file,$omf_format,$omf_category, $omf_serial_id);
+        $do_update     = 1;
         last; # register only the first format found
       }
     }

@@ -1,3 +1,26 @@
+doc-base (0.8.11) experimental; urgency=low
+
+  * Make use of the new dpkg triggers feature:
+    + provide debian/triggers file;
+    + change postinst to reinstall all docs on trigger activation;
+    + install-docs is now no-op if called from other packages' installation
+      or removal scripts;
+    + remove obsolete (created by doc-base << 0.8.7) dhelp/scrollkeeper files 
+      in preinst rather than in postinst.
+
+  * Scrollkeeper.pm: switch from scrollkeeper-gen-seriesid to UUID.pm.
+  * Dwww.pm: call dwww-build-menu directly (without update-menus).
+
+  * debian/control:
+    + add dependency on dpkg (>= 1.14.17) and libperl-uuid;
+    + move scrollkeeper from Depends to Suggests field.
+
+  * doc-base.sgml:
+    + add OCaml as an example sub-section of Programming (closes: #472501);
+    + add TODO entry related to triggers support.
+
+ -- Robert Luberda <robert@debian.org>  Sun, 24 Feb 2008 11:46:13 +0100
+
 doc-base (0.8.10) unstable; urgency=low
 
   * doc-base.sgml:

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs.in 100 2007-12-02 13:24:50Z robert $
+# $Id: install-docs.in 115 2008-03-31 18:16:38Z robert $
 
 use warnings;
 use strict;
@@ -15,6 +15,11 @@ use vars qw($fully_functional $opt_verbose $opt_debug $opt_update_menus $exitval
 my $version='#VERSION#';
 
 BEGIN {
+  if ($ENV{'DPKG_MAINTSCRIPT_PACKAGE'} && $ENV{'DPKG_MAINTSCRIPT_PACKAGE'} ne "doc-base") {
+    print STDERR "install-docs called from ". 
+                  $ENV{'DPKG_MAINTSCRIPT_PACKAGE'} . "'s maintainer script, exiting\n";
+    exit 0;
+  }
   $fully_functional = eval {
                               require Pod::Usage;
                               import Pod::Usage qw(pod2usage);

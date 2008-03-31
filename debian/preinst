@@ -1,0 +1,56 @@
+#!/bin/sh
+# $Id: preinst 115 2008-03-31 18:16:38Z robert $
+# preinst for doc-base
+
+# Abort if any command returns an error value
+set -e
+
+package=doc-base
+infodir="/var/lib/$package/info"
+docsdir="/var/lib/$package/documents"
+
+
+remove_obsolete() {
+	# remove old dhelp files (from versions <= 0.8.4)
+	find $infodir -maxdepth 1 -type f -name "*.list" | xargs grep -h '^/.*/.dhelp' |  \
+	while read f; do
+		[ -e "$f" ] || continue;
+#		[ -x /usr/sbin/dhelp_parse ] && /usr/sbin/dhelp_parse -d "`dirname "$f"`" || true
+		rm -f "$f"
+	done
+
+	# remove old scrollkeeper files
+	find $infodir -maxdepth 1 -type f -name "*.status" | \
+	xargs sed -ne 's/^Scrollkeeper-omf-file: *"*\(.*-C.omf\)"* *$/\1/p'  |  \
+	while read f; do
+		[ -e "$f" ] || continue;
+		rm -f "$f"
+		rmdir --ignore-fail-on-non-empty "`dirname "$f"`" || true
+	done
+
+
+	# remove newer dhelp files
+	find $infodir -maxdepth 1 -type f -name "*.status" | \
+	xargs sed -ne 's/^Dhelp-file: *"*\(.*\.dhelp\)"* *$/\1/p'  |  \
+	while read f; do
+		[ -e "$f" ] || continue;
+		rm -f "$f"
+	done
+
+
+	# remove status/list files
+	find $infodir -maxdepth 1 -type f \( -name "*.status" -o -name "*.list" \) | \
+	xargs rm -f
+	
+	# remove generated documents
+	find $docsdir -maxdepth 1 -type f  | xargs rm -f
+}
+
+if [ "$1" = "upgrade" ] &&  dpkg --compare-versions "$2" lt-nl 0.8.7; then
+	remove_obsolete
+fi		
+
+#DEBHELPER#
+
+exit 0
+

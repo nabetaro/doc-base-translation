@@ -472,6 +472,7 @@ The full section list is presented below.
           <item><tt>C</tt></item>
           <item><tt>C++</tt></item>
           <item><tt>Java</tt></item>
+          <item><tt>OCaml</tt></item>
           <item><tt>Perl</tt></item>
           <item><tt>Python</tt></item>
           <item><tt>Ruby</tt></item>
@@ -887,6 +888,17 @@ means the documents was not registered to the package.
 <list>
   <item>
     <p>
+      Enhance usage of dpkg triggers. We shouldn't reinstall all doc-base files, but 
+      only the changed ones. This would require some tracking of changes in  contens 
+      of <file>/usr/share/doc-base</file> directory.
+    </p>  
+    <p>
+      Update our docs wrt. triggers.
+    </p>  
+  </item>
+
+  <item>
+    <p>
       Internationalisation and po-debconf support. Unfortunately this
       would require merging <em/Abstract/ and <em/Title/ fields into
 	    one <em/Description/ field.
@@ -987,6 +999,6 @@ sgml-declaration:nil
 sgml-local-catalogs:nil
 sgml-local-ecat-files:nil
 End:
-$Id: doc-base.sgml 113 2008-02-22 23:16:04Z robert $
+$Id: doc-base.sgml 116 2008-03-31 18:18:43Z robert $
 vim:ts=2:et:sts=2:sw=2:fdm=marker 
 -->
