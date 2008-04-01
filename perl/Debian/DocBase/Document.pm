@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 111 2008-02-17 18:56:44Z robert $
+# $Id: Document.pm 118 2008-04-01 18:00:22Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -177,10 +177,11 @@ sub _read_status_file { # {{{
                                     s/^"//;
                                     s/"$//;
                                     Debug("Existing control file in status: $_");
-                                    (-f $_) ? ($_ => undef): Warn("Registered control file `$_' no longer exists")
+                                    (-f $_) ? ($_ => undef): (undef => Warn("Registered control file `$_' no longer exists"))
                                    } split(/\s*,\s*/, $status->{'Control-Files'})
                                       if $status->{'Control-Files'};
 
+    delete $self->{'CONTROL_FILES'}->{undef};
     delete $$status{'Control-Files'};
     $self->{'STATUS_DICT'} = $status;
   }
@@ -367,7 +368,7 @@ sub WriteNewCtrlFile() { # {{{
 } # }}}
 
 
-sub _MangleSection($) {
+sub _MangleSection($) { # {{{
   my $self      = shift;
   my $section   = shift;
 
@@ -391,7 +392,7 @@ sub _MangleSection($) {
 
   return $result if $result;
   return "Unknown";
-}
+} # }}}
 
 # merge contents of all available control files for the document
 #  into $self->{'MAIN_DATA'} and $self->{'FORMAT_LIST'}

@@ -8,6 +8,8 @@ doc-base (0.8.11) experimental; urgency=low
     + remove obsolete (created by doc-base << 0.8.7) dhelp/scrollkeeper files 
       in preinst rather than in postinst.
 
+  * Document.pm: remove a perl warning issued on removal doc-base files that
+    have been already deleted.
   * Scrollkeeper.pm: switch from scrollkeeper-gen-seriesid to UUID.pm.
   * Dwww.pm: call dwww-build-menu directly (without update-menus).
 
