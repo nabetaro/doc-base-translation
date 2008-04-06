@@ -1,11 +1,11 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs.in 115 2008-03-31 18:16:38Z robert $
+# $Id: install-docs.in 125 2008-04-06 19:20:02Z robert $
 
 use warnings;
 use strict;
-use lib 'perl';
+use lib 'perl'; #LINE_REMOVED_BY_MAKE#
 
 
 # declared in Debian::DocBase::InstallDocs;
@@ -75,6 +75,7 @@ description of the control file syntax and grammar.
 =cut
 
 sub CheckFunctionality() { # {{{
+  return; #LINE_REMOVED_BY_MAKE#
   if (not $fully_functional) {
     open F, "> $force_reregister_flagfile" 
       or die "Cannot create $force_reregister_flagfile: $!\n";
@@ -186,9 +187,9 @@ Install the documentation described by the control file I<file>.
     ($#ARGV == -1) and die "Arguments missing for `install'";
     CheckFunctionality();
     if (! -e $force_reregister_flagfile) {
-        SetMode($MODE_INSTALL, @ARGV);
+       SetMode($MODE_INSTALL, @ARGV);
     } else {     
-        SetMode($MODE_INSTALL_ALL); 
+       SetMode($MODE_INSTALL_ALL); 
     }      
     last; # }}}
 
@@ -236,7 +237,7 @@ De-register all registered documents.
 
 =item B<-I>, B<--install-all>
 
-(Re)register all documents from F</usr/share/doc-base>.
+(Re)register all documents from F</usr/share/doc-base> and F</etc/doc-base/documents>.
 
 =cut
     ($#ARGV == -1) or die "Too many arguments missing for `install-all'";
@@ -244,6 +245,18 @@ De-register all registered documents.
     SetMode($MODE_INSTALL_ALL);
     last; # }}}
 
+  } elsif (($arg eq '-C') or ($arg eq '--install-changed')) { # {{{ 
+
+=item B<-C>, B<--install-changed>
+
+Compare contents of F</usr/share/doc-base> and F</etc/doc-base/documents> directories
+with registered documents database and de-register any files that are missing and 
+(re)register only changed or new files.
+=cut
+    ($#ARGV == -1) or die "Too many arguments missing for `install-changed'";
+    CheckFunctionality();
+    SetMode($MODE_INSTALL_CHANGED);
+    last; # }}}
 
   } elsif (($arg eq '-s') or ($arg eq '--status')) {  # {{{
 
@@ -312,7 +325,7 @@ B<-d>,B<--debug>, B<-h>,B<--help> options.
 
 =back
 
-
+The B<-C>,B<--install-changed> option was added in 0.8.12.
 
 =head1 FILES
 
@@ -326,13 +339,17 @@ The location of doc-base control files provided by various packages.
 
 The location of doc-base control files provided by local administrator.
 
-=item F</var/lib/doc-base/info/*.status>
+=item F</var/lib/doc-base/info/documents>
 
 The location of registered control files.
 
-=item F</var/lib/doc-base/info/*.status>
+=item F</var/lib/doc-base/info/status.db>
 
 Statuses of registered documents.
+
+=item F</var/lib/doc-base/info/files.db>
+
+Timestamps and documents ids of registered doc-base files.
 
 =item F</var/lib/doc-base/omf/> 
 

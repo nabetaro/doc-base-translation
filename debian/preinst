@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: preinst 115 2008-03-31 18:16:38Z robert $
+# $Id: preinst 125 2008-04-06 19:20:02Z robert $
 # preinst for doc-base
 
 # Abort if any command returns an error value
@@ -8,6 +8,7 @@ set -e
 package=doc-base
 infodir="/var/lib/$package/info"
 docsdir="/var/lib/$package/documents"
+omfdir="/var/lib/$package/omf"
 
 
 remove_obsolete() {
@@ -37,18 +38,25 @@ remove_obsolete() {
 		rm -f "$f"
 	done
 
+	# remove newer scrollkeeper files
+	find $infodir -maxdepth 2 -type f -name "*.omf" | xargs rm -f
+	find $infodir -maxdepth 1 -type d  | xargs rmdir --ignore-fail-on-non-empty
+
 
 	# remove status/list files
-	find $infodir -maxdepth 1 -type f \( -name "*.status" -o -name "*.list" \) | \
+	find $infodir -maxdepth 1 -type f \( -name "*.status" -o -name "*.list" -o name "*.db" \) | \
 	xargs rm -f
 	
 	# remove generated documents
 	find $docsdir -maxdepth 1 -type f  | xargs rm -f
 }
 
-if [ "$1" = "upgrade" ] &&  dpkg --compare-versions "$2" lt-nl 0.8.7; then
+if [ "$1" = "upgrade" ] &&  dpkg --compare-versions "$2" lt-nl "0.8.12~"; then
 	remove_obsolete
-fi		
+elif [ "X`which dpkg-trigger`" != "X" ]; then
+	dpkg-trigger /usr/share/doc-base
+fi
+
 
 #DEBHELPER#
 

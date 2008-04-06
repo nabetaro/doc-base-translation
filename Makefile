@@ -1,6 +1,6 @@
 # vim:ts=2
 # makefile for doc-base
-# $Id: Makefile 113 2008-02-22 23:16:04Z robert $
+# $Id: Makefile 125 2008-04-06 19:20:02Z robert $
 #
 # determine our version number
 DEB_VERSION     := $(shell LC_ALL=C dpkg-parsechangelog | grep ^Version: | sed 's/^Version: *//')
@@ -58,7 +58,7 @@ $(bdir)/check-stamp: $(bdir)/install-docs $(bdir)/doc-base.sgml $(bdir)/version.
 
 $(bdir)/install-docs: install-docs.in | $(bdir)
 	@echo; echo "*** Creating $@:"
-	sed -e '/use lib.*perl/d' \
+	sed -e '/#LINE_REMOVED_BY_MAKE#/d'   \
 	    -e 's/#VERSION#/$(DEB_VERSION)/' \
 	    < $< > $@
 	chmod 755 $@

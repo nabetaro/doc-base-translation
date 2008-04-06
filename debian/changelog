@@ -1,3 +1,18 @@
+doc-base (0.8.12~1) UNRELEASED; urgency=low
+
+  * install-docs.in: add -C, --install-changed arguments.
+  * Add files.db and status.db databases instead of *.status plain text files
+  * SAve list of registed doc-base files together with timestamps in files.db
+  * List is saved even for broken doc-base files not to try to register them
+    on evvery trigger run
+  * InstallDocs.pm: refactor
+  * InstallDocs.pm: print some additional messages to give clue what is done
+  * Depend on libmldbm-perl
+  * postinst preinst: changed not to run triggered until we properly configure
+    package
+
+ -- Robert Luberda <robert@debian.org>  Sun, 06 Apr 2008 20:48:46 +0200
+
 doc-base (0.8.11) experimental; urgency=low
 
   * Make use of the new dpkg triggers feature:

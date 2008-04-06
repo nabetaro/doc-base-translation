@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: postinst 115 2008-03-31 18:16:38Z robert $
+# $Id: postinst 125 2008-04-06 19:20:02Z robert $
 # postinst for doc-base
 
 # Abort if any command returns an error value
@@ -7,7 +7,7 @@ set -e
 
 package=doc-base
 # upgrades prior to this version require complete re-registration
-compat_ver=0.8.10
+compat_ver=0.8.12~
 VERBOSE=
 
 ctrldir="/usr/share/$package"
@@ -20,7 +20,7 @@ if [ "$DEBUG" ]; then
 fi
 
 reinstall_docs () {
-    install-docs ${VERBOSE} --install-all
+    install-docs ${VERBOSE} "--install-$1"
 }
 
 register_our_docs () {
@@ -32,17 +32,22 @@ case "$1" in
   configure)
 
     if dpkg --compare-versions "$2" lt-nl "$compat_ver" ||
-      [ -z "`/bin/ls $infodir`" ]; then
+      [ ! -f "$infodir/status.db"  ]; then
 	# version is less than last compatable version, we need to
 	# re-register all the docs
-        reinstall_docs
-    else
-        # only register our stuff
-	register_our_docs
+        reinstall_docs all
+#    else
+        # only register our stuff		# registering our docs should be 
+#	register_our_docs			# handled by triggers 
+	
     fi
     ;;
   triggered)
-    reinstall_docs
+    if [ -f "$infodir/status.db" ]; then
+	    reinstall_docs changed
+    else
+    	echo "doc-base seems not to be configured yet, skipping triggers run"
+    fi
     ;; 	
 esac
 

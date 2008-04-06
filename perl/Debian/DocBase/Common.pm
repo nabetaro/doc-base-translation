@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Common.pm 111 2008-02-17 18:56:44Z robert $
+# $Id: Common.pm 125 2008-04-06 19:20:02Z robert $
 
 
 package Debian::DocBase::Common;
@@ -12,7 +12,8 @@ use warnings;
 use vars    qw(@ISA @EXPORT);
 @ISA    = qw(Exporter);
 @EXPORT = qw($DATA_DIR $CONTROL_DIR $LOCAL_CONTROL_DIR $VAR_CTRL_DIR  
-             $DOCBASE_SECTIONS_MAP $DOCBASE_VALID_SECTIONS_LIST
+             $DOCBASE_SECTIONS_MAP $DOCBASE_VALID_SECTIONS_LIST $CTIME_FIELDNO
+             $DB_FILES $DB_STATUS
              @SUPPORTED_FORMATS @NEED_INDEX_FORMATS
              $FLD_DOCUMENT $FLD_VERSION $FLD_SECTION $FLD_TITLE $FLD_AUTHOR $FLD_ABSTRACT 
              $FLD_FORMAT $FLD_INDEX $FLD_FILES 
@@ -26,11 +27,15 @@ use vars    qw(@ISA @EXPORT);
             );
 
 our $DATA_DIR                     = "/var/lib/doc-base/info";
+our $DB_FILES                     = "$DATA_DIR/files.db";
+our $DB_STATUS                    = "$DATA_DIR/status.db";
 our $CONTROL_DIR                  = "/usr/share/doc-base";
 our $DOCBASE_SECTIONS_MAP         = "$CONTROL_DIR/data/doc-base.map";
 our $DOCBASE_VALID_SECTIONS_LIST  = "$CONTROL_DIR/data/section.list";
 our $LOCAL_CONTROL_DIR            = "/etc/doc-base/documents";
 our $VAR_CTRL_DIR                 = "/var/lib/doc-base/documents";
+our $CTIME_FIELDNO                = 10;
+
 
 # ---configuration-part---
 

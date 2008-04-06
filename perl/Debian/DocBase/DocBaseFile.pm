@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 111 2008-02-17 18:56:44Z robert $
+# $Id: DocBaseFile.pm 125 2008-04-06 19:20:02Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -16,6 +16,7 @@ use Scalar::Util qw(weaken);
 use Carp;
 
 our %CONTROLFILES = ();
+
 
 # constants for _prserr function
 use constant PRS_FATAL_ERR    => 1;   # fatal error, marks documents as invalid
@@ -37,7 +38,6 @@ sub new { # {{{
     my $parse_flag    = shift; # PARSE_FULL or PARSE_GETDOCID
     my $do_add_checks = shift;
     if (defined  $CONTROLFILES{$filename}) {
-      $CONTROLFILES{$filename}->_Parse($parse_flag);
       return $CONTROLFILES{$filename}
     }
 
@@ -45,17 +45,19 @@ sub new { # {{{
         MAIN_DATA     => {},    # hash of main_fld=>value 
         FORMAT_LIST   => {},    # array of format data hashes
         FILE_NAME     => $filename,
+        CTIME         => 0,
         PARSE_FLAG    => 0,
         DO_ADD_CHECKS => $do_add_checks ? 1 : 0,
         WARNERR_CNT   => 0, # errors/warnings count
         INVALID       => 1
     };
     bless($self, $class);
-    $self->_Parse($parse_flag);
+    $self->_ReadStatusDB();
+    $self->_Parse($parse_flag) if $parse_flag and $parse_flag == PARSE_FULL;
     $CONTROLFILES{$filename} = $self;
     weaken $CONTROLFILES{$filename};
     return $self;
-} # }}}
+ } # }}}
 
 
 sub DESTROY { # {{{
@@ -153,8 +155,10 @@ sub _Parse { # {{{
   return if ($self->{'PARSE_FLAG'} == PARSE_FULL);
   return if ($self->{'PARSE_FLAG'} == $parseflag);
 
-  open($fh, "<", $file) or
+  open($fh, "<", $file) or 
     carp "Cannot open control file `$file' for reading: $!";
+
+  $self->{'CTIME'} = (stat _)[$CTIME_FIELDNO];
 
   $self->_ReadControlFile($parseflag, $fh);
 
@@ -383,6 +387,85 @@ sub _ReadControlFile { # {{{
   return $self->_prserr(PRS_ERR_IGN, "no valid `Format' section found") if (keys %{$self->{FORMAT_LIST}} < 0);
 
  $self->{'INVALID'} = 0;
+} # }}} 
+
+sub OnRegistered($$) {
+  my ($self, $valid)  = @_;
+  my $docid = $valid ? $self->document_id() : undef;
+  my $data  = { CT => $self->{'CTIME'},
+                ID => $docid,
+             };
+  Debug("OnRegistered (".$self->source_file_name().", $valid)");
+  Debian::DocBase::DB::GetFilesDB()->PutData($self->source_file_name(), $data);
+}
+
+sub OnUnregistered() {
+  my $self = shift;
+  Debug("OnUnregistered (".$self->source_file_name().")");
+
+  Debian::DocBase::DB::GetFilesDB()->RemoveData($self->source_file_name());
+
+}
+
+sub _ReadStatusDB($) {
+  my $self = shift;
+  my $data = Debian::DocBase::DB::GetFilesDB()->GetData($self->source_file_name());
+  return unless $data;
+  $self->{'MAIN_DATA'}->{$FLD_DOCUMENT} = $data->{'ID'};
+  $self->{'CTIME'} = $data->{'CT'}
+} 
+
+sub GetLastChangeTime($) {
+  my $self = shift;
+  return $self->{'CTIME'};
+}
+
+sub GetDocIdFromRegisteredFile($) {
+  my $file = shift;
+  my $data = Debian::DocBase::DB::GetFilesDB()->GetData($file);
+  return undef unless $data;
+  return $data->{'ID'};
+}  
+
+sub GetAllDocBaseFiles() { # {{{
+  my @global = ();
+  my @local  = ();
+  if (opendir(DIR, $CONTROL_DIR)) {
+    @global = grep { $_ = "$CONTROL_DIR/$_" if -f "$CONTROL_DIR/$_" } readdir(DIR);
+    closedir DIR;
+  }
+  if (opendir(DIR, $LOCAL_CONTROL_DIR)) {
+    @local = grep { $_ = "$LOCAL_CONTROL_DIR/$_"
+                       if $_ ne "README"
+                          and $_ !~ /\.(bak|swp|~)$/o
+                          and -f "$LOCAL_CONTROL_DIR/$_" } readdir(DIR);
+    closedir DIR;
+  }
+  return (@global, @local);
+}  # }}}
+ 
+sub GetChangedDocBaseFiles($$){ # {{{
+  my ($toremove, $toinstall) = @_;
+
+  my @changed = ();
+
+  my %files = map { $_ => (stat $_)[$CTIME_FIELDNO] } GetAllDocBaseFiles();
+
+  my $db    = Debian::DocBase::DB::GetFilesDB()->GetDB();
+  foreach my $file ( keys %{$db} ) {
+    my $realfile =  Debian::DocBase::DB::GetFilesDB()->DecodeKey($file);
+    if ($files{$realfile} ) {
+      push @changed, $realfile if $files{$realfile} != $db->{$file}->{'CT'};
+      delete $files{$realfile}
+    } else {
+      push @$toremove, $realfile;
+    }
+  }
+  @$toinstall = keys %files;
+
+  push @$toinstall, @changed;
+  push @$toremove, @changed;
+  undef @changed;
 } # }}}
 
 1;

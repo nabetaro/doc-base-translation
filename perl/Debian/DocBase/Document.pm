@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 118 2008-04-01 18:00:22Z robert $
+# $Id: Document.pm 125 2008-04-06 19:20:02Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -11,6 +11,7 @@ use warnings;
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
 use Debian::DocBase::DocBaseFile qw(PARSE_FULL PARSE_GETDOCID);
+use Debian::DocBase::DB;
 use Carp;
 #use Scalar::Util qw(weaken);
 
@@ -155,36 +156,16 @@ sub _has_control_files() { # {{{
 sub _read_status_file { # {{{
   my $self        = shift;
   my $docid       = $self->document_id();
-  my $status_file = "$DATA_DIR/$docid.status";
+  my $data        = Debian::DocBase::DB::GetStatusDB()->GetData($docid);
 
-  if (-f $status_file) {
-    Debug ("Reading status file `$status_file'");
-    my $status = {};
-    open(S, "<", $status_file)
-      or return Error("Cannot open status file `$status_file' for reading: $!");
-
-    while (<S>) {
-      chomp;
-      next if /^\s*$/o;
-      /^\s*(\S+):\s*"?(.*?)"?\s*$/o
-        or return Warn("Syntax error in status file `$status_file': $_");
-      $$status{$1} = $2;
-    }
-    close(S)
-      or croak "Cannot close status file `$status_file': $!";
-
-    %{$self->{'CONTROL_FILES'}} = map {
-                                    s/^"//;
-                                    s/"$//;
-                                    Debug("Existing control file in status: $_");
-                                    (-f $_) ? ($_ => undef): (undef => Warn("Registered control file `$_' no longer exists"))
-                                   } split(/\s*,\s*/, $status->{'Control-Files'})
-                                      if $status->{'Control-Files'};
-
-    delete $self->{'CONTROL_FILES'}->{undef};
-    delete $$status{'Control-Files'};
-    $self->{'STATUS_DICT'} = $status;
-  }
+  if ($data) {
+    my %cf = map { $_ => Debian::DocBase::DocBaseFile->new($_) } keys %{$data->{'CF'}}; 
+    $self->{'CONTROL_FILES'}  = \%cf;
+    $self->{'STATUS_DICT'}    = $data->{'SD'};
+  } else { 
+    $self->{'CONTROL_FILES'} = {};
+    $self->{'STATUS_DICT'}   = {}; 
+  };   
   $self->{'INVALID'} = 0;
 
 } # }}}
@@ -194,34 +175,16 @@ sub _write_status_file { # {{{
   my $self  = shift;
   my $docid = $self->document_id();
 
-  my $status_file     = "$DATA_DIR/$docid.status";
-  my $tmp_status_file = "$status_file.tmp";
-  Debug ("Writing status information into `$status_file'");
+  if (%{$self->{'CONTROL_FILES'}} or %{$self->{'STATUS_DICT'}}) {
+    my %cf = map { $_ => undef }  keys %{$self->{'CONTROL_FILES'}};
 
-  open(S, ">", $tmp_status_file)
-    or croak "Cannot open status file `$tmp_status_file' for writing: $!";
-
-  my $control_files = '"' . join('", "', sort keys %{$self->{'CONTROL_FILES'}}) . '"';
-  print S "Control-Files: $control_files\n" unless $control_files eq '""';
-
-  my $status = $self->{'STATUS_DICT'};
-  for my $k (sort keys   %$status) {
-    print S "$k: \"$$status{$k}\"\n";
-  }
-  close(S) or croak "Cannot close status file `$tmp_status_file': $!";
-
-  IgnoreSignals();
-  # remove file if it's empty
-  if (-z $tmp_status_file) {
-    unlink $tmp_status_file;
-    unlink $status_file;
-    Debug ("Removing status file `$status_file'");
+    my $data = { 'CF' => \%cf,                 
+                 'SD' => $self->{'STATUS_DICT'} 
+               };
+   Debian::DocBase::DB::GetStatusDB()->PutData($docid, $data);
   } else {
-    rename $tmp_status_file, $status_file
-      or croak "Can't rename `$tmp_status_file' to `$status_file': $!";
-  }
-  RestoreSignals();
-
+   Debian::DocBase::DB::GetStatusDB()->RemoveData($docid);
+  }  
 } # }}}
 
 
@@ -255,7 +218,6 @@ sub DisplayStatusInformation($) { # {{{
   my $docid           = $self->document_id();
   my $status_file     = "$DATA_DIR/$docid.status";
   my $var_ctrl_file   = "$VAR_CTRL_DIR/$docid";
-  return unless -f $status_file;
 
   if (-f $var_ctrl_file) {
     if (open(F, '<', $var_ctrl_file)) {
@@ -271,16 +233,14 @@ sub DisplayStatusInformation($) { # {{{
     }
   }
 
-  if (-f $status_file) {
-    if (open(F, '<', $status_file)) {
-      print "\n---status-information---\n";
-      while (<F>) {
-        print $_;
-      }
-      close(F);
-    } else {
-      Warn("Cannot open `$status_file': $!");
-    }
+  print "\n---status-information---\n";
+
+  foreach my $cf (sort keys %{$self->{'CONTROL_FILES'}} ) {
+    print "Control-File: $cf (changed: ". localtime ($self->{'CONTROL_FILES'}->{$cf}->GetLastChangeTime()) . ")\n";
+  }      
+
+  foreach my $key (sort keys %{$self->{'STATUS_DICT'}} ) {
+    print "$key: $self->{'STATUS_DICT'}->{$key}\n";
   }
 } # }}}
 
@@ -293,15 +253,18 @@ sub Register($$) { # {{{
 
   if ($db_file->document_id() ne $self->document_id()) {
     delete $self->{'CONTROL_FILES'}->{$db_filename};
+    $db_file->OnRegistered(0);
     return Error("Document id in `$db_filename' does not match our document id (" .
                   $db_file->document_id() . ' != ' . $self->document_id() . ")");
   }
 
   if ($db_file->invalid()) {
     delete $self->{'CONTROL_FILES'}->{$db_filename};
+    $db_file->OnRegistered(0);
     return Warn($db_file->source_file_name() . " contains errors, not registering");
   }
 
+  $db_file->OnRegistered(1);
   $self->{'CONTROL_FILES'}->{$db_filename} = $db_file;
 } # }}}
 
@@ -310,9 +273,10 @@ sub Unregister($$) { # {{{
   my $db_file       = shift;
   my $db_filename   = $db_file->source_file_name();
 
-  Warn("File `" . $db_filename . "' is not registered, cannot remove")
+  return Warn("File `" . $db_filename . "' is not registered, cannot remove")
     unless exists ($self->{'CONTROL_FILES'}->{$db_filename});
 
+  $self->{'CONTROL_FILES'}->{$db_filename}->OnUnregistered();
   delete $self->{'CONTROL_FILES'}->{$db_filename};
 
 } # }}}
@@ -321,6 +285,11 @@ sub UnregisterAll($) { # {{{
   my $self          = shift;
 
   Debug('Unregistering all control files from document `' . $self->document_id() . "'");
+
+  foreach my $doc ( values %{$self->{'CONTROL_FILES'}} ) {
+    $doc->OnUnregistered();
+  }  
+
 
   $self->{'CONTROL_FILES'} = {};
 } # }}}
@@ -416,9 +385,9 @@ sub MergeCtrlFiles($) { # {{{
     my $doc_data  = $self->{'CONTROL_FILES'}->{$db_file_name};
     my $doc_fname = $doc_data->source_file_name();
 
-    if ($doc_data->document_id() ne $self->document_id()) {
+    if ($doc_data->document_id() ne $doc_id) {
       Warn("Document id in `" . $doc_fname ."' does not match our document id (" .
-                  $doc_id . ' != ' . $self->document_id() . ")");
+                  $doc_data->document_id()  . ' != ' . $self->document_id() . ")");
       $self->Unregister($doc_data);
       next;
     }
@@ -454,6 +423,18 @@ sub SaveStatusChanges($) { # {{{
   my $self = shift;
 
   $self->_write_status_file();
+} # }}}
+
+##### STATIC FUNCTIONS
+sub IsRegistered($) {
+  my $key = shift;
+  return Debian::DocBase::DB::GetStatusDB()->Exists($key);
+}
+
+sub GetAllRegisteredDocumentIDs() { # {{{
+  my $db    = Debian::DocBase::DB::GetStatusDB()->GetDB();
+  my @result = sort keys %$db;
+  return @result;
 } # }}}
 
 1;
