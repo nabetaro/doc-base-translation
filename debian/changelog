@@ -11,6 +11,7 @@ doc-base (0.8.12~1) UNRELEASED; urgency=low
     perl -cw
   * postinst preinst: changed not to run triggered until we properly configure
     package
+  * add --dump-db option.  
 
  -- Robert Luberda <robert@debian.org>  Sun, 06 Apr 2008 20:48:46 +0200
 

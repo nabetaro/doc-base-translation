@@ -2,7 +2,7 @@
 
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 125 2008-04-06 19:20:02Z robert $
+# $Id: InstallDocs.pm 128 2008-04-07 17:49:48Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -13,7 +13,7 @@ use base qw(Exporter);
 use vars qw(@EXPORT);
 our @EXPORT = qw(SetMode InstallDocsMain
                  $MODE_INSTALL $MODE_REMOVE $MODE_STATUS $MODE_REMOVE_ALL $MODE_INSTALL_ALL
-                 $MODE_INSTALL_CHANGED $MODE_CHECK  $verbose $debug);
+                 $MODE_INSTALL_CHANGED $MODE_DUMP_DB $MODE_CHECK  $verbose $debug);
 
 use Carp;
 use Debian::DocBase::Common;
@@ -34,6 +34,7 @@ our $MODE_REMOVE_ALL      = 4;
 our $MODE_STATUS          = 5;
 our $MODE_CHECK           = 6;
 our $MODE_INSTALL_CHANGED = 7;
+our $MODE_DUMP_DB         = 8;
 
 # global module variables
 our $mode                 = undef;
@@ -71,6 +72,8 @@ sub InstallDocsMain() { # {{{
     HandleCheck();
   } elsif ($mode == $MODE_STATUS) {
     HandleStatus();
+  } elsif ($mode == $MODE_DUMP_DB) {
+    HandleDumpDB();
   } else {
     HandleRegistrationAndUnregistation();
   }
@@ -112,6 +115,19 @@ sub HandleStatus() { # {{{
   }
 } # }}}
 
+sub HandleDumpDB() { # {{{
+  foreach my $arg (@arguments) {
+    if ($arg eq "files.db") {
+      Debian::DocBase::DB::GetFilesDB()->DumpDB();
+    } elsif ($arg eq "status.db") {  
+      Debian::DocBase::DB::GetStatusDB()->DumpDB();
+    } else {
+      Error("Invalid argument `$arg' passed to --dump-db option");
+      exit (1);
+    }
+  }    
+} # }}}
+
 sub HandleRegistrationAndUnregistation() { # {{{
   my @toinstall     = ();       # list of files to install
   my @toremove      = ();       # list of files to remove
@@ -139,7 +155,7 @@ sub HandleRegistrationAndUnregistation() { # {{{
 
   }
 
-  Inform("Removing " . ($#toremovedocs + 1) . " registered documents") if $bshowmsg and @toremovedocs;
+  Inform("Removing " . ($#toremovedocs + $#toremove + 2) . " registered documents") if $bshowmsg and (@toremovedocs or @toremove);
 
   foreach my $docid (@toremovedocs) {
     unless (Debian::DocBase::Document::IsRegistered($docid)) {

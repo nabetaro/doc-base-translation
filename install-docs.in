@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs.in 125 2008-04-06 19:20:02Z robert $
+# $Id: install-docs.in 127 2008-04-06 22:00:45Z robert $
 
 use warnings;
 use strict;
@@ -10,7 +10,9 @@ use lib 'perl'; #LINE_REMOVED_BY_MAKE#
 
 # declared in Debian::DocBase::InstallDocs;
 use vars qw($fully_functional $opt_verbose $opt_debug $opt_update_menus $exitval 
-            $MODE_INSTALL $MODE_REMOVE $MODE_REMOVE_ALL $MODE_INSTALL_ALL $MODE_STATUS $MODE_CHECK);
+            $MODE_INSTALL $MODE_REMOVE $MODE_REMOVE_ALL $MODE_INSTALL_ALL 
+            $MODE_DUMP_DB $MODE_INSTALL_CHANGED
+            $MODE_STATUS $MODE_CHECK);
 
 my $version='#VERSION#';
 
@@ -51,11 +53,13 @@ my $force_reregister_flagfile = "/var/lib/doc-base/info/FORCE-REREGISTER.flag";
 
  install-docs [options] -i,--install | -r,--remove | -c,--check file [ file ... ]
 
- install-docs [options] -I,--install-all | -R,--remove-all
+ install-docs [options] -I,--install-all | -C,--install-changed | -R,--remove-all 
 
  install-docs [options] -s,--status docid [ docid ... ]
 
- install-docs -h | --help
+ install-docs [options] --dump-db dbname
+
+ install-docs -h,--help | -V,--version
 
 
 =head1 DESCRIPTION
@@ -74,15 +78,24 @@ description of the control file syntax and grammar.
 
 =cut
 
-sub CheckFunctionality() { # {{{
+sub CheckFunctionality(;$) { # {{{
   return; #LINE_REMOVED_BY_MAKE#
+  my $dont_force_reg = shift;
   if (not $fully_functional) {
     open F, "> $force_reregister_flagfile" 
       or die "Cannot create $force_reregister_flagfile: $!\n";
     print F "x";
     close F;
     exit 0;
-  }    
+  } 
+  if (!$dont_force_reg && -e $force_reregister_flagfile) {
+    Inform("Force re-registation of all documents");
+    SetMode($MODE_INSTALL_ALL);
+    unlink ($force_reregister_flagfile);
+    return 1;
+  }      
+  return 0;
+
 } # }}}
 
 
@@ -122,7 +135,7 @@ Print some debugging informations.
 
 =item B<--no-update-menus>
 
-Inhibit running both L<update-menus(1)> (used for the L<dwww(8)> update program)
+Inhibit running L<dwww-build-menu(8)>, L<dhelp_parse(8)>,  
 and L<scrollkeeper-update(8)>.
 
 =cut
@@ -143,16 +156,6 @@ the B<--check> action.
     ($opt_rootdir = $arg) =~ s/\/+$//;
     next; # }}}
 
-   } elsif (($arg eq '-h') or ($arg eq '--help')) { # {{{ 
-
-=item B<-h>, B<--help>
-
-Show a short help message.
-
-
-=cut
-    pod2usage(-verbose => 1, -exitval => 0);
-    # NOT REACHED  # }}}
 
 =back
 
@@ -185,12 +188,7 @@ Install the documentation described by the control file I<file>.
 =cut
     # install new docs 
     ($#ARGV == -1) and die "Arguments missing for `install'";
-    CheckFunctionality();
-    if (! -e $force_reregister_flagfile) {
-       SetMode($MODE_INSTALL, @ARGV);
-    } else {     
-       SetMode($MODE_INSTALL_ALL); 
-    }      
+    SetMode($MODE_INSTALL, @ARGV) unless CheckFunctionality();
     last; # }}}
 
   } elsif (($arg eq '-r') or ($arg eq '--remove')) { # {{{
@@ -203,8 +201,7 @@ I<file>.
 =cut
     # remove old docs # 
     ($#ARGV == -1) and die "Arguments missing for `remove'";
-    CheckFunctionality();
-    SetMode($MODE_REMOVE, @ARGV);
+    SetMode($MODE_REMOVE, @ARGV) unless CheckFunctionality();
     last; # }}}
 
   } elsif (($arg eq '-c') or ($arg eq '--check')) { # {{{
@@ -229,7 +226,7 @@ De-register all registered documents.
 
 =cut
     ($#ARGV == -1) or die "Too many arguments missing for `remove-all'";
-    CheckFunctionality();
+    CheckFunctionality(1);
     SetMode($MODE_REMOVE_ALL);
     last; # }}}
 
@@ -240,10 +237,10 @@ De-register all registered documents.
 (Re)register all documents from F</usr/share/doc-base> and F</etc/doc-base/documents>.
 
 =cut
-    ($#ARGV == -1) or die "Too many arguments missing for `install-all'";
-    CheckFunctionality();
+    ($#ARGV == -1) or die "Too many arguments for `install-all'";
+    CheckFunctionality(1);
     SetMode($MODE_INSTALL_ALL);
-    last; # }}}
+    last; # }}} 
 
   } elsif (($arg eq '-C') or ($arg eq '--install-changed')) { # {{{ 
 
@@ -252,10 +249,10 @@ De-register all registered documents.
 Compare contents of F</usr/share/doc-base> and F</etc/doc-base/documents> directories
 with registered documents database and de-register any files that are missing and 
 (re)register only changed or new files.
+
 =cut
-    ($#ARGV == -1) or die "Too many arguments missing for `install-changed'";
-    CheckFunctionality();
-    SetMode($MODE_INSTALL_CHANGED);
+    ($#ARGV == -1) or die "Too many arguments for `install-changed'";
+    SetMode($MODE_INSTALL_CHANGED) unless CheckFunctionality();
     last; # }}}
 
   } elsif (($arg eq '-s') or ($arg eq '--status')) {  # {{{
@@ -275,12 +272,46 @@ Display the status of the document identifier I<docid>.
 
 Deprecated option. Does nothing.
 
-=back
-
 =cut
     warn "Ignoring deprecated command line argument: $arg\n";
     exit 0;
  # }}}
+
+  }  elsif ($arg eq '--dump-db') { # {{{
+
+=item B<--dump-db> I<dbname>
+
+Dumps contents of internal databases, for debugging purposes. I<dbname> can be either B<files.db> or
+B<status.db>.
+
+=cut
+    ($#ARGV == 0) or die "`dump-db' requires exactly one argument";
+    SetMode($MODE_DUMP_DB, @ARGV);
+    last # }}}
+
+   } elsif (($arg eq '-h') or ($arg eq '--help')) { # {{{ 
+
+=item B<-h>, B<--help>
+
+Show a short help message.
+
+
+=cut
+    pod2usage(-verbose => 1, -exitval => 0);
+    # NOT REACHED  # }}}
+
+   } elsif (($arg eq '-V') or ($arg eq '--version')) { # {{{ 
+
+=item B<-V>, B<--version>
+
+Display version infromation
+
+=back
+
+=cut
+    print "install-docs $version\n";
+    exit 0;
+    # NOT REACHED  # }}}
 
   } else { # {{{ default: die
     pod2usage(-msg => "Invalid argument: $arg", -verbose => 0, -exitval => 1);
@@ -293,7 +324,6 @@ Deprecated option. Does nothing.
 #### Main function
 InstallDocsMain();
 
-unlink ($force_reregister_flagfile) if -e $force_reregister_flagfile;
 
 exit ($exitval);
 
@@ -325,7 +355,7 @@ B<-d>,B<--debug>, B<-h>,B<--help> options.
 
 =back
 
-The B<-C>,B<--install-changed> option was added in 0.8.12.
+The B<-C>,B<--install-changed>, B<--dump-db>, B<-V>,B<--version> options were added in 0.8.12.
 
 =head1 FILES
 
@@ -339,7 +369,7 @@ The location of doc-base control files provided by various packages.
 
 The location of doc-base control files provided by local administrator.
 
-=item F</var/lib/doc-base/info/documents>
+=item F</var/lib/doc-base/info/documents/>
 
 The location of registered control files.
 
@@ -364,9 +394,8 @@ See L<http://bugs.debian.org/doc-base>.
 
 =head1 SEE ALSO
 
-dwww(8), scrollkeeper(7), 
-Debian doc-base Manual F</usr/share/doc/doc-base/doc-base.html/index.html>, 
-dhelp Manual F</usr/share/doc/dhelp/dhelp.html>
+dhelp(1), doccentral(1), dwww(8), scrollkeeper(7), 
+Debian doc-base Manual F</usr/share/doc/doc-base/doc-base.html/index.html>
 
 =head1 AUTHOR
 
