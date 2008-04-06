@@ -7,7 +7,8 @@ doc-base (0.8.12~1) UNRELEASED; urgency=low
     on evvery trigger run
   * InstallDocs.pm: refactor
   * InstallDocs.pm: print some additional messages to give clue what is done
-  * Depend on libmldbm-perl
+  * Depend on libmldbm-perl and build-depend on it and libuuid-perl build test
+    perl -cw
   * postinst preinst: changed not to run triggered until we properly configure
     package
 

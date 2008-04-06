@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: preinst 125 2008-04-06 19:20:02Z robert $
+# $Id: preinst 126 2008-04-06 19:35:30Z robert $
 # preinst for doc-base
 
 # Abort if any command returns an error value
@@ -44,14 +44,14 @@ remove_obsolete() {
 
 
 	# remove status/list files
-	find $infodir -maxdepth 1 -type f \( -name "*.status" -o -name "*.list" -o name "*.db" \) | \
+	find $infodir -maxdepth 1 -type f \( -name "*.status" -o -name "*.list" -o -name "*.db" \) | \
 	xargs rm -f
 	
 	# remove generated documents
 	find $docsdir -maxdepth 1 -type f  | xargs rm -f
 }
 
-if [ "$1" = "upgrade" ] &&  dpkg --compare-versions "$2" lt-nl "0.8.12~"; then
+if [ "$1" = "upgrade" ] &&  dpkg --compare-versions "$2" lt-nl "0.8.12"; then
 	remove_obsolete
 elif [ "X`which dpkg-trigger`" != "X" ]; then
 	dpkg-trigger /usr/share/doc-base
