@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 113 2008-02-22 23:16:04Z robert $
+# $Id: Dhelp.pm 129 2008-04-07 18:36:39Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -21,7 +21,7 @@ my $DHELP_PARSE     = "/usr/sbin/dhelp_parse";
 
 # executes `/usr/sbin/dhelp_parse $arg $@dirs' 
 # $arg should be `-d' or `-a' or `-r'
-sub ExecuteDhelpParse($$) { # {{{
+sub _ExecuteDhelpParse($$) { # {{{
   my $arg   = shift;
   my $dirs  = shift;
 
@@ -33,17 +33,17 @@ sub ExecuteDhelpParse($$) { # {{{
 
 
 
-sub GetDocFileList($$) {
+sub _GetDocFileList($$) { # {{{
   my $documents = shift;  # in parameter
   my $docfiles  = shift;  # out parameter
   
   foreach my $doc (@$documents) {
-    my $docid   = $doc->document_id();
+    my $docid   = $doc->GetDocumentID();
     my $docfile = $VAR_CTRL_DIR . "/" . $docid;
     next unless -f $docfile;
     push(@$docfiles, $docfile);
   }
-}  
+}   # }}}
 
 # Main functions of the module
 
@@ -58,9 +58,9 @@ sub GetDocFileList($$) {
 
   Debug("UnregisterDhelp started");
 
-  GetDocFileList(\@documents, \@docfiles);
+  _GetDocFileList(\@documents, \@docfiles);
 
-  ExecuteDhelpParse("-d", \@docfiles);
+  _ExecuteDhelpParse("-d", \@docfiles);
 
   Debug("UnregisterDhelp finished");
 
@@ -81,13 +81,13 @@ sub RegisterDhelp($@) {  # {{{
   Debug("RegisterDhelp started");
   
   if ($register_all) {
-    ExecuteDhelpParse("-r", ());
+    _ExecuteDhelpParse("-r", ());
   }
   else
   {
-    GetDocFileList(\@documents, \@docfiles);
+    _GetDocFileList(\@documents, \@docfiles);
   
-    ExecuteDhelpParse("-a", \@docfiles);
+    _ExecuteDhelpParse("-a", \@docfiles);
   }    
 
   Debug("RegisterDhelp finished");

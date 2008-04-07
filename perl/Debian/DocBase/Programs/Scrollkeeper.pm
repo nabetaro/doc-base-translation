@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 115 2008-03-31 18:16:38Z robert $
+# $Id: Scrollkeeper.pm 129 2008-04-07 18:36:39Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -48,7 +48,7 @@ our @omf_formats = (
 
 our %mapping = (undef=>undef);
 
-sub GetUUID() {
+sub _GetUUID() {
   my ($uuid, $retval);
   UUID::generate($uuid);
   UUID::unparse($uuid, $retval);
@@ -70,23 +70,23 @@ sub RegisterScrollkeeper(@) { # {{{
   foreach my $doc (@documents) {
     my $format_data;
 
-    my $old_omf_file = $doc->get_status('Scrollkeeper-omf-file');
+    my $old_omf_file = $doc->GetStatus('Scrollkeeper-omf-file');
     my $omf_serial_id = undef; 
     my $new_omf_file = undef;
-    my $omf_category = map_docbase_to_scrollkeeper($doc->section());
+    my $omf_category = _MapDocbaseToScrollkeeper($doc->GetSection());
 
     if (defined $omf_category) {
       for my $omf_format (@omf_formats) {
-        $format_data = $doc->format($omf_format);
+        $format_data = $doc->GetFormat($omf_format);
         next unless defined $format_data;
 
         my $file = defined $$format_data{'index'} ? $$format_data{'index'} : $$format_data{'files'};
         next unless -f $file;
 
-        $omf_serial_id = $doc->get_status('Scrollkeeper-sid');
+        $omf_serial_id = $doc->GetStatus('Scrollkeeper-sid');
 #        chomp ($omf_serial_id = `$scrollkeeper_gen_seriesid`) unless defined $omf_serial_id;
-        $omf_serial_id =  GetUUID() unless $omf_serial_id;
-        $new_omf_file  = write_omf_file($doc, $file,$omf_format,$omf_category, $omf_serial_id);
+        $omf_serial_id =  _GetUUID() unless $omf_serial_id;
+        $new_omf_file  = _WriteOmfFile($doc, $file,$omf_format,$omf_category, $omf_serial_id);
         $do_update     = 1;
         last; # register only the first format found
       }
@@ -95,12 +95,12 @@ sub RegisterScrollkeeper(@) { # {{{
     # remove old omf file
     # FIXME: $old_omf_file might be the same file as $new_omf_file even if $old_omf_file ne $new_omf_file
     if (defined $old_omf_file and (not defined $new_omf_file or $old_omf_file ne $new_omf_file)) {
-      remove_omf_file($old_omf_file);
+      _RemoveOmfFile($old_omf_file);
       $do_update = 1;
     }
 
-    $doc->set_status( 'Scrollkeeper-omf-file' => $new_omf_file, 
-                      'Scrollkeeper-sid'      =>  $omf_serial_id);
+    $doc->SetStatus( 'Scrollkeeper-omf-file' => $new_omf_file, 
+                     'Scrollkeeper-sid'      =>  $omf_serial_id);
   }
 
 
@@ -120,11 +120,11 @@ sub RegisterScrollkeeper(@) { # {{{
 
 # arguments: doc-base section
 # returns: scrollkeeper category
-sub map_docbase_to_scrollkeeper($) { # {{{
+sub _MapDocbaseToScrollkeeper($) { # {{{
   return $mapping{lc($_[0])};
 } # }}}
 
-sub remove_omf_file($) { # {{{
+sub _RemoveOmfFile($) { # {{{
   my $omf_file = shift;
   my $omf_dir = dirname($omf_file);
   Debug("Removing scrollkeeper OMF file `$omf_file'");
@@ -145,9 +145,9 @@ sub _HTMLEncode($) { # {{{
   return HTMLEncode($text);
 } # }}}
 
-sub write_omf_file($$$$) { # {{{
+sub _WriteOmfFile($$$$) { # {{{
   my ($doc, $file, $format, $category, $serial_id) = @_;
-  my $docid = $doc->document_id();
+  my $docid = $doc->GetDocumentID();
   my $omf_file = "$omf_locations/$docid/$docid-C.omf";
   my $date;
   my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
@@ -171,11 +171,11 @@ sub write_omf_file($$$$) { # {{{
   print OMF "<omf>\n\t<resource>\n";
 
   #now for the dynamic stuff
-  print OMF "\t\t<creator>".&_HTMLEncode($doc->author())."</creator>\n";
-  print OMF "\t\t<title>".&_HTMLEncode($doc->title())."</title>\n";
+  print OMF "\t\t<creator>".&_HTMLEncode($doc->GetAuthor())."</creator>\n";
+  print OMF "\t\t<title>".&_HTMLEncode($doc->GetTitle())."</title>\n";
   print OMF "\t\t<date>$date</date>\n";
   print OMF "\t\t<subject category=\"$category\"/>\n";
-  print OMF "\t\t<description>".&_HTMLEncode($doc->abstract())."</description>\n";
+  print OMF "\t\t<description>".&_HTMLEncode($doc->GetAbstract())."</description>\n";
   print OMF "\t\t<format $omf_mime_types{$format} />\n";
   print OMF "\t\t<identifier url=\"$file\"/>\n";
   print OMF "\t\t<language code=\"C\"/>\n";

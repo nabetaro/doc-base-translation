@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DB.pm 128 2008-04-07 17:49:48Z robert $
+# $Id: DB.pm 129 2008-04-07 18:36:39Z robert $
 #
 
 package Debian::DocBase::DB;
@@ -29,17 +29,20 @@ sub new { # {{{
 
     };
     bless($self, $class);
-    $self->init();
+    $self->_Init();
     return $self;
 } # }}}
 
-sub init() { # {{{
+sub _Init() { # {{{
   my $self = shift;
-  # read-only access for `install-docs --status' run as non-root user
-  my $flags = (! -f $self->{'FILE'} || -w $self->{'FILE'}) ? (O_CREAT | O_RDWR) : O_RDONLY;
+  # read-only access for `install-docs --status or --dump-db' run as non-root user
+  my $readonly = $> != 0;
+  return if ($readonly && ! -f $self->{'FILE'}); # db not yet exists and can't be created
+    
+  my $flags = (!$readonly) ? (O_CREAT | O_RDWR) : O_RDONLY;
 
   tie %{$self->{'DB'}}, 'MLDBM', $self->{'FILE'}, $flags, 0644
-    or carp "Can't access $self->{'FILE'}: $!\n";
+    or croak "Can't access $self->{'FILE'}: $!\n";
 } # }}}
 
 sub PutData($$$) { # {{{

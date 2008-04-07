@@ -12,6 +12,7 @@ doc-base (0.8.12~1) UNRELEASED; urgency=low
   * postinst preinst: changed not to run triggered until we properly configure
     package
   * add --dump-db option.  
+  * refactor function names in Document.pm, DocBase.pm, Dhelp.p, etc. 
 
  -- Robert Luberda <robert@debian.org>  Sun, 06 Apr 2008 20:48:46 +0200
 

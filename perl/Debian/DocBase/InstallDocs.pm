@@ -2,7 +2,7 @@
 
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 128 2008-04-07 17:49:48Z robert $
+# $Id: InstallDocs.pm 129 2008-04-07 18:36:39Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -69,13 +69,13 @@ sub InstallDocsMain() { # {{{
   croak("Internal error: Unknown mode") unless defined $mode;
 
   if ($mode == $MODE_CHECK) {
-    HandleCheck();
+    _HandleCheck();
   } elsif ($mode == $MODE_STATUS) {
-    HandleStatus();
+    _HandleStatus();
   } elsif ($mode == $MODE_DUMP_DB) {
-    HandleDumpDB();
+    _HandleDumpDB();
   } else {
-    HandleRegistrationAndUnregistation();
+    _HandleRegistrationAndUnregistation();
   }
 
   # don't fail on reregistering docs
@@ -86,7 +86,7 @@ sub InstallDocsMain() { # {{{
 } # }}}
 
 
-sub HandleCheck() { # {{{
+sub _HandleCheck() { # {{{
   foreach my $file (@arguments) {
     if (! -f $file) {
       Error("Can't read doc-base file `$file'");
@@ -104,7 +104,7 @@ sub HandleCheck() { # {{{
   }
 } # }}}
 
-sub HandleStatus() { # {{{
+sub _HandleStatus() { # {{{
   foreach my $docid (@arguments) {
     unless (Debian::DocBase::Document::IsRegistered($docid)) {
       Inform ("Document `$docid' is not registered");
@@ -115,7 +115,7 @@ sub HandleStatus() { # {{{
   }
 } # }}}
 
-sub HandleDumpDB() { # {{{
+sub _HandleDumpDB() { # {{{
   foreach my $arg (@arguments) {
     if ($arg eq "files.db") {
       Debian::DocBase::DB::GetFilesDB()->DumpDB();
@@ -128,7 +128,7 @@ sub HandleDumpDB() { # {{{
   }    
 } # }}}
 
-sub HandleRegistrationAndUnregistation() { # {{{
+sub _HandleRegistrationAndUnregistation() { # {{{
   my @toinstall     = ();       # list of files to install
   my @toremove      = ();       # list of files to remove
   my @toremovedocs  = ();       # list of docs to remove
@@ -169,7 +169,7 @@ sub HandleRegistrationAndUnregistation() { # {{{
 
   foreach my $file (@toremove) {
     my $docfile = Debian::DocBase::DocBaseFile->new($file, PARSE_GETDOCID, $opt_verbose);
-    my $docid   = $docfile->document_id();
+    my $docid   = $docfile->GetDocumentID();
     unless ($docid) {
       Inform ("Ignoring nonregistered file `$file'");
       next;
@@ -188,7 +188,7 @@ sub HandleRegistrationAndUnregistation() { # {{{
     }
     Debug("Trying to install file $file");
     my $docfile = Debian::DocBase::DocBaseFile->new($file, PARSE_FULL, $opt_verbose);
-    my $docid   = $docfile->document_id();
+    my $docid   = $docfile->GetDocumentID();
     next unless defined $docid;
     my $doc     = Debian::DocBase::Document->new($docid);
 
