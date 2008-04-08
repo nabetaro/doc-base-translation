@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 129 2008-04-07 18:36:39Z robert $
+# $Id: DocBaseFile.pm 130 2008-04-07 19:32:36Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -158,7 +158,7 @@ sub _Parse { # {{{
   open($fh, "<", $file) or
     carp "Cannot open control file `$file' for reading: $!";
 
-  $self->{'CTIME'} = (stat _)[$CTIME_FIELDNO];
+  $self->{'CTIME'} = (stat $fh)[$CTIME_FIELDNO];
 
   $self->_ReadControlFile($parseflag, $fh);
 

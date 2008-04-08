@@ -1,20 +1,36 @@
-doc-base (0.8.12~1) UNRELEASED; urgency=low
+doc-base (0.8.12) experimental; urgency=low
 
-  * install-docs.in: add -C, --install-changed arguments.
-  * Add files.db and status.db databases instead of *.status plain text files
-  * SAve list of registed doc-base files together with timestamps in files.db
-  * List is saved even for broken doc-base files not to try to register them
-    on evvery trigger run
-  * InstallDocs.pm: refactor
-  * InstallDocs.pm: print some additional messages to give clue what is done
-  * Depend on libmldbm-perl and build-depend on it and libuuid-perl build test
-    perl -cw
-  * postinst preinst: changed not to run triggered until we properly configure
-    package
-  * add --dump-db option.  
-  * refactor function names in Document.pm, DocBase.pm, Dhelp.p, etc. 
+  * Enhance doc-base dpkg's triggers support. Instead of simply re-registering
+    all available files, install-docs, when triggered, will find out names of
+    removed, changed or added /u/s/doc-base/* files and take appropriate
+    action on them.
 
- -- Robert Luberda <robert@debian.org>  Sun, 06 Apr 2008 20:48:46 +0200
+  * Change format of internal database of registered documents from plain
+    text files to DBM files (managed with GDBM_File and MLDBM):
+    + add new DB.pm module to provide access to database;
+    + move contents of old *.status files to new status.db;
+    + save timestamps and document-ids of registered /u/s/doc-base/* files
+      in a new files.db database;
+    + the timestamps will be saved even for broken doc-base files, that
+      cannot be properly registered;
+    + make necessary changes in our other *.pm to support the new databases.
+
+  * install-docs.in:
+    + add new --install-changed option, which compares contents of the files.db
+      database with contents of /u/s/doc-base dir and registers only changed
+      files; use this option for processing trigger in postinst;
+    + new --dump-db option for debugging our databases;
+    + update POD docs.
+
+  * InstallDocs.pm: print some additional messages to give clue what is
+    actually being done.
+  * DocBaseFile.pm, Document.pm: refactor function names.
+  * debian/control: add dependency on libmldbm-perl and build-dependency on
+    libmldbm-perl and libperl-uuid.
+  * debian/preinst: remove old plain text databases, call dpkg-trigger.
+  * debian/postinst: don't process triggers until our databases exist.
+
+ -- Robert Luberda <robert@debian.org>  Tue, 08 Apr 2008 22:07:06 +0200
 
 doc-base (0.8.11) experimental; urgency=low
 
@@ -23,7 +39,7 @@ doc-base (0.8.11) experimental; urgency=low
     + change postinst to reinstall all docs on trigger activation;
     + install-docs is now no-op if called from other packages' installation
       or removal scripts;
-    + remove obsolete (created by doc-base << 0.8.7) dhelp/scrollkeeper files 
+    + remove obsolete (created by doc-base << 0.8.7) dhelp/scrollkeeper files
       in preinst rather than in postinst.
 
   * Document.pm: remove a perl warning issued on removal doc-base files that
