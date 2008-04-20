@@ -865,9 +865,9 @@ Files: /usr/share/doc/foo/html-sgml/*.html
 Index: /usr/share/doc/foo/html-sgml/index.html
 
 ---status-information---
-Control-Files: "/usr/share/doc-base/foo"
-Scrollkeeper-omf-file: "/var/lib/doc-base/omf/foo/foo-C.omf"
-Scrollkeeper-sid: "99999999-0000-8888-0000-1234567890ab"
+Control-Files: /usr/share/doc-base/foo (changed: Tue Apr  8 23:09:24 2008)
+Scrollkeeper-omf-file: /var/lib/doc-base/omf/foo/foo-C.omf
+Scrollkeeper-sid: 99999999-0000-8888-0000-1234567890ab
 </example>
 <p>
 
@@ -886,17 +886,6 @@ means the documents was not registered to the package.
 <sect>Roadmap for 0.8.* releases<!--{{{-->
 <p>
 <list>
-  <item>
-    <p>
-      Enhance usage of dpkg triggers. We shouldn't reinstall all doc-base files, but 
-      only the changed ones. This would require some tracking of changes in  contens 
-      of <file>/usr/share/doc-base</file> directory.
-    </p>  
-    <p>
-      Update our docs wrt. triggers.
-    </p>  
-  </item>
-
   <item>
     <p>
       Internationalisation and po-debconf support. Unfortunately this
@@ -999,6 +988,6 @@ sgml-declaration:nil
 sgml-local-catalogs:nil
 sgml-local-ecat-files:nil
 End:
-$Id: doc-base.sgml 116 2008-03-31 18:18:43Z robert $
+$Id: doc-base.sgml 133 2008-04-20 14:32:30Z robert $
 vim:ts=2:et:sts=2:sw=2:fdm=marker 
 -->

@@ -1,3 +1,12 @@
+doc-base (0.8.13~) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+  * control: Bump conflict with dwww
+  * -R unregisters by simply removing files
+  * update docs
+
+ -- Robert Luberda <robert@debian.org>  Wed, 09 Apr 2008 08:33:13 +0200
+
 doc-base (0.8.12) experimental; urgency=low
 
   * Enhance doc-base dpkg's triggers support. Instead of simply re-registering

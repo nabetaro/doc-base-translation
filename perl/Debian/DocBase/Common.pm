@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Common.pm 125 2008-04-06 19:20:02Z robert $
+# $Id: Common.pm 133 2008-04-20 14:32:30Z robert $
 
 
 package Debian::DocBase::Common;
@@ -11,7 +11,7 @@ use warnings;
 
 use vars    qw(@ISA @EXPORT);
 @ISA    = qw(Exporter);
-@EXPORT = qw($DATA_DIR $CONTROL_DIR $LOCAL_CONTROL_DIR $VAR_CTRL_DIR  
+@EXPORT = qw($DATA_DIR $CONTROL_DIR $LOCAL_CONTROL_DIR $VAR_CTRL_DIR $OMF_DIR
              $DOCBASE_SECTIONS_MAP $DOCBASE_VALID_SECTIONS_LIST $CTIME_FIELDNO
              $DB_FILES $DB_STATUS
              @SUPPORTED_FORMATS @NEED_INDEX_FORMATS
@@ -35,6 +35,7 @@ our $DOCBASE_VALID_SECTIONS_LIST  = "$CONTROL_DIR/data/section.list";
 our $LOCAL_CONTROL_DIR            = "/etc/doc-base/documents";
 our $VAR_CTRL_DIR                 = "/var/lib/doc-base/documents";
 our $CTIME_FIELDNO                = 10;
+our $OMF_DIR                      = "/var/lib/doc-base/omf";
 
 
 # ---configuration-part---

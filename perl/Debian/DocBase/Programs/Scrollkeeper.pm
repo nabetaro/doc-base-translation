@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 129 2008-04-07 18:36:39Z robert $
+# $Id: Scrollkeeper.pm 133 2008-04-20 14:32:30Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -20,7 +20,6 @@ use File::Basename qw(dirname);
 use UUID;
 
 
-our $omf_locations = "/var/lib/doc-base/omf";
 
 
 our $scrollkeeper_update       = "/usr/bin/scrollkeeper-update";
@@ -48,20 +47,18 @@ our @omf_formats = (
 
 our %mapping = (undef=>undef);
 
-sub _GetUUID() {
+sub _GetUUID() { # {{{
   my ($uuid, $retval);
   UUID::generate($uuid);
   UUID::unparse($uuid, $retval);
   return $retval;
-}
+} # }}}
 
 
 sub RegisterScrollkeeper(@) { # {{{
   my @documents = @_;
   my $do_update = 0;
 
-  $#documents < 0 and return;
-  
   Debug("RegisterScrollkeeper started");
 
   # read in doc-base -> scrollkeeper mappings unless already read
@@ -148,7 +145,7 @@ sub _HTMLEncode($) { # {{{
 sub _WriteOmfFile($$$$) { # {{{
   my ($doc, $file, $format, $category, $serial_id) = @_;
   my $docid = $doc->GetDocumentID();
-  my $omf_file = "$omf_locations/$docid/$docid-C.omf";
+  my $omf_file = "$OMF_DIR/$docid/$docid-C.omf";
   my $date;
   my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
   $year += 1900;
@@ -157,8 +154,8 @@ sub _WriteOmfFile($$$$) { # {{{
   $date = "$year-$mon-$mday";
 
 
-  if (! -d "$omf_locations/$docid") {
-    mkdir("$omf_locations/$docid") or croak "Cannot create dir `$omf_locations/$docid': $!";
+  if (! -d "$OMF_DIR/$docid") {
+    mkdir("$OMF_DIR/$docid") or croak "Cannot create dir `$OMF_DIR/$docid': $!";
   }
 
   &Debug("Writing scrollkeeper OMF file `$omf_file'");

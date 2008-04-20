@@ -2,7 +2,7 @@
 
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 129 2008-04-07 18:36:39Z robert $
+# $Id: InstallDocs.pm 133 2008-04-20 14:32:30Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -24,6 +24,7 @@ use Debian::DocBase::DB;
 use Debian::DocBase::Programs::Dhelp;
 use Debian::DocBase::Programs::Dwww;
 use Debian::DocBase::Programs::Scrollkeeper;
+use File::Path;
 
 
 # constants
@@ -74,6 +75,8 @@ sub InstallDocsMain() { # {{{
     _HandleStatus();
   } elsif ($mode == $MODE_DUMP_DB) {
     _HandleDumpDB();
+  } elsif ($mode == $MODE_REMOVE_ALL) {
+    _HandleRemovalOfAllDocs();
   } else {
     _HandleRegistrationAndUnregistation();
   }
@@ -119,13 +122,13 @@ sub _HandleDumpDB() { # {{{
   foreach my $arg (@arguments) {
     if ($arg eq "files.db") {
       Debian::DocBase::DB::GetFilesDB()->DumpDB();
-    } elsif ($arg eq "status.db") {  
+    } elsif ($arg eq "status.db") {
       Debian::DocBase::DB::GetStatusDB()->DumpDB();
     } else {
       Error("Invalid argument `$arg' passed to --dump-db option");
       exit (1);
     }
-  }    
+  }
 } # }}}
 
 sub _HandleRegistrationAndUnregistation() { # {{{
@@ -139,7 +142,7 @@ sub _HandleRegistrationAndUnregistation() { # {{{
     Debian::DocBase::DocBaseFile::GetChangedDocBaseFiles(\@toremove, \@toinstall);
   }
 
-  elsif ($mode == $MODE_REMOVE_ALL or $mode == $MODE_INSTALL_ALL) {
+  elsif ($mode == $MODE_INSTALL_ALL) {
       @toremovedocs  = Debian::DocBase::Document::GetAllRegisteredDocumentIDs();
       $bshowmsg      = 1;
       @toinstall     = Debian::DocBase::DocBaseFile::GetAllDocBaseFiles() if $mode == $MODE_INSTALL_ALL;
@@ -197,7 +200,7 @@ sub _HandleRegistrationAndUnregistation() { # {{{
 
   my @documents = Debian::DocBase::Document::GetDocumentList();
 
-  UnregisterDhelp(@documents) unless $mode == $MODE_INSTALL_ALL;
+  UnregisterDhelp(@documents) if @documents and $mode != $MODE_INSTALL_ALL;
 
   foreach my $doc (@documents) {
       $doc -> MergeCtrlFiles();
@@ -218,7 +221,7 @@ sub _HandleRegistrationAndUnregistation() { # {{{
     RegisterDhelp($mode == $MODE_INSTALL_ALL, @documents);
     Inform("Registering documents with scrollkeeper...") if $bshowmsg;
     RegisterScrollkeeper(@documents);
-  }     
+  }
 
   undef @toinstall;
   undef @toremove;
@@ -226,5 +229,26 @@ sub _HandleRegistrationAndUnregistation() { # {{{
 
 } # }}}
 
+# Remove all docs simply by deleting our db and other created files
+# 
+sub _HandleRemovalOfAllDocs() { # {{{
+  my $suffix  = ".removed.$$";
+  my @dbdirs  = ($OMF_DIR, $VAR_CTRL_DIR);
+
+  unlink $DB_FILES or croak("Can't remove $DB_FILES: $!") if -f $DB_FILES;
+  foreach my $d (@dbdirs) {
+    next unless -d $d;
+    rename ($d, $d.$suffix) or croak("Can't rename $d to ${d}${suffix}: $!");
+    mkpath ($d, 0, 0755);
+    rmtree ($d.$suffix, 0, 0);
+  }
+  unlink $DB_STATUS or croak("Can't remove $DB_STATUS: $!") if -f $DB_STATUS;
+
+  my @documents = ();
+  RegisterDwww(@documents);
+  RegisterDhelp(1, @documents);
+  RegisterScrollkeeper(@documents);
+
+} # }}}
 
 1;

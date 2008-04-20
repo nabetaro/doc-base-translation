@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 129 2008-04-07 18:36:39Z robert $
+# $Id: Dhelp.pm 133 2008-04-20 14:32:30Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -54,8 +54,6 @@ sub _GetDocFileList($$) { # {{{
   my @documents     = @_;
   my @docfiles      = ();
 
-  $#documents < 0 and return;
-
   Debug("UnregisterDhelp started");
 
   _GetDocFileList(\@documents, \@docfiles);
@@ -76,8 +74,6 @@ sub RegisterDhelp($@) {  # {{{
   my @documents     = @_;
   my @docfiles      = ();
 
-  $#documents < 0 and return;
-
   Debug("RegisterDhelp started");
   
   if ($register_all) {
@@ -87,7 +83,7 @@ sub RegisterDhelp($@) {  # {{{
   {
     _GetDocFileList(\@documents, \@docfiles);
   
-    _ExecuteDhelpParse("-a", \@docfiles);
+    _ExecuteDhelpParse("-a", \@docfiles) if @docfiles;
   }    
 
   Debug("RegisterDhelp finished");

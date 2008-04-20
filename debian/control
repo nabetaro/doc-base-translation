@@ -9,7 +9,7 @@ Build-Depends: debhelper (>= 6)
 Package: doc-base
 Depends: ${perl:Depends}, libuuid-perl, dpkg (>= 1.14.17), libmldbm-perl
 Suggests: dhelp | dwww | doc-central | yelp | khelpcenter, scrollkeeper
-Conflicts: dhelp (<< 0.6.7), dwww (<< 1.9.0)
+Conflicts: dhelp (<< 0.6.7), dwww (<< 1.10.13~)
 Architecture: all
 Description: utilities to manage online documentation
  This package contains utilities to manage documentation installed on
