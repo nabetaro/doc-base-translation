@@ -717,7 +717,7 @@ is provided by two binary packages.
 
 <p>
 For example the <package/foo-text/ package could install the
-<file>/usr/share/doc-base/foo-text_foo</file> file with the following contents:
+<file>/usr/share/doc-base/foo-text</file> file with the following contents:
 
 <example>
 Document: foo
@@ -731,7 +731,7 @@ Files: /usr/share/foo-text/foo.txt.gz
 </example>
 
 and the <package/foo-html/ package could install  the following
-<file>/usr/share/doc-base/foo-html_foo</file> file:
+<file>/usr/share/doc-base/foo-html</file> file:
 
 <example>
 Document: foo
@@ -775,12 +775,18 @@ In order to do this local administrators need to create their own control file
  <file>/etc/doc-base/documents</file> directory, and then register it with
  <example>
 install-docs -i /etc/doc-base/documents/&lt;document-id&gt;
-</example>
+ </example>
 
 Before removing the file, it should be de-registered with
  <example>
-install-docs -i /etc/doc-base/documents/&lt;document-id&gt;
+install-docs -r /etc/doc-base/documents/&lt;document-id&gt;
+ </example>
+
+Since version 0.8.12
+ <example>
+install-docs --install-changed
 </example>
+may be used instead of the two above commands.
 
 </sect1>
 </sect><!--}}}-->
@@ -988,6 +994,6 @@ sgml-declaration:nil
 sgml-local-catalogs:nil
 sgml-local-ecat-files:nil
 End:
-$Id: doc-base.sgml 133 2008-04-20 14:32:30Z robert $
+$Id: doc-base.sgml 134 2008-04-21 21:30:30Z robert $
 vim:ts=2:et:sts=2:sw=2:fdm=marker 
 -->

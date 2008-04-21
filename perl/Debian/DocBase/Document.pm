@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 129 2008-04-07 18:36:39Z robert $
+# $Id: Document.pm 134 2008-04-21 21:30:30Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -10,13 +10,35 @@ use warnings;
 
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
-use Debian::DocBase::DocBaseFile qw(PARSE_FULL PARSE_GETDOCID);
+use Debian::DocBase::DocBaseFile;
 use Debian::DocBase::DB;
 use Carp;
 #use Scalar::Util qw(weaken);
 
 our %DOCUMENTS = ();
 my %section_map = ();
+
+#################################################
+###        PUBLIC STATIC FUNCTIONS            ###
+#################################################
+
+# return list of all proceseed documents
+sub GetDocumentList() { # {{{
+  return values %DOCUMENTS;
+} # }}}
+
+# check if $docid exists in status database
+sub IsRegistered($) { # {{{
+  my $docid = shift;
+  return Debian::DocBase::DB::GetStatusDB()->Exists($docid);
+} # }}}
+
+# return all documents id from status database
+sub GetAllRegisteredDocumentIDs() { # {{{
+  my $db    = Debian::DocBase::DB::GetStatusDB()->GetDB();
+  my @result = sort keys %$db;
+  return @result;
+} # }}}
 
 sub new { # {{{
     my $class      = shift;
@@ -39,11 +61,14 @@ sub new { # {{{
     return $self;
 } # }}}
 
+#################################################
+###            PUBLIC FUNCTIONS               ###
+#################################################
+
 sub DESTROY { # {{{
   my $self = shift;
   delete $DOCUMENTS{$self->GetDocumentID()};
 } # }}}
-
 
 sub GetDocumentID() { # {{{
   my $self = shift;
@@ -53,28 +78,6 @@ sub GetDocumentID() { # {{{
 sub Invalid() { # {{{
   my $self = shift;
   return $self->{'INVALID'};
-} # }}}
-
-# dies with Internal error if document hasn't been merged yet
-sub _CheckMerged($) { # {{{
-  my $self = shift;
-
-  carp "Internal error: Document " . $self->GetDocumentID(). " not yet merged"
-    unless $self->{'MERGED_CTRL_FILES'};
-} # }}}
-
-# returns $fld from $self->{'MAIN_DATA'}
-sub _GetMainFld($$) { # {{{
-  my $self = shift;
-  my $fld  = shift;
-
-  $self->_CheckMerged();
-
-  return "" if $self->Invalid();
-
-  return "" unless $self->{'MAIN_DATA'}->{$fld};
-
-  return $self->{'MAIN_DATA'}->{$fld};
 } # }}}
 
 
@@ -99,8 +102,8 @@ sub GetAuthor() { # {{{
   return $self->_GetMainFld($FLD_AUTHOR);
 }   # }}}
 
-# returns hash with format data (i.e. with FLD_FORMAT, $FLD_INDEX, $FLD_FILES keys) 
-# for $format_name 
+# returns hash with format data (i.e. with FLD_FORMAT, $FLD_INDEX, $FLD_FILES keys)
+# for $format_name
 sub GetFormat($$) { # {{{
   my $self = shift;
   my $format_name = shift;
@@ -109,7 +112,7 @@ sub GetFormat($$) { # {{{
   return $self->{'FORMAT_LIST'}->{$format_name};
 } # }}}
 
-# returns status data for $key 
+# returns status data for $key
 sub GetStatus() { # {{{
   my $self = shift;
   my $key  = shift;
@@ -141,71 +144,6 @@ sub SetStatus($%) { # {{{
                     $self->GetDocumentID() . " not changed");
 }   # }}}
 
-sub _HasControlFiles() { # {{{
-  my $self = shift;
-  return $self->{'CONTROL_FILES'}
-} # }}}
-
-# reads our status file and sets $self->{'STATUS_DICT'} and sets keys of
-# $self->{'CONTROL_FILES'} 
-sub _ReadStatusDB { # {{{
-  my $self        = shift;
-  my $docid       = $self->GetDocumentID();
-  my $data        = Debian::DocBase::DB::GetStatusDB()->GetData($docid);
-
-  if ($data) {
-    my %cf = map { $_ => Debian::DocBase::DocBaseFile->new($_) } keys %{$data->{'CF'}}; 
-    $self->{'CONTROL_FILES'}  = \%cf;
-    $self->{'STATUS_DICT'}    = $data->{'SD'};
-  } else { 
-    $self->{'CONTROL_FILES'} = {};
-    $self->{'STATUS_DICT'}   = {}; 
-  };   
-  $self->{'INVALID'} = 0;
-
-} # }}}
-
-# writes our status file
-sub _WriteStatusDB { # {{{
-  my $self  = shift;
-  my $docid = $self->GetDocumentID();
-
-  if (%{$self->{'CONTROL_FILES'}} or %{$self->{'STATUS_DICT'}}) {
-    my %cf = map { $_ => undef }  keys %{$self->{'CONTROL_FILES'}};
-
-    my $data = { 'CF' => \%cf,                 
-                 'SD' => $self->{'STATUS_DICT'} 
-               };
-   Debian::DocBase::DB::GetStatusDB()->PutData($docid, $data);
-  } else {
-   Debian::DocBase::DB::GetStatusDB()->RemoveData($docid);
-  }  
-} # }}}
-
-
-# if called without any argument, returns array of control files' names 
-# if called with an argument returns string containing names of the control files
-#  joined with value of the argument
-sub _GetControlFileNames($;$) { # {{{
-  my $self      = shift;
-  my $join_str  = shift;
-
-  my @cfnames = sort keys %{$self->{'CONTROL_FILES'}};
-
-  return @cfnames unless ($join_str);
-  return join($join_str, @cfnames);
-} # }}}
-
-# reads and parses all control files mentioned in $self->{'CONTROL_FILES'}
-sub _ParseControlFiles($) { # {{{
-  my $self = shift;
-
-  foreach my $cfname ($self->_GetControlFileNames()) {
-    $self->{'CONTROL_FILES'}->{$cfname} = Debian::DocBase::DocBaseFile->new($cfname, PARSE_FULL)
-      unless $self->{'CONTROL_FILES'}->{$cfname};
-  }
-} # }}}
-
 # displays informations about the document (called by `install-docs -s')
 sub DisplayStatusInformation($) { # {{{
   my $self            = shift;
@@ -228,10 +166,9 @@ sub DisplayStatusInformation($) { # {{{
   }
 
   print "\n---status-information---\n";
-
   foreach my $cf (sort keys %{$self->{'CONTROL_FILES'}} ) {
     print "Control-File: $cf (changed: ". localtime ($self->{'CONTROL_FILES'}->{$cf}->GetLastChangeTime()) . ")\n";
-  }      
+  }
 
   foreach my $key (sort keys %{$self->{'STATUS_DICT'}} ) {
     print "$key: $self->{'STATUS_DICT'}->{$key}\n";
@@ -282,7 +219,7 @@ sub UnregisterAll($) { # {{{
 
   foreach my $doc ( values %{$self->{'CONTROL_FILES'}} ) {
     $doc->OnUnregistered();
-  }  
+  }
 
 
   $self->{'CONTROL_FILES'} = {};
@@ -315,8 +252,6 @@ sub WriteNewCtrlFile() { # {{{
       if $self->{'MAIN_DATA'}->{$fld};
   }
 
-#  print F "Control-Files: " . $self->_GetControlFileNames(' ') . "\n" if $self->_HasControlFiles();
-
   foreach my $format (sort keys %{$self->{'FORMAT_LIST'}}) {
     print F "\n";
     foreach $fld (GetFldKeys($FLDTYPE_FORMAT)) {
@@ -330,36 +265,10 @@ sub WriteNewCtrlFile() { # {{{
   rename $tmpfile, $file or carp "Can't rename $tmpfile to $file: $!";
 } # }}}
 
-sub _MangleSection($) { # {{{
-  my $self      = shift;
-  my $section   = shift;
-
-  ReadMap($DOCBASE_SECTIONS_MAP, \%section_map) unless %section_map;
-
-  $section  = lc $section;
-  $section  =~ s/\s+/ /g;       $section  =~ s/\/+/\//g;
-  $section  =~ s/[\/\s]$//g;    $section  =~ s/^[\/\s]//g;
-  $section  =~ s/\b./\U$&\E/g;
-
-  my @sect_comps = split (/\/+/, $section);
-  my $result     = "";
-
-  while ($#sect_comps > -1) {
-    my $tmp   =  shift(@sect_comps);
-    $result   =  ($result) ? $result . "/" .  $tmp : $tmp;
-
-    $tmp      = lc $result;
-    $result   = $section_map{$tmp} if exists $section_map{$tmp};
-  }
-
-  return $result if $result;
-  return "Unknown";
-} # }}}
-
 # merge contents of all available control files for the document
 #  into $self->{'MAIN_DATA'} and $self->{'FORMAT_LIST'}
 # Fields 'Document' and 'Section' must have the same value in all control files.
-# Value of fields 'Author', 'Abstract', 'Title' is taken from the first control file 
+# Value of fields 'Author', 'Abstract', 'Title' is taken from the first control file
 #  in which the value is not empty.
 # Format sections are joined. It's an error if the same format is defined in more
 #  than one control file.
@@ -391,11 +300,11 @@ sub MergeCtrlFiles($) { # {{{
       my $new_val = $doc_data->GetFldValue($fld);
       if ($new_val) {
         $new_val = $self->_MangleSection($new_val) if $fld eq $FLD_SECTION;
-        
+
         if ($old_val and $old_val ne $new_val and
             ($fld eq $FLD_DOCUMENT or $fld eq $FLD_SECTION)) {
             return Error("Error while merging $doc_id with $doc_fname: inconsistent values of $fld");
-        }            
+        }
         $self->{'MAIN_DATA'}->{$fld} = $new_val unless $old_val;
       }
     }
@@ -418,23 +327,120 @@ sub SaveStatusChanges($) { # {{{
   $self->_WriteStatusDB();
 } # }}}
 
-##### STATIC FUNCTIONS
-# return list of all proceseed documents
-sub GetDocumentList() { # {{{
-  return values %DOCUMENTS;
+#################################################
+###            PRIVATE FUNCTIONS              ###
+#################################################
+
+# dies with Internal error if document hasn't been merged yet
+sub _CheckMerged($) { # {{{
+  my $self = shift;
+
+  croak "Internal error: Document " . $self->GetDocumentID(). " not yet merged"
+    unless $self->{'MERGED_CTRL_FILES'};
 } # }}}
 
-# check if $docid exists in status database
-sub IsRegistered($) { # {{{
-  my $docid = shift;
-  return Debian::DocBase::DB::GetStatusDB()->Exists($docid);
+# returns $fld from $self->{'MAIN_DATA'}
+sub _GetMainFld($$) { # {{{
+  my $self = shift;
+  my $fld  = shift;
+
+  $self->_CheckMerged();
+
+  return "" if $self->Invalid();
+
+  return "" unless $self->{'MAIN_DATA'}->{$fld};
+
+  return $self->{'MAIN_DATA'}->{$fld};
 } # }}}
 
-# return all documents id from status database
-sub GetAllRegisteredDocumentIDs() { # {{{
-  my $db    = Debian::DocBase::DB::GetStatusDB()->GetDB();
-  my @result = sort keys %$db;
-  return @result;
+sub _HasControlFiles() { # {{{
+  my $self = shift;
+  return $self->{'CONTROL_FILES'}
+} # }}}
+
+# reads our status file and sets $self->{'STATUS_DICT'} and sets keys of
+# $self->{'CONTROL_FILES'}
+sub _ReadStatusDB { # {{{
+  my $self        = shift;
+  my $docid       = $self->GetDocumentID();
+  my $data        = Debian::DocBase::DB::GetStatusDB()->GetData($docid);
+
+  if ($data) {
+    my %cf = map { $_ => Debian::DocBase::DocBaseFile->new($_) } keys %{$data->{'CF'}};
+    $self->{'CONTROL_FILES'}  = \%cf;
+    $self->{'STATUS_DICT'}    = $data->{'SD'};
+  } else {
+    $self->{'CONTROL_FILES'} = {};
+    $self->{'STATUS_DICT'}   = {};
+  };
+  $self->{'INVALID'} = 0;
+
+} # }}}
+
+# writes our status file
+sub _WriteStatusDB { # {{{
+  my $self  = shift;
+  my $docid = $self->GetDocumentID();
+
+  if (%{$self->{'CONTROL_FILES'}} or %{$self->{'STATUS_DICT'}}) {
+    my %cf = map { $_ => undef }  keys %{$self->{'CONTROL_FILES'}};
+
+    my $data = { 'CF' => \%cf,
+                 'SD' => $self->{'STATUS_DICT'}
+               };
+   Debian::DocBase::DB::GetStatusDB()->PutData($docid, $data);
+  } else {
+   Debian::DocBase::DB::GetStatusDB()->RemoveData($docid);
+  }
+} # }}}
+
+# if called without any argument, returns array of control files' names
+# if called with an argument returns string containing names of the control files
+#  joined with value of the argument
+sub _GetControlFileNames($;$) { # {{{
+  my $self      = shift;
+  my $join_str  = shift;
+
+  my @cfnames = sort keys %{$self->{'CONTROL_FILES'}};
+
+  return @cfnames unless ($join_str);
+  return join($join_str, @cfnames);
+} # }}}
+
+# reads and parses all control files mentioned in $self->{'CONTROL_FILES'}
+sub _ParseControlFiles($) { # {{{
+  my $self = shift;
+
+  foreach my $cfname ($self->_GetControlFileNames()) {
+    croak "Internal error: $cfname not created\n" unless $self->{'CONTROL_FILES'}->{$cfname};
+    $self->{'CONTROL_FILES'}->{$cfname}->Parse();
+  }
+} # }}}
+
+sub _MangleSection($) { # {{{
+  my $self      = shift;
+  my $section   = shift;
+
+  ReadMap($DOCBASE_SECTIONS_MAP, \%section_map) unless %section_map;
+
+  $section  = lc $section;
+  $section  =~ s/\s+/ /g;       $section  =~ s/\/+/\//g;
+  $section  =~ s/[\/\s]$//g;    $section  =~ s/^[\/\s]//g;
+  $section  =~ s/\b./\U$&\E/g;
+
+  my @sect_comps = split (/\/+/, $section);
+  my $result     = "";
+
+  while ($#sect_comps > -1) {
+    my $tmp   =  shift(@sect_comps);
+    $result   =  ($result) ? $result . "/" .  $tmp : $tmp;
+
+    $tmp      = lc $result;
+    $result   = $section_map{$tmp} if exists $section_map{$tmp};
+  }
+
+  return $result if $result;
+  return "Unknown";
 } # }}}
 
 1;

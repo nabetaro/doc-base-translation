@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: preinst 126 2008-04-06 19:35:30Z robert $
+# $Id: preinst 134 2008-04-21 21:30:30Z robert $
 # preinst for doc-base
 
 # Abort if any command returns an error value
@@ -53,8 +53,6 @@ remove_obsolete() {
 
 if [ "$1" = "upgrade" ] &&  dpkg --compare-versions "$2" lt-nl "0.8.12"; then
 	remove_obsolete
-elif [ "X`which dpkg-trigger`" != "X" ]; then
-	dpkg-trigger /usr/share/doc-base
 fi
 
 

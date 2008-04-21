@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: postinst 126 2008-04-06 19:35:30Z robert $
+# $Id: postinst 134 2008-04-21 21:30:30Z robert $
 # postinst for doc-base
 
 # Abort if any command returns an error value
@@ -23,11 +23,6 @@ reinstall_docs () {
     install-docs ${VERBOSE} "--install-$1"
 }
 
-register_our_docs () {
-    install-docs ${VERBOSE} --install $ctrldir/$package	\
-		  		      $ctrldir/install-docs-man
-}
-
 case "$1" in
   configure)
 
@@ -36,10 +31,8 @@ case "$1" in
 	# version is less than last compatable version, we need to
 	# re-register all the docs
         reinstall_docs all
-#    else
-        # only register our stuff		# registering our docs should be 
-#	register_our_docs			# handled by triggers 
-	
+    else
+	reinstall_docs changed
     fi
     ;;
   triggered)

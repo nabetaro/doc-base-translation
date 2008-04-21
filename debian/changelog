@@ -1,9 +1,17 @@
 doc-base (0.8.13~) UNRELEASED; urgency=low
 
   * NOT RELEASED YET
-  * control: Bump conflict with dwww
-  * -R unregisters by simply removing files
-  * update docs
+  * Remove dpkg-triggers call from prerm and always register changed files
+    in postinst.
+  * InstallDocs.pm: 
+    + change behaviour of `-R' option to unregister doc-base files by removal 
+      of our databases. This could be useful if database gets damaged;
+    + get Document-Id of removed doc-base files from files.db;
+    + show nicer statistics about install-docs actions.
+  * DocBaseFile.pm: remove PARSE_* variables.
+  * doc-base.sgml: minor update, fix typos.
+  * install-docs.in: don't print debugging info about skipping install-docs run.
+  * control: bump conflict with dwww.
 
  -- Robert Luberda <robert@debian.org>  Wed, 09 Apr 2008 08:33:13 +0200
 
