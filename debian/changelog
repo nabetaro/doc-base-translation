@@ -1,6 +1,5 @@
-doc-base (0.8.13~) UNRELEASED; urgency=low
+doc-base (0.8.13) experimental; urgency=low
 
-  * NOT RELEASED YET
   * Remove dpkg-triggers call from prerm and always register changed files
     in postinst.
   * InstallDocs.pm: 
@@ -12,9 +11,9 @@ doc-base (0.8.13~) UNRELEASED; urgency=low
   * doc-base.sgml: minor update, fix typos.
   * install-docs.in: don't print debugging info about skipping install-docs run.
   * control: bump conflict with dwww.
-  * merge changes from  0.8.10.1
+  * Merge changes from  0.8.10.1.
 
- -- Robert Luberda <robert@debian.org>  Wed, 09 Apr 2008 08:33:13 +0200
+ -- Robert Luberda <robert@debian.org>  Wed, 23 Apr 2008 22:46:50 +0200
 
 doc-base (0.8.12) experimental; urgency=low
 
