@@ -2,7 +2,7 @@
 
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 134 2008-04-21 21:30:30Z robert $
+# $Id: InstallDocs.pm 139 2008-04-23 20:42:34Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -176,17 +176,17 @@ sub _HandleRegistrationAndUnregistation() { # {{{
     $msg      .= ($i++ ? ""   : "") . $stats[0] .  " removed" if $stats[0];
     $msg      .= ($i++ ? ", " : "") . $stats[1] .  " changed" if $stats[1];
     $msg      .= ($i++ ? ", " : "") . $stats[2] .  " added"   if $stats[2];
-    Inform("Processing $msg doc-base file(s)") if $msg;
+    Inform("Processing $msg doc-base file(s)...") if $msg;
   }
 
   elsif ($mode == $MODE_INSTALL_ALL) {
     @toremovedocs  = Debian::DocBase::Document::GetAllRegisteredDocumentIDs();
     @toinstall     = Debian::DocBase::DocBaseFile::GetAllDocBaseFiles() if $mode == $MODE_INSTALL_ALL;
-    my @stats      = ($#toremovedocs, $#toinstall);
+    my @stats      = ($#toremovedocs+1, $#toinstall+1);
     my $i          = 0;
     $msg          .=  ($i++ ? "" : "")  .  "De-registering "       . $stats[0] if $stats[0];
     $msg          .=  ($i++ ? ", re-registering "  : "Registering ") . $stats[1] if $stats[1];
-    Inform("$msg doc-base file(s)") if $msg;
+    Inform("$msg doc-base file(s)...") if $msg;
   }
 
   elsif  ($mode == $MODE_INSTALL) {
@@ -252,11 +252,11 @@ sub _HandleRegistrationAndUnregistation() { # {{{
 
   if (@documents)
   {
-    Inform("Registering documents with dwww...") if $msg;
+    Inform("Registering documents with dwww...") if $msg or $opt_verbose;
     RegisterDwww(@documents);
-    Inform("Registering documents with dhelp...") if $msg;
+    Inform("Registering documents with dhelp...") if $msg or $opt_verbose;
     RegisterDhelp($mode == $MODE_INSTALL_ALL, @documents);
-    Inform("Registering documents with scrollkeeper...") if $msg;
+    Inform("Registering documents with scrollkeeper...") if $msg or $opt_verbose;
     RegisterScrollkeeper(@documents);
   }
 
