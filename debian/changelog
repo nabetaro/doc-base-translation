@@ -1,3 +1,10 @@
+doc-base (0.8.10.1) unstable; urgency=high
+
+  * DocBaseFile.pm: workaround Perl crash by decreasing maximum length of
+    line that is checked for non-UTF-8 chars (closes: #477512).
+
+ -- Robert Luberda <robert@debian.org>  Wed, 23 Apr 2008 22:26:54 +0200
+
 doc-base (0.8.10) unstable; urgency=low
 
   * doc-base.sgml:

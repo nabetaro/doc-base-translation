@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 111 2008-02-17 18:56:44Z robert $
+# $Id: DocBaseFile.pm 136 2008-04-23 20:27:01Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -171,7 +171,7 @@ sub _CheckUTF8($$) {
   my ($self, $line, $fld) = @_;
   my $is_utf8_expr= '^(?:[\x{00}-\x{7f}]|[\x{80}-\x{255}]{2,})*$';
 
-  return $line if length($line) > 30000;
+  return $line if length($line) > 512;
 
   if ($line !~ /$is_utf8_expr/o) {
       $self->_prserr(PRS_WARN, "line in field `$fld' seems not to be UTF-8 encoded, recoding");
