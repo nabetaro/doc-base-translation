@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 133 2008-04-20 14:32:30Z robert $
+# $Id: Scrollkeeper.pm 143 2008-04-27 08:07:20Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -23,7 +23,7 @@ use UUID;
 
 
 our $scrollkeeper_update       = "/usr/bin/scrollkeeper-update";
-our $scrollkeeper_gen_seriesid = "/usr/bin/scrollkeeper-gen-seriesid";
+#our $scrollkeeper_gen_seriesid = "/usr/bin/scrollkeeper-gen-seriesid";
 our $scrollkeeper_map_file     = "/usr/share/doc-base/data/scrollkeeper.map";
 
 
@@ -55,9 +55,13 @@ sub _GetUUID() { # {{{
 } # }}}
 
 
-sub RegisterScrollkeeper(@) { # {{{
+sub RegisterScrollkeeper($@) { # {{{
+  my $showinfo  = shift;
   my @documents = @_;
   my $do_update = 0;
+
+  Inform("Registering documents with scrollkeeper...")
+    if $showinfo and $opt_update_menus and -x $scrollkeeper_update;
 
   Debug("RegisterScrollkeeper started");
 
@@ -68,7 +72,7 @@ sub RegisterScrollkeeper(@) { # {{{
     my $format_data;
 
     my $old_omf_file = $doc->GetStatus('Scrollkeeper-omf-file');
-    my $omf_serial_id = undef; 
+    my $omf_serial_id = undef;
     my $new_omf_file = undef;
     my $omf_category = _MapDocbaseToScrollkeeper($doc->GetSection());
 
@@ -96,14 +100,14 @@ sub RegisterScrollkeeper(@) { # {{{
       $do_update = 1;
     }
 
-    $doc->SetStatus( 'Scrollkeeper-omf-file' => $new_omf_file, 
+    $doc->SetStatus( 'Scrollkeeper-omf-file' => $new_omf_file,
                      'Scrollkeeper-sid'      =>  $omf_serial_id);
   }
 
 
   Execute($scrollkeeper_update, '-q') if ($do_update and $opt_update_menus);
 
-  
+
   Debug("RegisterScrollkeeper finished");
 } # }}}
 

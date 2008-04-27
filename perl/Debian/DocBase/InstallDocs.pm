@@ -2,7 +2,7 @@
 
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 139 2008-04-23 20:42:34Z robert $
+# $Id: InstallDocs.pm 143 2008-04-27 08:07:20Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -156,9 +156,9 @@ sub _HandleRemovalOfAllDocs() { # {{{
   unlink $DB_STATUS or croak("Can't remove $DB_STATUS: $!") if -f $DB_STATUS;
 
   my @documents = ();
-  RegisterDwww(@documents);
-  RegisterDhelp(1, @documents);
-  RegisterScrollkeeper(@documents);
+  RegisterDwww(1, @documents);
+  RegisterDhelp(1, 1, @documents);
+  RegisterScrollkeeper(1, @documents);
 
 } # }}}
 
@@ -252,12 +252,11 @@ sub _HandleRegistrationAndUnregistation() { # {{{
 
   if (@documents)
   {
-    Inform("Registering documents with dwww...") if $msg or $opt_verbose;
-    RegisterDwww(@documents);
-    Inform("Registering documents with dhelp...") if $msg or $opt_verbose;
-    RegisterDhelp($mode == $MODE_INSTALL_ALL, @documents);
-    Inform("Registering documents with scrollkeeper...") if $msg or $opt_verbose;
-    RegisterScrollkeeper(@documents);
+    my $showmsg = ($opt_verbose or $msg);
+
+    RegisterDwww($showmsg,          @documents);
+    RegisterDhelp($showmsg,         $mode == $MODE_INSTALL_ALL, @documents);
+    RegisterScrollkeeper($showmsg,  @documents);
   }
 
   undef @toinstall;

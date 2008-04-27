@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 133 2008-04-20 14:32:30Z robert $
+# $Id: Dhelp.pm 143 2008-04-27 08:07:20Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -19,7 +19,7 @@ use Debian::DocBase::Utils;
 
 my $DHELP_PARSE     = "/usr/sbin/dhelp_parse";
 
-# executes `/usr/sbin/dhelp_parse $arg $@dirs' 
+# executes `/usr/sbin/dhelp_parse $arg $@dirs'
 # $arg should be `-d' or `-a' or `-r'
 sub _ExecuteDhelpParse($$) { # {{{
   my $arg   = shift;
@@ -28,7 +28,7 @@ sub _ExecuteDhelpParse($$) { # {{{
   return 0 if $#{$dirs} < 0 and $arg ne '-r';
 
   Execute($DHELP_PARSE, $arg, @$dirs) if ($opt_update_menus);
-  
+
 } # }}}
 
 
@@ -36,7 +36,7 @@ sub _ExecuteDhelpParse($$) { # {{{
 sub _GetDocFileList($$) { # {{{
   my $documents = shift;  # in parameter
   my $docfiles  = shift;  # out parameter
-  
+
   foreach my $doc (@$documents) {
     my $docid   = $doc->GetDocumentID();
     my $docfile = $VAR_CTRL_DIR . "/" . $docid;
@@ -48,9 +48,9 @@ sub _GetDocFileList($$) { # {{{
 # Main functions of the module
 
 # Unregistering documents from dhelp
-# Must be called BEFORE the new contents is written 
+# Must be called BEFORE the new contents is written
 # to /var/lib/doc-base/documents/
- sub UnregisterDhelp(@) {  # {{{
+  sub UnregisterDhelp(@) {  # {{{
   my @documents     = @_;
   my @docfiles      = ();
 
@@ -67,29 +67,37 @@ sub _GetDocFileList($$) { # {{{
 } # }}}
 
 # Registering documents to dhelp
-# Must be called before AFTER new contents is written 
+# Must be called before AFTER new contents is written
 # to /var/lib/doc-base/documents/
-sub RegisterDhelp($@) {  # {{{
+sub RegisterDhelp($$@) {  # {{{
+  my $showinfo      = shift;
   my $register_all  = shift;
   my @documents     = @_;
   my @docfiles      = ();
 
   Debug("RegisterDhelp started");
-  
+
+  if (-x $DHELP_PARSE) {
+    Inform("Registering documents with dhelp...") if $showinfo and $opt_update_menus;
+  } else {
+    Debug("Skipping execution of $DHELP_PARSE - dhelp package doesn't seem to be installed");
+    return;
+  }
+
   if ($register_all) {
     _ExecuteDhelpParse("-r", ());
   }
   else
   {
     _GetDocFileList(\@documents, \@docfiles);
-  
+
     _ExecuteDhelpParse("-a", \@docfiles) if @docfiles;
-  }    
+  }
 
   Debug("RegisterDhelp finished");
 
   undef @docfiles;
 
-} # }}} 
+} # }}}
 
 1;
