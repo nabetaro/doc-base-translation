@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs.in 134 2008-04-21 21:30:30Z robert $
+# $Id: install-docs.in 149 2008-05-13 22:55:52Z robert $
 
 use warnings;
 use strict;
@@ -30,6 +30,8 @@ BEGIN {
                               import Debian::DocBase::Common;
                               require Debian::DocBase::InstallDocs;
                               import Debian::DocBase::InstallDocs;
+                              require Debian::DocBase::Utils;
+                              import Debian::DocBase::Utils;
                               1;
                         };
   warn $@ if $@;

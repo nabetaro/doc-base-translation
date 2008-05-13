@@ -1,3 +1,9 @@
+doc-base (0.8.16) unstable; urgency=medium
+
+  * install-docs.in: Import Debian::DocBase::Utils (closes: #481121).
+
+ -- Robert Luberda <robert@debian.org>  Wed, 14 May 2008 00:55:34 +0200
+
 doc-base (0.8.15) unstable; urgency=medium
 
   * Fix the `--check' option which got broken in 0.8.12.
