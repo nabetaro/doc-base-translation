@@ -2,7 +2,7 @@
 
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 143 2008-04-27 08:07:20Z robert $
+# $Id: InstallDocs.pm 147 2008-05-13 19:42:14Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -105,9 +105,9 @@ sub _HandleCheck() { # {{{
 
     my $docfile = Debian::DocBase::DocBaseFile->new($file, 1);
     $docfile->Parse();
-    if ($docfile->invalid()) {
+    if ($docfile->Invalid()) {
         Inform("$file: Fatal error found, the file won't be registered");
-    } elsif ((my $cnt = $docfile->warn_err_count()) > 0) {
+    } elsif ((my $cnt = $docfile->GetWarnErrCount()) > 0) {
         Inform("$file: $cnt warning(s) or non-fatal error(s) found");
     } else {
         Inform("$file: No problems found");

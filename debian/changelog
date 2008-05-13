@@ -1,3 +1,9 @@
+doc-base (0.8.15) unstable; urgency=medium
+
+  * Fix the `--check' option which got broken in 0.8.12.
+
+ -- Robert Luberda <robert@debian.org>  Tue, 13 May 2008 21:42:08 +0200
+
 doc-base (0.8.14) unstable; urgency=low
 
   * Upload to unstable.
