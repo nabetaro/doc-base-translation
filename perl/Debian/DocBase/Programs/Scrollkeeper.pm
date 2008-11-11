@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 154 2008-11-11 10:14:45Z robert $
+# $Id: Scrollkeeper.pm 157 2008-11-11 13:21:09Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -16,6 +16,7 @@ use vars qw(@ISA @EXPORT);
 use Carp;
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
+use Debian::DocBase::Gettext;
 use File::Basename qw(dirname);
 use UUID;
 
@@ -60,10 +61,10 @@ sub RegisterScrollkeeper($@) { # {{{
   my @documents = @_;
   my $do_update = 0;
 
-  Inform("Registering documents with scrollkeeper...")
+  Inform(_g("Registering documents with %s..."), "scrollkeeper")
     if $showinfo and $opt_update_menus and -x $scrollkeeper_update;
 
-  Debug("RegisterScrollkeeper started");
+  Debug(_g("%s started"), "RegisterScrollkeeper");
 
   # read in doc-base -> scrollkeeper mappings unless already read
   ReadMap($scrollkeeper_map_file, \%mapping);
@@ -108,7 +109,7 @@ sub RegisterScrollkeeper($@) { # {{{
   Execute($scrollkeeper_update, '-q') if ($do_update and $opt_update_menus);
 
 
-  Debug("RegisterScrollkeeper finished");
+  Debug(_g("%s finished"), "RegisterScrollkeeper");
 } # }}}
 
 
@@ -128,13 +129,13 @@ sub _MapDocbaseToScrollkeeper($) { # {{{
 sub _RemoveOmfFile($) { # {{{
   my $omf_file = shift;
   my $omf_dir = dirname($omf_file);
-  Debug("Removing scrollkeeper OMF file `$omf_file'");
-  unlink($omf_file) or return Error ("$omf_file: could not delete file: $!");
+  Debug( _g("Removing scrollkeeper OMF file `%s'"), $omf_file);
+  unlink($omf_file) or return Error( _g("%s: could not delete file: %s"), $omf_file, $!);
 
   #check to see if the directory is now empty. if so, kill it.
   if (opendir(DIR, $omf_dir)) {
     if (defined grep { $_ !~ /^\.\.?$/ } readdir DIR) {
-      rmdir($omf_dir) or Error ("Could not delete directory `$omf_dir': $!");
+      rmdir($omf_dir) or Error( _g("Could not delete directory `%s': %s"), $omf_dir, $!);
     }
     closedir DIR;
   }

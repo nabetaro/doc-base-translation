@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 154 2008-11-11 10:14:45Z robert $
+# $Id: DocBaseFile.pm 157 2008-11-11 13:21:09Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -12,6 +12,7 @@ use warnings;
 use File::Glob ':glob';
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
+use Debian::DocBase::Gettext;
 use Scalar::Util qw(weaken);
 use Carp;
 
@@ -222,21 +223,23 @@ sub Parse { # {{{
 sub _PrsErr($$) { # {{{
   my $self = shift;
   my $flag = shift;
-  my $msg = shift;
-  my $filepos =  "`" . $self->GetSourceFileName()  . ((defined $.) ? "', line $." : "");
+  my $fmt  = shift;
+  my $msg  = sprintf ($fmt, @_);
+  my $filepos = $. ?  sprintf _g("`%s', line %d"), $self->GetSourceFileName(), $. 
+                   :  sprintf _g("`%s'"), $self->GetSourceFileName();
 
 
   $self->{'WARNERR_CNT'}++;
   $self->{'INVALID'} = 1 if $flag != PRS_WARN;
 
   if ($flag == PRS_FATAL_ERR) {
-    Error("Error in $filepos: $msg");
+    Error(_g("Error in %s: %s"), $filepos, $msg);
   } elsif ($flag == PRS_ERR_IGN) {
-    ErrorNF("Error in $filepos: $msg");
+    ErrorNF(_g("Error in %s: %s"), $filepos, $msg);
   } elsif ($flag == PRS_WARN) {
-    Warn("Warning in $filepos: $msg");
+    Warn(_g("Warning in %s: %s"), $filepos, $msg);
   } else {
-    croak ("Internal error: Unknown flag ($flag, $msg)");
+    croak (sprintf _g("Internal error: Unknown flag (%s, %s)"), $flag, $msg);
   }
 
   return undef;
@@ -252,7 +255,7 @@ sub _CheckUTF8($$) { # {{{
   return $line if length($line) > 512;
 
   if ($line !~ /$is_utf8_expr/o) {
-      $self->_PrsErr(PRS_WARN, "line in field `$fld' seems not to be UTF-8 encoded, recoding");
+      $self->_PrsErr(PRS_WARN, _g("line in field `%s' seems not to be UTF-8 encoded, recoding"), $fld);
       utf8::encode($line);
   }
   return $line;
@@ -288,25 +291,25 @@ sub _ReadControlFileSection($$$) { # {{{
     if (/^(\S+)\s*:\s*(.*)$/o) {
       ($origcf, $cf, $v) = ($1, lc $1, $2);
       if (exists $pfields->{$cf}) {
-        $self->_PrsErr(PRS_WARN, "control field `$origcf' already defined");
+        $self->_PrsErr(PRS_WARN, _g("control field `%s' already defined"), $origcf);
         next;
       } elsif (not defined $FIELDS_DEF{$cf}) {
-        $self->_PrsErr(PRS_WARN, "unrecognised control field `$origcf'");
+        $self->_PrsErr(PRS_WARN, _g("unrecognised control field `%s'"), $origcf);
         next;
       } elsif ($FIELDS_DEF{$cf}->{$FLDDEF_TYPE} != $fldstype) {
-        $self->_PrsErr(PRS_WARN, "field `$origcf' in incorrect section (missing empty line before the field?)");
+        $self->_PrsErr(PRS_WARN, _g("field `%s' in incorrect section (missing empty line before the field?)"), $origcf);
         next;
       }
       $pfields->{$cf} = $self->_CheckUTF8($v, $origcf);
 
     } elsif (/^\s+(\S.*)$/o) {
       $v = $&;
-      defined($cf) or return $self->_PrsErr(PRS_FATAL_ERR, "syntax error - no field specified");
-      not defined($FIELDS_DEF{$cf}) or $FIELDS_DEF{$cf}->{$FLDDEF_MULTILINE} or return $self->_PrsErr(PRS_FATAL_ERR, "field `$origcf' can't consist of multi lines");
+      defined($cf) or return $self->_PrsErr(PRS_FATAL_ERR, _g("syntax error - no field specified"));
+      not defined($FIELDS_DEF{$cf}) or $FIELDS_DEF{$cf}->{$FLDDEF_MULTILINE} or return $self->_PrsErr(PRS_FATAL_ERR, _g("field `%s' can't consist of multi lines"), $origcf);
     #print STDERR "$cf -> $v (continued)\n";
       $$pfields{$cf} .= "\n" . $self->_CheckUTF8($v, $origcf);
     } else {
-      return $self->_PrsErr(PRS_FATAL_ERR, "syntax error in control file: $_");
+      return $self->_PrsErr(PRS_FATAL_ERR, _g("syntax error in control file: %s"), $_);
     }
   }
   return $self->_CheckRequiredFields($pfields, $fldstype) unless $empty and $fldstype == $FLDTYPE_FORMAT;
@@ -334,7 +337,7 @@ sub _CheckSection($$) { # {{{
     last unless $section =~ s/\/[^\/]+$//;
   }
 
- $self->_PrsErr(PRS_WARN, "unknown section: `$orig_section'\n");
+ $self->_PrsErr(PRS_WARN, _g("unknown section: `%s'"), $orig_section);
 } # }}}
 
 sub _CheckRequiredFields($$$) { # {{{
@@ -348,7 +351,7 @@ sub _CheckRequiredFields($$$) { # {{{
         and $FIELDS_DEF{$fldname} -> {$FLDDEF_REQUIRED}
         and not exists $pfields->{$fldname}
        ) {
-      return $self -> _PrsErr(PRS_FATAL_ERR, "`" . ucfirst($fldname) . "' value not specified");
+      return $self -> _PrsErr(PRS_FATAL_ERR, _g("value of `%s' not specified"), ucfirst($fldname));
     }
   }
   return 1;
@@ -359,25 +362,25 @@ sub _CheckRequiredFields($$$) { # {{{
 #    sets $docid
 #    sets $doc_data to point to a hash containing the document data
 #    sets @format_list, a list of pointers to hashes containing the format data
-sub _ReadControlFile { # {{{
+ sub _ReadControlFile { # {{{
   my $self      = shift;
   my $fh        = shift;
   my ($tmp, $tmpnam);
 
   # first find doc id
   $_ = <$fh>;
-  return $self->_PrsErr(PRS_FATAL_ERR, "the first line does not contain valid `Document' field")
+  return $self->_PrsErr(PRS_FATAL_ERR, _g("the first line does not contain valid `Document' field"))
     unless defined $_ and /^\s*Document\s*:\s*(\S+)\s*$/i;
   $self->{'MAIN_DATA'} = { $FLD_DOCUMENT => ($tmp = $1) };
-  $self->_PrsErr(PRS_WARN, "invalid value of `Document' field")
+  $self->_PrsErr(PRS_WARN, _g("invalid value of `Document' field"))
     unless $tmp =~ /^[a-z0-9\.\+\-]+$/;
 
   my $doc_data = $self->{'MAIN_DATA'};
   # parse rest of the file
   $self->_ReadControlFileSection($fh, $doc_data, $FLDTYPE_MAIN)
     or return undef;
-  return $self->_PrsErr(PRS_WARN, "unsupported Version: $$doc_data{'version'}") if
-    defined $$doc_data{'version'};
+  return $self->_PrsErr(PRS_WARN, _g("unsupported doc-base file version: %s"), $$doc_data{'version'}) 
+    if defined $$doc_data{'version'};
 
   $self->_CheckSection($doc_data->{$FLD_SECTION}) if $self->{'DO_ADD_CHECKS'};
 
@@ -395,11 +398,11 @@ sub _ReadControlFile { # {{{
     $format =~ tr/A-Z/a-z/;
 
     if (defined $self->{FORMAT_LIST}->{$format}) {
-      return $self->_PrsErr(PRS_ERR_IGN, "format $format already defined");
+      return $self->_PrsErr(PRS_ERR_IGN, _g("format `%s' already defined"), $format);
     }
 
     if (not grep { $_ eq $format } @SUPPORTED_FORMATS) {
-      $self->_PrsErr(PRS_WARN, "format `$$format_data{'format'}' is not supported");
+      $self->_PrsErr(PRS_WARN, _g("format `%s' is not supported"), $$format_data{'format'});
       next;
     }
 
@@ -411,11 +414,11 @@ sub _ReadControlFile { # {{{
 
         # a) does the field exist?
         defined $tmp
-          or return $self->_PrsErr(PRS_FATAL_ERR,"`$tmpnam' value missing for format `$format'");
+          or return $self->_PrsErr(PRS_FATAL_ERR, _g("`%s' value missing for format `%s'"), $tmpnam, $format);
 
         # b) does it start with / ?
         if ($$format_data{'index'} !~ /^\//) {
-          $self->_PrsErr(PRS_WARN, "`$tmpnam' value has to be specified with absolute path: $tmp");
+          $self->_PrsErr(PRS_WARN, _g("`%s' value has to be specified with absolute path: %s"), $tmpnam, $tmp);
           next;
        }
 
@@ -448,8 +451,10 @@ sub _ReadControlFile { # {{{
 
       # c) do files exist ?
       if (not grep { &bsd_glob($opt_rootdir.$_, GLOB_NOSORT) }  @masks) {
-        $self->_PrsErr(PRS_WARN, "file mask `" . join(' ', @masks) . "' does not match any files" .
-                         ($opt_rootdir eq "" ? "" : " (using `$opt_rootdir' as the root directory)"));
+        my $optdirmsg = ($opt_rootdir eq "") ? "" : sprintf ( _g(" (using `%s' as the root directory)"), 
+                                                              $opt_rootdir);
+        $self->_PrsErr(PRS_WARN, _g("file mask `%s' does not match any files") . $optdirmsg, 
+                                  join (" ", @masks));
         next;
       }
     }

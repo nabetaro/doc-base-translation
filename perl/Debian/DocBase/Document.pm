@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 154 2008-11-11 10:14:45Z robert $
+# $Id: Document.pm 157 2008-11-11 13:21:09Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -11,6 +11,7 @@ use warnings;
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
 use Debian::DocBase::DocBaseFile;
+use Debian::DocBase::Gettext;
 use Debian::DocBase::DB;
 use Carp;
 #use Scalar::Util qw(weaken);
@@ -161,7 +162,7 @@ sub DisplayStatusInformation($) { # {{{
       }
       close(F);
     } else {
-      Warn("Cannot open `$var_ctrl_file': $!");
+      Warn( _g("Cannot open `%s': %s"), $var_ctrl_file, $!);
     }
   }
 
@@ -185,14 +186,15 @@ sub Register($$) { # {{{
   if ($db_file->GetDocumentID() ne $self->GetDocumentID()) {
     delete $self->{'CONTROL_FILES'}->{$db_filename};
     $db_file->OnRegistered(0);
-    return Error("Document id in `$db_filename' does not match our document id (" .
-                  $db_file->GetDocumentID() . ' != ' . $self->GetDocumentID() . ")");
+    return Error( _g("Document id in `%s' does not match our document id (%s != %s)"),
+                  $db_filename, $db_file->GetDocumentID(), $self->GetDocumentID()
+                  );
   }
 
   if ($db_file->Invalid()) {
     delete $self->{'CONTROL_FILES'}->{$db_filename};
     $db_file->OnRegistered(0);
-    return Warn($db_file->GetSourceFileName() . " contains errors, not registering");
+    return Warn( _g( "`%s' contains errors, not registering"), $db_file->GetSourceFileName() );
   }
 
   $db_file->OnRegistered(1);
@@ -204,10 +206,10 @@ sub Unregister($$) { # {{{
   my $db_file       = shift;
   my $db_filename   = $db_file->GetSourceFileName();
 
-  unless (exists $self->{'CONTROL_FILES'}->{$db_filename}) {
+  unless exists ($self->{'CONTROL_FILES'}->{$db_filename}) {
     # remove any file data from our existing files database if it's there
     Debian::DocBase::DB::GetFilesDB()->RemoveData($db_filename);
-    return Warn( "File `" . $db_filename . "' is not registered, cannot remove");
+    return Warn( _g("File `%s' is not registered, cannot remove") , $db_filename)
   }
 
   $self->{'CONTROL_FILES'}->{$db_filename}->OnUnregistered();
@@ -306,7 +308,8 @@ sub MergeCtrlFiles($) { # {{{
 
         if ($old_val and $old_val ne $new_val and
             ($fld eq $FLD_DOCUMENT or $fld eq $FLD_SECTION)) {
-            return Error("Error while merging $doc_id with $doc_fname: inconsistent values of $fld");
+            return Error( _g("Error while merging %s with %s: inconsistent values of %s"),
+                          $doc_id, $doc_fname, $fld);
         }
         $self->{'MAIN_DATA'}->{$fld} = $new_val unless $old_val;
       }
@@ -314,7 +317,8 @@ sub MergeCtrlFiles($) { # {{{
 
     # merge formats
     foreach my $format ($doc_data->GetFormatNames()) {
-      return Error("Error while merging $doc_id with $doc_fname: format $format already defined") if $self->{'FORMAT_LIST'}->{$format};
+      return Error( _g("Error while merging %s with %s: format %s already defined"),
+                          $doc_id, $doc_fname, $format) if $self->{'FORMAT_LIST'}->{$format};
       $self->{'FORMAT_LIST'}->{$format} = $doc_data->GetFormat($format);
     }
   }

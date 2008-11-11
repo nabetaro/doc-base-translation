@@ -2,7 +2,7 @@
 
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 147 2008-05-13 19:42:14Z robert $
+# $Id: InstallDocs.pm 152 2008-07-12 06:35:10Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -24,6 +24,7 @@ use Debian::DocBase::DB;
 use Debian::DocBase::Programs::Dhelp;
 use Debian::DocBase::Programs::Dwww;
 use Debian::DocBase::Programs::Scrollkeeper;
+use Debian::DocBase::Gettext;
 use File::Path;
 
 
@@ -55,7 +56,9 @@ sub SetMode($@) { # {{{
 
   $mode = $newmode;
 
-  Inform("Value of --rootdir option ignored") if ($mode != $MODE_CHECK) and ($opt_rootdir ne "");
+  Inform(_g("Value of the `%s' option ignored"), "--rootdir") 
+    if ($mode != $MODE_CHECK) and ($opt_rootdir ne "");
+  $opt_rootdir = "" if ($mode != $MODE_CHECK);
 
   if ($#args == 0 and $args[0] eq '-') {
     # get list from stdin
@@ -99,18 +102,18 @@ sub InstallDocsMain() { # {{{
 sub _HandleCheck() { # {{{
   foreach my $file (@arguments) {
     if (! -f $file) {
-      Error("Can't read doc-base file `$file'");
+      Error(_g("Can't read doc-base file `%s'"), $file);
       next;
     }
 
     my $docfile = Debian::DocBase::DocBaseFile->new($file, 1);
     $docfile->Parse();
     if ($docfile->Invalid()) {
-        Inform("$file: Fatal error found, the file won't be registered");
+        Inform(_g("%s: Fatal error found, the file won't be registered"), $file);
     } elsif ((my $cnt = $docfile->GetWarnErrCount()) > 0) {
-        Inform("$file: $cnt warning(s) or non-fatal error(s) found");
+        Inform(_g("%s: %d warning(s) or non-fatal error(s) found"), $file, $cnt);
     } else {
-        Inform("$file: No problems found");
+        Inform(_g("%s: No problems found"), $file);
     }
   }
 } # }}}
@@ -119,13 +122,13 @@ sub _HandleCheck() { # {{{
 sub _HandleStatus() { # {{{
   foreach my $docid (@arguments) {
     unless (Debian::DocBase::Document::IsRegistered($docid)) {
-      Inform ("Document `$docid' is not registered");
+      Inform (_g("Document `%s' is not registered"), $docid);
       next;
     }
     my $doc = Debian::DocBase::Document->new($docid);
     $doc -> DisplayStatusInformation();
   }
-} # }}}
+} # }}} 
 
 # Dump our databases
 sub _HandleDumpDB() { # {{{
@@ -135,11 +138,11 @@ sub _HandleDumpDB() { # {{{
     } elsif ($arg eq "status.db") {
       Debian::DocBase::DB::GetStatusDB()->DumpDB();
     } else {
-      Error("Invalid argument `$arg' passed to --dump-db option");
+      Error(_g("Invalid argument `%s' passed to the `%s' option"), $arg, "--dump-db");
       exit (1);
     }
   }
-} # }}}
+} # }}} 
 
 # Remove all docs simply by deleting our db and other created files
 sub _HandleRemovalOfAllDocs() { # {{{
@@ -172,21 +175,29 @@ sub _HandleRegistrationAndUnregistation() { # {{{
   if ($mode == $MODE_INSTALL_CHANGED) {
     my @stats = Debian::DocBase::DocBaseFile::GetChangedDocBaseFiles(\@toremove, \@toinstall);
 
-    my $i      = 0;
-    $msg      .= ($i++ ? ""   : "") . $stats[0] .  " removed" if $stats[0];
-    $msg      .= ($i++ ? ", " : "") . $stats[1] .  " changed" if $stats[1];
-    $msg      .= ($i++ ? ", " : "") . $stats[2] .  " added"   if $stats[2];
-    Inform("Processing $msg doc-base file(s)...") if $msg;
+    $msg      .=  _ng("%d removed", "%d removed", $stats[0]) if $stats[0];
+    $msg      .= " " if $msg and $stats[1];
+    $msg      .=  _ng("%d changed", "%d changed", $stats[1]) if $stats[1];
+    $msg      .= " " if $msg and $stats[2];
+    $msg      .=  _ng("%d added",   "%d added",   $stats[2]) if $stats[2];
+    $msg       = sprintf $msg, grep { $_ != 0 } @stats if $msg;
+    Inform(_g("Processing %s doc-base file(s)..."), $msg) if $msg;
   }
 
   elsif ($mode == $MODE_INSTALL_ALL) {
     @toremovedocs  = Debian::DocBase::Document::GetAllRegisteredDocumentIDs();
     @toinstall     = Debian::DocBase::DocBaseFile::GetAllDocBaseFiles() if $mode == $MODE_INSTALL_ALL;
     my @stats      = ($#toremovedocs+1, $#toinstall+1);
-    my $i          = 0;
-    $msg          .=  ($i++ ? "" : "")  .  "De-registering "       . $stats[0] if $stats[0];
-    $msg          .=  ($i++ ? ", re-registering "  : "Registering ") . $stats[1] if $stats[1];
-    Inform("$msg doc-base file(s)...") if $msg;
+
+    if ($stats[0] and $stats[1]) {
+      Inform(_g("De-registering %d, re-registering %d doc-base files"), $stats[0], $stats[1]);
+    } elsif ($stats[0]) {   
+      Inform(_ng("De-registering %d doc-base file",
+                 "De-registering %d doc-base files", $stats[0]), $stats[0]);
+   } elsif ($stats[1]) {
+      Inform(_ng("Registering %d doc-base file",
+                 "Registering %d doc-base files", $stats[1]), $stats[1]);
+   }
   }
 
   elsif  ($mode == $MODE_INSTALL) {
@@ -201,10 +212,10 @@ sub _HandleRegistrationAndUnregistation() { # {{{
 
   foreach my $docid (@toremovedocs) {
     unless (Debian::DocBase::Document::IsRegistered($docid)) {
-      Inform ("Ignoring nonregistered document `$docid'");
+      Inform (_g("Ignoring nonregistered document `%s'"), $docid);
       next;
     }
-    Debug("Trying to remove document $docid");
+    Debug(_g("Trying to remove document `%s'"), $docid);
     my $doc   = Debian::DocBase::Document->new($docid);
     $doc->UnregisterAll();
   }
@@ -212,7 +223,7 @@ sub _HandleRegistrationAndUnregistation() { # {{{
   foreach my $file (@toremove) {
     my $docid   = Debian::DocBase::DocBaseFile::GetDocIdFromRegisteredFile($file);
     unless ($docid) {
-      Inform ("Ignoring nonregistered file `$file'");
+      Inform (_g("Ignoring nonregistered file `%s'"), $file);
       next;
     }
     my $docfile = Debian::DocBase::DocBaseFile->new($file);
@@ -222,7 +233,7 @@ sub _HandleRegistrationAndUnregistation() { # {{{
 
   foreach my $file (@toinstall) {
     unless (-f $file) {
-      Error("Can't read doc-base file `$file'");
+      Error(_g("Can't read doc-base file `%s'"), $file);
       next;
     }
     Debug("Trying to install file $file");

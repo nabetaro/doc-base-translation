@@ -1,6 +1,6 @@
 # vim:ts=2
 # makefile for doc-base
-# $Id: Makefile 125 2008-04-06 19:20:02Z robert $
+# $Id: Makefile 152 2008-07-12 06:35:10Z robert $
 #
 # determine our version number
 DEB_VERSION     := $(shell LC_ALL=C dpkg-parsechangelog | grep ^Version: | sed 's/^Version: *//')
@@ -9,13 +9,17 @@ DEB_DATE        := $(shell dpkg-parsechangelog | sed -n 's/^Date: *//p')
 DATE_EN         := $(shell LC_ALL=C     date --date="$(DEB_DATE)" '+%d %B, %Y')
 
 bdir            := build
+MOFILES				  := $(sort $(patsubst po/%.po,$(bdir)/%.mo,$(wildcard po/*.po)))
+
 sdir            := $(CURDIR)
 generated       := $(bdir)/install-docs \
                    $(bdir)/install-docs.8 \
                    $(bdir)/install-docs.html \
                    $(bdir)/doc-base.txt \
                    $(bdir)/doc-base.html/index.html \
-                   $(bdir)/section.list
+                   $(bdir)/section.list \
+									 $(MOFILES)
+
 
 
 # build abstraction
@@ -34,6 +38,7 @@ perldir         := $(prefix)/share/perl5/Debian/DocBase
 docdir          := $(prefix)/share/doc/doc-base
 libdir          := /var/lib/doc-base
 omfdir          := $(prefix)/share/omf
+nlsdir					:= $(prefix)/share/locale
 
 
 
@@ -166,4 +171,27 @@ install: $(generated)
 	$(install_dir)                            $(DESTDIR)$(docdir)/doc-base.html
 	$(install_file) $(bdir)/doc-base.html/*   $(DESTDIR)$(docdir)/doc-base.html
 
-.PHONY: install clean all
+	set -e; \
+	for file in $(MOFILES) ; do \
+		dir=$(DESTDIR)$(nlsdir)/`basename $$file .mo`/LC_MESSAGES; \
+		$(install_dir)													$$dir; \
+		$(install_file) $$file 									$$dir/doc-base.mo ; \
+	done
+
+# NLS support
+po/doc-base.pot: $(sort $(wildcard perl/Debian/DocBase/*.pm perl/Debian/DocBase/Programs/*.pm install-docs.in))
+	xgettext -L perl -o $@ -k -k_g -k_ng:1,2 --msgid-bugs-address="doc-base@packages.debian.org" $^
+
+po/%.po: po/doc-base.pot
+	msgmerge $@ $< > $@.new
+	mv $@.new $@
+
+update-po: $(wildcard po/*.po)
+
+
+$(bdir)/%.mo: po/%.po
+	msgfmt  -o $@ $<
+
+
+.PHONY: install clean all update-po
+.force: po/doc-base.pot 

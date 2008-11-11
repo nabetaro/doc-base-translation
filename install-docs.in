@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs.in 149 2008-05-13 22:55:52Z robert $
+# $Id: install-docs.in 152 2008-07-12 06:35:10Z robert $
 
 use warnings;
 use strict;
@@ -25,13 +25,15 @@ BEGIN {
   }
   $fully_functional = eval {
                               require Pod::Usage;
-                              import Pod::Usage qw(pod2usage);
+                              import  Pod::Usage qw(pod2usage);
                               require Debian::DocBase::Common;
-                              import Debian::DocBase::Common;
+                              import  Debian::DocBase::Common;
                               require Debian::DocBase::InstallDocs;
-                              import Debian::DocBase::InstallDocs;
+                              import  Debian::DocBase::InstallDocs;
                               require Debian::DocBase::Utils;
-                              import Debian::DocBase::Utils;
+                              import  Debian::DocBase::Utils;
+                              require Debian::DocBase::Gettext;
+                              import  Debian::DocBase::Gettext;
                               1;
                         };
   warn $@ if $@;
@@ -80,19 +82,34 @@ description of the control file syntax and grammar.
 =over 4
 
 =cut
+sub _CheckArgCount($$) {
+  my ($cnt, $option) = @_;
+  ++$cnt;
 
-sub CheckFunctionality(;$) { # {{{
+  if ($option eq "install-all" or$option eq "install-changed" or $option eq "remove-all") {
+    die sprintf _g("Too many arguments for `%s'"), $option unless $cnt == 0;
+  } 
+  elsif ($option eq "dump-db") {
+    die sprintf _g("`%s' requires exactly one argument"), $option unless $cnt == 1;
+  }
+  else {
+    die sprintf _g("Arguments missing for %s"), $option if $cnt == 0;
+  }    
+}
+   
+
+ sub CheckFunctionality(;$) { # {{{
   return; #LINE_REMOVED_BY_MAKE#
   my $dont_force_reg = shift;
   if (not $fully_functional) {
     open F, "> $force_reregister_flagfile"
-      or die "Cannot create $force_reregister_flagfile: $!\n";
+      or die sprintf _g("Cannot create %s: %s\n"), $force_reregister_flagfile, $!;
     print F "x";
     close F;
     exit 0;
   }
   if (!$dont_force_reg && -e $force_reregister_flagfile) {
-    Inform("Force re-registation of all documents");
+    Inform( _g("Re-registation of all documents forced by %s"), $force_reregister_flagfile);
     SetMode($MODE_INSTALL_ALL);
     unlink ($force_reregister_flagfile);
     return 1;
@@ -122,7 +139,7 @@ Operate verbosely.
 
 =cut
     $opt_verbose = 1;
-    next;  # }}}
+     next;  # }}} 
 
    } elsif (($arg eq '-d') or ($arg eq '--debug')) { # {{{
 
@@ -132,7 +149,7 @@ Print some debugging informations.
 
 =cut
     $opt_debug = 1;
-    next;  # }}}
+    next;  # }}} 
 
    } elsif ($arg eq '--no-update-menus') { # {{{
 
@@ -143,9 +160,9 @@ and L<scrollkeeper-update(8)>.
 
 =cut
     $opt_update_menus = 0;
-    next; # }}}
+    next; # }}} 
 
-   } elsif ($arg eq '--rootdir') { # {{{
+   } elsif ($arg  eq '--rootdir') { # {{{
 
 =item B<--rootdir> I<dir>
 
@@ -153,9 +170,9 @@ Set the root directory to I<dir> instead of `I</>'. Useful and valid only with
 the B<--check> action.
 
 =cut
-    ($#ARGV == -1) and die "Arguments missing for `rootdir'";
+    _CheckArgCount($#ARGV, "rootdir");
     $arg = shift @ARGV;
-    -d $arg or die "`$arg' does not exist or is not a directory";
+    -d $arg or die sprintf _g("`%s' does not exist or is not a directory"), $arg;
     ($opt_rootdir = $arg) =~ s/\/+$//;
     next; # }}}
 
@@ -182,7 +199,7 @@ arguments is read from the standard input (each file name or document id in sepa
 
 =cut
 
-   } elsif (($arg eq '-i') or ($arg eq '--install')) { # {{{
+   } elsif (($arg eq '-i') or ($arg eq '--install')) { # {{{ 
 
 =item B<-i> I<file> [I<file> ...],  B<--install> I<file> [I<file> ...]
 
@@ -190,7 +207,7 @@ Install the documentation described by the control file I<file>.
 
 =cut
     # install new docs
-    ($#ARGV == -1) and die "Arguments missing for `install'";
+    _CheckArgCount($#ARGV, "install");
     SetMode($MODE_INSTALL, @ARGV) unless CheckFunctionality();
     last; # }}}
 
@@ -203,7 +220,7 @@ I<file>.
 
 =cut
     # remove old docs #
-    ($#ARGV == -1) and die "Arguments missing for `remove'";
+    _CheckArgCount($#ARGV, "remove");
     SetMode($MODE_REMOVE, @ARGV) unless CheckFunctionality();
     last; # }}}
 
@@ -217,18 +234,18 @@ If I<--rootdir> was also given, its argument will be prepended to names of the f
 given if the `Files' and `Index' fields of the I<file>.
 
 =cut
-    ($#ARGV == -1) and die "Arguments missing for `check'";
+    _CheckArgCount($#ARGV, "check");
     SetMode($MODE_CHECK, @ARGV);
     last; # }}}
 
-  } elsif (($arg eq '-R') or ($arg eq '--remove-all')) { # {{{
+   } elsif (($arg eq '-R') or ($arg eq '--remove-all')) { # {{{
 
 =item B<-R>,  B<--remove-all>
 
 De-register all registered documents.
 
 =cut
-    ($#ARGV == -1) or die "Too many arguments missing for `remove-all'";
+    _CheckArgCount($#ARGV, "remove-all");
     CheckFunctionality(1);
     SetMode($MODE_REMOVE_ALL);
     last; # }}}
@@ -240,7 +257,7 @@ De-register all registered documents.
 (Re)register all documents from F</usr/share/doc-base> and F</etc/doc-base/documents>.
 
 =cut
-    ($#ARGV == -1) or die "Too many arguments for `install-all'";
+    _CheckArgCount($#ARGV, "install-all");
     CheckFunctionality(1);
     SetMode($MODE_INSTALL_ALL);
     last; # }}}
@@ -254,7 +271,7 @@ with registered documents database and de-register any files that are missing an
 (re)register only changed or new files.
 
 =cut
-    ($#ARGV == -1) or die "Too many arguments for `install-changed'";
+    _CheckArgCount($#ARGV, "install-changed");
     SetMode($MODE_INSTALL_CHANGED) unless CheckFunctionality();
     last; # }}}
 
@@ -265,7 +282,7 @@ with registered documents database and de-register any files that are missing an
 Display the status of the document identifier I<docid>.
 
 =cut
-    ($#ARGV == -1) and die "Arguments missing for `status'";
+    _CheckArgCount($#ARGV, "status");
     SetMode($MODE_STATUS, @ARGV);
     last; # }}}
 
@@ -276,7 +293,7 @@ Display the status of the document identifier I<docid>.
 Deprecated option. Does nothing.
 
 =cut
-    warn "Ignoring deprecated command line argument: $arg\n";
+    warn sprintf _g("Ignoring deprecated command line argument: %s\n"), $arg;
     exit 0;
  # }}}
 
@@ -288,7 +305,7 @@ Dumps contents of internal databases, for debugging purposes. I<dbname> can be e
 B<status.db>.
 
 =cut
-    ($#ARGV == 0) or die "`dump-db' requires exactly one argument";
+    _CheckArgCount($#ARGV, "dump-db");
     SetMode($MODE_DUMP_DB, @ARGV);
     last # }}}
 

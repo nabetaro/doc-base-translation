@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: postinst 154 2008-11-11 10:14:45Z robert $
+# $Id: postinst 157 2008-11-11 13:21:09Z robert $
 # postinst for doc-base
 
 # Abort if any command returns an error value

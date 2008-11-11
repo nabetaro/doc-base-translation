@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 143 2008-04-27 08:07:20Z robert $
+# $Id: Dhelp.pm 151 2008-05-22 12:46:05Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -16,6 +16,7 @@ use vars qw(@ISA @EXPORT);
 use Carp;
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
+use Debian::DocBase::Gettext;
 
 my $DHELP_PARSE     = "/usr/sbin/dhelp_parse";
 
@@ -75,12 +76,12 @@ sub RegisterDhelp($$@) {  # {{{
   my @documents     = @_;
   my @docfiles      = ();
 
-  Debug("RegisterDhelp started");
+  Debug(_g("%s started"), "RegisterDhelp");
 
   if (-x $DHELP_PARSE) {
-    Inform("Registering documents with dhelp...") if $showinfo and $opt_update_menus;
+    Inform(_g("Registering documents with %s..."), "dhelp") if $showinfo and $opt_update_menus;
   } else {
-    Debug("Skipping execution of $DHELP_PARSE - dhelp package doesn't seem to be installed");
+    Debug(_g("Skipping execution of %s - %s package doesn't seem to be installed"), $DHELP_PARSE, "dhelp");
     return;
   }
 
@@ -94,7 +95,7 @@ sub RegisterDhelp($$@) {  # {{{
     _ExecuteDhelpParse("-a", \@docfiles) if @docfiles;
   }
 
-  Debug("RegisterDhelp finished");
+  Debug(_g("%s finished"), "RegisterDhelp");
 
   undef @docfiles;
 

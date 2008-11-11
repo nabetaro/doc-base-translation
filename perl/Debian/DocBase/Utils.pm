@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Utils.pm 111 2008-02-17 18:56:44Z robert $
+# $Id: Utils.pm 151 2008-05-22 12:46:05Z robert $
 #
 
 package Debian::DocBase::Utils;
@@ -68,26 +68,26 @@ sub Execute(@) { # {{{
 } # }}}
 
 
-sub Debug($) { # {{{
-  print STDOUT (join ' ', @_ ) . "\n" if $opt_debug;
+sub Debug(@) { # {{{
+  printf STDOUT  ((shift) . "\n", @_) if $opt_debug;
 } # }}}
 
-sub Inform($) { # {{{
-  print STDOUT (join ' ', @_) . "\n";
+sub Inform(@) { # {{{
+  printf STDOUT ((shift) . "\n", @_);
 } # }}}
 
-sub Warn($) { # {{{
-  print STDERR (join ' ', @_) . "\n" if $opt_verbose;
-} # }}}
+sub Warn(@) { # {{{
+  printf STDERR ((shift) . "\n", @_) if $opt_verbose;
+} # }}} 
 
-sub Error($) { # {{{
-  print STDERR (join ' ', @_) . "\n";
+sub Error(@) { # {{{ 
+  printf STDERR ((shift) . "\n", @_);
   $exitval = 1;
 } # }}}
 
 # non-fatal error
-sub ErrorNF($) { # {{{
-  print STDERR (join ' ', @_) . "\n";
+sub ErrorNF(@) { # {{{ 
+  printf STDERR ((shift) . "\n", @_);
 } # }}}
 
 { # IgnoreSignals, RestoreSignals # {{{
