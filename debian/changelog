@@ -9,8 +9,9 @@ doc-base (0.8.17) unstable; urgency=low
   * Document.pm: remove doc-base file entry from files.db database even
     if the relevant document is not registered.
   * Scrollkeeper.pm: fix dates in generated omf files.
+  * Standards-Version: 3.8.0 (no changes). 
 
- -- Robert Luberda <robert@debian.org>  Tue, 11 Nov 2008 11:11:01 +0100
+ -- Robert Luberda <robert@debian.org>  Tue, 11 Nov 2008 11:19:02 +0100
 
 doc-base (0.8.16) unstable; urgency=medium
 
