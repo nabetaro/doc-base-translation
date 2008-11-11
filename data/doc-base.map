@@ -67,6 +67,12 @@ Windowmanagers                      : Window Managers
 Windowmanager                       : Window Managers
 X11/Window Managers                 : Window Managers
 
+### Self-mappings to get correct case of characters in section names
+Help/FAQ                            : Help/FAQ
+Help/RFC                            : Help/RFC
+Help/HOWTO                          : Help/HOWTO
+TV and Radio                        : TV and Radio
+
 ### Invalid sections (not defined in menu section hierarchy)
 
 Net                                 : Network

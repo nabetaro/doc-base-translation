@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 139 2008-04-23 20:42:34Z robert $
+# $Id: DocBaseFile.pm 154 2008-11-11 10:14:45Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -46,7 +46,7 @@ sub GetAllDocBaseFiles() { # {{{
   if (opendir(DIR, $LOCAL_CONTROL_DIR)) {
     @local = grep { $_ = "$LOCAL_CONTROL_DIR/$_"
                        if $_ ne "README"
-                          and $_ !~ /\.(bak|swp|~)$/o
+                          and $_ !~ /\.(bak|swp|dpkg-tmp|dpkg-new|dpkg-old|~)$/o
                           and -f "$LOCAL_CONTROL_DIR/$_" } readdir(DIR);
     closedir DIR;
   }

@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 143 2008-04-27 08:07:20Z robert $
+# $Id: Scrollkeeper.pm 154 2008-11-11 10:14:45Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -153,6 +153,7 @@ sub _WriteOmfFile($$$$) { # {{{
   my $date;
   my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
   $year += 1900;
+  $mon++;
   if ($mday <10) {$mday = "0$mday";}
   if ($mon <10) {$mon = "0$mon";}
   $date = "$year-$mon-$mday";

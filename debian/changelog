@@ -1,3 +1,17 @@
+doc-base (0.8.17) unstable; urgency=low
+
+  * doc-base.map: add a few self-mappings to prevent install-docs from
+    incorrectly changing case of characters in sections like Help/HOWTO
+    (without such a mapping the section name is turned into Help/Howto).
+  * postinst: re-register all docs for the above change to be propagated.
+  * DocBaseFile.pm: ignore dpkg temporary files while interating through
+    /usr/share/doc-base dir contents.
+  * Document.pm: remove doc-base file entry from files.db database even
+    if the relevant document is not registered.
+  * Scrollkeeper.pm: fix dates in generated omf files.
+
+ -- Robert Luberda <robert@debian.org>  Tue, 11 Nov 2008 11:11:01 +0100
+
 doc-base (0.8.16) unstable; urgency=medium
 
   * install-docs.in: Import Debian::DocBase::Utils (closes: #481121).

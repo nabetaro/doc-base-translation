@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 134 2008-04-21 21:30:30Z robert $
+# $Id: Document.pm 154 2008-11-11 10:14:45Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -204,8 +204,11 @@ sub Unregister($$) { # {{{
   my $db_file       = shift;
   my $db_filename   = $db_file->GetSourceFileName();
 
-  return Warn("File `" . $db_filename . "' is not registered, cannot remove")
-    unless exists ($self->{'CONTROL_FILES'}->{$db_filename});
+  unless (exists $self->{'CONTROL_FILES'}->{$db_filename}) {
+    # remove any file data from our existing files database if it's there
+    Debian::DocBase::DB::GetFilesDB()->RemoveData($db_filename);
+    return Warn( "File `" . $db_filename . "' is not registered, cannot remove");
+  }
 
   $self->{'CONTROL_FILES'}->{$db_filename}->OnUnregistered();
   delete $self->{'CONTROL_FILES'}->{$db_filename};
