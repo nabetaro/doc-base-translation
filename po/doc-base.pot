@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2008-05-22 15:46+0200\n"
+"POT-Creation-Date: 2008-11-11 14:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,170 +17,180 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: install-docs.in:87
+#: install-docs.in:90
 #, perl-format
 msgid "Too many arguments for `%s'"
 msgstr ""
 
-#: install-docs.in:90
+#: install-docs.in:93
 #, perl-format
 msgid "`%s' requires exactly one argument"
 msgstr ""
 
-#: install-docs.in:93
+#: install-docs.in:96
 #, perl-format
 msgid "Arguments missing for %s"
 msgstr ""
 
-#: install-docs.in:103
+#: install-docs.in:106
 #, perl-format
 msgid "Cannot create %s: %s\n"
 msgstr ""
 
-#: install-docs.in:109
+#: install-docs.in:112
 #, perl-format
 msgid "Re-registation of all documents forced by %s"
 msgstr ""
 
-#: install-docs.in:172
+#: install-docs.in:175
 #, perl-format
 msgid "`%s' does not exist or is not a directory"
 msgstr ""
 
-#: install-docs.in:293
+#: install-docs.in:296
 #, perl-format
 msgid "Ignoring deprecated command line argument: %s\n"
 msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:227
+#: perl/Debian/DocBase/DocBaseFile.pm:228
 #, perl-format
 msgid "`%s', line %d"
 msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:228
+#: perl/Debian/DocBase/DocBaseFile.pm:229
 #, perl-format
 msgid "`%s'"
 msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:235
-#: perl/Debian/DocBase/DocBaseFile.pm:237
+#: perl/Debian/DocBase/DocBaseFile.pm:236
+#: perl/Debian/DocBase/DocBaseFile.pm:238
 #, perl-format
 msgid "Error in %s: %s"
 msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:239
+#: perl/Debian/DocBase/DocBaseFile.pm:240
 #, perl-format
 msgid "Warning in %s: %s"
 msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:241
+#: perl/Debian/DocBase/DocBaseFile.pm:242
 #, perl-format
 msgid "Internal error: Unknown flag (%s, %s)"
 msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:257
+#: perl/Debian/DocBase/DocBaseFile.pm:258
 #, perl-format
 msgid "line in field `%s' seems not to be UTF-8 encoded, recoding"
 msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:293
+#: perl/Debian/DocBase/DocBaseFile.pm:294
 #, perl-format
 msgid "control field `%s' already defined"
 msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:296
+#: perl/Debian/DocBase/DocBaseFile.pm:297
 #, perl-format
 msgid "unrecognised control field `%s'"
 msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:299
+#: perl/Debian/DocBase/DocBaseFile.pm:300
 #, perl-format
 msgid "field `%s' in incorrect section (missing empty line before the field?)"
 msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:306
+#: perl/Debian/DocBase/DocBaseFile.pm:307
 msgid "syntax error - no field specified"
 msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:307
+#: perl/Debian/DocBase/DocBaseFile.pm:308
 #, perl-format
 msgid "field `%s' can't consist of multi lines"
 msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:311
+#: perl/Debian/DocBase/DocBaseFile.pm:312
 #, perl-format
 msgid "syntax error in control file: %s"
 msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:339
+#: perl/Debian/DocBase/DocBaseFile.pm:340
 #, perl-format
 msgid "unknown section: `%s'"
 msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:353
+#: perl/Debian/DocBase/DocBaseFile.pm:354
 #, perl-format
 msgid "value of `%s' not specified"
 msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:371
+#: perl/Debian/DocBase/DocBaseFile.pm:372
 msgid "the first line does not contain valid `Document' field"
 msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:374
+#: perl/Debian/DocBase/DocBaseFile.pm:375
 msgid "invalid value of `Document' field"
 msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:381
+#: perl/Debian/DocBase/DocBaseFile.pm:382
 #, perl-format
 msgid "unsupported doc-base file version: %s"
 msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:400
+#: perl/Debian/DocBase/DocBaseFile.pm:401
 #, perl-format
 msgid "format `%s' already defined"
 msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:404
+#: perl/Debian/DocBase/DocBaseFile.pm:405
 #, perl-format
 msgid "format `%s' is not supported"
 msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:416
+#: perl/Debian/DocBase/DocBaseFile.pm:417
 #, perl-format
 msgid "`%s' value missing for format `%s'"
 msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:420
+#: perl/Debian/DocBase/DocBaseFile.pm:421
 #, perl-format
 msgid "`%s' value has to be specified with absolute path: %s"
 msgstr ""
 
-#: perl/Debian/DocBase/Document.pm:164
+#: perl/Debian/DocBase/DocBaseFile.pm:454
+#, perl-format
+msgid " (using `%s' as the root directory)"
+msgstr ""
+
+#: perl/Debian/DocBase/DocBaseFile.pm:456
+#, perl-format
+msgid "file mask `%s' does not match any files"
+msgstr ""
+
+#: perl/Debian/DocBase/Document.pm:165
 #, perl-format
 msgid "Cannot open `%s': %s"
 msgstr ""
 
-#: perl/Debian/DocBase/Document.pm:188
+#: perl/Debian/DocBase/Document.pm:189
 #, perl-format
 msgid "Document id in `%s' does not match our document id (%s != %s)"
 msgstr ""
 
-#: perl/Debian/DocBase/Document.pm:196
+#: perl/Debian/DocBase/Document.pm:197
 #, perl-format
 msgid "`%s' contains errors, not registering"
 msgstr ""
 
-#: perl/Debian/DocBase/Document.pm:208
+#: perl/Debian/DocBase/Document.pm:212
 #, perl-format
 msgid "File `%s' is not registered, cannot remove"
 msgstr ""
 
-#: perl/Debian/DocBase/Document.pm:307
+#: perl/Debian/DocBase/Document.pm:311
 #, perl-format
 msgid "Error while merging %s with %s: inconsistent values of %s"
 msgstr ""
 
-#: perl/Debian/DocBase/Document.pm:316
+#: perl/Debian/DocBase/Document.pm:320
 #, perl-format
 msgid "Error while merging %s with %s: format %s already defined"
 msgstr ""
