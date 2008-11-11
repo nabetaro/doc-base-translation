@@ -1,6 +1,8 @@
 doc-base (0.9.0~) UNRELEASED; urgency=low
 
   * NOT RELEASED YET
+  * Extend scrollkeeper.map (closes: #497272). Many thanks to Deng Xiyue for 
+    the patch.
   * Make doc-base messages translatable (closes:  #479011).
   * Add Polish translation of the messages.
 
