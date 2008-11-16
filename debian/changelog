@@ -8,6 +8,14 @@ doc-base (0.9.0~) UNRELEASED; urgency=low
 
  -- Robert Luberda <robert@debian.org>  Sun, 27 Apr 2008 14:12:18 +0200
 
+doc-base (0.8.18) unstable; urgency=medium
+
+  * install-docs.in: include $opt_rootdir in used vars not to fail when
+    Perl is in unusable state (closes: #501874). In such a case install-docs
+    should try to recover on next invokation (see entry for version 0.8.4)
+
+ -- Robert Luberda <robert@debian.org>  Sun, 16 Nov 2008 22:34:09 +0100
+
 doc-base (0.8.17) unstable; urgency=low
 
   * doc-base.map: add a few self-mappings to prevent install-docs from

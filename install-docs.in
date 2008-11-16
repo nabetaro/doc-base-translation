@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs.in 152 2008-07-12 06:35:10Z robert $
+# $Id: install-docs.in 164 2008-11-16 21:48:12Z robert $
 
 use warnings;
 use strict;
@@ -9,7 +9,7 @@ use lib 'perl'; #LINE_REMOVED_BY_MAKE#
 
 
 # declared in Debian::DocBase::InstallDocs;
-use vars qw($fully_functional $opt_verbose $opt_debug $opt_update_menus $exitval
+use vars qw($fully_functional $opt_verbose $opt_debug $opt_update_menus $opt_rootdir $exitval
             $MODE_INSTALL $MODE_REMOVE $MODE_REMOVE_ALL $MODE_INSTALL_ALL
             $MODE_DUMP_DB $MODE_INSTALL_CHANGED
             $MODE_STATUS $MODE_CHECK);
