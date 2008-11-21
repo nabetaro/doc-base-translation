@@ -1,6 +1,6 @@
 # vim:ts=2
 # makefile for doc-base
-# $Id: Makefile 152 2008-07-12 06:35:10Z robert $
+# $Id: Makefile 166 2009-01-03 22:26:44Z robert $
 #
 # determine our version number
 DEB_VERSION     := $(shell LC_ALL=C dpkg-parsechangelog | grep ^Version: | sed 's/^Version: *//')
@@ -42,12 +42,12 @@ nlsdir					:= $(prefix)/share/locale
 
 
 
-all: $(generated)
+all: $(generated) update-pod-po
 
 
 $(bdir):
 	@echo; echo "*** Creating $@:"
-	mkdir -p $@
+	mkdir -p $@/man
 
 $(bdir)/doc-base.sgml: doc-base.sgml | $(bdir)
 	@echo; echo "*** Creating $@:"
@@ -118,7 +118,7 @@ clean:
 	rm -f `find . -name "*~"`
 
 
-install: $(generated)
+install: $(generated) update-pod-po
 	@echo; echo "*** Installing script and perl libraries:"
 	$(install_dir)                           $(DESTDIR)$(sbindir)
 	$(install_script) $(bdir)/install-docs   $(DESTDIR)$(sbindir)
@@ -178,20 +178,50 @@ install: $(generated)
 		$(install_file) $$file 									$$dir/doc-base.mo ; \
 	done
 
+define pochanged
+	set -x; \
+  [ ! -e $(1) ] && rename=1 || rename=0	;	\
+	if [ $$rename = 0 ] ; then		\
+		diff=`diff -q  -I'POT-Creation-Date:' -I'PO-Revision-Date:' $(1) $(2)`; \
+		[ -z "$$diff" ] || rename=1	; \
+	fi; \
+	[ $$rename = 1 ] && mv -f $(2) $(1) || rm -f $(2); 
+  touch $(1) 
+endef
+
 # NLS support
-po/doc-base.pot: $(sort $(wildcard perl/Debian/DocBase/*.pm perl/Debian/DocBase/Programs/*.pm install-docs.in))
-	xgettext -L perl -o $@ -k -k_g -k_ng:1,2 --msgid-bugs-address="doc-base@packages.debian.org" $^
-
-po/%.po: po/doc-base.pot
-	msgmerge $@ $< > $@.new
-	mv $@.new $@
-
-update-po: $(wildcard po/*.po)
+po/bin/doc-base.pot: $(sort $(wildcard perl/Debian/DocBase/*.pm perl/Debian/DocBase/Programs/*.pm install-docs.in))
+	xgettext -L perl -o $@.new -k -k_g -k_ng:1,2 --msgid-bugs-address="doc-base@packages.debian.org" $^
+	$(call pochanged,$@,$@.new)
 
 
-$(bdir)/%.mo: po/%.po
+po/bin/%.po: po/bin/doc-base.pot
+	msgmerge --previous $@ $< > $@.new
+	$(call pochanged,$@,$@.new)
+
+update-bin-po: $(wildcard po/bin/*.po)
+
+update-pod-po:
+	po4a --package-name doc-base \
+		   --package-version $(DEB_VERSION) \
+			 --msgid-bugs-address "Robert Luberda <robert@debian.org>" \
+			 --previous \
+ 			 -k0 -v --variable srcdir=. --variable builddir=$(bdir)/man  po/pod/po4a.cfg
+	for file in $(bdir)/man/*.pod; do \
+	  (echo "=encoding utf8"; echo "=cut"; cat $$file) | \
+		pod2man --utf8 --section=8 --center="Debian Utilities"   \
+	  	--release="doc-base v$(DEB_VERSION)"            \
+	  	--date="$(DATE_EN)"                             \
+			--name="INSTALL-DOCS"														\
+	  > $(bdir)/man/`basename $$file .pod`;								\
+	done
+		
+
+
+
+$(bdir)/%.mo: po/bin/%.po
 	msgfmt  -o $@ $<
 
 
-.PHONY: install clean all update-po
-.force: po/doc-base.pot 
+.PHONY: install clean all update-bin-po
+.force: po/bin/doc-base.pot 

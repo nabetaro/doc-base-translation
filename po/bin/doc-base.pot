@@ -1,340 +1,334 @@
-# translation of pl.po to Polish
+# SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-# Robert Luberda <robert@debian.org>, 2008.
+#, fuzzy
 msgid ""
-msgstr "Project-Id-Version: doc-base 0.9.0\n"
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2008-11-11 14:57+0100\n"
-"PO-Revision-Date: 2008-11-11 15:01+0100\n"
-"Last-Translator: Robert Luberda <robert@debian.org>\n"
-"Language-Team: Polish <debian-l10n-polish@lists.debian.org>\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 ||"
-" n%100>=20) ? 1 : 2);\n"
+"POT-Creation-Date: 2008-11-26 22:14+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: install-docs.in:90
+#: install-docs.in:92
 #, perl-format
 msgid "Too many arguments for `%s'"
-msgstr "Zbyt wiele argumentów dla \"%s\""
+msgstr ""
 
-#: install-docs.in:93
+#: install-docs.in:95
 #, perl-format
 msgid "`%s' requires exactly one argument"
-msgstr "\"%s\" wymaga podania dokładnie jednego argumentu"
+msgstr ""
 
-#: install-docs.in:96
+#: install-docs.in:98
 #, perl-format
 msgid "Arguments missing for %s"
-msgstr "Nie podano argumentów dla \"%s\""
+msgstr ""
 
-#: install-docs.in:106
+#: install-docs.in:108
 #, perl-format
 msgid "Cannot create %s: %s\n"
-msgstr "Nie można utworzyć %s: %s\n"
+msgstr ""
 
-#: install-docs.in:112
+#: install-docs.in:114
 #, perl-format
 msgid "Re-registation of all documents forced by %s"
-msgstr "Ponowne rejestrowanie wszystkich dokumentów wymuszone przez %s"
+msgstr ""
 
-#: install-docs.in:175
+#: install-docs.in:177
 #, perl-format
 msgid "`%s' does not exist or is not a directory"
-msgstr "\"%s\" nie istnieje lub nie jest katalogiem"
+msgstr ""
 
-#: install-docs.in:296
+#: install-docs.in:298
 #, perl-format
 msgid "Ignoring deprecated command line argument: %s\n"
-msgstr "Ignorowanie przestarzałego argumentu linii poleceń: %s\n"
-
-#: perl/Debian/DocBase/DocBaseFile.pm:228
-#, perl-format
-msgid "`%s', line %d"
-msgstr "\"%s\", linia %d"
+msgstr ""
 
 #: perl/Debian/DocBase/DocBaseFile.pm:229
 #, perl-format
-msgid "`%s'"
-msgstr "\"%s\""
+msgid "`%s', line %d"
+msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:236
-#: perl/Debian/DocBase/DocBaseFile.pm:238
+#: perl/Debian/DocBase/DocBaseFile.pm:230
+#, perl-format
+msgid "`%s'"
+msgstr ""
+
+#: perl/Debian/DocBase/DocBaseFile.pm:237
+#: perl/Debian/DocBase/DocBaseFile.pm:239
 #, perl-format
 msgid "Error in %s: %s"
-msgstr "Błąd w %s: %s"
+msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:240
+#: perl/Debian/DocBase/DocBaseFile.pm:241
 #, perl-format
 msgid "Warning in %s: %s"
-msgstr "Ostrzeżenie w %s: %s"
+msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:242
+#: perl/Debian/DocBase/DocBaseFile.pm:243
 #, perl-format
 msgid "Internal error: Unknown flag (%s, %s)"
-msgstr "Błąd wewnętrzny: Nieznana flaga (%s, %s)"
+msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:258
+#: perl/Debian/DocBase/DocBaseFile.pm:259
 #, perl-format
 msgid "line in field `%s' seems not to be UTF-8 encoded, recoding"
-msgstr "linia w polu \"%s\" nie jest kodowana w UTF-8, przekodowywanie"
+msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:294
+#: perl/Debian/DocBase/DocBaseFile.pm:295
 #, perl-format
 msgid "control field `%s' already defined"
-msgstr "pole kontrolne \"%s\" jest już zdefiniowane"
+msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:297
+#: perl/Debian/DocBase/DocBaseFile.pm:298
 #, perl-format
 msgid "unrecognised control field `%s'"
-msgstr "nierozpoznane pole kontrolne \"%s\""
+msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:300
+#: perl/Debian/DocBase/DocBaseFile.pm:301
 #, perl-format
 msgid "field `%s' in incorrect section (missing empty line before the field?)"
 msgstr ""
-"niepoprawna sekcja pole \"%s\" (brak znaku nowej linii przed tym polem?)"
-
-#: perl/Debian/DocBase/DocBaseFile.pm:307
-msgid "syntax error - no field specified"
-msgstr "błąd składni - nie podano pola"
 
 #: perl/Debian/DocBase/DocBaseFile.pm:308
+msgid "syntax error - no field specified"
+msgstr ""
+
+#: perl/Debian/DocBase/DocBaseFile.pm:309
 #, perl-format
 msgid "field `%s' can't consist of multi lines"
-msgstr "pole \"%s\" nie może składać się z wielu linii"
+msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:312
+#: perl/Debian/DocBase/DocBaseFile.pm:313
 #, perl-format
 msgid "syntax error in control file: %s"
-msgstr "błąd składni w pliku kontrolnym: %s"
+msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:340
+#: perl/Debian/DocBase/DocBaseFile.pm:341
 #, perl-format
 msgid "unknown section: `%s'"
-msgstr "nieznana sekcja \"%s\""
+msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:354
+#: perl/Debian/DocBase/DocBaseFile.pm:355
 #, perl-format
 msgid "value of `%s' not specified"
-msgstr "nie określono wartości \"%s\""
+msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:372
+#: perl/Debian/DocBase/DocBaseFile.pm:373
 msgid "the first line does not contain valid `Document' field"
-msgstr "pierwsza linia nie zawiera poprawnego pola \"Document\""
+msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:375
+#: perl/Debian/DocBase/DocBaseFile.pm:376
 msgid "invalid value of `Document' field"
-msgstr "niepoprawna wartość pola \"Document\""
+msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:382
+#: perl/Debian/DocBase/DocBaseFile.pm:383
 #, perl-format
 msgid "unsupported doc-base file version: %s"
-msgstr "nieobsługiwana wersja pliku doc-base: %s"
+msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:401
+#: perl/Debian/DocBase/DocBaseFile.pm:402
 #, perl-format
 msgid "format `%s' already defined"
-msgstr "format \"%s\" już został zdefiniowany"
+msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:405
+#: perl/Debian/DocBase/DocBaseFile.pm:406
 #, perl-format
 msgid "format `%s' is not supported"
-msgstr "format \"%s\" nie jest obsługiwany"
+msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:417
+#: perl/Debian/DocBase/DocBaseFile.pm:418
 #, perl-format
 msgid "`%s' value missing for format `%s'"
-msgstr "brak wartości pola \"%s\" dla formatu \"%s\""
+msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:421
+#: perl/Debian/DocBase/DocBaseFile.pm:422
 #, perl-format
 msgid "`%s' value has to be specified with absolute path: %s"
-msgstr "wartość pola \"%s\" musi być podana jako pełna ścieżka: %s"
+msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:454
+#: perl/Debian/DocBase/DocBaseFile.pm:455
 #, perl-format
 msgid " (using `%s' as the root directory)"
-msgstr " (używanie \"%s\" jako korzenia drzewa katalogów)"
+msgstr ""
 
-#: perl/Debian/DocBase/DocBaseFile.pm:456
+#: perl/Debian/DocBase/DocBaseFile.pm:457
 #, perl-format
 msgid "file mask `%s' does not match any files"
-msgstr "maska plików \"%s\" nie pasuje do żadnego pliku"
+msgstr ""
 
 #: perl/Debian/DocBase/Document.pm:165
 #, perl-format
 msgid "Cannot open `%s': %s"
-msgstr "Nie można otworzyć \"%s\": %s"
+msgstr ""
 
 #: perl/Debian/DocBase/Document.pm:189
 #, perl-format
 msgid "Document id in `%s' does not match our document id (%s != %s)"
-msgstr "Id dokumentu w \"%s\" nie pasuje do id naszego dokumentu (%s != %s)"
+msgstr ""
 
 #: perl/Debian/DocBase/Document.pm:197
 #, perl-format
 msgid "`%s' contains errors, not registering"
-msgstr "\"%s\" zawiera błędy, nie zostanie zarejestrowany"
+msgstr ""
 
 #: perl/Debian/DocBase/Document.pm:212
 #, perl-format
 msgid "File `%s' is not registered, cannot remove"
-msgstr "Plik \"%s\" nie jest zarejestrowany, nie można go usunąć"
+msgstr ""
 
 #: perl/Debian/DocBase/Document.pm:311
 #, perl-format
 msgid "Error while merging %s with %s: inconsistent values of %s"
-msgstr "Błąd scalania %s z %s: niespójne wartości %s"
+msgstr ""
 
 #: perl/Debian/DocBase/Document.pm:320
 #, perl-format
 msgid "Error while merging %s with %s: format %s already defined"
-msgstr "Błąd scalania %s z %s: format %s już jest zdefiniowany"
+msgstr ""
 
 #: perl/Debian/DocBase/InstallDocs.pm:59
 #, perl-format
 msgid "Value of the `%s' option ignored"
-msgstr "Ignorowanie wartości opcji \"%s\""
+msgstr ""
 
 #: perl/Debian/DocBase/InstallDocs.pm:105
 #: perl/Debian/DocBase/InstallDocs.pm:236
 #, perl-format
 msgid "Can't read doc-base file `%s'"
-msgstr "Nie można odczytać pliku doc-base \"%s\""
+msgstr ""
 
 #: perl/Debian/DocBase/InstallDocs.pm:112
 #, perl-format
 msgid "%s: Fatal error found, the file won't be registered"
-msgstr "%s: Znaleziono błąd krytyczny, plik nie zostanie zarejestrowany"
+msgstr ""
 
 #: perl/Debian/DocBase/InstallDocs.pm:114
 #, perl-format
 msgid "%s: %d warning(s) or non-fatal error(s) found"
-msgstr "%s: Wykryto %s ostrzeżeń lub błędów niekrytycznych"
+msgstr ""
 
 #: perl/Debian/DocBase/InstallDocs.pm:116
 #, perl-format
 msgid "%s: No problems found"
-msgstr "%s: Nie znaleziono żadnych problemów"
+msgstr ""
 
 #: perl/Debian/DocBase/InstallDocs.pm:125
 #, perl-format
 msgid "Document `%s' is not registered"
-msgstr "Dokument \"%s\" nie jest zarejestrowany"
+msgstr ""
 
 #: perl/Debian/DocBase/InstallDocs.pm:141
 #, perl-format
 msgid "Invalid argument `%s' passed to the `%s' option"
-msgstr "Niepoprawny argument \"%s\" opcji \"%s\""
+msgstr ""
 
 #: perl/Debian/DocBase/InstallDocs.pm:178
 #, perl-format
 msgid "%d removed"
 msgid_plural "%d removed"
-msgstr[0] "%d usuniętego"
-msgstr[1] "%d usuniętych"
-msgstr[2] "%d usuniętych"
+msgstr[0] ""
+msgstr[1] ""
 
 #: perl/Debian/DocBase/InstallDocs.pm:180
 #, perl-format
 msgid "%d changed"
 msgid_plural "%d changed"
-msgstr[0] "%d zmienionego"
-msgstr[1] "%d zmienionych"
-msgstr[2] "%d zmienionych"
+msgstr[0] ""
+msgstr[1] ""
 
 #: perl/Debian/DocBase/InstallDocs.pm:182
 #, perl-format
 msgid "%d added"
 msgid_plural "%d added"
-msgstr[0] "%d dodanego"
-msgstr[1] "%d dodanych"
-msgstr[2] "%d dodanych"
+msgstr[0] ""
+msgstr[1] ""
 
 #: perl/Debian/DocBase/InstallDocs.pm:184
 #, perl-format
 msgid "Processing %s doc-base file(s)..."
-msgstr "Przetwarzanie %s pliku/plików doc-base..."
+msgstr ""
 
 #: perl/Debian/DocBase/InstallDocs.pm:193
 #, perl-format
 msgid "De-registering %d, re-registering %d doc-base files"
-msgstr "Wyrejestrowywanie %d, ponowne rejestrowanie %d plików doc-base"
+msgstr ""
 
 #: perl/Debian/DocBase/InstallDocs.pm:195
 #, perl-format
 msgid "De-registering %d doc-base file"
 msgid_plural "De-registering %d doc-base files"
-msgstr[0] "Wyrejestrowywanie %d pliku doc-base"
-msgstr[1] "Wyrejestrowywanie %d plików doc-base"
-msgstr[2] "Wyrejestrowywanie %d plików doc-base"
+msgstr[0] ""
+msgstr[1] ""
 
 #: perl/Debian/DocBase/InstallDocs.pm:198
 #, perl-format
 msgid "Registering %d doc-base file"
 msgid_plural "Registering %d doc-base files"
-msgstr[0] "Rejestrowanie %d pliku doc-base"
-msgstr[1] "Rejestrowanie %d plików doc-base"
-msgstr[2] "Rejestrowanie %d plików doc-base"
+msgstr[0] ""
+msgstr[1] ""
 
 #: perl/Debian/DocBase/InstallDocs.pm:215
 #, perl-format
 msgid "Ignoring nonregistered document `%s'"
-msgstr "Ignorowanie niezarejestrowanego dokumentu \"%s\""
+msgstr ""
 
 #: perl/Debian/DocBase/InstallDocs.pm:218
 #, perl-format
 msgid "Trying to remove document `%s'"
-msgstr "Próba usunięca dokumentu \"%s\""
+msgstr ""
 
 #: perl/Debian/DocBase/InstallDocs.pm:226
 #, perl-format
 msgid "Ignoring nonregistered file `%s'"
-msgstr "Ignorowanie niezarejestrowanego pliku \"%s\""
+msgstr ""
 
 #: perl/Debian/DocBase/Programs/Dhelp.pm:79
 #: perl/Debian/DocBase/Programs/Dwww.pm:27
 #: perl/Debian/DocBase/Programs/Scrollkeeper.pm:67
 #, perl-format
 msgid "%s started"
-msgstr "%s uruchomione"
+msgstr ""
 
 #: perl/Debian/DocBase/Programs/Dhelp.pm:82
 #: perl/Debian/DocBase/Programs/Dwww.pm:30
 #: perl/Debian/DocBase/Programs/Scrollkeeper.pm:64
 #, perl-format
 msgid "Registering documents with %s..."
-msgstr "Rejestrowanie dokumentów w %s..."
+msgstr ""
 
 #: perl/Debian/DocBase/Programs/Dhelp.pm:84
 #: perl/Debian/DocBase/Programs/Dwww.pm:33
 #, perl-format
 msgid "Skipping execution of %s - %s package doesn't seem to be installed"
-msgstr "Pomijanie uruchamiania %s - pakiet %s nie jest zainstalowany"
+msgstr ""
 
 #: perl/Debian/DocBase/Programs/Dhelp.pm:98
 #: perl/Debian/DocBase/Programs/Dwww.pm:35
 #: perl/Debian/DocBase/Programs/Scrollkeeper.pm:112
 #, perl-format
 msgid "%s finished"
-msgstr "%s zakończone"
+msgstr ""
 
 #: perl/Debian/DocBase/Programs/Scrollkeeper.pm:132
 #, perl-format
 msgid "Removing scrollkeeper OMF file `%s'"
-msgstr "Usuwanie pliku OMF scrollkeepera \"%s\""
+msgstr ""
 
 #: perl/Debian/DocBase/Programs/Scrollkeeper.pm:133
 #, perl-format
 msgid "%s: could not delete file: %s"
-msgstr "%s: nie można usunąć pliku: %s"
+msgstr ""
 
 #: perl/Debian/DocBase/Programs/Scrollkeeper.pm:138
 #, perl-format
 msgid "Could not delete directory `%s': %s"
-msgstr "Nie można usunąć katalogu \"%s\": %s"
-
+msgstr ""

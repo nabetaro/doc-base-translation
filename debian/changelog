@@ -5,6 +5,7 @@ doc-base (0.9.0~) UNRELEASED; urgency=low
     the patch.
   * Make doc-base messages translatable (closes:  #479011).
   * Add Polish translation of the messages.
+  * Make man page translatable and add Polish translation of man pages 
 
  -- Robert Luberda <robert@debian.org>  Sun, 27 Apr 2008 14:12:18 +0200
 

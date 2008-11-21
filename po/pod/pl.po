@@ -1,0 +1,510 @@
+# Polish translations for PACKAGE package
+# Copyright (C) 2008 Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# Automatically generated, 2008.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: doc-base 0.9.0\n"
+"Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
+"POT-Creation-Date: 2008-11-23 18:58+0100\n"
+"PO-Revision-Date: 2008-11-21 00:47+0100\n"
+"Language-Team: Polish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2);\n"
+
+# type: =encoding
+#: ../../install-docs.in:42
+msgid "utf8"
+msgstr ""
+
+# type: =head1
+#: ../../install-docs.in:44
+msgid "NAME"
+msgstr "NAZWA"
+
+# type: textblock
+#: ../../install-docs.in:46
+msgid "install-docs - manage online Debian documentation"
+msgstr "install-docs - zarządzanie dokumentacją Debiana"
+
+# type: =head1
+#: ../../install-docs.in:59
+msgid "SYNOPSIS"
+msgstr "SKŁADNIA"
+
+# type: verbatim
+#: ../../install-docs.in:61
+#, no-wrap
+msgid ""
+" install-docs [options] -i,--install | -r,--remove | -c,--check file [ file ... ]\n"
+"\n"
+msgstr ""
+" install-docs [options] -i,--install | -r,--remove | -c,--check plik [ plik ... ]\n"
+"\n"
+
+# type: verbatim
+#: ../../install-docs.in:63
+#, no-wrap
+msgid ""
+" install-docs [options] -I,--install-all | -C,--install-changed | -R,--remove-all\n"
+"\n"
+msgstr ""
+" install-docs [options] -I,--install-all | -C,--install-changed | -R,--remove-all\n"
+"\n"
+
+# type: verbatim
+#: ../../install-docs.in:65
+#, no-wrap
+msgid ""
+" install-docs [options] -s,--status docid [ docid ... ]\n"
+"\n"
+msgstr ""
+" install-docs [options] -s,--status docid [ docid ... ]\n"
+"\n"
+
+# type: verbatim
+#: ../../install-docs.in:67
+#, no-wrap
+msgid ""
+" install-docs [options] --dump-db dbname\n"
+"\n"
+msgstr ""
+" install-docs [options] --dump-db nazwa_db\n"
+"\n"
+
+# type: verbatim
+#: ../../install-docs.in:69
+#, no-wrap
+msgid ""
+" install-docs -h,--help | -V,--version\n"
+"\n"
+msgstr ""
+" install-docs -h,--help | -V,--version\n"
+"\n"
+
+# type: =head1
+#: ../../install-docs.in:72
+msgid "DESCRIPTION"
+msgstr "OPIS"
+
+# type: textblock
+#: ../../install-docs.in:74
+msgid ""
+"B<install-docs> is a tool allow Debian package maintainers to register "
+"documentation to various documentation systems.  It currently supports "
+"B<dhelp>, B<dwww>, B<doc-central>, and B<scrollkeeper> browsers."
+msgstr ""
+"B<install-docs> jest narzędziem pozwalającym opiekunom pakietów Debiana na "
+"rejestrowanie dokumentacji w różnych systemach. Obecnie wspiera przeglądarki "
+"B<dhelp>, B<dwww>, B<doc-central> oraz B<scrollkeeper>."
+
+# type: textblock
+#: ../../install-docs.in:78
+msgid ""
+"This manual page provides a quick synopsis of B<install-docs> usage.  Full "
+"documentation can be found in the documentation, including a description of "
+"the control file syntax and grammar."
+msgstr ""
+"Ta strona podręcznika ekranowego zawiera podstawowe wskazówki dotyczące "
+"używania B<install-docs>. Pełny opis programu wraz z opisem składni składni "
+"pliku konfiguracyjnego można znaleźć w dokumentacji dołączonej do pakietu."
+
+# type: =head1
+#: ../../install-docs.in:82
+msgid "OPTIONS"
+msgstr "OPCJE"
+
+# type: =item
+#: ../../install-docs.in:138
+msgid "B<-v>, B<--verbose>"
+msgstr "B<-v>, B<--verbose>"
+
+# type: textblock
+#: ../../install-docs.in:140
+msgid "Operate verbosely."
+msgstr "Tryb gadatliwy."
+
+# type: =item
+#: ../../install-docs.in:148
+msgid "B<-d>, B<--debug>"
+msgstr "B<-d>, B<--debug>"
+
+# type: textblock
+#: ../../install-docs.in:150
+msgid "Print some debugging informations."
+msgstr "Wyświetla komunikaty diagnostyczne."
+
+# type: =item
+#: ../../install-docs.in:158
+msgid "B<--no-update-menus>"
+msgstr "B<--no-update-menus>"
+
+# type: textblock
+#: ../../install-docs.in:160
+msgid ""
+"Inhibit running L<dwww-build-menu(8)>, L<dhelp_parse(8)>, and L<scrollkeeper-"
+"update(8)>."
+msgstr ""
+"Nie uruchamia L<dwww-build-menu(8)>, L<dhelp_parse(8)>, ani L<scrollkeeper-"
+"update(8)>."
+
+# type: =item
+#: ../../install-docs.in:169
+msgid "B<--rootdir> I<dir>"
+msgstr "B<--rootdir> I<katalog>"
+
+# type: textblock
+#: ../../install-docs.in:171
+msgid ""
+"Set the root directory to I<dir> instead of `I</>'. Useful and valid only "
+"with the B<--check> action."
+msgstr ""
+"Ustawia główny katalog na I<katlaog>, zamiast używać `I</>'. Użyteczne i "
+"poprawne tylko w przypadku akcji B<--check>."
+
+# type: =head1
+#: ../../install-docs.in:184
+msgid "ACTIONS"
+msgstr "AKCJE"
+
+# type: textblock
+#: ../../install-docs.in:186
+msgid ""
+"Below is list of possible actions B<install-docs> could handle. There can be "
+"only one action option passed to install-docs, moreover the action with its "
+"arguments must be the last option passed."
+msgstr ""
+"Poniżej podano listę akcji obsługiwanych przez B<install-docs>. Programowi "
+"można podać tylko jedną akcję. Ponadto akcja ta łącznie z jej argumentami "
+"musi być przekazana jako ostatnia opcja linii poleceń."
+
+# type: textblock
+#: ../../install-docs.in:190
+msgid ""
+"Each I<file> argument should be the full path for the doc-base control file "
+"(i.e.  `/usr/share/doc-base/some_file' or `/etc/doc-base/documents/"
+"some_file'), and each I<docid> should be the document identifier (Document "
+"identifiers are set in the `Document' field of the control file, and usually "
+"correspond to the package name.)"
+msgstr ""
+"Każdy argument I<plik> powinien być pełną ścieżką do pliku kontrolnego doc-"
+"base(t.j. \"/usr/share/doc-base/jakiś_plik\" lub \"/etc/doc-base/documents/"
+"jakiś_plik\"), a każde I<docid> powinno być identyfikatorem dokumentu "
+"(Identyfikatory dokumentów  są ustawiane w polu \"Document\" pliku "
+"kontrolnego i zazwyczaj są takie same jak nazwa pakietu)."
+
+# type: textblock
+#: ../../install-docs.in:196
+msgid ""
+"If I<file> or I<docid> equals `B<->' (the minus sign), the list of arguments "
+"is read from the standard input (each file name or document id in separate "
+"line)."
+msgstr ""
+"Jeżeli I<plik> lub <docid> jest równe \"B<->\" (znak minusa), to lista "
+"argumentów jest odczytywana ze standardowego wejścia (każda nazwa pliku lub "
+"każde id dokumentu w oddzielnej linii)."
+
+# type: =item
+#: ../../install-docs.in:206
+msgid "B<-i> I<file> [I<file> ...], B<--install> I<file> [I<file> ...]"
+msgstr "B<-i> I<plik> [I<plik> ...], B<--install> I<plik> [I<plik> ...]"
+
+# type: textblock
+#: ../../install-docs.in:208
+msgid "Install the documentation described by the control file I<file>."
+msgstr "Instaluje dokumentację wymienioną w pliku kontrolnym I<plik>."
+
+# type: =item
+#: ../../install-docs.in:218
+msgid "B<-r> I<file> [I<file> ...], B<--remove> I<file> [I<file> ...]"
+msgstr "B<-r> I<plik> [I<plik> ...], B<--remove> I<plik> [I<plik> ...]"
+
+# type: textblock
+#: ../../install-docs.in:220
+msgid "Remove the documentation identified by the control file I<file>."
+msgstr "Wyrejestrowuje dokumentację wymienioną w pliku kontrolnym I<plik>."
+
+# type: =item
+#: ../../install-docs.in:231
+msgid "B<-c> I<file> [I<file> ...], B<--check> I<file> [I<file> ...]"
+msgstr "B<-c> I<plik> [I<plik> ...], B<--check> I<plik> [I<plik> ...]"
+
+# type: textblock
+#: ../../install-docs.in:233
+msgid ""
+"Check the control file I<file> and display number of possible problems "
+"found.  Use with I<--verbose> to get the actual locations of errors and "
+"warnings.  If I<--rootdir> was also given, its argument will be prepended to "
+"names of the files given if the `Files' and `Index' fields of the I<file>."
+msgstr ""
+"Sprawdza poprawność pliku kontrolnego I<plik> i wyświetla listę znalezionych "
+"problemów. Użyta z opcją I<--verbose> podaje lokalizacje błędów i ostrzeżeń. "
+"Jeśli podano także I<--rootdir>, to argument tej opcji zostanie dołączony do "
+"nazw plików wymienionych w polach \"Files\" i \"Index\" I<plik>u."
+
+# type: =item
+#: ../../install-docs.in:245
+msgid "B<-R>, B<--remove-all>"
+msgstr "B<-R>, B<--remove-all>"
+
+# type: textblock
+#: ../../install-docs.in:247
+msgid "De-register all registered documents."
+msgstr "Wyrejestrowuje wszystkie zarejestrowane dokumenty."
+
+# type: =item
+#: ../../install-docs.in:257
+msgid "B<-I>, B<--install-all>"
+msgstr "B<-I>, B<--install-all>"
+
+# type: textblock
+#: ../../install-docs.in:259
+msgid ""
+"(Re)register all documents from F</usr/share/doc-base> and F</etc/doc-base/"
+"documents>."
+msgstr ""
+
+# type: =item
+#: ../../install-docs.in:269
+msgid "B<-C>, B<--install-changed>"
+msgstr "B<-C>, B<--install-changed>"
+
+# type: textblock
+#: ../../install-docs.in:271
+msgid ""
+"Compare contents of F</usr/share/doc-base> and F</etc/doc-base/documents> "
+"directories with registered documents database and de-register any files "
+"that are missing and (re)register only changed or new files."
+msgstr ""
+"Porównuje zawartość katalogów  F</usr/share/doc-base> i F</etc/doc-base/"
+"documents> z bazą danych zarejestrowanych dokumentów i wyrejestrowuje "
+"usunięte pliki oraz (ponownie) rejestruje pliki zmienione lub dodane."
+
+# type: =item
+#: ../../install-docs.in:282
+msgid "B<-s> I<docid> [I<docid> ...], B<--status> I<docid> [I<docid> ...]"
+msgstr "B<-s> I<docid> [I<docid> ...], B<--status> I<docid> [I<docid> ...]"
+
+# type: textblock
+#: ../../install-docs.in:284
+msgid "Display the status of the document identifier I<docid>."
+msgstr "Wyświetla stan dokumentu określonego przez I<docid>."
+
+# type: =item
+#: ../../install-docs.in:293
+msgid "B<-L> I<docid> [I<docid> ...], B<--listfiles> I<docid> [I<docid> ...]"
+msgstr "B<-L> I<docid> [I<docid> ...], B<--listfiles> I<docid> [I<docid> ...]"
+
+# type: textblock
+#: ../../install-docs.in:295
+msgid "Deprecated option. Does nothing."
+msgstr "Opcja przestarzała. Nie robi nic."
+
+# type: =item
+#: ../../install-docs.in:304
+msgid "B<--dump-db> I<dbname>"
+msgstr "B<--dump-db> I<nazwa_db>"
+
+# type: textblock
+#: ../../install-docs.in:306
+#, fuzzy
+msgid ""
+"Dumps contents of internal databases, for debugging purposes. I<dbname> can "
+"be either B<files.db> or B<status.db>."
+msgstr "Wypisuje zawartość wewnętrznych baz danych - w celu "
+
+# type: =item
+#: ../../install-docs.in:316
+msgid "B<-h>, B<--help>"
+msgstr "B<-h>, B<--help>"
+
+# type: textblock
+#: ../../install-docs.in:318
+msgid "Show a short help message."
+msgstr "Wyświetla krótki komunikat pomocy."
+
+# type: =item
+#: ../../install-docs.in:327
+msgid "B<-V>, B<--version>"
+msgstr "B<-V>, B<--version>"
+
+# type: textblock
+#: ../../install-docs.in:329
+msgid "Display version infromation"
+msgstr "Wyświetla informacje o wersji programu."
+
+# type: =head1
+#: ../../install-docs.in:354
+msgid "COMPATIBILITY ISSUES"
+msgstr ""
+
+# type: textblock
+#: ../../install-docs.in:356
+msgid ""
+"The following features were added in version 0.8.4, please make sure to add "
+"proper `I<Conflicts>' or `I<Depends>' lines if you would like to use them in "
+"your package's scripts:"
+msgstr ""
+
+# type: =item
+#: ../../install-docs.in:362 ../../install-docs.in:366
+#: ../../install-docs.in:370 ../../install-docs.in:374
+msgid "*"
+msgstr "*"
+
+# type: textblock
+#: ../../install-docs.in:364
+msgid ""
+"support for passing more than one argument to the B<-i> and B<-r> actions,"
+msgstr "obsługa wielu argumentów akcji B<-i> oraz B<-r>,"
+
+# type: textblock
+#: ../../install-docs.in:368
+msgid "reading arguments from the standard input,"
+msgstr "czytanie argumentów ze standardowego wejścia, "
+
+# type: textblock
+#: ../../install-docs.in:372
+msgid ""
+"B<-I>,B<--install-all>, B<-R>,B<---remove-all>, B<-c>,B<--check> actions,"
+msgstr ""
+"akcje B<-I>,B<--install-all>, B<-R>,B<---remove-all>, B<-c>,B<--check>,"
+
+# type: textblock
+#: ../../install-docs.in:376
+msgid "B<-d>,B<--debug>, B<-h>,B<--help> options."
+msgstr "opcje B<-d>,B<--debug>, B<-h>,B<--help>."
+
+# type: textblock
+#: ../../install-docs.in:380
+msgid ""
+"The B<-C>,B<--install-changed>, B<--dump-db>, B<-V>,B<--version> options "
+"were added in 0.8.12."
+msgstr ""
+"Opcje B<-C>,B<--install-changed>, B<--dump-db>, B<-V>,B<--version> zostały "
+"dodane w wersji 0.8.12."
+
+# type: =head1
+#: ../../install-docs.in:382
+msgid "FILES"
+msgstr "PLIKI"
+
+# type: =item
+#: ../../install-docs.in:386
+msgid "F</usr/share/doc-base/>"
+msgstr "F</usr/share/doc-base/>"
+
+# type: textblock
+#: ../../install-docs.in:388
+msgid "The location of doc-base control files provided by various packages."
+msgstr "Lokalizacja plików kontrolnych doc-base dostarczanych przez pakiety."
+
+# type: =item
+#: ../../install-docs.in:390
+msgid "F</etc/doc-base/documents/>"
+msgstr "F</etc/doc-base/documents/>"
+
+# type: textblock
+#: ../../install-docs.in:392
+msgid "The location of doc-base control files provided by local administrator."
+msgstr ""
+"Lokalizacja plików kontrolnych doc-base dostarczanych przez lokalnego "
+"administratora."
+
+# type: =item
+#: ../../install-docs.in:394
+msgid "F</var/lib/doc-base/info/documents/>"
+msgstr "F</var/lib/doc-base/info/documents/>"
+
+# type: textblock
+#: ../../install-docs.in:396
+msgid "The location of registered control files."
+msgstr "Lokalizacja zarejestrowanych plików kontrolnych."
+
+# type: =item
+#: ../../install-docs.in:398
+msgid "F</var/lib/doc-base/info/status.db>"
+msgstr "F</var/lib/doc-base/info/status.db>"
+
+# type: textblock
+#: ../../install-docs.in:400
+msgid "Statuses of registered documents."
+msgstr "Stany zarejestrowanych dokumentów."
+
+# type: =item
+#: ../../install-docs.in:402
+msgid "F</var/lib/doc-base/info/files.db>"
+msgstr "F</var/lib/doc-base/info/files.db>"
+
+# type: textblock
+#: ../../install-docs.in:404
+msgid "Timestamps and documents ids of registered doc-base files."
+msgstr "Znaczniku czasowe i identyfikatory zarejestrowanych plików doc-base."
+
+# type: =item
+#: ../../install-docs.in:406
+msgid "F</var/lib/doc-base/omf/>"
+msgstr "F</var/lib/doc-base/omf/>"
+
+# type: textblock
+#: ../../install-docs.in:408
+msgid ""
+"The location of generated scrollkeeper OMF files.  Note: F</usr/share/omf/"
+"doc-base> should be a symbolic link pointing to the directory."
+msgstr ""
+"Lokalizacja wygenerowanych plików OMF scrollkeepera. Uwaga: F</usr/share/omf/"
+"doc-base> powinien być dowiązaniem symbolicznym wskazującym na ten katalog."
+
+# type: =head1
+#: ../../install-docs.in:413
+msgid "BUGS"
+msgstr "BŁĘDY"
+
+# type: textblock
+#: ../../install-docs.in:415
+msgid "See L<http://bugs.debian.org/doc-base>."
+msgstr "Patrz L<http://bugs.debian.org/doc-base>."
+
+# type: =head1
+#: ../../install-docs.in:417
+msgid "SEE ALSO"
+msgstr "ZOBACZ TAKŻE"
+
+# type: textblock
+#: ../../install-docs.in:419
+msgid ""
+"dhelp(1), doccentral(1), dwww(8), scrollkeeper(7), Debian doc-base Manual F</"
+"usr/share/doc/doc-base/doc-base.html/index.html>"
+msgstr ""
+"dhelp(1), doccentral(1), dwww(8), scrollkeeper(7), Podręcznik doc-base F</"
+"usr/share/doc/doc-base/doc-base.html/index.html>"
+
+# type: =head1
+#: ../../install-docs.in:422
+msgid "AUTHOR"
+msgstr "AUTOR"
+
+# type: textblock
+#: ../../install-docs.in:424
+msgid ""
+"This program was originally written by Christian Schwarz <schwarz@debian."
+"org>, for the Debian GNU/Linux system, and the next maintainer was Adam Di "
+"Carlo <aph@debian.org>.  Robert Luberda <robert@debian.org> is currently "
+"maintaining and extending it."
+msgstr ""
+"Program napisał  Christian Schwarz <schwarz@debian.org> dla systemu Debian "
+"GNU/Linux; kolejnym opiekunem był Adam Di Carlo <aph@debian.org>. Robert "
+"Luberda <robert@debian.org> zajmuje się nim obecnie i go rozszerza o nowe "
+"funkcjonalności."
+
+# type: textblock
+#: ../../install-docs.in:429
+msgid ""
+"This software was meant to be for the benefit of the entire Debian user and "
+"developer community.  If you are interested in being involved with this "
+"software, please join the mailing list <debian-doc@lists.debian.org>."
+msgstr ""
