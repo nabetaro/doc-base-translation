@@ -1,14 +1,14 @@
-# Polish translations for PACKAGE package
-# Copyright (C) 2008 Free Software Foundation, Inc.
-# This file is distributed under the same license as the PACKAGE package.
-# Automatically generated, 2008.
+# Polish translations for doc-base package
+# Copyright (C) 2008 Robert Luberda <robert@debian.org>
+# This file is distributed under the same license as the doc-base package.
+# Robert Luberda <robert@debian.org>, 2008.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.9.0\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
 "POT-Creation-Date: 2009-01-04 00:56+0100\n"
-"PO-Revision-Date: 2008-11-21 00:47+0100\n"
+"PO-Revision-Date: 2009-01-04 17:17+0100\n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -262,6 +262,8 @@ msgid ""
 "(Re)register all documents from F</usr/share/doc-base> and F</etc/doc-base/"
 "documents>."
 msgstr ""
+"(Ponownie) rejestruje wszystkie dokumenty z katalogów F</usr/share/doc-base> "
+"i F</etc/doc-base/documents>."
 
 # type: =item
 #: ../../install-docs.in:267
@@ -306,11 +308,12 @@ msgstr "B<--dump-db> I<nazwa_db>"
 
 # type: textblock
 #: ../../install-docs.in:304
-#, fuzzy
 msgid ""
 "Dumps contents of internal databases, for debugging purposes. I<dbname> can "
 "be either B<files.db> or B<status.db>."
-msgstr "Wypisuje zawartość wewnętrznych baz danych - w celu "
+msgstr ""
+"Wypisuje - w celu debugowania programu - zawartość wewnętrznych baz danych. "
+"I<nazwa_db> może być albo B<files.db>, albo B<status.db>."
 
 # type: =item
 #: ../../install-docs.in:314
@@ -335,7 +338,7 @@ msgstr "Wyświetla informacje o wersji programu."
 # type: =head1
 #: ../../install-docs.in:352
 msgid "COMPATIBILITY ISSUES"
-msgstr ""
+msgstr "KOMPATYBILNOŚĆ Z POPRZEDNIMI WERSJAMI"
 
 # type: textblock
 #: ../../install-docs.in:354
@@ -344,6 +347,9 @@ msgid ""
 "proper `I<Conflicts>' or `I<Depends>' lines if you would like to use them in "
 "your package's scripts:"
 msgstr ""
+"Następujące właściwości zostały dodane w wersji 0.8.4 programu, opiekunowie "
+"pakietów powinni dodać odpowiednie linie \"I<Conflicts>\" lub \"I<Depends>"
+"\", jeśli planują ich używać w skryptach pakietów:"
 
 # type: =item
 #: ../../install-docs.in:360 ../../install-docs.in:364
@@ -503,3 +509,6 @@ msgid ""
 "developer community.  If you are interested in being involved with this "
 "software, please join the mailing list <debian-doc@lists.debian.org>."
 msgstr ""
+"Ten program został napisany dla pożytku całej społeczności użytkowników i "
+"opiekunów Debiana. Aby zaangażować się w rozwój programu, prosimy dołączyć "
+"do listy dyskusyjnej <debian-doc@lists.debian.org>."

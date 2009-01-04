@@ -1,6 +1,6 @@
 # vim:ts=2:et
 # common includes for doc-base
-# $Id: common.mk 168 2009-01-04 16:10:53Z robert $
+# $Id: common.mk 169 2009-01-04 16:35:45Z robert $
 #
 # determine our version number
 
@@ -9,6 +9,8 @@ getCurrentMakefileName := $(CURDIR)/$(lastword $(MAKEFILE_LIST))
 override TOPDIR   := $(dir $(call getCurrentMakefileName))
 
 override PACKAGE  := doc-base
+
+PATH            := /usr/bin:/usr/sbin:/bin:/sbin:$(PATH)
 
 # build abstraction
 install_file    := install -p -o root -g root -m 644
@@ -61,8 +63,9 @@ ifndef DIR
 endif
 
 XGETTEXT_COMMON_OPTIONS   := --msgid-bugs-address $(PACKAGE)@packages.debian.org  \
-                            --package-name $(PACKAGE)                           \
-                            --package-version $(VERSION)
+                            --package-name $(PACKAGE)                             \
+                            --package-version $(VERSION)                          \
+                            --copyright-holder='Robert Luberda <robert@debian.org>'
 
 
 
@@ -79,7 +82,7 @@ ifndef MAKE_VERBOSE
         echo "$(msgprefix) Cleaning $(DIR) ..."                 \
         ;;                                                      \
       *)                                                        \
-        echo "$(msgprefix) Making $(DIR)$(1) ..."               \
+        echo "$(msgprefix) Making $(DIR)/$(1) ..."              \
         ;;                                                      \
     esac
   endef
@@ -124,13 +127,13 @@ endef
 
 
 define pochanged
-  set -e;                                                                   \
-  [ ! -e $(1) ] && rename=1 || rename=0 ;                                   \
-  if [ $$rename = 0 ] ; then                                                \
-    diff=`diff -q  -I'POT-Creation-Date:' -I'PO-Revision-Date:' $(1) $(2)`; \
-    [ -z "$$diff" ] || rename=1 ;                                           \
-  fi;                                                                       \
-  [ $$rename = 1 ] && mv -f $(2) $(1) || rm -f $(2);                        \
+  set -e;                                                                       \
+  [ ! -e $(1) ] && rename=1 || rename=0 ;                                       \
+  if [ $$rename = 0 ] ; then                                                    \
+    diff -q  -I'POT-Creation-Date:' -I'PO-Revision-Date:' $(1) $(2) >/dev/null  \
+      ||  rename=1;                                                             \
+  fi;                                                                           \
+  [ $$rename = 1 ] && mv -f $(2) $(1) || rm -f $(2);                            \
   touch $(1)
 endef
 

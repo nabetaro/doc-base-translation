@@ -1,8 +1,8 @@
-# translation of pl.po to Polish
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-#
+# Polish translations for doc-base package
+# Copyright (C) 2008 Robert Luberda <robert@debian.org>
+# This file is distributed under the same license as the doc-base package.
 # Robert Luberda <robert@debian.org>, 2008.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.9.0\n"
