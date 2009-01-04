@@ -1,18 +1,15 @@
 # vim:ts=2
 # makefile for doc-base
-# $Id: Makefile 167 2009-01-04 12:24:45Z robert $
+# $Id: Makefile 168 2009-01-04 16:10:53Z robert $
 #
 
-ALL_TARGET=
-SUBDIRS=
+ALL_TARGET:=
+SUBDIRS:=
 include ../common.mk
 
 install-local: 
-	$(install_dir)                            $(DESTDIR)$(sharedir)
-	$(install_file) doc-base.desc        			$(DESTDIR)$(sharedir)/doc-base
-	$(install_file) install-docs.desc    			$(DESTDIR)$(sharedir)/install-docs-man
-	$(install_dir)                            $(DESTDIR)$(sharedir)/data
-	$(install_file) scrollkeeper.map     			$(DESTDIR)$(sharedir)/data/
-	$(install_file) doc-base.map         			$(DESTDIR)$(sharedir)/data/
-	$(install_dir)                            $(DESTDIR)$(etcdir)/documents
-	$(install_file) README.local         			$(DESTDIR)$(etcdir)/documents/README
+	$(call msg,$@)
+	$(call install,$(DESTDIR)$(sharedir)/doc-base,doc-base.desc,notdir)
+	$(call install,$(DESTDIR)$(sharedir)/install-docs-man,install-docs.desc,notdir)
+	$(call install,$(DESTDIR)$(sharedir)/data,scrollkeeper.map doc-base.map)
+	$(call install,$(DESTDIR)$(etcdir)/documents/README,README.local,notdir)

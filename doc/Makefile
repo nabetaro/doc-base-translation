@@ -1,6 +1,6 @@
 # vim:ts=2
 # makefile for doc-base
-# $Id: Makefile 167 2009-01-04 12:24:45Z robert $
+# $Id: Makefile 168 2009-01-04 16:10:53Z robert $
 #
 
 ALL_TARGET := build-local
@@ -18,30 +18,31 @@ $(ALL_TARGET): $(generated) | $(bdir)
 
 
 $(bdir)/doc-base.sgml: doc-base.sgml | $(bdir)
-	@echo; echo "*** Creating $@:"
+	$(call msg,$@)
 	cp -f $< $@
 	touch -r $< $@
 
 $(bdir)/check-stamp: $(bdir)/doc-base.sgml $(bdir)/version.ent
+	$(call msg,$@)
 	nsgmls -wall -s -E20 $(bdir)/doc-base.sgml	# check SGML syntax
 	touch $@
 
 $(bdir)/doc-base.txt: $(bdir)/doc-base.sgml $(bdir)/version.ent $(bdir)/check-stamp
-	@echo; echo "*** Creating $@:"
+	$(call msg,$@)
 	cd $(bdir) && debiandoc2text $(<F)
 
 $(bdir)/doc-base.html/%: $(bdir)/doc-base.sgml $(bdir)/version.ent $(bdir)/check-stamp
-	@echo; echo "*** Creating $(@D):"
+	$(call msg,$@)
 	cd $(bdir) && debiandoc2html $(<F)
 
 $(bdir)/version.ent: $(bdir)/doc-base.sgml $(CHANGELOGFILE) $(MAKEFILESLIST) | $(bdir)
-	@echo; echo "*** Creating $@:"
+	$(call msg,$@)
 	echo "<!ENTITY version \"$(VERSION)\">"    > $@.new
 	echo "<!ENTITY date    \"$(DATE_EN)\">"    >> $@.new
 	mv -f $@.new $@
 
 $(bdir)/section.list: doc-base.sgml | $(bdir)
-	@echo; echo "*** Creating $@:"
+	$(call msg,$@)
 	perl -e  \
 	   'exec ("'perl'", "-ne", join("",@ARGV)) if $$#ARGV >-1;                    '\
 	   '      last                    if /<!--\s*section\s+list\s+end\s*-->/;     '\
@@ -59,16 +60,8 @@ $(bdir)/section.list: doc-base.sgml | $(bdir)
 	 mv $@.tmp $@
 
 install-local: $(generated) 
-	$(install_dir)                            $(DESTDIR)$(docdir)
-	$(install_file) $(bdir)/version.ent       $(DESTDIR)$(docdir)
-	$(install_file) doc-base.sgml             $(DESTDIR)$(docdir)
-	$(compress)                               $(DESTDIR)$(docdir)/doc-base.sgml
-
-	$(install_file) $(bdir)/doc-base.txt      $(DESTDIR)$(docdir)
-	$(compress)                               $(DESTDIR)$(docdir)/doc-base.txt
-
-	$(install_dir)                            $(DESTDIR)$(docdir)/doc-base.html
-	$(install_file) $(bdir)/doc-base.html/*   $(DESTDIR)$(docdir)/doc-base.html
-
-	$(install_dir)  $(DESTDIR)$(sharedir)/data/
-	$(install_file) $(bdir)/section.list      $(DESTDIR)$(sharedir)/data/
+	$(call msg,$@)
+	$(call install,$(DESTDIR)$(docdir),$(bdir)/version.ent)
+	$(call install,$(DESTDIR)$(docdir)/doc-base.html,$(bdir)/doc-base.html/*)
+	$(call install,$(DESTDIR)$(docdir),$(bdir)/doc-base.sgml $(bdir)/doc-base.txt,compress)
+	$(call install,$(DESTDIR)$(sharedir)/data,$(bdir)/section.list)
