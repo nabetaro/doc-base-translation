@@ -994,6 +994,6 @@ sgml-declaration:nil
 sgml-local-catalogs:nil
 sgml-local-ecat-files:nil
 End:
-$Id: doc-base.sgml 134 2008-04-21 21:30:30Z robert $
+$Id: doc-base.sgml 167 2009-01-04 12:24:45Z robert $
 vim:ts=2:et:sts=2:sw=2:fdm=marker 
 -->

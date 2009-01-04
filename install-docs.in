@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs.in 165 2008-11-21 22:37:08Z robert $
+# $Id: install-docs.in 167 2009-01-04 12:24:45Z robert $
 
 use warnings;
 use strict;
@@ -38,8 +38,6 @@ BEGIN {
                         };
   warn $@ if $@;
 }
-
-=encoding utf8
 
 =head1 NAME
 
