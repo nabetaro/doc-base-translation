@@ -12,8 +12,9 @@ doc-base (0.9.0~) UNRELEASED; urgency=low
     + clean & improve build system;
     + move doc-base.sgml to doc subdir;
     + set debhelper compat level to 7.
+  * debian/rules: use dh_prep instead of `dh_clean -k' (lintian) 
 
- -- Robert Luberda <robert@debian.org>  Sun, 04 Jan 2009 13:18:21 +0100
+ -- Robert Luberda <robert@debian.org>  Mon, 05 Jan 2009 23:31:15 +0100
 
 doc-base (0.8.19) unstable; urgency=low
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.9.0~\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2009-01-04 17:31+0100\n"
+"POT-Creation-Date: 2009-01-05 23:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,115 +52,115 @@ msgstr ""
 msgid "Ignoring deprecated command line argument: %s\n"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:228
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:239
 #, perl-format
 msgid "`%s', line %d"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:229
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:240
 #, perl-format
 msgid "`%s'"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:236
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:238
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:246
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:248
 #, perl-format
 msgid "Error in %s: %s"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:240
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:250
 #, perl-format
 msgid "Warning in %s: %s"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:242
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:252
 #, perl-format
 msgid "Internal error: Unknown flag (%s, %s)"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:258
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:268
 #, perl-format
 msgid "line in field `%s' seems not to be UTF-8 encoded, recoding"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:294
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:304
 #, perl-format
 msgid "control field `%s' already defined"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:297
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:307
 #, perl-format
 msgid "unrecognised control field `%s'"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:300
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:310
 #, perl-format
 msgid "field `%s' in incorrect section (missing empty line before the field?)"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:307
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:317
 msgid "syntax error - no field specified"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:308
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:318
 #, perl-format
 msgid "field `%s' can't consist of multi lines"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:312
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:322
 #, perl-format
 msgid "syntax error in control file: %s"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:340
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:350
 #, perl-format
 msgid "unknown section: `%s'"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:354
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:364
 #, perl-format
 msgid "value of `%s' not specified"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:372
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:382
 msgid "the first line does not contain valid `Document' field"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:375
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:385
 msgid "invalid value of `Document' field"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:382
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:392
 #, perl-format
 msgid "unsupported doc-base file version: %s"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:401
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:411
 #, perl-format
 msgid "format `%s' already defined"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:405
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:415
 #, perl-format
 msgid "format `%s' is not supported"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:417
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:427
 #, perl-format
 msgid "`%s' value missing for format `%s'"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:421
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:431
 #, perl-format
 msgid "`%s' value has to be specified with absolute path: %s"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:454
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:464
 #, perl-format
 msgid " (using `%s' as the root directory)"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:456
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:466
 #, perl-format
 msgid "file mask `%s' does not match any files"
 msgstr ""
