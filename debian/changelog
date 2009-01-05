@@ -1,12 +1,14 @@
 doc-base (0.9.0~) UNRELEASED; urgency=low
 
   * NOT RELEASED YET
-  * Extend scrollkeeper.map (closes: #497272). Many thanks to Deng Xiyue for 
-    the patch.
+  * Extend scrollkeeper.map (closes: #497272). Many thanks to Deng Xiyue
+    for the patch.
   * Make doc-base messages translatable (closes:  #479011).
   * Add Polish translation of the messages.
-  * Make man page translatable and add Polish translation of man pages 
-  * Reogranise source tree:
+  * Make man page translatable and add Polish translation of man pages
+  * DocBaseFile.pm: insert into files.db also existing files that don't 
+    contain valid document it.
+  * Reorganise source tree:
     + clean & improve build system;
     + move doc-base.sgml to doc subdir;
     + set debhelper compat level to 7.
@@ -17,7 +19,7 @@ doc-base (0.8.19) unstable; urgency=low
 
   * While checking for changed files, remove from our database files
     that no longer exists and were never registered because of errors.
-  * Fix warning messages for checks that are done after checked file 
+  * Fix warning messages for checks that are done after checked file
     is closed (e.g. section check).
 
  -- Robert Luberda <robert@debian.org>  Mon, 05 Jan 2009 22:25:08 +0100
@@ -26,7 +28,7 @@ doc-base (0.8.18) unstable; urgency=medium
 
   * install-docs.in: include $opt_rootdir in used vars not to fail when
     Perl is in unusable state (closes: #501874). In such a case install-docs
-    should try to recover on next invokation (see entry for version 0.8.4)
+    should try to recover on next invocation (see entry for version 0.8.4)
 
  -- Robert Luberda <robert@debian.org>  Sun, 16 Nov 2008 22:34:09 +0100
 
@@ -36,12 +38,12 @@ doc-base (0.8.17) unstable; urgency=low
     incorrectly changing case of characters in sections like Help/HOWTO
     (without such a mapping the section name is turned into Help/Howto).
   * postinst: re-register all docs for the above change to be propagated.
-  * DocBaseFile.pm: ignore dpkg temporary files while interating through
+  * DocBaseFile.pm: ignore dpkg temporary files while iterating through
     /usr/share/doc-base dir contents.
   * Document.pm: remove doc-base file entry from files.db database even
     if the relevant document is not registered.
   * Scrollkeeper.pm: fix dates in generated omf files.
-  * Standards-Version: 3.8.0 (no changes). 
+  * Standards-Version: 3.8.0 (no changes).
 
  -- Robert Luberda <robert@debian.org>  Tue, 11 Nov 2008 11:19:02 +0100
 
@@ -69,8 +71,8 @@ doc-base (0.8.13) experimental; urgency=low
 
   * Remove dpkg-triggers call from prerm and always register changed files
     in postinst.
-  * InstallDocs.pm: 
-    + change behaviour of `-R' option to unregister doc-base files by removal 
+  * InstallDocs.pm:
+    + change behaviour of `-R' option to unregister doc-base files by removal
       of our databases. This could be useful if database gets damaged;
     + get Document-Id of removed doc-base files from files.db;
     + show nicer statistics about install-docs actions.
@@ -283,7 +285,7 @@ doc-base (0.8.4) unstable; urgency=low
 
 doc-base (0.8.3) unstable; urgency=low
 
-  * prerm: Oops, the first letter from the `else' word went somehow 
+  * prerm: Oops, the first letter from the `else' word went somehow
     missing (closes: #419045).
 
  -- Robert Luberda <robert@debian.org>  Fri, 13 Apr 2007 19:40:06 +0200
@@ -296,7 +298,7 @@ doc-base (0.8.2) unstable; urgency=low
 
 doc-base (0.8.1) unstable; urgency=low
 
-  * Fix a typo that caused broken omf files being generated in some cases 
+  * Fix a typo that caused broken omf files being generated in some cases
     (closes: #418861).
 
  -- Robert Luberda <robert@debian.org>  Thu, 12 Apr 2007 18:49:39 +0200
@@ -447,7 +449,7 @@ doc-base (0.7.16) unstable; urgency=low
 doc-base (0.7.15) unstable; urgency=low
 
   * attempting to flush the easy bugs before the major rewrite...
-  
+
   * don't set /usr/doc symlink, in fact, remove it in preinst if it is there
   * add #DEBHELPER# areas in maintainer scripts (thanks, linda)
   * postinst: don't variablize /usr/bin/update-menus, it confuses lintian
@@ -455,7 +457,7 @@ doc-base (0.7.15) unstable; urgency=low
     doc-base: maintainer-script-does-not-check-for-existence-of-installdocs postinst
     doc-base: preinst-calls-installdocs
   * docs: update (c) date; s/command -v/which/; closes: #169115
-  * install-docs: strip trailing space in fields that we read; 
+  * install-docs: strip trailing space in fields that we read;
     closes: #86040 and part of #60981
   * install-docs: improve the error message when we fail writing a dhelp
     file; closes: #111620
@@ -470,7 +472,7 @@ doc-base (0.7.15) unstable; urgency=low
 
 doc-base (0.7.14) unstable; urgency=low
 
-  * fix a bug introduced in last version, thanks to bug hunting by 
+  * fix a bug introduced in last version, thanks to bug hunting by
     David Kimdon; closes: #171202
   * dhelp registration was busted in 0.7.13, so if we're upgrading from
     that version, take the time to re-register all docreg files
@@ -510,13 +512,13 @@ doc-base (0.7.12) unstable; urgency=low
 doc-base (0.7.11) unstable; urgency=low
 
   * incorporate NMU (closes: #111703, #114657)
-  * strengthen the wording of the prerm case -- for people getting 
+  * strengthen the wording of the prerm case -- for people getting
       dpkg: warning - unable to delete old file `directory': Directory not empty
     due to old .dhelp files, please read section 2.4
     (closes: #59850)
   * some other minor updates in the documentation
   * debian/control: upgrade to standards version to 3.5.6, no changes
-    needed 
+    needed
 
     - Note that the stipulation that programs cannot reference files in
       /usr/share/doc [13.3] is not honoured because that is required by
@@ -536,7 +538,7 @@ doc-base (0.7.10) unstable; urgency=low
   * clarify wording when unregistering documentation
   * postrm works better when it's actually installed into the deb, duh
     really closes: #101252
-  
+
  -- Adam Di Carlo <aph@debian.org>  Mon, 30 Jul 2001 02:11:12 -0400
 
 doc-base (0.7.9) unstable; urgency=low
@@ -566,7 +568,7 @@ doc-base (0.7.8) frozen unstable; urgency=low
     /usr/share/doc-base/ (closes: Bug#53555)
   * update to Policy standards 3.1.1 -- added Build-Depends-Indep
     (closes: Bug#53261)
-  * tweak preinst wording as it removes old .dhelp files 
+  * tweak preinst wording as it removes old .dhelp files
     (closes: Bug#47010)
   * doc-base.sgml: use version.ent for dynamic versioning (shipped too);
     SGML aesthetics and tagging
@@ -610,7 +612,7 @@ doc-base (0.7.5) unstable; urgency=low
 
 doc-base (0.7.4) unstable; urgency=low
 
-  * install-docs: skip dhelp when directory != /usr/doc or 
+  * install-docs: skip dhelp when directory != /usr/doc or
     /usr/share/doc (closes Bug#32034)
   * changes for Policy 3.0.0 (no /usr/doc compat symlinks)
   * debian/control: removed perl-base dependency -- it's required!
@@ -660,10 +662,10 @@ doc-base (0.7.0) frozen unstable; urgency=low
   * bump standards version to 2.4.1.0 (checked)
   * add digit to version number: 0.7.x will be for hamm maintenance
     (branched); probably 0.8 will be for our documentation drafts
-    including information on the Debian Document Hierarchy, the new docreg 
+    including information on the Debian Document Hierarchy, the new docreg
     file format documentation and system, and other documents; 0.9 will
     probalby contain our implementations of these new infrastructures for
-    slink; and eventually it'll all be a done deal and we'll hit 1.0. 
+    slink; and eventually it'll all be a done deal and we'll hit 1.0.
 
  -- Adam P. Harris <aph@debian.org>  Sun,  3 May 1998 09:05:23 -0400
 

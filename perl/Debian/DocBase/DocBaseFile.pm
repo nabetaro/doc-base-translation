@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 173 2009-01-05 21:57:30Z robert $
+# $Id: DocBaseFile.pm 174 2009-01-05 22:16:59Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -78,6 +78,7 @@ sub GetChangedDocBaseFiles($$){ # {{{
   }
   @$toinstall = keys %files;
 
+ 
   my @retval = ($#{$toremove}+1, $#changed+1, $#{$toinstall}+1);
 
   push @$toinstall, @changed;
@@ -213,6 +214,11 @@ sub Parse { # {{{
   $self->{'PARSED'} = 1;
 
   close($fh);
+
+  # if document doesn't contain valid document id,
+  # mark that document file exists in our files.db
+  $self->OnRegistered(0) unless defined $self->GetDocumentID();
+
 } # }}}
 
 #################################################
