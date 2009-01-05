@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 154 2008-11-11 10:14:45Z robert $
+# $Id: DocBaseFile.pm 171 2009-01-05 21:25:22Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -66,8 +66,13 @@ sub GetChangedDocBaseFiles($$){ # {{{
     if ($files{$realfile} ) {
       push @changed, $realfile if $files{$realfile} != $db->{$file}->{'CT'};
       delete $files{$realfile}
-    } else {
+    } elsif (defined $db->{$file}->{'ID'}) {
       push @$toremove, $realfile;
+    } else {
+      # file no longer exists at file system and ID was not defined,
+      # so it was never registered and can't be de-registered. Don't
+      # try to de-register it, just remove entry from files.db
+      Debian::DocBase::DB::GetFilesDB()->RemoveData($realfile);
     }
   }
   @$toinstall = keys %files;
@@ -223,7 +228,7 @@ sub _PrsErr($$) { # {{{
   my $self = shift;
   my $flag = shift;
   my $msg = shift;
-  my $filepos =  "`" . $self->GetSourceFileName()  . ((defined $.) ? "', line $." : "");
+  my $filepos =  "`" . $self->GetSourceFileName()  . ($. ? "', line $." : "");
 
 
   $self->{'WARNERR_CNT'}++;

@@ -1,3 +1,12 @@
+doc-base (0.8.19) unstable; urgency=low
+
+  * While checking for changed files, remove from our database files
+    that no longer exists and were never registered because of errors.
+  * Fix warning messages for checks that are done after checked file 
+    is closed (e.g. section check).
+
+ -- Robert Luberda <robert@debian.org>  Mon, 05 Jan 2009 22:25:08 +0100
+
 doc-base (0.8.18) unstable; urgency=medium
 
   * install-docs.in: include $opt_rootdir in used vars not to fail when
