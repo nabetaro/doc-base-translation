@@ -1,11 +1,9 @@
-doc-base (0.9.0~) UNRELEASED; urgency=low
+doc-base (0.9.0) experimental; urgency=low
 
-  * NOT RELEASED YET
   * Extend scrollkeeper.map (closes: #497272). Many thanks to Deng Xiyue
     for the patch.
-  * Make doc-base messages translatable (closes:  #479011).
-  * Add Polish translation of the messages.
-  * Make man page translatable and add Polish translation of man pages
+  * Add NLS support for doc-base script and man pages (closes:  #479011).
+  * Add Polish translation of the script and man pages.
   * DocBaseFile.pm: insert into files.db also existing files that don't 
     contain valid document it.
   * Reorganise source tree:
@@ -13,8 +11,9 @@ doc-base (0.9.0~) UNRELEASED; urgency=low
     + move doc-base.sgml to doc subdir;
     + set debhelper compat level to 7.
   * debian/rules: use dh_prep instead of `dh_clean -k' (lintian) 
+  * Add po4a to build-dependencies. 
 
- -- Robert Luberda <robert@debian.org>  Mon, 05 Jan 2009 23:31:15 +0100
+ -- Robert Luberda <robert@debian.org>  Sat, 10 Jan 2009 17:26:31 +0100
 
 doc-base (0.8.19) unstable; urgency=low
 

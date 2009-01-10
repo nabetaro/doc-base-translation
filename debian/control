@@ -3,7 +3,7 @@ Section: doc
 Priority: optional
 Maintainer: Robert Luberda <robert@debian.org>
 Standards-Version: 3.8.0
-Build-Depends-Indep: debiandoc-sgml (>= 1.1.37), libmldbm-perl, libuuid-perl
+Build-Depends-Indep: debiandoc-sgml (>= 1.1.37), libmldbm-perl, libuuid-perl, po4a (>= 0.34)
 Build-Depends: debhelper (>= 7)
 
 Package: doc-base
