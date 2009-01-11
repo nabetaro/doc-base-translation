@@ -1,6 +1,6 @@
 # vim:ts=2
 # makefile for doc-base
-# $Id: Makefile 169 2009-01-04 16:35:45Z robert $
+# $Id: Makefile 178 2009-01-11 14:14:16Z robert $
 #
 
 ALL_TARGET=build-local
@@ -19,7 +19,7 @@ build-local: $(MOFILES)
 install-local: $(MOFILES)
 	$(call msg,$@)
 	$(foreach file,$(MOFILES),	\
-		$(call install,$(DESTDIR)$(nlsdir)/$(notdir $(basename $(file)))/LC_MESSAGES/$(PACKAGE).mo,$(file),notdir))
+		$(call install,$(nlsdir)/$(notdir $(basename $(file)))/LC_MESSAGES/$(PACKAGE).mo,$(file),notdir))
 
 $(bdir)/%.mo: %.po
 	$(call msg,$@)

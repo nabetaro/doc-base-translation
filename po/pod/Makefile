@@ -1,6 +1,6 @@
 # vim:ts=2
 # makefile for doc-base
-# $Id: Makefile 168 2009-01-04 16:10:53Z robert $
+# $Id: Makefile 178 2009-01-11 14:14:16Z robert $
 #
 
 ALL_TARGET=build-local
@@ -27,7 +27,7 @@ install-local: $(bdir)/stamp-po4a
 	cd $(bdir); \
 	for file in */man*/*.pod; do                  \
 	  basedir=`dirname $$file`;                   \
-	  dir=$(DESTDIR)/$(mandir)/$$basedir;         \
+	  dir=$(mandir)/$$basedir;         \
 	  src=$$basedir/`basename $$file .pod`;       \
 	  $(call install,$$dir,$$src,compress);       \
 	done

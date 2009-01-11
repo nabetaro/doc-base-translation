@@ -1,6 +1,6 @@
 # vim:ts=2
 # makefile for doc-base
-# $Id: Makefile 168 2009-01-04 16:10:53Z robert $
+# $Id: Makefile 178 2009-01-11 14:14:16Z robert $
 #
 
 ALL_TARGET := build-local
@@ -61,7 +61,7 @@ $(bdir)/section.list: doc-base.sgml | $(bdir)
 
 install-local: $(generated) 
 	$(call msg,$@)
-	$(call install,$(DESTDIR)$(docdir),$(bdir)/version.ent)
-	$(call install,$(DESTDIR)$(docdir)/doc-base.html,$(bdir)/doc-base.html/*)
-	$(call install,$(DESTDIR)$(docdir),$(bdir)/doc-base.sgml $(bdir)/doc-base.txt,compress)
-	$(call install,$(DESTDIR)$(sharedir)/data,$(bdir)/section.list)
+	$(call install,$(docdir),$(bdir)/version.ent)
+	$(call install,$(docdir)/doc-base.html,$(bdir)/doc-base.html/*)
+	$(call install,$(docdir),$(bdir)/doc-base.sgml $(bdir)/doc-base.txt,compress)
+	$(call install,$(sharedir)/data,$(bdir)/section.list)

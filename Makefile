@@ -1,6 +1,6 @@
 # vim:ts=2
 # makefile for doc-base
-# $Id: Makefile 168 2009-01-04 16:10:53Z robert $
+# $Id: Makefile 178 2009-01-11 14:14:16Z robert $
 #
 
 ALL_TARGET    := build-local
@@ -8,7 +8,7 @@ AFTER_INSTALL := $(call check_install)
 SUBDIRS       := doc data perl po
 include       common.mk
 
-x:=$(subst /, ,$(abspath $(DESTDIR)))
+x:=$(subst /, ,$(abspath ))
 x1:=$(strip $x)
 
 generated     := $(bdir)/man/man8/install-docs.8  \
@@ -47,16 +47,16 @@ $(bdir)/install-docs.html: $(bdir)/install-docs $(bdir)/check-stamp
 
 define check_install
 	echo checking_installation; \
-	PERL5LIB=$(DESTDIR)/$(perldir)      perl -cw $(DESTDIR)$(sbindir)/install-docs
+	PERL5LIB=$(perldir)      perl -cw $(sbindir)/install-docs
 endef
 
 install-local: $(generated)
 	$(call msg,$@)
-	$(call install,$(DESTDIR)$(sbindir),$(bdir)/install-docs,script)
-	$(call install,$(DESTDIR)$(omfdir),,)
-	$(call install,$(DESTDIR)$(libdir)/omf,,)
-	$(call install,$(DESTDIR)$(libdir)/info,,)
-	$(call install,$(libdir)/omf,$(DESTDIR)$(omfdir)/doc-base,link)
-	$(call install,$(DESTDIR)$(mandir)/man8,$(bdir)/man/man8/install-docs.8,compress)
-	$(call install,$(DESTDIR)$(docdir),$(bdir)/install-docs.html)
+	$(call install,$(sbindir),$(bdir)/install-docs,script)
+	$(call install,$(omfdir),,)
+	$(call install,$(libdir)/omf,,)
+	$(call install,$(libdir)/info,,)
+	$(call install_links,$(libdir)/omf,$(omfdir)/doc-base)
+	$(call install,$(mandir)/man8,$(bdir)/man/man8/install-docs.8,compress)
+	$(call install,$(docdir),$(bdir)/install-docs.html)
 

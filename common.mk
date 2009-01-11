@@ -1,10 +1,7 @@
 # vim:ts=2:et
 # common includes for doc-base
-# $Id: common.mk 169 2009-01-04 16:35:45Z robert $
+# $Id: common.mk 178 2009-01-11 14:14:16Z robert $
 #
-# determine our version number
-
-
 getCurrentMakefileName := $(CURDIR)/$(lastword $(MAKEFILE_LIST))
 override TOPDIR   := $(dir $(call getCurrentMakefileName))
 
@@ -20,15 +17,17 @@ install_link    := ln -sf
 compress        := gzip -9f
 
 prefix          := /usr
-etcdir          := /etc/doc-base
+etcdir          := /etc/$(PACKAGE)
 sbindir         := $(prefix)/sbin
 mandir          := $(prefix)/share/man
-sharedir        := $(prefix)/share/doc-base
+sharedir        := $(prefix)/share/$(PACKAGE)
 perllibdir      := $(prefix)/share/perl5
-docdir          := $(prefix)/share/doc/doc-base
-libdir          := /var/lib/doc-base
+docdir          := $(prefix)/share/doc/$(PACKAGE)
+libdir          := /var/lib/$(PACKAGE)
 omfdir          := $(prefix)/share/omf
 nlsdir          := $(prefix)/share/locale
+
+# determine our version number
 
 ifndef VERSION
   CHANGELOGFILE     := $(TOPDIR)/debian/changelog
@@ -46,6 +45,8 @@ ifndef VERSION
     ifneq ($(DESTDIR),$(abspath $(DESTDIR)))
       $(error DESTDIR "$(DESTDIR)" is not an absolute path)
     endif
+    override ddirshort  :=  DESTDIR
+    export ddirshort
   endif
 endif
 
@@ -59,7 +60,7 @@ ifndef bdir
 endif
 
 ifndef DIR
-  DIR           := $(notdir $(CURDIR))
+  DIR           := .
 endif
 
 XGETTEXT_COMMON_OPTIONS   := --msgid-bugs-address $(PACKAGE)@packages.debian.org  \
@@ -77,6 +78,8 @@ ifndef MAKE_VERBOSE
         ;;                                                      \
       install|install-local)                                    \
         echo "$(msgprefix) Installing files from $(DIR) ..." ;  \
+        [ -z "$(DESTDIR)" ] ||                                  \
+          echo "$(msgprefix)   (DESTDIR=$(DESTDIR))";           \
         ;;                                                      \
       clean|clean-local)                                        \
         echo "$(msgprefix) Cleaning $(DIR) ..."                 \
@@ -93,37 +96,49 @@ emptyprefix       := $(subst *, ,$(msgprefix))
 
 
 #SHELL:=/bin/echo
-# install(dir/link_target,files,mode=compress|script|link|notdir)
+# install(dir,files,mode=compress|script|notdir)
 define install
   set -e;                                                           \
-  [ "$3" = "notdir" ] && dir="`dirname "$1"`" || dir="$1";          \
-  if [ -z "$2" ]; then                                              \
-    echo "$(emptyprefix) installing dir    $$dir";                  \
-    $(install_dir) "$$dir";                                         \
-  else for file in $2; do                                           \
-    [ "$3" = "notdir" ] && bfile="`basename $1`" ||                 \
-                           bfile=`basename "$$file"`;               \
-    target="$$dir/$$bfile" ;                                        \
-    [ "$3" = "link" ] || $(install_dir) "$$dir";                    \
-    if [ "$3" = "script" ] ; then                                   \
-      echo "$(emptyprefix) installing script $$target";             \
-      $(install_script) "$$file" "$$target";                        \
-    elif [ "$3" = "link" ] ; then                                   \
-      echo "$(emptyprefix) installing link   $$file";               \
-      rm -f "$$file";                                               \
-      $(install_link) "$1" "$$file";                                \
-    else                                                            \
-      echo "$(emptyprefix) installing file   $$target";             \
-      $(install_file) "$$file" "$$target";                          \
-      if [ "$3" = "compress" ]; then                                \
-        echo "$(emptyprefix) compressing file  $$target";           \
-        $(compress) "$$target";                                     \
-      fi                                                            \
-    fi                                                              \
-  done                                                              \
-  fi
+  tgt="$1"; dir="$1"; files="$2";  prg="$(install_file)";           \
+  doCompress=0;  bfile=""; what="file  ";                           \
+  set -- $3;                                                        \
+  while [ "$$1" ] ; do                                              \
+    if [ "$$1" = "notdir" ] ; then                                  \
+      dir="`dirname "$$dir"`";                                      \
+      bfile="`basename "$$tgt"`";                                   \
+    elif [ "$$1" = "compress" ] ; then                              \
+      doCompress=1;                                                 \
+    elif [ "$$1" = "script" ] ; then                                \
+      prg="$(install_script)";                                      \
+      what="script";                                                \
+    fi;                                                             \
+    shift;                                                          \
+  done;                                                             \
+  [ -n "$$files" ] ||                                               \
+    echo "$(emptyprefix) installing dir    $(ddirshort)$$dir";      \
+  $(install_dir) "$(DESTDIR)/$$dir";                                \
+  for file in $$files; do                                           \
+      [ -n "$$bfile" ] && tgt="$$dir/$$bfile"  ||                   \
+        tgt="$$dir/`basename "$$file"`";                            \
+      echo "$(emptyprefix) installing $$what $(ddirshort)$$tgt";    \
+      $$prg "$$file" "$(DESTDIR)/$$tgt";                            \
+      if [ "$$doCompress" -eq 1 ] ; then                            \
+        echo "$(emptyprefix) compressing file  $(ddirshort)$$tgt";  \
+        $(compress) "$(DESTDIR)/$$tgt";                             \
+      fi;                                                           \
+  done
 endef
 
+# install(link_target,files)
+define install_links
+  set -e;                                                          \
+  for file in $2; do                                               \
+    echo "$(emptyprefix) installing link   $(ddirshort)$$file";    \
+    $(install_dir) $(DESTDIR)/`dirname "$$file"`;                  \
+    rm -f "$(DESTDIR)/$$file";                                     \
+    $(install_link) "$1" "$(DESTDIR)/$$file";                      \
+  done
+endef
 
 
 define pochanged
@@ -140,7 +155,7 @@ endef
 define recurse
   set -e;                                                                 \
   for dir in $(SUBDIRS); do                                               \
-    $(MAKE) -C $$dir DIR=$(DIR)/$$dir $(1);                               \
+    $(MAKE) -C "$$dir" DIR="$(DIR)/$$dir" $(1);                               \
   done
 endef
 
@@ -175,7 +190,7 @@ install: install-local
 	$(AFTER_INSTALL)
 
 $(bdir):
-	$(call createmsg,$@)
+	$(call msg,$@)
 	test -z "$(bdir)" || mkdir -p $(bdir)
 
 # debug

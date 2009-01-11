@@ -13,7 +13,7 @@ doc-base (0.9.0) experimental; urgency=low
   * debian/rules: use dh_prep instead of `dh_clean -k' (lintian) 
   * Add po4a to build-dependencies. 
 
- -- Robert Luberda <robert@debian.org>  Sat, 10 Jan 2009 17:26:31 +0100
+ -- Robert Luberda <robert@debian.org>  Sun, 11 Jan 2009 15:14:02 +0100
 
 doc-base (0.8.19) unstable; urgency=low
 
