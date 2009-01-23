@@ -1,3 +1,10 @@
+doc-base (0.8.20) unstable; urgency=low
+
+  * debian/postinst: Use `find -print0 | xargs -0' to handle spaces in 
+    old list/status file names (closes: #512390).
+
+ -- Robert Luberda <robert@debian.org>  Sat, 24 Jan 2009 00:01:10 +0100
+
 doc-base (0.8.19) unstable; urgency=low
 
   * While checking for changed files, remove from our database files
