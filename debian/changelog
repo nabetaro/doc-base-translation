@@ -4,7 +4,7 @@ doc-base (0.9.1) unstable; urgency=low
   * Merge changes from 0.8.20.
   * install-docs.in: update section reference of dwww man page.
 
- -- Robert Luberda <robert@debian.org>  Sun, 22 Feb 2009 11:54:56 +0100
+ -- Robert Luberda <robert@debian.org>  Sun, 22 Feb 2009 13:32:09 +0100
 
 doc-base (0.9.0) experimental; urgency=low
 

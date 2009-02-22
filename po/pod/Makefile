@@ -1,6 +1,6 @@
 # vim:ts=2
 # makefile for doc-base
-# $Id: Makefile 178 2009-01-11 14:14:16Z robert $
+# $Id: Makefile 186 2009-02-22 12:32:20Z robert $
 #
 
 ALL_TARGET=build-local
@@ -10,7 +10,7 @@ include ../../common.mk
 SOURCE_FILES=$(shell sed -ne 's/^\[type: pod\] \$$(srcdir)\/\([^ ]*\)*.*$$/..\/..\/\1/p' < po4a.cfg)
 build-local: $(bdir)/stamp-po4a
   
-$(bdir)/stamp-po4a: po4a.cfg $(wildcard %.po) $(SOURCE_FILES) $(MAKEFILE_LIST)
+$(bdir)/stamp-po4a: po4a.cfg $(wildcard *.po) $(SOURCE_FILES) $(MAKEFILE_LIST)
 	$(call msg,$@)
 	po4a  $(XGETTEXT_COMMON_OPTIONS)          \
 	      --previous                          \
@@ -27,7 +27,21 @@ install-local: $(bdir)/stamp-po4a
 	cd $(bdir); \
 	for file in */man*/*.pod; do                  \
 	  basedir=`dirname $$file`;                   \
-	  dir=$(mandir)/$$basedir;         \
+	  dir=$(mandir)/$$basedir;                    \
 	  src=$$basedir/`basename $$file .pod`;       \
 	  $(call install,$$dir,$$src,compress);       \
 	done
+
+
+update-po:
+	$(call msg,$@)
+	po4a  $(XGETTEXT_COMMON_OPTIONS)          \
+	      --previous                          \
+	      --force                             \
+	      -v                                  \
+	      --variable srcdir=../..             \
+	      --variable builddir=$(bdir)         \
+	      po4a.cfg
+
+
+.PHONY: update-po

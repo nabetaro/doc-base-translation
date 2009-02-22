@@ -1,6 +1,6 @@
 # vim:ts=2
 # makefile for doc-base
-# $Id: Makefile 178 2009-01-11 14:14:16Z robert $
+# $Id: Makefile 186 2009-02-22 12:32:20Z robert $
 #
 
 ALL_TARGET=build-local
@@ -26,18 +26,19 @@ $(bdir)/%.mo: %.po
 	mkdir -p $(bdir)
 	msgfmt  -o $@ $<
 
-doc-base.pot:	$(NLS_SOURCES) $(MAKEFILE_LIST)
+$(PACKAGE).pot:	$(NLS_SOURCES) | $(MAKEFILE_LIST)
 	$(call msg,$@)
 	xgettext -L perl  -k -k_g -k_ng:1,2 $(XGETTEXT_COMMON_OPTIONS) -o $@.new $^
 	$(call pochanged,$@,$@.new)
 
-%.po: doc-base.pot
+%.po: $(PACKAGE).pot
 	$(call msg,$@)
 	msgmerge --previous $@ $< > $@.new
 	$(call pochanged,$@,$@.new)
 
-update-po: $(POFILES)
+update-po: 
 	$(call msg,$@)
+	$(MAKE) -W $(firstword $(NLS_SOURCES)) $(POFILES) 
 
 
 .PHONY: update-po
