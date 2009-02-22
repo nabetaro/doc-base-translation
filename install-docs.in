@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs.in 167 2009-01-04 12:24:45Z robert $
+# $Id: install-docs.in 183 2009-02-22 10:54:12Z robert $
 
 use warnings;
 use strict;
@@ -414,7 +414,7 @@ See L<http://bugs.debian.org/doc-base>.
 
 =head1 SEE ALSO
 
-dhelp(1), doccentral(1), dwww(8), scrollkeeper(7),
+dhelp(1), doccentral(1), dwww(7), scrollkeeper(7),
 Debian doc-base Manual F</usr/share/doc/doc-base/doc-base.html/index.html>
 
 =head1 AUTHOR

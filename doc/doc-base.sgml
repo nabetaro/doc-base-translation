@@ -889,7 +889,7 @@ means the documents was not registered to the package.
 
 
 <chapt id="todo">TODO List<!--{{{-->
-<sect>Roadmap for 0.8.* releases<!--{{{-->
+<sect>Roadmap for 0.9.* releases<!--{{{-->
 <p>
 <list>
   <item>
@@ -994,6 +994,6 @@ sgml-declaration:nil
 sgml-local-catalogs:nil
 sgml-local-ecat-files:nil
 End:
-$Id: doc-base.sgml 167 2009-01-04 12:24:45Z robert $
+$Id: doc-base.sgml 183 2009-02-22 10:54:12Z robert $
 vim:ts=2:et:sts=2:sw=2:fdm=marker 
 -->
