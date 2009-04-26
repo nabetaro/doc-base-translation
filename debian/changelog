@@ -1,3 +1,18 @@
+doc-base (0.9.2~1) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+  * Add missing spaces into pod documentation (closes: #520238).
+  * Fix typo in scrollkeeper.map (closes: #524153).
+  * po/pod/po4a.cfg: use [po_directory], instead of [po4a_langs]
+  * debian/control: 
+    + bump po4a build-dependency to 0.35 for the above feature;
+    + Standards-Version: 3.8.1 (no changes).
+  * New translations:
+    + French (closes: #524358);
+    + German (closes: #522033, #521833).
+
+ -- Robert Luberda <robert@debian.org>  Mon, 27 Apr 2009 00:56:42 +0200
+
 doc-base (0.9.1) unstable; urgency=low
 
   * Upload to unstable.

@@ -1,6 +1,6 @@
 # vim:ts=2:et
 # common includes for doc-base
-# $Id: common.mk 178 2009-01-11 14:14:16Z robert $
+# $Id: common.mk 189 2009-04-26 22:57:37Z robert $
 #
 getCurrentMakefileName := $(CURDIR)/$(lastword $(MAKEFILE_LIST))
 override TOPDIR   := $(dir $(call getCurrentMakefileName))
@@ -126,7 +126,7 @@ define install
         echo "$(emptyprefix) compressing file  $(ddirshort)$$tgt";  \
         $(compress) "$(DESTDIR)/$$tgt";                             \
       fi;                                                           \
-  done
+  done;
 endef
 
 # install(link_target,files)

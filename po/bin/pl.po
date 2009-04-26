@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.9.0\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2009-01-05 23:17+0100\n"
+"POT-Creation-Date: 2009-04-27 00:39+0200\n"
 "PO-Revision-Date: 2008-11-11 15:01+0100\n"
 "Last-Translator: Robert Luberda <robert@debian.org>\n"
 "Language-Team: Polish <debian-l10n-polish@lists.debian.org>\n"
@@ -202,7 +202,7 @@ msgid "Value of the `%s' option ignored"
 msgstr "Ignorowanie wartości opcji \"%s\""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:105
-#: ../../perl/Debian/DocBase/InstallDocs.pm:236
+#: ../../perl/Debian/DocBase/InstallDocs.pm:239
 #, perl-format
 msgid "Can't read doc-base file `%s'"
 msgstr "Nie można odczytać pliku doc-base \"%s\""
@@ -213,26 +213,30 @@ msgid "%s: Fatal error found, the file won't be registered"
 msgstr "%s: Znaleziono błąd krytyczny, plik nie zostanie zarejestrowany"
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:114
-#, perl-format
-msgid "%s: %d warning(s) or non-fatal error(s) found"
-msgstr "%s: Wykryto %s ostrzeżeń lub błędów niekrytycznych"
+#, fuzzy, perl-format
+#| msgid "%s: %d warning(s) or non-fatal error(s) found"
+msgid "%d warning or non-fatal error found"
+msgid_plural "%d warnings or non-fatal errors found"
+msgstr[0] "%s: Wykryto %s ostrzeżeń lub błędów niekrytycznych"
+msgstr[1] "%s: Wykryto %s ostrzeżeń lub błędów niekrytycznych"
+msgstr[2] "%s: Wykryto %s ostrzeżeń lub błędów niekrytycznych"
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:116
+#: ../../perl/Debian/DocBase/InstallDocs.pm:119
 #, perl-format
 msgid "%s: No problems found"
 msgstr "%s: Nie znaleziono żadnych problemów"
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:125
+#: ../../perl/Debian/DocBase/InstallDocs.pm:128
 #, perl-format
 msgid "Document `%s' is not registered"
 msgstr "Dokument \"%s\" nie jest zarejestrowany"
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:141
+#: ../../perl/Debian/DocBase/InstallDocs.pm:144
 #, perl-format
 msgid "Invalid argument `%s' passed to the `%s' option"
 msgstr "Niepoprawny argument \"%s\" opcji \"%s\""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:178
+#: ../../perl/Debian/DocBase/InstallDocs.pm:181
 #, perl-format
 msgid "%d removed"
 msgid_plural "%d removed"
@@ -240,7 +244,7 @@ msgstr[0] "%d usuniętego"
 msgstr[1] "%d usuniętych"
 msgstr[2] "%d usuniętych"
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:180
+#: ../../perl/Debian/DocBase/InstallDocs.pm:183
 #, perl-format
 msgid "%d changed"
 msgid_plural "%d changed"
@@ -248,7 +252,7 @@ msgstr[0] "%d zmienionego"
 msgstr[1] "%d zmienionych"
 msgstr[2] "%d zmienionych"
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:182
+#: ../../perl/Debian/DocBase/InstallDocs.pm:185
 #, perl-format
 msgid "%d added"
 msgid_plural "%d added"
@@ -256,17 +260,17 @@ msgstr[0] "%d dodanego"
 msgstr[1] "%d dodanych"
 msgstr[2] "%d dodanych"
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:184
+#: ../../perl/Debian/DocBase/InstallDocs.pm:187
 #, perl-format
 msgid "Processing %s doc-base file(s)..."
 msgstr "Przetwarzanie %s pliku/plików doc-base..."
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:193
+#: ../../perl/Debian/DocBase/InstallDocs.pm:196
 #, perl-format
 msgid "De-registering %d, re-registering %d doc-base files"
 msgstr "Wyrejestrowywanie %d, ponowne rejestrowanie %d plików doc-base"
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:195
+#: ../../perl/Debian/DocBase/InstallDocs.pm:198
 #, perl-format
 msgid "De-registering %d doc-base file"
 msgid_plural "De-registering %d doc-base files"
@@ -274,7 +278,7 @@ msgstr[0] "Wyrejestrowywanie %d pliku doc-base"
 msgstr[1] "Wyrejestrowywanie %d plików doc-base"
 msgstr[2] "Wyrejestrowywanie %d plików doc-base"
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:198
+#: ../../perl/Debian/DocBase/InstallDocs.pm:201
 #, perl-format
 msgid "Registering %d doc-base file"
 msgid_plural "Registering %d doc-base files"
@@ -282,17 +286,17 @@ msgstr[0] "Rejestrowanie %d pliku doc-base"
 msgstr[1] "Rejestrowanie %d plików doc-base"
 msgstr[2] "Rejestrowanie %d plików doc-base"
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:215
+#: ../../perl/Debian/DocBase/InstallDocs.pm:218
 #, perl-format
 msgid "Ignoring nonregistered document `%s'"
 msgstr "Ignorowanie niezarejestrowanego dokumentu \"%s\""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:218
+#: ../../perl/Debian/DocBase/InstallDocs.pm:221
 #, perl-format
 msgid "Trying to remove document `%s'"
 msgstr "Próba usunięca dokumentu \"%s\""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:226
+#: ../../perl/Debian/DocBase/InstallDocs.pm:229
 #, perl-format
 msgid "Ignoring nonregistered file `%s'"
 msgstr "Ignorowanie niezarejestrowanego pliku \"%s\""
