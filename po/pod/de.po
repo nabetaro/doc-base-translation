@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.9.1\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2009-04-27 00:44+0300\n"
+"POT-Creation-Date: 2009-05-02 23:12+0300\n"
 "PO-Revision-Date: 2009-03-14 13:47+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -432,9 +432,6 @@ msgstr "Argumente werden von Standardeingabe gelesen,"
 # type: textblock
 #. type: textblock
 #: ../../install-docs.in:370
-#| msgid ""
-#| "B<-I>, B<--install-all>, B<-R>, B<---remove-all>, B<-c>, B<--check> "
-#| "actions,"
 msgid ""
 "B<-I>,B<--install-all>, B<-R>, B<---remove-all>, B<-c>, B<--check> actions,"
 msgstr ""
