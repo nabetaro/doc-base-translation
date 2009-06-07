@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: doc-base 0.9.1\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
 "POT-Creation-Date: 2009-04-27 00:39+0200\n"
-"PO-Revision-Date: 2009-03-13 10:58+0100\n"
+"PO-Revision-Date: 2009-05-05 12:07+0200\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -238,22 +238,22 @@ msgstr "Ungültiges Argument »%s« an die »%s«-Option weitergereicht"
 #, perl-format
 msgid "%d removed"
 msgid_plural "%d removed"
-msgstr[0] "%d entfernt"
-msgstr[1] "%d entfernt"
+msgstr[0] "%d entfernte"
+msgstr[1] "%d entfernte"
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:183
 #, perl-format
 msgid "%d changed"
 msgid_plural "%d changed"
-msgstr[0] "%d geändert"
-msgstr[1] "%d geändert"
+msgstr[0] "%d geänderte"
+msgstr[1] "%d geänderte"
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:185
 #, perl-format
 msgid "%d added"
 msgid_plural "%d added"
-msgstr[0] "%d hinzugefügt"
-msgstr[1] "%d hinzugefügt"
+msgstr[0] "%d hinzugefügte"
+msgstr[1] "%d hinzugefügte"
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:187
 #, perl-format

@@ -217,14 +217,12 @@ msgid "%s: Fatal error found, the file won't be registered"
 msgstr "%s : erreur fatale découverte, le fichier ne sera pas enregistré"
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:114
-#, fuzzy, perl-format
-#| msgid "%s: %d warning(s) or non-fatal error(s) found"
 msgid "%d warning or non-fatal error found"
 msgid_plural "%d warnings or non-fatal errors found"
 msgstr[0] ""
-"%s : %d avertissement(s) ou erreur(s) non fatale(s) ont été découverts"
+"%d avertissement ou erreur non fatal(e) a été découvert(e)"
 msgstr[1] ""
-"%s : %d avertissement(s) ou erreur(s) non fatale(s) ont été découverts"
+"%d avertissements ou erreurs non fatal(e)s ont été découvert(e)s"
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:119
 #, perl-format
