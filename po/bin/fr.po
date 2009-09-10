@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.9.1\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2009-04-27 00:39+0200\n"
+"POT-Creation-Date: 2009-09-10 19:37+0200\n"
 "PO-Revision-Date: 2009-03-16 22:00+0100\n"
 "Last-Translator: Jean-Luc Coulon (f5ibh) <jean-luc.coulon@wanadoo.fr>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -217,12 +217,11 @@ msgid "%s: Fatal error found, the file won't be registered"
 msgstr "%s : erreur fatale découverte, le fichier ne sera pas enregistré"
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:114
+#, perl-format
 msgid "%d warning or non-fatal error found"
 msgid_plural "%d warnings or non-fatal errors found"
-msgstr[0] ""
-"%d avertissement ou erreur non fatal(e) a été découvert(e)"
-msgstr[1] ""
-"%d avertissements ou erreurs non fatal(e)s ont été découvert(e)s"
+msgstr[0] "%d avertissement ou erreur non fatal(e) a été découvert(e)"
+msgstr[1] "%d avertissements ou erreurs non fatal(e)s ont été découvert(e)s"
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:119
 #, perl-format

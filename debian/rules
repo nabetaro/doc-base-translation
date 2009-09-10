@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 # vim:ts=2
 # rules file for doc-base
-# $Id: rules 175 2009-01-05 22:31:40Z robert $
+# $Id: rules 195 2009-09-10 19:15:50Z robert $
 #
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
@@ -33,9 +33,8 @@ install: build
 	dh_installdirs
 
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/$(package)
-	install -m644 debian/lintian-overrides debian/$(package)/usr/share/lintian/overrides/$(package)
 
-# Buily architecture-independent files here.
+# Build architecture-independent files here.
 binary-indep: build install
 	dh_testdir
 	dh_testroot
@@ -52,6 +51,10 @@ binary-indep: build install
 #	dh_installinit
 #	dh_installcron
 #	dh_installinfo
+#	dh_installwm
+#	dh_installudev
+	dh_lintian
+#	dh_bugfiles
 #	dh_undocumented
 #	dh_installman 
 	dh_link

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs.in 189 2009-04-26 22:57:37Z robert $
+# $Id: install-docs.in 195 2009-09-10 19:15:50Z robert $
 
 use warnings;
 use strict;
@@ -373,9 +373,9 @@ B<-I>,B<--install-all>, B<-R>, B<---remove-all>, B<-c>, B<--check> actions,
 
 B<-d>, B<--debug>, B<-h>, B<--help> options.
 
-=back
+=back 
 
- The B<-C>, B<--install-changed>, B<--dump-db>, B<-V>, B<--version> options were added in 0.8.12.
+The B<-C>, B<--install-changed>, B<--dump-db>, B<-V>, B<--version> options were added in 0.8.12.
 
 =head1 FILES
 

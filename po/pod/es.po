@@ -31,12 +31,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.9.2~1\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2009-05-02 23:12+0200\n"
+"POT-Creation-Date: 2009-09-10 19:50+0300\n"
 "PO-Revision-Date: 2009-07-23 12:38+0200\n"
 "Last-Translator: Omar Campagne <ocampagne@gmail.com>\n"
 "Language-Team: Debian l10n Spanish <debian-l10n-spanish@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n==1? 0 : 1);\n"
 
@@ -199,8 +199,8 @@ msgid ""
 "arguments must be the last option passed."
 msgstr ""
 "A continuación hay una lista de las acciones posibles que B<install-docs> "
-"ofrece. Sólo se puede introducir una opción de acción a «install-docs», y "
-"más aún, la acción y sus argumentos deben ser la última opción introducida."
+"ofrece. Sólo se puede introducir una opción de acción a «install-docs», y más "
+"aún, la acción y sus argumentos deben ser la última opción introducida."
 
 #. type: textblock
 #: ../../install-docs.in:188
@@ -212,11 +212,11 @@ msgid ""
 "correspond to the package name.)"
 msgstr ""
 "Cada argumento I<archivo> debería ser la ruta absoluta del archivo de "
-"control de doc-base (p. ej., «/usr/share/doc-base/archivo» o "
-"«/etc/doc-base/documents/archivo»), y cada I<iddoc> debería  "
-"ser la identificación del documento (Los identificadores de documentos "
-"se definen en el campo de «Document» en el archivo de control, "
-"y normalmente se corresponden con el nombre del paquete)."
+"control de doc-base (p. ej., «/usr/share/doc-base/archivo» o «/etc/doc-base/"
+"documents/archivo»), y cada I<iddoc> debería  ser la identificación del "
+"documento (Los identificadores de documentos se definen en el campo de "
+"«Document» en el archivo de control, y normalmente se corresponden con el "
+"nombre del paquete)."
 
 #. type: textblock
 #: ../../install-docs.in:194
@@ -268,10 +268,10 @@ msgid ""
 "names of the files given if the `Files' and `Index' fields of the I<file>."
 msgstr ""
 "Revisa el archivo de control I<archivo> y muestra el número de los posibles "
-"problemas encontrados. Úselo con I<--verbose> para obtener la ubicación "
-"real de los errores y avisos. Si también se introduce I<--rootdir>, su "
-"argumento se anexará a los nombres de los archivos presentes en los campos "
-"de «Files» e «Index» del I<archivo>."
+"problemas encontrados. Úselo con I<--verbose> para obtener la ubicación real "
+"de los errores y avisos. Si también se introduce I<--rootdir>, su argumento "
+"se anexará a los nombres de los archivos presentes en los campos de «Files» e "
+"«Index» del I<archivo>."
 
 #. type: =item
 #: ../../install-docs.in:243
@@ -294,8 +294,8 @@ msgid ""
 "(Re)register all documents from F</usr/share/doc-base> and F</etc/doc-base/"
 "documents>."
 msgstr ""
-"Registrar nuevamente todos los documentos en «F</usr/share/doc-base>» y "
-"«F</etc/doc-base/documents>»."
+"Registrar nuevamente todos los documentos en «F</usr/share/doc-base>» y «F</"
+"etc/doc-base/documents>»."
 
 #. type: =item
 #: ../../install-docs.in:267
@@ -414,15 +414,14 @@ msgstr ""
 msgid "B<-d>, B<--debug>, B<-h>, B<--help> options."
 msgstr "opciones B<-d>, B<--debug>, B<-h>, B<--help>."
 
-#. type: verbatim
+#. type: textblock
 #: ../../install-docs.in:378
-#, no-wrap
 msgid ""
-" The B<-C>, B<--install-changed>, B<--dump-db>, B<-V>, B<--version> options were added in 0.8.12.\n"
-"\n"
+"The B<-C>, B<--install-changed>, B<--dump-db>, B<-V>, B<--version> options "
+"were added in 0.8.12."
 msgstr ""
-" Las opciones B<-C>, B<--install-changed>, B<--dump-db>, B<-V>, B<--version> se añadieron en la versión 0.8.12.\n"
-"\n"
+"Las opciones B<-C>, B<--install-changed>, B<--dump-db>, B<-V>, B<--version> "
+"se añadieron en la versión 0.8.12."
 
 #. type: =head1
 #: ../../install-docs.in:380
@@ -494,9 +493,9 @@ msgid ""
 "The location of generated scrollkeeper OMF files.  Note: F</usr/share/omf/"
 "doc-base> should be a symbolic link pointing to the directory."
 msgstr ""
-"La ubicación de los archivos OMF generados por scrollkeeper. Nota: "
-"«F</usr/share/omf/doc-base>» debería ser un enlace simbólico apuntando "
-"a un directorio."
+"La ubicación de los archivos OMF generados por scrollkeeper. Nota: «F</usr/"
+"share/omf/doc-base>» debería ser un enlace simbólico apuntando a un "
+"directorio."
 
 #. type: =head1
 #: ../../install-docs.in:411
@@ -537,8 +536,8 @@ msgid ""
 msgstr ""
 "Este programa fue originalmente escrito por Christian Schwarz  "
 "schwarz@debian.org para el sistema Debian GNU/Linux, seguido de Adam Di "
-"Carlo <aph@debian.org>. Actualmente, lo desarrolla y extiende Robert "
-"Luberda <robert@debian.org>."
+"Carlo <aph@debian.org>. Actualmente, lo desarrolla y extiende Robert Luberda "
+"<robert@debian.org>."
 
 #. type: textblock
 #: ../../install-docs.in:427
@@ -548,5 +547,5 @@ msgid ""
 "software, please join the mailing list <debian-doc@lists.debian.org>."
 msgstr ""
 "Este software se diseñó para el beneficio de toda la comunidad de usuarios y "
-"desarrolladores de Debian. Si está interesado en contribuir a este "
-"proyecto, únase a la lista de correo <debian-doc@lists.debian.org>."
+"desarrolladores de Debian. Si está interesado en contribuir a este proyecto, "
+"únase a la lista de correo <debian-doc@lists.debian.org>."

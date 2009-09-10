@@ -20,7 +20,7 @@
 <copyright><!--{{{-->
   <copyrightsummary>copyright &copy;1998, Christian Schwarz</copyrightsummary>
   <copyrightsummary>copyright &copy;1999 &ndash 2002, Adam Di Carlo</copyrightsummary>
-	<copyrightsummary>copyright &copy;2006 &ndash 2008, Robert Luberda</copyrightsummary>
+	<copyrightsummary>copyright &copy;2006 &ndash 2009, Robert Luberda</copyrightsummary>
 
   <p>This manual is free software; you may redistribute it and/or modify it
      under the terms of the GNU General Public License as published by the
@@ -630,39 +630,18 @@ The full section list is presented below.
 </sect1><!--}}}-->
 </sect><!--}}}-->
 
-<sect id="registering_documents">Registering Documents Using <prgn>install-docs</prgn><!--{{{-->
+<sect id="registering_documents">Registering Documents With <prgn>doc-base</prgn><!--{{{-->
 <p>
 
 In order to register a piece of online documentation to
-<package>doc-base</package>, the package must install the control
+<package>doc-base</package>, all the package needs to do is installing the control
 file (see <ref id="control_files">) as file
 <file>/usr/share/doc-base/<var/document-id/</file>.
 <p>
 
-Then, it should call <prgn/install-docs/ from its <file>postinst</file> script:
-
-<example>
-  if [ "$1" = configure ]; then
-    if which install-docs >/dev/null 2>&1; then
-      install-docs -i /usr/share/doc-base/&lt;document-id&gt;
-    fi
-  fi
-</example>
-
-and from the <file>prerm</file> script as well:
-
-<example>
-  if [ "$1" = remove ] || [ "$1" = upgrade ]; then
-    if which install-docs >/dev/null 2>&1; then
-      install-docs -r /usr/share/doc-base/&lt;document-id&gt;
-    fi
-  fi
-</example>
-
-
-
-<p>
-With that, <package>doc-base</package> will generate
+Further processing of the control file is handled by a <package/dpkg/ trigger
+(cf. <file>/usr/share/doc/dpkg/triggers.txt.gz</file>) provided by <package/doc-base/.
+The trigger will call <prgn/install-docs/ to generate
 <file>/var/lib/doc-base/documents/<var/&lt;document-id&gt;/</file> file and
 register the
 online manuals to <package>dww</package>, <package>dhelp</package>,
@@ -670,43 +649,10 @@ and <package>scrollkeeper</package>
 when the package is installed, and de-register the manuals when the
 package is removed.
 
-<p>
-Note that the call to remove the registered documentation from the
-<file>prerm</file> maintainer script is necessary for cases such as
-when the documentation directory changes.
 </sect><!--}}}-->
 
 
 <sect>doc-base 0.8.x features and incompatibilities<!--{{{-->
-<sect1>Remove call semantics
-<p>
-The semantics of the remove call has been changed in version 0.8.4:
-<prgn/install-docs -r/ require the full path of <em/control file/ to be passed.
-Previous syntax (i.e. passing only <em/document-id/) is still supported for backward compatibility.
-Older versions of <prgn/install-docs/ ignore the new syntax (only issue a warning, but don't fail).
-</sect1>
-
-<sect1>Registering multiple documents
-<p>
-With 0.8.4 and later is possible to install (and remove) multiple documents in one call, like
-<example>
-install-docs -i /usr/share/doc-base/&lt;document-id1&gt; \
-                /usr/share/doc-base/&lt;document-id2&gt; \
-                /usr/share/doc-base/&lt;document-id3&gt;
-</example>
-or even
-<example>
-cat &lt;&lt; EOF | install-docs -i -
-/usr/share/doc-base/&lt;document-id1&gt;
-/usr/share/doc-base/&lt;document-id2&gt;
-/usr/share/doc-base/&lt;document-id3&gt;
-EOF
-</example>
-However <strong/older versions will fail/ on such a syntax, so it's necessary to add proper
-<em/Conflicts/ or <em/Depends/ line if you plan to use the feature in your package.
-
-</sect1>
-
 <sect1>Splitting control files over multiple binary packages
 <p>
 Since version 0.8.7 is it possible to provide documents with the same <em/document-id/
@@ -764,34 +710,40 @@ Files: /usr/share/foo-text/foo.txt.gz
 </example>
 </sect1>
 
-
-
 <sect1>Registering local documents
 <p>
 Version 0.8.7 and furthers allow user to register local documentations.
 
 In order to do this local administrators need to create their own control file
 (see <ref id="control_files">, place it in the
- <file>/etc/doc-base/documents</file> directory, and then register it with
- <example>
+<file>/etc/doc-base/documents</file> directory, and then register it with
+<example>
 install-docs -i /etc/doc-base/documents/&lt;document-id&gt;
- </example>
+</example>
 
 Before removing the file, it should be de-registered with
- <example>
+<example>
 install-docs -r /etc/doc-base/documents/&lt;document-id&gt;
- </example>
+</example>
 
 Since version 0.8.12
- <example>
+<example>
 install-docs --install-changed
 </example>
 may be used instead of the two above commands.
 
 </sect1>
+
+<sect1>dpkg triggers
+<p>
+<package/doc-base/ 0.8.11 and greater uses the <package/dpkg/ triggers feature to 
+register and de-register the documentation. There is no longer need to call
+<prgn/install-docs/ from maintainer scripts.
+</sect1>
+
 </sect><!--}}}-->
 
-<sect id="checking_syntax">Checking Syntax of <em/Control Files/<!--{{{-->
+<sect id="checking_syntax">Checking Syntax of <em/Control Files/<!--{{{--> 
 <p>
 
 With the new <tt/--check/ (<tt/-c/) option of <prgn/install-docs/ it is possible to check
@@ -994,6 +946,6 @@ sgml-declaration:nil
 sgml-local-catalogs:nil
 sgml-local-ecat-files:nil
 End:
-$Id: doc-base.sgml 183 2009-02-22 10:54:12Z robert $
+$Id: doc-base.sgml 195 2009-09-10 19:15:50Z robert $
 vim:ts=2:et:sts=2:sw=2:fdm=marker 
 -->

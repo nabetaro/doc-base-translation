@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2009-04-27 00:44+0300\n"
+"POT-Creation-Date: 2009-09-10 19:50+0300\n"
 "PO-Revision-Date: 2009-03-26 14:39+0100\n"
 "Last-Translator: Jean-Luc Coulon (f5ibh) <jean-luc.coulon@wanadoo.fr>\n"
 "Language-Team: French <<debian-l10n-french@lists.debian.org>>\n"
@@ -447,13 +447,14 @@ msgid "B<-d>, B<--debug>, B<-h>, B<--help> options."
 msgstr "option B<-d>, B<--debug>, B<-h>, B<--help>."
 
 # type: textblock
-#. type: verbatim
+#. type: textblock
 #: ../../install-docs.in:378
-#, no-wrap
 msgid ""
-" The B<-C>, B<--install-changed>, B<--dump-db>, B<-V>, B<--version> options were added in 0.8.12.\n"
-"\n"
-msgstr "Les options B<-C>, B<--install-changed>, B<--dump-db>, B<-V>, B<--version> ont été ajoutées dans la version 0.8.12.\n"
+"The B<-C>, B<--install-changed>, B<--dump-db>, B<-V>, B<--version> options "
+"were added in 0.8.12."
+msgstr ""
+"Les options B<-C>, B<--install-changed>, B<--dump-db>, B<-V>, B<--version> "
+"ont été ajoutées dans la version 0.8.12."
 
 # type: =head1
 #. type: =head1

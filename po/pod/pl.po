@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.9.0\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2009-04-27 00:44+0300\n"
+"POT-Creation-Date: 2009-09-10 19:50+0300\n"
 "PO-Revision-Date: 2009-02-22 11:53+0100\n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -434,13 +434,14 @@ msgid "B<-d>, B<--debug>, B<-h>, B<--help> options."
 msgstr "opcje B<-d>, B<--debug>, B<-h>, B<--help>."
 
 # type: textblock
-#. type: verbatim
+#. type: textblock
 #: ../../install-docs.in:378
-#, no-wrap
 msgid ""
-" The B<-C>, B<--install-changed>, B<--dump-db>, B<-V>, B<--version> options were added in 0.8.12.\n"
-"\n"
-msgstr "Opcje B<-C>, B<--install-changed>, B<--dump-db>, B<-V>, B<--version> zostały dodane w wersji 0.8.12.\n"
+"The B<-C>, B<--install-changed>, B<--dump-db>, B<-V>, B<--version> options "
+"were added in 0.8.12."
+msgstr ""
+"Opcje B<-C>, B<--install-changed>, B<--dump-db>, B<-V>, B<--version> zostały "
+"dodane w wersji 0.8.12."
 
 # type: =head1
 #. type: =head1
