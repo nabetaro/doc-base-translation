@@ -1,0 +1,365 @@
+# doc-base /po/bin po translation to Spanish
+# Copyright (C) 2009 Software in the Public Interest
+# This file is distributed under the same license as the doc-base package.
+#
+# Changes:
+#   - Initial translation
+#       Omar Campagne <ocampagne@gmail.com>, 2009
+#
+#   - Updates
+#       TRADUCTOR <CORREO>, AÑO
+#
+# Traductores, si no conocen el formato PO, merece la pena leer la
+# de gettext, especialmente las secciones dedicadas a este
+# formato, por ejemplo ejecutando:
+#       info -n '(gettext)PO Files'
+#       info -n '(gettext)Header Entry'
+#
+# Equipo de traducción al español, por favor, lean antes de traducir
+# los siguientes documentos:
+#
+#   - El proyecto de traducción de Debian al español
+#     http://www.debian.org/intl/spanish/
+#     especialmente las notas de traducción en
+#     http://www.debian.org/intl/spanish/notas
+#
+#   - La guía de traducción de po's de debconf:
+#     /usr/share/doc/po-debconf/README-trans
+#     o http://www.debian.org/intl/l10n/po-debconf/README-trans
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: doc-base 0.9.2~1\n"
+"Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
+"POT-Creation-Date: 2009-05-02 23:12+0200\n"
+"PO-Revision-Date: 2009-07-23 12:45+0200\n"
+"Last-Translator: Omar Campagne <ocampagne@gmail.com>\n"
+"Language-Team: Debian l10n Spanish <debian-l10n-spanish@lists.debian.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n==1? 0 : 1);\n"
+
+#: ../../install-docs.in:90
+#, perl-format
+msgid "Too many arguments for `%s'"
+msgstr "Demasiados argumentos para «%s»"
+
+#: ../../install-docs.in:93
+#, perl-format
+msgid "`%s' requires exactly one argument"
+msgstr "«%s» requiere exactamente un solo argumento"
+
+#: ../../install-docs.in:96
+#, perl-format
+msgid "Arguments missing for %s"
+msgstr "Faltan argumentos para %s"
+
+#: ../../install-docs.in:106
+#, perl-format
+msgid "Cannot create %s: %s\n"
+msgstr "No se pudo crear %s: %s\n"
+
+#: ../../install-docs.in:112
+#, perl-format
+msgid "Re-registation of all documents forced by %s"
+msgstr "Creación de un nuevo registro de todos los documentos forzado por %s"
+
+#: ../../install-docs.in:175
+#, perl-format
+msgid "`%s' does not exist or is not a directory"
+msgstr "«%s» no existe o no es un directorio"
+
+#: ../../install-docs.in:296
+#, perl-format
+msgid "Ignoring deprecated command line argument: %s\n"
+msgstr "Ignorando el argumento de la línea de órdenes obsoleto: %s\n"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:239
+#, perl-format
+msgid "`%s', line %d"
+msgstr "«%s», línea %d"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:240
+#, perl-format
+msgid "`%s'"
+msgstr "«%s»"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:246
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:248
+#, perl-format
+msgid "Error in %s: %s"
+msgstr "Error en %s: %s"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:250
+#, perl-format
+msgid "Warning in %s: %s"
+msgstr "Aviso en %s: %s"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:252
+#, perl-format
+msgid "Internal error: Unknown flag (%s, %s)"
+msgstr "Error interno: Marca desconocida (%s, %s)"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:268
+#, perl-format
+msgid "line in field `%s' seems not to be UTF-8 encoded, recoding"
+msgstr ""
+"la línea en el campo «%s» no parece estar codificada en UTF-8, recodificando"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:304
+#, perl-format
+msgid "control field `%s' already defined"
+msgstr "el campo de control «%s» ya está definido"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:307
+#, perl-format
+msgid "unrecognised control field `%s'"
+msgstr "el campo de control «%s» es desconocido"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:310
+#, perl-format
+msgid "field `%s' in incorrect section (missing empty line before the field?)"
+msgstr ""
+"el campo «%s» está en la sección incorrecta (¿Precede una línea vacía al "
+"campo?)"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:317
+msgid "syntax error - no field specified"
+msgstr "error de sintaxis - no se especificó el campo"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:318
+#, perl-format
+msgid "field `%s' can't consist of multi lines"
+msgstr "el campo «%s» no puede consistir de varias líneas"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:322
+#, perl-format
+msgid "syntax error in control file: %s"
+msgstr "error de sintaxis en el archivo de control: %s"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:350
+#, perl-format
+msgid "unknown section: `%s'"
+msgstr "sección desconocida: «%s»"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:364
+#, perl-format
+msgid "value of `%s' not specified"
+msgstr "no se especificó el valor de «%s»"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:382
+msgid "the first line does not contain valid `Document' field"
+msgstr "la primera línea no contiene un campo de «Document» válido"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:385
+msgid "invalid value of `Document' field"
+msgstr "el campo «Document» posee un valor inválido"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:392
+#, perl-format
+msgid "unsupported doc-base file version: %s"
+msgstr "la versión del archivo de doc-base no es compatible: %s"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:411
+#, perl-format
+msgid "format `%s' already defined"
+msgstr "el formato «%s» ya está definido"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:415
+#, perl-format
+msgid "format `%s' is not supported"
+msgstr "no hay compatibilidad con el formato «%s»"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:427
+#, perl-format
+msgid "`%s' value missing for format `%s'"
+msgstr "falta el valor «%s» para el formato «%s»"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:431
+#, perl-format
+msgid "`%s' value has to be specified with absolute path: %s"
+msgstr "el valor «%s» se debe especificar con una ruta absoluta: %s"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:464
+#, perl-format
+msgid " (using `%s' as the root directory)"
+msgstr " (usando «%s» como directorio raíz)"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:466
+#, perl-format
+msgid "file mask `%s' does not match any files"
+msgstr "el archivo de máscara «%s» no coincide con ninguno de los archivos"
+
+#: ../../perl/Debian/DocBase/Document.pm:165
+#, perl-format
+msgid "Cannot open `%s': %s"
+msgstr "No se pudo abrir «%s»: %s"
+
+#: ../../perl/Debian/DocBase/Document.pm:189
+#, perl-format
+msgid "Document id in `%s' does not match our document id (%s != %s)"
+msgstr ""
+"El id del documento en «%s» no concuerda con nuestro id del documento (%s != "
+"%s)"
+
+#: ../../perl/Debian/DocBase/Document.pm:197
+#, perl-format
+msgid "`%s' contains errors, not registering"
+msgstr "«%s» contiene errores, no se registrará"
+
+#: ../../perl/Debian/DocBase/Document.pm:212
+#, perl-format
+msgid "File `%s' is not registered, cannot remove"
+msgstr "El archivo «%s» no está registrado, no se puede eliminar"
+
+#: ../../perl/Debian/DocBase/Document.pm:311
+#, perl-format
+msgid "Error while merging %s with %s: inconsistent values of %s"
+msgstr "Error al fusionar %s con %s: %s tiene valores inconsistentes"
+
+#: ../../perl/Debian/DocBase/Document.pm:320
+#, perl-format
+msgid "Error while merging %s with %s: format %s already defined"
+msgstr "Error al fusionar %s con %s: el formato %s ya está definido"
+
+#: ../../perl/Debian/DocBase/InstallDocs.pm:59
+#, perl-format
+msgid "Value of the `%s' option ignored"
+msgstr "Ignorado el valor de la opción «%s»"
+
+#: ../../perl/Debian/DocBase/InstallDocs.pm:105
+#: ../../perl/Debian/DocBase/InstallDocs.pm:239
+#, perl-format
+msgid "Can't read doc-base file `%s'"
+msgstr "No se pudo leer el archivo de doc-base «%s»"
+
+#: ../../perl/Debian/DocBase/InstallDocs.pm:112
+#, perl-format
+msgid "%s: Fatal error found, the file won't be registered"
+msgstr "%s: Error fatal encontrado, el archivo no se registrará"
+
+#: ../../perl/Debian/DocBase/InstallDocs.pm:114
+#, perl-format
+msgid "%d warning or non-fatal error found"
+msgid_plural "%d warnings or non-fatal errors found"
+msgstr[0] "%d aviso o error no fatal encontrado"
+msgstr[1] "%d avisos o errores no fatales encontrados"
+
+#: ../../perl/Debian/DocBase/InstallDocs.pm:119
+#, perl-format
+msgid "%s: No problems found"
+msgstr "%s: No se encontraron problemas"
+
+#: ../../perl/Debian/DocBase/InstallDocs.pm:128
+#, perl-format
+msgid "Document `%s' is not registered"
+msgstr "El documento «%s» no está registrado"
+
+#: ../../perl/Debian/DocBase/InstallDocs.pm:144
+#, perl-format
+msgid "Invalid argument `%s' passed to the `%s' option"
+msgstr "Se introdujo un argumento inválido «%s» a la opción «%s»"
+
+#: ../../perl/Debian/DocBase/InstallDocs.pm:181
+#, perl-format
+msgid "%d removed"
+msgid_plural "%d removed"
+msgstr[0] "%d se ha eliminado"
+msgstr[1] "%d se han eliminado"
+
+#: ../../perl/Debian/DocBase/InstallDocs.pm:183
+#, perl-format
+msgid "%d changed"
+msgid_plural "%d changed"
+msgstr[0] "se ha modificado %d"
+msgstr[1] "se han modificado %d"
+
+#: ../../perl/Debian/DocBase/InstallDocs.pm:185
+#, perl-format
+msgid "%d added"
+msgid_plural "%d added"
+msgstr[0] "%d añadido"
+msgstr[1] "%d añadidos"
+
+#: ../../perl/Debian/DocBase/InstallDocs.pm:187
+#, perl-format
+msgid "Processing %s doc-base file(s)..."
+msgstr "Procesando %s archivo(s) de doc-base..."
+
+#: ../../perl/Debian/DocBase/InstallDocs.pm:196
+#, perl-format
+msgid "De-registering %d, re-registering %d doc-base files"
+msgstr ""
+"Eliminando %d del registro, registrando nuevamente %d archivos de doc-base"
+
+#: ../../perl/Debian/DocBase/InstallDocs.pm:198
+#, perl-format
+msgid "De-registering %d doc-base file"
+msgid_plural "De-registering %d doc-base files"
+msgstr[0] "Eliminando del registro %d archivo de doc-base"
+msgstr[1] "Eliminando del registro %d archivos de doc-base"
+
+#: ../../perl/Debian/DocBase/InstallDocs.pm:201
+#, perl-format
+msgid "Registering %d doc-base file"
+msgid_plural "Registering %d doc-base files"
+msgstr[0] "Registrando %d archivo de doc-base"
+msgstr[1] "Registrando %d archivos de doc-base"
+
+#: ../../perl/Debian/DocBase/InstallDocs.pm:218
+#, perl-format
+msgid "Ignoring nonregistered document `%s'"
+msgstr "Ignorando el documento no registrado «%s»"
+
+#: ../../perl/Debian/DocBase/InstallDocs.pm:221
+#, perl-format
+msgid "Trying to remove document `%s'"
+msgstr "Intentando eliminar el documento «%s»"
+
+#: ../../perl/Debian/DocBase/InstallDocs.pm:229
+#, perl-format
+msgid "Ignoring nonregistered file `%s'"
+msgstr "Ignorando el archivo no registrado «%s»"
+
+#: ../../perl/Debian/DocBase/Programs/Dhelp.pm:79
+#: ../../perl/Debian/DocBase/Programs/Dwww.pm:27
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:67
+#, perl-format
+msgid "%s started"
+msgstr "%s iniciado"
+
+#: ../../perl/Debian/DocBase/Programs/Dhelp.pm:82
+#: ../../perl/Debian/DocBase/Programs/Dwww.pm:30
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:64
+#, perl-format
+msgid "Registering documents with %s..."
+msgstr "Registrando documentos con %s..."
+
+#: ../../perl/Debian/DocBase/Programs/Dhelp.pm:84
+#: ../../perl/Debian/DocBase/Programs/Dwww.pm:33
+#, perl-format
+msgid "Skipping execution of %s - %s package doesn't seem to be installed"
+msgstr "Se ha obviado ejecutar %s - el paquete %s no parece estar instalado"
+
+#: ../../perl/Debian/DocBase/Programs/Dhelp.pm:98
+#: ../../perl/Debian/DocBase/Programs/Dwww.pm:35
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:112
+#, perl-format
+msgid "%s finished"
+msgstr "%s finalizado"
+
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:132
+#, perl-format
+msgid "Removing scrollkeeper OMF file `%s'"
+msgstr "Eliminando archivo OMF de scrollkeeper «%s»"
+
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:133
+#, perl-format
+msgid "%s: could not delete file: %s"
+msgstr "%s: no se pudo eliminar el archivo: %s"
+
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:138
+#, perl-format
+msgid "Could not delete directory `%s': %s"
+msgstr "No se pudo borrar el directorio «%s»: %s"
