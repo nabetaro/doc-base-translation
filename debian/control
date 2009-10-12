@@ -8,15 +8,14 @@ Build-Depends: debhelper (>= 7)
 
 Package: doc-base
 Depends: ${perl:Depends}, libuuid-perl, dpkg (>= 1.14.17), libmldbm-perl
-Suggests: dhelp | dwww | doc-central | yelp | khelpcenter, scrollkeeper
+Suggests: dhelp | dwww | doc-central | yelp | khelpcenter4, rarian-compat
 Conflicts: dhelp (<< 0.6.7), dwww (<< 1.10.13~)
 Architecture: all
 Description: utilities to manage online documentation
  This package contains utilities to manage documentation installed on
- a Debian system.  It contains a database of document metadata.
- Various third-party systems such as 'dwww', 'dhelp',  'doc-central' 
- or 'scrollkeeper'  use this data to provide a catalog of available 
- documentation.
+ a Debian system. It generates a database of document metadata, which
+ other packages such as dwww, dhelp, doc-central, and rarian-compat
+ can use to provide a catalog of available documentation.
  .
- If you want to get additional information about 'doc-base' please
- consult the `Debian doc-base Manual' included in this package.
+ For additional information see the Debian doc-base Manual included in
+ this package.

@@ -607,6 +607,11 @@ The full section list is presented below.
     <item>
       <p>TV-in, TV-out, FM radio, teletext browsers, etc.</p>
     </item>
+  <tag><tt>Typesetting</tt></tag>
+    <item>
+      <p>Software for typesetting text and graphics from structured input files
+         like LaTeX or docbook sources, database exports etc.</p>
+    </item>
   <tag><tt>Viewers</tt></tag>
     <item>
       <p>Software for viewing images, documents
@@ -946,6 +951,6 @@ sgml-declaration:nil
 sgml-local-catalogs:nil
 sgml-local-ecat-files:nil
 End:
-$Id: doc-base.sgml 195 2009-09-10 19:15:50Z robert $
+$Id: doc-base.sgml 197 2009-10-12 20:55:27Z robert $
 vim:ts=2:et:sts=2:sw=2:fdm=marker 
 -->

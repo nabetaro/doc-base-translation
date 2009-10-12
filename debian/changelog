@@ -1,3 +1,11 @@
+doc-base (0.9.5~) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+  * Add Typesetting section (closes: #486144).
+  * Fix description and control (closes: #550086).
+
+ -- Robert Luberda <robert@debian.org>  Mon, 12 Oct 2009 22:54:10 +0200
+
 doc-base (0.9.4) unstable; urgency=low
 
   * Add Spanish translations (closes: #539706, #539707).
