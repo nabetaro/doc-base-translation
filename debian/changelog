@@ -1,10 +1,12 @@
-doc-base (0.9.5~) UNRELEASED; urgency=low
+doc-base (0.9.5) unstable; urgency=low
 
-  * NOT RELEASED YET
-  * Add Typesetting section (closes: #486144).
-  * Fix description and control (closes: #550086).
+  * Add a `Typesetting' top-level section for software used to typesetting 
+    text and graphics from structured input files (closes: 486144)..
+  * Map the unofficial `Tex' section into `Typesetting'; re-register all 
+    documents. 
+  * Fix package description and dependencies (closes: #550086).
 
- -- Robert Luberda <robert@debian.org>  Mon, 12 Oct 2009 22:54:10 +0200
+ -- Robert Luberda <robert@debian.org>  Thu, 15 Oct 2009 11:26:27 +0200
 
 doc-base (0.9.4) unstable; urgency=low
 
