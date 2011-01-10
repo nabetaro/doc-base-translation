@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 # vim:ts=2
 # rules file for doc-base
-# $Id: rules 195 2009-09-10 19:15:50Z robert $
+# $Id: rules 201 2011-01-10 20:28:43Z robert $
 #
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
@@ -60,7 +60,7 @@ binary-indep: build install
 	dh_link
 	dh_compress
 	dh_fixperms
-	dh_perl
+	dh_perl -d
 #	dh_python
 	dh_installdeb
 	dh_gencontrol

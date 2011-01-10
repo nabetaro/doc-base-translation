@@ -1,7 +1,27 @@
+doc-base (0.9.6) UNRELEASED; urgency=low
+
+  * UNRELEASED 
+  * Applied patch from Ubuntu to remove dependency on perl (closes: #602919).
+
+ -- Robert Luberda <robert@debian.org>  Mon, 10 Jan 2011 21:25:51 +0100
+
+doc-base (0.9.5ubuntu1) natty; urgency=low
+
+  * perl/Debian/DocBase/Programs/Scrollkeeper.pm: Provide our own local
+    dirname() function and use it instead of File::Basename.
+  * perl/Debian/DocBase/InstallDocs.pm: Use 'rm -r' and 'mkdir -p' programs
+    instead of File::Path.
+  * perl/Debian/DocBase/DB.pm: If Dumper module is not available, exit with an
+    error that perl needs to be installeld. --dump-db is only required for
+    debugging.
+  * debian/rules: Run dh_perl with '-d' to avoid perl dependency.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 09 Nov 2010 13:24:19 +0100
+
 doc-base (0.9.5) unstable; urgency=low
 
   * Add a `Typesetting' top-level section for software used to typesetting 
-    text and graphics from structured input files (closes: 486144)..
+    text and graphics from structured input files (closes: #486144)..
   * Map the unofficial `Tex' section into `Typesetting'; re-register all 
     documents. 
   * Fix package description and dependencies (closes: #550086).

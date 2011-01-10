@@ -2,7 +2,7 @@
 
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 189 2009-04-26 22:57:37Z robert $
+# $Id: InstallDocs.pm 201 2011-01-10 20:28:43Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -156,8 +156,8 @@ sub _HandleRemovalOfAllDocs() { # {{{
   foreach my $d (@dbdirs) {
     next unless -d $d;
     rename ($d, $d.$suffix) or croak("Can't rename $d to ${d}${suffix}: $!");
-    mkpath ($d, 0, 0755);
-    rmtree ($d.$suffix, 0, 0);
+    system ('mkdir', '-m', '0755', '-p', $d);
+    system ('rm', '-r', $d.$suffix);
   }
   unlink $DB_STATUS or croak("Can't remove $DB_STATUS: $!") if -f $DB_STATUS;
 

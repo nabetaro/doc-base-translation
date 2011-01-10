@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 157 2008-11-11 13:21:09Z robert $
+# $Id: Scrollkeeper.pm 201 2011-01-10 20:28:43Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -17,7 +17,6 @@ use Carp;
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
 use Debian::DocBase::Gettext;
-use File::Basename qw(dirname);
 use UUID;
 
 
@@ -125,6 +124,13 @@ sub RegisterScrollkeeper($@) { # {{{
 sub _MapDocbaseToScrollkeeper($) { # {{{
   return $mapping{lc($_[0])};
 } # }}}
+
+sub dirname {
+    my @p = split '/', $_[0];
+    return (join '/', @p[0..($#p-1)]) if $#p > 1;
+    return '/' if substr ($_[0], 0, 1) eq '/';
+    return '.';
+}
 
 sub _RemoveOmfFile($) { # {{{
   my $omf_file = shift;
