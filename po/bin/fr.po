@@ -262,7 +262,7 @@ msgstr[1] "%d ajoutés"
 #: ../../perl/Debian/DocBase/InstallDocs.pm:187
 #, perl-format
 msgid "Processing %s doc-base file(s)..."
-msgstr "Traitement de %s fichier(s) de documentation"
+msgstr "Traitement de fichier(s) de documentation : %s"
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:196
 #, perl-format

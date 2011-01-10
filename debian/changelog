@@ -2,8 +2,10 @@ doc-base (0.9.6) UNRELEASED; urgency=low
 
   * UNRELEASED 
   * Applied patch from Ubuntu to remove dependency on perl (closes: #602919).
+  * Applied patch from David Prévot not to assume word ordering in translated
+    strings (closes: #606475).
 
- -- Robert Luberda <robert@debian.org>  Mon, 10 Jan 2011 21:25:51 +0100
+ -- Robert Luberda <robert@debian.org>  Mon, 10 Jan 2011 21:30:24 +0100
 
 doc-base (0.9.5ubuntu1) natty; urgency=low
 
