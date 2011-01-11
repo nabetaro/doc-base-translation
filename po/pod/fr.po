@@ -7,10 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2009-09-10 19:50+0300\n"
+"POT-Creation-Date: 2011-01-10 23:59+0100\n"
 "PO-Revision-Date: 2009-03-26 14:39+0100\n"
 "Last-Translator: Jean-Luc Coulon (f5ibh) <jean-luc.coulon@wanadoo.fr>\n"
 "Language-Team: French <<debian-l10n-french@lists.debian.org>>\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -147,7 +148,7 @@ msgstr "B<-d>, B<--debug>"
 # type: textblock
 #. type: textblock
 #: ../../install-docs.in:148
-msgid "Print some debugging informations."
+msgid "Print some debugging information."
 msgstr "Afficher certaines informations de débogage."
 
 # type: =item
@@ -212,11 +213,11 @@ msgid ""
 "correspond to the package name.)"
 msgstr ""
 "Chaque paramètre I<fichier> doit être le chemin complet vers le fichier de "
-"contrôle de doc-base (par ex. « /usr/share/doc-base/some_file » ou « /etc/doc-"
-"base/documents/un_fichier »), et chaque I<id_doc> doit être l'identifiant du "
-"document (les identifiants de document sont définis dans le champ "
-"« Document » du fichier de contrôle, ils correspondent habituellement au nom "
-"du paquet)."
+"contrôle de doc-base (par ex. « /usr/share/doc-base/some_file » ou « /etc/"
+"doc-base/documents/un_fichier »), et chaque I<id_doc> doit être "
+"l'identifiant du document (les identifiants de document sont définis dans le "
+"champ « Document » du fichier de contrôle, ils correspondent habituellement "
+"au nom du paquet)."
 
 # type: textblock
 #. type: textblock
@@ -226,8 +227,8 @@ msgid ""
 "is read from the standard input (each file name or document id in separate "
 "line)."
 msgstr ""
-"Si I<fichier> ou I<id_doc> est égal à « B<-> » (le signe moins), la liste des "
-"paramètres sera lue depuis l'entrée standard (chaque nom de fichier ou "
+"Si I<fichier> ou I<id_doc> est égal à « B<-> » (le signe moins), la liste "
+"des paramètres sera lue depuis l'entrée standard (chaque nom de fichier ou "
 "chaque identifiant de document se trouvant sur une ligne séparée)."
 
 # type: =item
@@ -389,7 +390,7 @@ msgstr "B<-V>, B<--version>"
 # type: textblock
 #. type: textblock
 #: ../../install-docs.in:327
-msgid "Display version infromation"
+msgid "Display version information."
 msgstr "Afficher les informations de version."
 
 # type: =head1

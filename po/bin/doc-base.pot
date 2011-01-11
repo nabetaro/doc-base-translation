@@ -6,12 +6,13 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: doc-base 0.9.4\n"
+"Project-Id-Version: doc-base 0.9.6~\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2009-09-10 19:37+0200\n"
+"POT-Creation-Date: 2011-01-11 00:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -42,14 +43,13 @@ msgstr ""
 msgid "Re-registation of all documents forced by %s"
 msgstr ""
 
-#: ../../install-docs.in:175
-#, perl-format
-msgid "`%s' does not exist or is not a directory"
+#: ../../perl/Debian/DocBase/DB.pm:83
+msgid "Please install the 'perl' package for this operation.\n"
 msgstr ""
 
-#: ../../install-docs.in:296
+#: ../../perl/Debian/DocBase/DB.pm:90
 #, perl-format
-msgid "Ignoring deprecated command line argument: %s\n"
+msgid "Contents of `%s'\n"
 msgstr ""
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:239
@@ -235,28 +235,28 @@ msgstr ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:181
 #, perl-format
-msgid "%d removed"
-msgid_plural "%d removed"
+msgid "%d removed doc-base file"
+msgid_plural "%d removed doc-base files"
 msgstr[0] ""
 msgstr[1] ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:183
 #, perl-format
-msgid "%d changed"
-msgid_plural "%d changed"
+msgid "%d changed doc-base file"
+msgid_plural "%d changed doc-base files"
 msgstr[0] ""
 msgstr[1] ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:185
 #, perl-format
-msgid "%d added"
-msgid_plural "%d added"
+msgid "%d added doc-base file"
+msgid_plural "%d added doc-base files"
 msgstr[0] ""
 msgstr[1] ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:187
 #, perl-format
-msgid "Processing %s doc-base file(s)..."
+msgid "Processing %s..."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:196
@@ -295,14 +295,14 @@ msgstr ""
 
 #: ../../perl/Debian/DocBase/Programs/Dhelp.pm:79
 #: ../../perl/Debian/DocBase/Programs/Dwww.pm:27
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:67
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:66
 #, perl-format
 msgid "%s started"
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Programs/Dhelp.pm:82
 #: ../../perl/Debian/DocBase/Programs/Dwww.pm:30
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:64
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:63
 #, perl-format
 msgid "Registering documents with %s..."
 msgstr ""
@@ -315,22 +315,22 @@ msgstr ""
 
 #: ../../perl/Debian/DocBase/Programs/Dhelp.pm:98
 #: ../../perl/Debian/DocBase/Programs/Dwww.pm:35
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:112
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:114
 #, perl-format
 msgid "%s finished"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:132
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:141
 #, perl-format
 msgid "Removing scrollkeeper OMF file `%s'"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:133
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:142
 #, perl-format
 msgid "%s: could not delete file: %s"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:138
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:147
 #, perl-format
 msgid "Could not delete directory `%s': %s"
 msgstr ""

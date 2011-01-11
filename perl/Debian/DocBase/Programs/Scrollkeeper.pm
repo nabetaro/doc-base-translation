@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 201 2011-01-10 20:28:43Z robert $
+# $Id: Scrollkeeper.pm 203 2011-01-11 00:11:46Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -82,6 +82,9 @@ sub RegisterScrollkeeper($@) { # {{{
         next unless defined $format_data;
 
         my $file = defined $$format_data{'index'} ? $$format_data{'index'} : $$format_data{'files'};
+        next if $file =~ /\n/; # avoid `Unsuccessful stat on filename containing newline'
+                               # given by perl in the next line when the files field is a
+                               # multiline one, see Bug#607498
         next unless -f $file;
 
         $omf_serial_id = $doc->GetStatus('Scrollkeeper-sid');

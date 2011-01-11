@@ -2,14 +2,14 @@ Source: doc-base
 Section: doc
 Priority: optional
 Maintainer: Robert Luberda <robert@debian.org>
-Standards-Version: 3.8.3
+Standards-Version: 3.9.1
 Build-Depends-Indep: debiandoc-sgml (>= 1.1.37), libmldbm-perl, libuuid-perl, po4a (>= 0.35)
-Build-Depends: debhelper (>= 7)
+Build-Depends: debhelper (>= 8)
 
 Package: doc-base
-Depends: ${perl:Depends}, libuuid-perl, dpkg (>= 1.14.17), libmldbm-perl
+Depends: ${perl:Depends}, ${misc:Depends}, libuuid-perl, dpkg (>= 1.14.17), libmldbm-perl
 Suggests: dhelp | dwww | doc-central | yelp | khelpcenter4, rarian-compat
-Conflicts: dhelp (<< 0.6.7), dwww (<< 1.10.13~)
+Breaks: dhelp (<< 0.6.7), dwww (<< 1.10.13~)
 Architecture: all
 Description: utilities to manage online documentation
  This package contains utilities to manage documentation installed on

@@ -7,10 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.9.1\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2009-09-10 19:50+0300\n"
+"POT-Creation-Date: 2011-01-10 23:59+0100\n"
 "PO-Revision-Date: 2009-03-14 13:47+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -147,7 +148,7 @@ msgstr "B<-d>, B<--debug>"
 # type: textblock
 #. type: textblock
 #: ../../install-docs.in:148
-msgid "Print some debugging informations."
+msgid "Print some debugging information."
 msgstr "Einige Fehlersuchinformationen ausgeben."
 
 # type: =item
@@ -386,8 +387,8 @@ msgstr "B<-V>, B<--version>"
 # type: textblock
 #. type: textblock
 #: ../../install-docs.in:327
-msgid "Display version infromation"
-msgstr "Versions-Information anzeigen"
+msgid "Display version information."
+msgstr "Versions-Information anzeigen."
 
 # type: =head1
 #. type: =head1

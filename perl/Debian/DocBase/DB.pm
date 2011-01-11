@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DB.pm 201 2011-01-10 20:28:43Z robert $
+# $Id: DB.pm 203 2011-01-11 00:11:46Z robert $
 #
 
 package Debian::DocBase::DB;
@@ -13,6 +13,7 @@ use Fcntl;
 use Carp;
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
+use Debian::DocBase::Gettext;
 my $has_dumper = 1;
 eval 'use Data::Dumper';
 $has_dumper = 0 if ($@);
@@ -79,14 +80,14 @@ sub DumpDB($) { # {{{
   my $db   = $self->{'DB'};
 
   unless ($has_dumper) {
-      print STDERR "Please install the 'perl' package for this operation\n";
+      print STDERR _g("Please install the 'perl' package for this operation.\n");
       exit 1;
   }
 
   my $dumper = Data::Dumper->new([$db], [$self->{'FILE'}]);
   $dumper->Indent(1);
   $dumper->Terse(1);
-  print "Contents of `" .$self->{'FILE'}."\':\n";
+  printf STDOUT (_g("Contents of `%s'\n"), $self->{'FILE'});
   print $dumper->Dump();
 } # }}}
 

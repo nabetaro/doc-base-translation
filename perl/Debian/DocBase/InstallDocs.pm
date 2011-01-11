@@ -2,7 +2,7 @@
 
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 202 2011-01-10 20:32:00Z robert $
+# $Id: InstallDocs.pm 203 2011-01-11 00:11:46Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -179,9 +179,9 @@ sub _HandleRegistrationAndUnregistation() { # {{{
     my @stats = Debian::DocBase::DocBaseFile::GetChangedDocBaseFiles(\@toremove, \@toinstall);
 
     $msg      .=  _ng("%d removed doc-base file", "%d removed doc-base files", $stats[0]) if $stats[0];
-    $msg      .= " " if $msg and $stats[1];
+    $msg      .= ", " if $msg and $stats[1];
     $msg      .=  _ng("%d changed doc-base file", "%d changed doc-base files", $stats[1]) if $stats[1];
-    $msg      .= " " if $msg and $stats[2];
+    $msg      .= ", " if $msg and $stats[2];
     $msg      .=  _ng("%d added doc-base file",   "%d added doc-base files",   $stats[2]) if $stats[2];
     $msg       = sprintf $msg, grep { $_ != 0 } @stats if $msg;
     Inform(_g("Processing %s..."), $msg) if $msg;

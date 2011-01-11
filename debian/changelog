@@ -1,14 +1,6 @@
-doc-base (0.9.6) UNRELEASED; urgency=low
+doc-base (0.9.6~) UNRELEASED; urgency=low
 
-  * UNRELEASED 
-  * Applied patch from Ubuntu to remove dependency on perl (closes: #602919).
-  * Applied patch from David Prévot not to assume word ordering in translated
-    strings (closes: #606475).
-
- -- Robert Luberda <robert@debian.org>  Mon, 10 Jan 2011 21:30:24 +0100
-
-doc-base (0.9.5ubuntu1) natty; urgency=low
-
+  [ Martin Pitt ]
   * perl/Debian/DocBase/Programs/Scrollkeeper.pm: Provide our own local
     dirname() function and use it instead of File::Basename.
   * perl/Debian/DocBase/InstallDocs.pm: Use 'rm -r' and 'mkdir -p' programs
@@ -18,7 +10,21 @@ doc-base (0.9.5ubuntu1) natty; urgency=low
     debugging.
   * debian/rules: Run dh_perl with '-d' to avoid perl dependency.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 09 Nov 2010 13:24:19 +0100
+  [ Robert Luberda ]
+  * Applied patch from Marin Pitt from Ubuntu to remove dependency on perl
+    (closes: #602919).
+  * Applied patch from David Prévot not to assume word ordering in translated
+    strings (closes: #606475). 
+  * Applied patch from Chris Leick to fix plurals in translated strings
+    (closes: #521384).
+  * Set source format to `3.0 (native)'.
+  * Standards-Version: 3.9.1:
+    + use Breaks instead of Conflicts for versioned conflicts with dwww 
+      and dhelp.
+  * Fix spelling typos found by lintian.
+  * Bump debhelper compat mode to 8.
+
+ -- Robert Luberda <robert@debian.org>  Tue, 11 Jan 2011 00:09:55 +0100
 
 doc-base (0.9.5) unstable; urgency=low
 
