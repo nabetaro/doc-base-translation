@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 161 2008-11-11 16:51:07Z robert $
+# $Id: Document.pm 204 2011-01-14 23:24:45Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -287,15 +287,18 @@ sub MergeCtrlFiles($) { # {{{
   $self->{'MERGED_CTRL_FILES'} = 1;
   $self->{'MAIN_DATA'}         = {};
   $self->{'FORMAT_LIST'}       = {};
+  my @control_files = $self->_GetControlFileNames();
 
-  foreach my $db_file_name ($self->_GetControlFileNames()) {
+  for (my $idx = 0; $idx <= $#control_files; $idx++) {
+    my $db_file_name = $control_files[$idx];
     my $doc_data  = $self->{'CONTROL_FILES'}->{$db_file_name};
     my $doc_fname = $doc_data->GetSourceFileName();
 
     if ($doc_data->GetDocumentID() ne $doc_id) {
-      Warn("Document id in `" . $doc_fname ."' does not match our document id (" .
-                  $doc_data->GetDocumentID()  . ' != ' . $self->GetDocumentID() . ")");
+      Warn( _g("Unregistering file `%s', since its actual document id `%s' does not match its saved document id `%s'"),
+               $doc_fname, $doc_data->GetDocumentID(), $doc_id);
       $self->Unregister($doc_data);
+      splice (@control_files, $idx--, 1);
       next;
     }
 
@@ -309,7 +312,7 @@ sub MergeCtrlFiles($) { # {{{
         if ($old_val and $old_val ne $new_val and
             ($fld eq $FLD_DOCUMENT or $fld eq $FLD_SECTION)) {
             return Error( _g("Error while merging %s with %s: inconsistent values of %s"),
-                          $doc_id, $doc_fname, $fld);
+                          join(', ', @control_files[0..$idx-1]), $doc_fname, $fld);
         }
         $self->{'MAIN_DATA'}->{$fld} = $new_val unless $old_val;
       }
@@ -318,7 +321,7 @@ sub MergeCtrlFiles($) { # {{{
     # merge formats
     foreach my $format ($doc_data->GetFormatNames()) {
       return Error( _g("Error while merging %s with %s: format %s already defined"),
-                          $doc_id, $doc_fname, $format) if $self->{'FORMAT_LIST'}->{$format};
+                          join(', ', @control_files[0..$idx-1]), $doc_fname, $format) if $self->{'FORMAT_LIST'}->{$format};
       $self->{'FORMAT_LIST'}->{$format} = $doc_data->GetFormat($format);
     }
   }
