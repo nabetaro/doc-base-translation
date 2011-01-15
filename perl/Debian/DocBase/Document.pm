@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 204 2011-01-14 23:24:45Z robert $
+# $Id: Document.pm 205 2011-01-15 19:53:18Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -152,12 +152,16 @@ sub DisplayStatusInformation($) { # {{{
   my $status_file     = "$DATA_DIR/$docid.status";
   my $var_ctrl_file   = "$VAR_CTRL_DIR/$docid";
 
+  my $doc_info_msg    =  _g("---document-information---"); 
+  my $fmt_desc_msg    =  _g("---format-description---"); 
+  my $status_info_msg =  _g("---status-information---"); 
+
   if (-f $var_ctrl_file) {
     if (open(F, '<', $var_ctrl_file)) {
-      print "---document-information---\n";
+      print $doc_info_msg . "\n";
       while (<F>) {
         next if /^Control-Files:/;
-        s/^$/\n---format-description---/;
+        s/^$/\n$fmt_desc_msg/o;
         print $_;
       }
       close(F);
@@ -166,7 +170,7 @@ sub DisplayStatusInformation($) { # {{{
     }
   }
 
-  print "\n---status-information---\n";
+  print "\n" . $status_info_msg . "\n";
   foreach my $cf (sort keys %{$self->{'CONTROL_FILES'}} ) {
     print "Control-File: $cf (changed: ". localtime ($self->{'CONTROL_FILES'}->{$cf}->GetLastChangeTime()) . ")\n";
   }
@@ -287,7 +291,7 @@ sub MergeCtrlFiles($) { # {{{
   $self->{'MERGED_CTRL_FILES'} = 1;
   $self->{'MAIN_DATA'}         = {};
   $self->{'FORMAT_LIST'}       = {};
-  my @control_files = $self->_GetControlFileNames();
+  my @control_files            = $self->_GetControlFileNames();
 
   for (my $idx = 0; $idx <= $#control_files; $idx++) {
     my $db_file_name = $control_files[$idx];

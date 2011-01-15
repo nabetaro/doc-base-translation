@@ -4,19 +4,18 @@
 # Robert Luberda <robert@debian.org>, 2008.
 #
 msgid ""
-msgstr ""
-"Project-Id-Version: doc-base 0.9.6\n"
+msgstr "Project-Id-Version: doc-base 0.9.6\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2011-01-11 00:23+0100\n"
-"PO-Revision-Date: 2011-01-11 00:18+0100\n"
+"POT-Creation-Date: 2011-01-15 00:39+0100\n"
+"PO-Revision-Date: 2011-01-15 00:40+0100\n"
 "Last-Translator: Robert Luberda <robert@debian.org>\n"
 "Language-Team: Polish <debian-l10n-polish@lists.debian.org>\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 ||"
+" n%100>=20) ? 1 : 2);\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
-"|| n%100>=20) ? 1 : 2);\n"
 
 #: ../../install-docs.in:90
 #, perl-format
@@ -166,32 +165,54 @@ msgstr " (używanie \"%s\" jako korzenia drzewa katalogów)"
 msgid "file mask `%s' does not match any files"
 msgstr "maska plików \"%s\" nie pasuje do żadnego pliku"
 
-#: ../../perl/Debian/DocBase/Document.pm:165
+#: ../../perl/Debian/DocBase/Document.pm:155
+msgid "---document-information---"
+msgstr "--informacje-o-dokumencie--"
+
+#: ../../perl/Debian/DocBase/Document.pm:156
+#| msgid "---status-information---"
+msgid "---format-description---"
+msgstr "--opis-formatu--"
+
+#: ../../perl/Debian/DocBase/Document.pm:157
+msgid "---status-information---"
+msgstr "--informacje-stanu--"
+
+#: ../../perl/Debian/DocBase/Document.pm:169
 #, perl-format
 msgid "Cannot open `%s': %s"
 msgstr "Nie można otworzyć \"%s\": %s"
 
-#: ../../perl/Debian/DocBase/Document.pm:189
+#: ../../perl/Debian/DocBase/Document.pm:193
 #, perl-format
 msgid "Document id in `%s' does not match our document id (%s != %s)"
 msgstr "Id dokumentu w \"%s\" nie pasuje do id naszego dokumentu (%s != %s)"
 
-#: ../../perl/Debian/DocBase/Document.pm:197
+#: ../../perl/Debian/DocBase/Document.pm:201
 #, perl-format
 msgid "`%s' contains errors, not registering"
 msgstr "\"%s\" zawiera błędy, nie zostanie zarejestrowany"
 
-#: ../../perl/Debian/DocBase/Document.pm:212
+#: ../../perl/Debian/DocBase/Document.pm:216
 #, perl-format
 msgid "File `%s' is not registered, cannot remove"
 msgstr "Plik \"%s\" nie jest zarejestrowany, nie można go usunąć"
 
-#: ../../perl/Debian/DocBase/Document.pm:311
+#: ../../perl/Debian/DocBase/Document.pm:302
+#, perl-format
+msgid ""
+"Unregistering file `%s', since its actual document id `%s' does not match "
+"its saved document id `%s'"
+msgstr ""
+"Wyrejestrowanie pliku \"%s\", ponieważ jego bieżący identyfikator dokumentu "
+"\"%s\" różni się od zachowanego identyfikatora \"%s\""
+
+#: ../../perl/Debian/DocBase/Document.pm:318
 #, perl-format
 msgid "Error while merging %s with %s: inconsistent values of %s"
 msgstr "Błąd scalania %s z %s: niespójne wartości %s"
 
-#: ../../perl/Debian/DocBase/Document.pm:320
+#: ../../perl/Debian/DocBase/Document.pm:327
 #, perl-format
 msgid "Error while merging %s with %s: format %s already defined"
 msgstr "Błąd scalania %s z %s: format %s już jest zdefiniowany"
@@ -341,3 +362,4 @@ msgstr "%s: nie można usunąć pliku: %s"
 #, perl-format
 msgid "Could not delete directory `%s': %s"
 msgstr "Nie można usunąć katalogu \"%s\": %s"
+

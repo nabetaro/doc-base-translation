@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.9.1\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2011-01-10 23:53+0100\n"
+"POT-Creation-Date: 2011-01-15 00:39+0100\n"
 "PO-Revision-Date: 2009-03-16 22:00+0100\n"
 "Last-Translator: Jean-Luc Coulon (f5ibh) <jean-luc.coulon@wanadoo.fr>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -166,35 +166,54 @@ msgstr " (utilisation de « %s » comme répertoire racine)"
 msgid "file mask `%s' does not match any files"
 msgstr "aucun fichier ne correspond au masque de fichier « %s »"
 
-#: ../../perl/Debian/DocBase/Document.pm:165
+#: ../../perl/Debian/DocBase/Document.pm:155
+msgid "---document-information---"
+msgstr ""
+
+#: ../../perl/Debian/DocBase/Document.pm:156
+msgid "---format-description---"
+msgstr ""
+
+#: ../../perl/Debian/DocBase/Document.pm:157
+msgid "---status-information---"
+msgstr ""
+
+#: ../../perl/Debian/DocBase/Document.pm:169
 #, perl-format
 msgid "Cannot open `%s': %s"
 msgstr "Impossible d'ouvrir « %s » : %s"
 
-#: ../../perl/Debian/DocBase/Document.pm:189
+#: ../../perl/Debian/DocBase/Document.pm:193
 #, perl-format
 msgid "Document id in `%s' does not match our document id (%s != %s)"
 msgstr ""
 "L'identifiant du document « %s » ne correspond pas à notre identifiant de "
 "document (%s != %s)"
 
-#: ../../perl/Debian/DocBase/Document.pm:197
+#: ../../perl/Debian/DocBase/Document.pm:201
 #, perl-format
 msgid "`%s' contains errors, not registering"
 msgstr "« %s » contient des erreurs et ne sera pas enregistré"
 
-#: ../../perl/Debian/DocBase/Document.pm:212
+#: ../../perl/Debian/DocBase/Document.pm:216
 #, perl-format
 msgid "File `%s' is not registered, cannot remove"
 msgstr "Le fichier « %s » n'est pas enregistré, impossible de le supprimer"
 
-#: ../../perl/Debian/DocBase/Document.pm:311
+#: ../../perl/Debian/DocBase/Document.pm:302
+#, perl-format
+msgid ""
+"Unregistering file `%s', since its actual document id `%s' does not match "
+"its saved document id `%s'"
+msgstr ""
+
+#: ../../perl/Debian/DocBase/Document.pm:318
 #, perl-format
 msgid "Error while merging %s with %s: inconsistent values of %s"
 msgstr ""
 "Erreur lors de la concaténation de %s avec %s : valeurs incohérentes de %s"
 
-#: ../../perl/Debian/DocBase/Document.pm:320
+#: ../../perl/Debian/DocBase/Document.pm:327
 #, perl-format
 msgid "Error while merging %s with %s: format %s already defined"
 msgstr ""
