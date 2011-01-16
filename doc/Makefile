@@ -1,6 +1,6 @@
 # vim:ts=2
 # makefile for doc-base
-# $Id: Makefile 178 2009-01-11 14:14:16Z robert $
+# $Id: Makefile 206 2011-01-16 21:08:22Z robert $
 #
 
 ALL_TARGET := build-local
@@ -53,8 +53,8 @@ $(bdir)/section.list: doc-base.sgml | $(bdir)
 	   '      $$inlst = 0             if s/<\/list>/<\/taglist>/;                 '\
 	   '      $$top .= ($$sect . "/") if /<taglist>/ and $$sect;                  '\
 	   '      $$top =~ s/[^\/]+\/$$// if /<\/taglist>/;                           '\
-	   '      $$sect = $$1            if (/<tag>(?:(?:<\w+[>\/])*?)\s*([^<>\/]+)\s*(.*?)<\/tag>/);  '\
-	   '      print "$$top$$sect\n"   if /<tag>/ && !/<!--\s*skip\s*-->/;         '\
+	   '      $$sect = $$1            if (/<tag>(?:(?:<\w+[>\/])*?)\s*([^<>]+)\s*(.*?)<\/tag>/);  '\
+	   '      print "$$sect\n"        if /<tag>/ && !/<!--\s*skip\s*-->/;         '\
 	 < $< > $@.tmp
 	 touch -r $< $@.tmp
 	 mv $@.tmp $@

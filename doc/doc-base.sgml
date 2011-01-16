@@ -297,7 +297,7 @@ directory.
 
 <sect1 id="section_field"> The <tt/section/ field<!--{{{-->
 <p>
-The <tt/section/ field hold a slash-separated list of hierarchical sections
+The <tt/section/ field holds a slash-separated list of hierarchical sections
 components. The hierarchy is mostly based on the sections outlined in chapter 2.1 of
 the <url id="http://www.debian.org/doc/packaging-manuals/menu-policy/ch2.html#s2.1"
  name="Debian Menu Policy">, however the top-level <tt/Applications/ component was removed
@@ -347,47 +347,47 @@ The full section list is presented below.
     <item>
       Games and recreations. Entries should be placed in appropriate subsection.
       <taglist>
-        <tag><tt>Action</tt></tag>
+        <tag><tt>Games/Action</tt></tag>
           <item>
             <p>Games that involve a lot of action
                and require fast reflexes.</p>
           </item>
-        <tag><tt>Adventure</tt></tag>
+        <tag><tt>Games/Adventure</tt></tag>
           <item>
             <p>Role playing and adventure games,
                interactive movies and stories, etc.</p>
           </item>
-        <tag><tt>Blocks</tt></tag>
+        <tag><tt>Games/Blocks</tt></tag>
           <item>
             <p>Tetris-like games involving falling blocks.</p>
           </item>
-        <tag><tt>Board</tt></tag>
+        <tag><tt>Games/Board</tt></tag>
           <item>
             <p>Games played on a board.</p>
           </item>
-        <tag><tt>Card</tt></tag>
+        <tag><tt>Games/Card</tt></tag>
           <item>
             <p>Games involving a deck of cards.</p>
           </item>
-        <tag><tt>Puzzles</tt></tag>
+        <tag><tt>Games/Puzzles</tt></tag>
           <item>
             <p>Tests of ingenuity and logic.</p>
           </item>
-        <tag><tt>Simulation</tt></tag>
+        <tag><tt>Games/Simulation</tt></tag>
           <item>
             <p>Simulations of the real world
                in all detail and complexity.</p>
           </item>
-        <tag><tt>Strategy</tt></tag>
+        <tag><tt>Games/Strategy</tt></tag>
           <item>
             <p>Games involving long-term strategic thinking.</p>
           </item>
-        <tag><tt>Tools</tt></tag>
+        <tag><tt>Games/Tools</tt></tag>
           <item>
             <p>Server browsers, configurators, editors, and other
                game-related tools that are not games themselves.</p>
           </item>
-        <tag><tt>Toys</tt></tag>
+        <tag><tt>Games/Toys</tt></tag>
           <item>
             <p>Amusements, eye-candy, entertaining
                demos, screen hacks (screen-savers), etc.</p>
@@ -402,23 +402,23 @@ The full section list is presented below.
     <item>
       Documentation of programs that provide user documentation.
       <taglist>
-        <tag><tt>Books</tt></tag>
+        <tag><tt>Help/Books</tt></tag>
           <item>
             Books.
           </item>
-        <tag><tt>FAQ</tt></tag>
+        <tag><tt>Help/FAQ</tt></tag>
           <item>
             Frequently Asked Questions.
           </item>
-        <tag><tt>HOWTO</tt></tag>
+        <tag><tt>Help/HOWTO</tt></tag>
           <item>
             Various HOWTOs.
           </item>
-        <tag><tt>RFC</tt></tag>
+        <tag><tt>Help/RFC</tt></tag>
           <item>
             RFCs 
           </item>
-        <tag><tt>Standards</tt></tag>
+        <tag><tt>Help/Standards</tt></tag>
           <item>
             Standards
           </item>
@@ -431,28 +431,28 @@ The full section list is presented below.
   </item>
   <tag><tt>Network</tt></tag> <!--skip-->
   <item>
-    Network related software. This is a three-level
+    Network related software. This is a two-level
     section, do not put entries directly here.
     <taglist>
-      <tag><tt>Communication</tt></tag>
+      <tag><tt>Network/Communication</tt></tag>
         <item>
           <p>Mail, USENET news, chat, instant messaging,
              IP telephony, video conferencing software, etc.</p>
         </item>
-      <tag><tt>File Transfer</tt></tag>
+      <tag><tt>Network/File Transfer</tt></tag>
         <item>
           <p>File transfer software such as download
              managers, FTP clients, P2P clients, etc.</p>
         </item>
-      <tag><tt>Monitoring</tt></tag>
+      <tag><tt>Network/Monitoring</tt></tag>
         <item>
           <p>Network monitoring software</p>
         </item>
-      <tag><tt>Web Browsing</tt></tag>
+      <tag><tt>Network/Web Browsing</tt></tag>
         <item>
           <p>Web browsers, tools for offline browsing, etc.</p>
         </item>
-      <tag><tt>Web News</tt></tag>
+      <tag><tt>Network/Web News</tt></tag>
         <item>
           <p>Web feed (RSS, Atom, etc.) and podcast aggregators.</p>
         </item>
@@ -469,13 +469,13 @@ The full section list is presented below.
       to only one specific language should be put in subsection named like the language, 
       for example:
       <list>
-          <item><tt>C</tt></item>
-          <item><tt>C++</tt></item>
-          <item><tt>Java</tt></item>
-          <item><tt>OCaml</tt></item>
-          <item><tt>Perl</tt></item>
-          <item><tt>Python</tt></item>
-          <item><tt>Ruby</tt></item>
+          <item><tt>Programming/C</tt></item>
+          <item><tt>Programming/C++</tt></item>
+          <item><tt>Programming/Java</tt></item>
+          <item><tt>Programming/OCaml</tt></item>
+          <item><tt>Programming/Perl</tt></item>
+          <item><tt>Programming/Python</tt></item>
+          <item><tt>Programming/Ruby</tt></item>
     </list>          
   <tag><tt>Project Management</tt></tag>
     <item>
@@ -487,50 +487,50 @@ The full section list is presented below.
       Documentation of scientific and engineering-related software.
       Please use appropriate subsection.
       <taglist>
-        <tag><tt>Astronomy</tt></tag>
+        <tag><tt>Science/Astronomy</tt></tag>
           <item>
             <p>Astronomy-related software.</p>
           </item>
-        <tag><tt>Biology</tt></tag>
+        <tag><tt>Science/Biology</tt></tag>
           <item>
             <p>Biology-related software.</p>
           </item>
-        <tag><tt>Chemistry</tt></tag>
+        <tag><tt>Science/Chemistry</tt></tag>
           <item>
             <p>Chemistry-related software.</p>
           </item>
-        <tag><tt>Data Analysis</tt></tag>
+        <tag><tt>Science/Data Analysis</tt></tag>
           <item>
             <p>Software designed for processing, extracting,
                and presenting generic scientific data.</p>
           </item>
-        <tag><tt>Electronics</tt></tag>
+        <tag><tt>Science/Electronics</tt></tag>
           <item>
             <p>Circuit design tools, simulators and
                assemblers for microprocessors, etc</p>
           </item>
-        <tag><tt>Engineering</tt></tag>
+        <tag><tt>Science/Engineering</tt></tag>
           <item>
             <p>CAD, UML tools, diagram-drawing and
                other engineering-related software.</p>
           </item>
-        <tag><tt>Geoscience</tt></tag>
+        <tag><tt>Science/Geoscience</tt></tag>
           <item>
             <p>Geoscience-related software.</p>
           </item>
-        <tag><tt>Mathematics</tt></tag>
+        <tag><tt>Science/Mathematics</tt></tag>
           <item>
             <p>Mathematics-related software.</p>
           </item>
-        <tag><tt>Medicine</tt></tag>
+        <tag><tt>Science/Medicine</tt></tag>
           <item>
             <p>Medicine-related software.</p>
           </item>
-        <tag><tt>Physics</tt></tag>
+        <tag><tt>Science/Physics</tt></tag>
           <item>
             <p>Physics-related software.</p>
           </item>
-        <tag><tt>Social</tt></tag>
+        <tag><tt>Science/Social</tt></tag>
           <item>
             <p>Social sciences-related software.</p>
           </item>
@@ -540,12 +540,12 @@ The full section list is presented below.
     <item>
       Programs that affect the whole screen. 
       <taglist>
-        <tag><tt>Saving</tt></tag>
+        <tag><tt>Screen/Saving</tt></tag>
           <item>
             <p>Tools for blanking the screen. Entries of screen hacks and
                configuration GUIs should go to other appropriate sections.</p>
           </item>
-        <tag><tt>Locking</tt></tag>
+        <tag><tt>Screen/Locking</tt></tag>
           <item>
             <p>Tools for locking the screen.</p>
           </item>
@@ -563,31 +563,31 @@ The full section list is presented below.
     <item>
       System related software. Place entries in one of she subsections.
       <taglist>
-        <tag><tt>Administration</tt></tag>
+        <tag><tt>System/Administration</tt></tag>
           <item>
             <p>Administrative and system configuration utilities,
                also tools for personal user settings.</p>
           </item>
-        <tag><tt>Hardware</tt></tag>
+        <tag><tt>System/Hardware</tt></tag>
           <item>
             <p>Tools for manipulating specific hardware,
                especially non-standard laptop hardware.</p>
           </item>
-        <tag><tt>Language Environment</tt></tag>
+        <tag><tt>System/Language Environment</tt></tag>
           <item>
             <p>This section is reserved for language-env as a
                special case.</p>
           </item>
-        <tag><tt>Monitoring</tt></tag>
+        <tag><tt>System/Monitoring</tt></tag>
           <item>
             <p>System information and monitoring tools, log viewers,
                etc.</p>
           </item>
-        <tag><tt>Package Management</tt></tag>
+        <tag><tt>System/Package Management</tt></tag>
           <item>
             <p>Package managers and related tools.</p>
           </item>
-        <tag><tt>Security</tt></tag>
+        <tag><tt>System/Security</tt></tag>
           <item>
             <p>Security, cryptography and privacy related software,
                antiviruses, tools to track and report bugs, etc.</p>
@@ -951,6 +951,6 @@ sgml-declaration:nil
 sgml-local-catalogs:nil
 sgml-local-ecat-files:nil
 End:
-$Id: doc-base.sgml 197 2009-10-12 20:55:27Z robert $
+$Id: doc-base.sgml 206 2011-01-16 21:08:22Z robert $
 vim:ts=2:et:sts=2:sw=2:fdm=marker 
 -->
