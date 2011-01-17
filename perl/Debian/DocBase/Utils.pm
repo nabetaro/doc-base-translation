@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Utils.pm 151 2008-05-22 12:46:05Z robert $
+# $Id: Utils.pm 207 2011-01-17 22:45:18Z robert $
 #
 
 package Debian::DocBase::Utils;
@@ -8,13 +8,14 @@ package Debian::DocBase::Utils;
 use Exporter();
 use strict;
 use warnings;
+
 use vars qw(@ISA @EXPORT);
-use Carp;
 @ISA = qw(Exporter);
-@EXPORT = qw(Execute HTMLEncode HTMLEncodeDescription Inform Debug Warn Error ErrorNF 
-            IgnoreSignals RestoreSignals ReadMap);
+@EXPORT = qw(Execute HTMLEncode HTMLEncodeDescription Inform Debug Warn Error ErrorNF Fatal
+            IgnoreSignals RestoreSignals SetupSignals ReadMap);
 
 use Debian::DocBase::Common;
+use Debian::DocBase::Gettext;
 
 sub HTMLEncode($) { # {{{
   my $text        = shift;
@@ -55,7 +56,7 @@ sub Execute(@) { # {{{
   my @args = @_;
   my $sargs = join " ", @args;
 
-  croak "Internal error: no arguments passed to Execute" if $#args < 0;
+  Fatal ("Internal error: no arguments passed to Execute") if $#args < 0;
 
   if (-x $args[0]) {
     Debug ("Executing `$sargs'");
@@ -70,9 +71,9 @@ sub Execute(@) { # {{{
 
 sub Debug(@) { # {{{
   printf STDOUT  ((shift) . "\n", @_) if $opt_debug;
-} # }}}
+} #  }}}
 
-sub Inform(@) { # {{{
+sub  Inform(@) { # {{{
   printf STDOUT ((shift) . "\n", @_);
 } # }}}
 
@@ -83,14 +84,31 @@ sub Warn(@) { # {{{
 sub Error(@) { # {{{ 
   printf STDERR ((shift) . "\n", @_);
   $exitval = 1;
-} # }}}
+} # }}} 
 
-# non-fatal error
-sub ErrorNF(@) { # {{{ 
+# non-fatal error - doesn't set exitval
+sub ErrorNF(@) { # {{{  
   printf STDERR ((shift) . "\n", @_);
 } # }}}
 
-{ # IgnoreSignals, RestoreSignals # {{{
+# fatal error, runs $on_fatal_handler and exits
+sub Fatal(@) { # {{{ 
+  printf STDERR ((shift) . "\n", @_);
+  if ($on_fatal_handler)
+  {
+    Debug("Running fatal handler");
+    my $handler = $on_fatal_handler;
+    $on_fatal_handler = undef;
+    $handler->();
+  }
+  exit (2);
+} # }}}
+
+{ # Signal handling routines - IgnoreSignals, RestoreSignals, SetupSignals # {{{
+
+sub _SigHandler { # {{{
+  Fatal(_g("Signal %s received, terminating."), shift);
+} # }}}  
   
 our %sigactions = ('ignore_cnt' => 0);
 
@@ -104,14 +122,17 @@ sub _IgnoreRestoreSignals($) { # {{{
     $ign_cnt = $sigactions{'ignore_cnt'}++;
   } elsif ($mode eq "restore") {
     $ign_cnt = --$sigactions{'ignore_cnt'};
-  } else {  
-     croak "Invalid argument of IgnoreRestoreSignals: $mode";
+  } elsif ($mode ne "setup") {
+     Fatal(_g("Invalid argument of IgnoreRestoreSignals: %s"), $mode);
   }       
-  
-  croak "Invalid ign_cnt (" . $ign_cnt . ") in IgnoreRestoreSignals(" . $mode . ")"
-    if $ign_cnt < 0;
+ 
+  if ($mode ne "setup")
+  {
+    Fatal( _g("Invalid ign_cnt (%d) in IgnoreRestoreSignals(%s)"), $ign_cnt, $mode)
+      if $ign_cnt < 0;
 
-  return unless $ign_cnt == 0;
+    return unless $ign_cnt == 0;
+  }
 
   Debug(ucfirst $mode . " signals");
 
@@ -121,8 +142,10 @@ sub _IgnoreRestoreSignals($) { # {{{
       $SIG{$sig} = "IGNORE";
     } elsif ($mode eq "restore") {
       $SIG{$sig} = defined $sigactions{$sig} ? $sigactions{$sig} : "DEFAULT";
+    } elsif ($mode eq "setup") {
+      $SIG{$sig} = \&_SigHandler;
     } else {
-       croak "Invalid argument of IgnoreRestoreSignals: $mode";
+      Fatal(_g("Invalid argument of IgnoreRestoreSignals: %s"), $mode);
     }       
   }
 } # }}}
@@ -135,8 +158,11 @@ sub IgnoreSignals() {
 sub RestoreSignals() {
   return _IgnoreRestoreSignals("restore");
 }
-} # }}}
 
+sub SetupSignals() {
+  return _IgnoreRestoreSignals("setup");
+}
+} # }}}
 
 
 sub ReadMap($$;$) { # {{{
@@ -144,7 +170,7 @@ sub ReadMap($$;$) { # {{{
   my $map     = shift;
   my $defval  = shift;
   $defval     = "" unless $defval;
-  open (MAP, "<", $file) or croak "Cannot open `$file' for reading: $!";
+  open (MAP, "<", $file) or Fatal(_g("Cannot open `%s' for reading: %s"), $file, $!);
   while(<MAP>) {
           chomp;
           next if /^\s*$/;

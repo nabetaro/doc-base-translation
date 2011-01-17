@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 174 2009-01-05 22:16:59Z robert $
+# $Id: DocBaseFile.pm 207 2011-01-17 22:45:18Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -14,7 +14,6 @@ use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
 use Debian::DocBase::Gettext;
 use Scalar::Util qw(weaken);
-use Carp;
 
 our %CONTROLFILES = ();
 
@@ -59,21 +58,22 @@ sub GetChangedDocBaseFiles($$){ # {{{
 
   my @changed = ();
 
-  my %files = map { $_ => (stat $_)[$CTIME_FIELDNO] } GetAllDocBaseFiles();
+  my %files   = map { $_ => (stat $_)[$CTIME_FIELDNO] } GetAllDocBaseFiles();
 
-  my $db    = Debian::DocBase::DB::GetFilesDB()->GetDB();
-  foreach my $file ( keys %{$db} ) {
-    my $realfile =  Debian::DocBase::DB::GetFilesDB()->DecodeKey($file);
+  my $filesdb = Debian::DocBase::DB::GetFilesDB();
+  my @dbkeys  = $filesdb->GetDBKeys();
+  foreach my $realfile ( @dbkeys ) {
+    my $dbdata = $filesdb->GetData($realfile);
     if ($files{$realfile} ) {
-      push @changed, $realfile if $files{$realfile} != $db->{$file}->{'CT'};
+      push @changed, $realfile if $files{$realfile} != $dbdata->{'CT'};
       delete $files{$realfile}
-    } elsif (defined $db->{$file}->{'ID'}) {
+    } elsif (defined $dbdata->{'ID'}) {
       push @$toremove, $realfile;
     } else {
       # file no longer exists at file system and ID was not defined,
       # so it was never registered and can't be de-registered. Don't
       # try to de-register it, just remove entry from files.db
-      Debian::DocBase::DB::GetFilesDB()->RemoveData($realfile);
+      $filesdb->RemoveData($realfile);
     }
   }
   @$toinstall = keys %files;
@@ -205,7 +205,7 @@ sub Parse { # {{{
   return if $self->{'PARSED'};
 
   open($fh, "<", $file) or
-    carp "Cannot open control file `$file' for reading: $!";
+    Fatal(_g("Cannot open file `%s' for reading: %s"), $file, $!);
 
   $self->{'CTIME'} = (stat $fh)[$CTIME_FIELDNO];
 
@@ -249,7 +249,7 @@ sub _PrsErr($$) { # {{{
   } elsif ($flag == PRS_WARN) {
     Warn(_g("Warning in %s: %s"), $filepos, $msg);
   } else {
-    croak (sprintf _g("Internal error: Unknown flag (%s, %s)"), $flag, $msg);
+    Fatal(_g("Internal error: Unknown flag (%s, %s)"), $flag, $msg);
   }
 
   return undef;
@@ -329,7 +329,7 @@ sub _ReadControlFileSection($$$) { # {{{
 sub _CheckParsed() { # {{{
   my $self      = shift;
   my $filename  = $self->GetSourceFileName();
-  croak ('Internal error: file `' . (defined $filename ?  $filename : "") . "' not parsed")
+  Fatal(_g("Internal error: file `%s' not parsed"), (defined $filename ?  $filename : ""))
     unless $self->{'PARSED'};
 } # }}}
 

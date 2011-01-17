@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Common.pm 133 2008-04-20 14:32:30Z robert $
+# $Id: Common.pm 207 2011-01-17 22:45:18Z robert $
 
 
 package Debian::DocBase::Common;
@@ -22,13 +22,13 @@ use vars    qw(@ISA @EXPORT);
                   $FLDTYPE_MAIN $FLDTYPE_FORMAT
                 $FLDDEF_REQUIRED
                 $FLDDEF_MULTILINE
-             $opt_verbose $opt_debug $exitval $opt_rootdir $opt_update_menus
+             $opt_verbose $opt_debug $exitval $opt_rootdir $opt_update_menus $on_fatal_handler
              GetFldKeys
             );
 
 our $DATA_DIR                     = "/var/lib/doc-base/info";
-our $DB_FILES                     = "$DATA_DIR/files.db";
-our $DB_STATUS                    = "$DATA_DIR/status.db";
+our $DB_FILES                     = "$DATA_DIR/files.yml";
+our $DB_STATUS                    = "$DATA_DIR/status.yml";
 our $CONTROL_DIR                  = "/usr/share/doc-base";
 our $DOCBASE_SECTIONS_MAP         = "$CONTROL_DIR/data/doc-base.map";
 our $DOCBASE_VALID_SECTIONS_LIST  = "$CONTROL_DIR/data/section.list";
@@ -156,6 +156,6 @@ our $opt_debug        = 0;
 our $opt_update_menus = 1;
 our $opt_rootdir      = "";
 our $exitval          = 0;
-
+our $on_fatal_handler = undef;
 
 1;

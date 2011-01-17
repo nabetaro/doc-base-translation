@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 205 2011-01-15 19:53:18Z robert $
+# $Id: Document.pm 207 2011-01-17 22:45:18Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -13,7 +13,6 @@ use Debian::DocBase::Utils;
 use Debian::DocBase::DocBaseFile;
 use Debian::DocBase::Gettext;
 use Debian::DocBase::DB;
-use Carp;
 #use Scalar::Util qw(weaken);
 
 our %DOCUMENTS = ();
@@ -36,9 +35,7 @@ sub IsRegistered($) { # {{{
 
 # return all documents id from status database
 sub GetAllRegisteredDocumentIDs() { # {{{
-  my $db    = Debian::DocBase::DB::GetStatusDB()->GetDB();
-  my @result = sort keys %$db;
-  return @result;
+  return sort Debian::DocBase::DB::GetStatusDB()->GetDBKeys();
 } # }}}
 
 sub new { # {{{
@@ -247,14 +244,14 @@ sub WriteNewCtrlFile() { # {{{
   if ($self->Invalid() || !$self->_HasControlFiles()) {
     if (-e $file)  {
       Debug("Removing control file $file");
-      unlink $file or carp "Can't remove $file: $!";
+      unlink $file or Fatal(_g("Cannot remove `%s': %s"), $file, $!);
     }
     return;
   }
 
 
   open(F, '>', $tmpfile) or
-    carp ("Can't open $tmpfile for writing: $_");
+    Fatal(_g("Can't open `%s' for writing: %s"), $tmpfile, $!);
 
   foreach $fld (GetFldKeys($FLDTYPE_MAIN)) {
     print F ucfirst($fld) . ": " .  $self->{'MAIN_DATA'}->{$fld} . "\n"
@@ -269,9 +266,9 @@ sub WriteNewCtrlFile() { # {{{
     }
   }
 
-  close F or carp "Can't close $file: $!";
+  close F or Fatal(_g("Cannot close `%s': %s"), $file, $!);
 
-  rename $tmpfile, $file or carp "Can't rename $tmpfile to $file: $!";
+  rename $tmpfile, $file or Fatal(_g("Cannot rename `%s' to `%s': %s"), $tmpfile, $file, $!);
 } # }}}
 
 # merge contents of all available control files for the document
@@ -349,7 +346,7 @@ sub SaveStatusChanges($) { # {{{
 sub _CheckMerged($) { # {{{
   my $self = shift;
 
-  croak "Internal error: Document " . $self->GetDocumentID(). " not yet merged"
+  Fatal(_g("Internal error: Document `%s' is not yet merged"),  $self->GetDocumentID())
     unless $self->{'MERGED_CTRL_FILES'};
 } # }}}
 
@@ -426,7 +423,7 @@ sub _ParseControlFiles($) { # {{{
   my $self = shift;
 
   foreach my $cfname ($self->_GetControlFileNames()) {
-    croak "Internal error: $cfname not created\n" unless $self->{'CONTROL_FILES'}->{$cfname};
+    Fatal(_g("Internal error: `%s' not yet created"), $cfname) unless $self->{'CONTROL_FILES'}->{$cfname};
     $self->{'CONTROL_FILES'}->{$cfname}->Parse();
   }
 } # }}}

@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dhelp.pm 151 2008-05-22 12:46:05Z robert $
+# $Id: Dhelp.pm 207 2011-01-17 22:45:18Z robert $
 #
 
 package Debian::DocBase::Programs::Dhelp;
@@ -13,7 +13,6 @@ use vars qw(@ISA @EXPORT);
 @ISA = qw(Exporter);
 @EXPORT = qw(RegisterDhelp UnregisterDhelp);
 
-use Carp;
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
 use Debian::DocBase::Gettext;

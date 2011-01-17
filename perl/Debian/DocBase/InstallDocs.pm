@@ -2,7 +2,7 @@
 
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 203 2011-01-11 00:11:46Z robert $
+# $Id: InstallDocs.pm 207 2011-01-17 22:45:18Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -15,7 +15,6 @@ our @EXPORT = qw(SetMode InstallDocsMain
                  $MODE_INSTALL $MODE_REMOVE $MODE_STATUS $MODE_REMOVE_ALL $MODE_INSTALL_ALL
                  $MODE_INSTALL_CHANGED $MODE_DUMP_DB $MODE_CHECK  $verbose $debug);
 
-use Carp;
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
 use Debian::DocBase::Document;
@@ -52,7 +51,7 @@ sub SetMode($@) { # {{{
   my @args    = @_;
 
 
-  croak("Internal error: mode already set: $mode, $newmode") if (defined $mode);
+  Fatal(_g("Internal error: mode already set: %s, %s"), $mode, $newmode) if (defined $mode);
 
   $mode = $newmode;
 
@@ -73,7 +72,7 @@ sub SetMode($@) { # {{{
 # Main procedure that gets called by install-docs
 sub InstallDocsMain() { # {{{
 
-  croak("Internal error: Unknown mode") unless defined $mode;
+  Fatal(_g("Internal error: Unknown mode")) unless defined $mode;
 
   if ($mode == $MODE_CHECK) {
     _HandleCheck();
@@ -152,14 +151,14 @@ sub _HandleRemovalOfAllDocs() { # {{{
   my $suffix  = ".removed.$$";
   my @dbdirs  = ($OMF_DIR, $VAR_CTRL_DIR);
 
-  unlink $DB_FILES or croak("Can't remove $DB_FILES: $!") if -f $DB_FILES;
+  unlink $DB_FILES or Fatal(_g("Cannot remove `%s': %s"), $DB_FILES, $!) if -f $DB_FILES;
   foreach my $d (@dbdirs) {
     next unless -d $d;
-    rename ($d, $d.$suffix) or croak("Can't rename $d to ${d}${suffix}: $!");
+    rename ($d, $d.$suffix) or Fatal(_g("Cannot rename `%s' to `%s': %s"), $d, ${d}.${suffix}, $!);
     system ('mkdir', '-m', '0755', '-p', $d);
     system ('rm', '-r', $d.$suffix);
   }
-  unlink $DB_STATUS or croak("Can't remove $DB_STATUS: $!") if -f $DB_STATUS;
+  unlink $DB_STATUS or Fatal(_g("Cannot remove `%s': %s"), $DB_STATUS, $!) if -f $DB_STATUS;
 
   my @documents = ();
   RegisterDwww(1, @documents);
@@ -174,6 +173,9 @@ sub _HandleRegistrationAndUnregistation() { # {{{
   my @toremove      = ();       # list of files to remove
   my @toremovedocs  = ();       # list of docs to remove
   my $msg           = "";
+
+  $on_fatal_handler = \&Debian::DocBase::DB::SaveDatabases;
+  SetupSignals();
 
   if ($mode == $MODE_INSTALL_CHANGED) {
     my @stats = Debian::DocBase::DocBaseFile::GetChangedDocBaseFiles(\@toremove, \@toinstall);
@@ -262,6 +264,7 @@ sub _HandleRegistrationAndUnregistation() { # {{{
     $doc -> WriteNewCtrlFile();
     $doc -> SaveStatusChanges();
   }
+  Debian::DocBase::DB::SaveDatabases();
   RestoreSignals();
 
   if (@documents)
@@ -271,6 +274,7 @@ sub _HandleRegistrationAndUnregistation() { # {{{
     RegisterDwww($showmsg,          @documents);
     RegisterDhelp($showmsg,         $mode == $MODE_INSTALL_ALL, @documents);
     RegisterScrollkeeper($showmsg,  @documents);
+    Debian::DocBase::DB::SaveDatabases();
   }
 
   undef @toinstall;

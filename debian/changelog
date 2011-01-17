@@ -1,4 +1,4 @@
-doc-base (0.9.6~) UNRELEASED; urgency=low
+doc-base (0.9.6~2) UNRELEASED; urgency=low
 
   [ Martin Pitt ]
   * perl/Debian/DocBase/Programs/Scrollkeeper.pm: Provide our own local
@@ -13,6 +13,11 @@ doc-base (0.9.6~) UNRELEASED; urgency=low
   [ Robert Luberda ]
   * Applied patch from Marin Pitt from Ubuntu to remove dependency on perl
     (closes: #602919).
+  * Change format of internal databases from MLDBM to YAML, and provide better
+    error handling to prevent databases corruption:
+    + use libyaml-tiny-perl for YAML files handling.
+    + save internal databases in case of fatal errors.
+  
   * Applied patch from David Prévot not to assume word ordering in translated
     strings (closes: #606475). 
   * Applied patch from Chris Leick to fix plurals in translated strings
@@ -27,9 +32,8 @@ doc-base (0.9.6~) UNRELEASED; urgency=low
       and dhelp.
   * Fix spelling typos found by lintian.
   * Bump debhelper compat mode to 8.
-  * 
 
- -- Robert Luberda <robert@debian.org>  Sun, 16 Jan 2011 21:54:59 +0100
+ -- Robert Luberda <robert@debian.org>  Mon, 17 Jan 2011 23:43:37 +0100
 
 doc-base (0.9.5) unstable; urgency=low
 
