@@ -13,6 +13,7 @@ doc-base (0.9.6~2) UNRELEASED; urgency=low
   [ Robert Luberda ]
   * Applied patch from Marin Pitt from Ubuntu to remove dependency on perl
     (closes: #602919).
+  * install-docs.in: Pod::Usage may be missing if perl is not installed.
   * Change format of internal databases from MLDBM to YAML, and provide better
     error handling to prevent databases corruption:
     + use libyaml-tiny-perl for YAML files handling.
@@ -33,7 +34,7 @@ doc-base (0.9.6~2) UNRELEASED; urgency=low
   * Fix spelling typos found by lintian.
   * Bump debhelper compat mode to 8.
 
- -- Robert Luberda <robert@debian.org>  Mon, 17 Jan 2011 23:43:37 +0100
+ -- Robert Luberda <robert@debian.org>  Wed, 19 Jan 2011 00:04:54 +0100
 
 doc-base (0.9.5) unstable; urgency=low
 

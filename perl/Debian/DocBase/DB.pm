@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DB.pm 207 2011-01-17 22:45:18Z robert $
+# $Id: DB.pm 208 2011-01-18 23:06:12Z robert $
 #
 
 package Debian::DocBase::DB;
@@ -41,7 +41,12 @@ sub _Init() { #  {{{
   {
     $self->{'YAML'} = YAML::Tiny->read ($file) or Fatal( _g("Failed to read file `%s': %s"), $file, $!);
   }
+  else
+  {
+    $self->{'YAML'}->[0] = {};
+  }
   $self->{'DB'} = \%{$self->{'YAML'}->[0]};
+  
 } # }}} 
 
  sub PutData($$$) { # {{{
@@ -71,8 +76,6 @@ sub _SaveDB() { # {{{
   Fatal(_g("Need to be root for this operation\n")) if $readonly;
   (my $newfile = $file) =~ s/^[^\.]+/$&-new/g;
   (my $oldfile = $file) =~ s/^[^\.]+/$&-old/g;
-
-  print "$file - $oldfile - $newfile\n";
 
   $self->{'YAML'}->write($newfile) or  Fatal(_g("Failed to save file `%s': %s"), $newfile, $!);
   unlink $oldfile if -f $oldfile;

@@ -2,7 +2,7 @@
 
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 207 2011-01-17 22:45:18Z robert $
+# $Id: InstallDocs.pm 208 2011-01-18 23:06:12Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -24,7 +24,6 @@ use Debian::DocBase::Programs::Dhelp;
 use Debian::DocBase::Programs::Dwww;
 use Debian::DocBase::Programs::Scrollkeeper;
 use Debian::DocBase::Gettext;
-use File::Path;
 
 
 # constants
@@ -55,7 +54,7 @@ sub SetMode($@) { # {{{
 
   $mode = $newmode;
 
-  Inform(_g("Value of the `%s' option ignored"), "--rootdir") 
+  Inform(_g("Value of the `%s' option ignored"), "--rootdir")
     if ($mode != $MODE_CHECK) and ($opt_rootdir ne "");
   $opt_rootdir = "" if ($mode != $MODE_CHECK);
 
@@ -130,7 +129,7 @@ sub _HandleStatus() { # {{{
     my $doc = Debian::DocBase::Document->new($docid);
     $doc -> DisplayStatusInformation();
   }
-} # }}} 
+} # }}}
 
 # Dump our databases
 sub _HandleDumpDB() { # {{{
@@ -144,7 +143,7 @@ sub _HandleDumpDB() { # {{{
       exit (1);
     }
   }
-} # }}} 
+} # }}}
 
 # Remove all docs simply by deleting our db and other created files
 sub _HandleRemovalOfAllDocs() { # {{{
@@ -195,8 +194,13 @@ sub _HandleRegistrationAndUnregistation() { # {{{
     my @stats      = ($#toremovedocs+1, $#toinstall+1);
 
     if ($stats[0] and $stats[1]) {
-      Inform(_g("De-registering %d, re-registering %d doc-base files"), $stats[0], $stats[1]);
-    } elsif ($stats[0]) {   
+      my $msg = _ng("De-registering %d doc-base file",
+                    "De-registering %d doc-base files", $stats[0]);
+      $msg .= ", ";
+      $msg .= _ng("re-registering %d doc-base file",
+                  "re-registering %d doc-base files", $stats[1]);
+      Inform($msg, $stats[0], $stats[1]);
+    } elsif ($stats[0]) {
       Inform(_ng("De-registering %d doc-base file",
                  "De-registering %d doc-base files", $stats[0]), $stats[0]);
    } elsif ($stats[1]) {
@@ -241,7 +245,7 @@ sub _HandleRegistrationAndUnregistation() { # {{{
       Error(_g("Can't read doc-base file `%s'"), $file);
       next;
     }
-    Debug("Trying to install file $file");
+    Debug(_g("Trying to install file `s'"), $file);
     my $docfile = Debian::DocBase::DocBaseFile->new($file,  $opt_verbose);
     $docfile->Parse();
     my $docid   = $docfile->GetDocumentID();

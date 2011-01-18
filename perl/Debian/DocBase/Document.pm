@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 207 2011-01-17 22:45:18Z robert $
+# $Id: Document.pm 208 2011-01-18 23:06:12Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -35,7 +35,8 @@ sub IsRegistered($) { # {{{
 
 # return all documents id from status database
 sub GetAllRegisteredDocumentIDs() { # {{{
-  return sort Debian::DocBase::DB::GetStatusDB()->GetDBKeys();
+  my $statusdb = Debian::DocBase::DB::GetStatusDB();
+  return sort $statusdb->GetDBKeys();
 } # }}}
 
 sub new { # {{{
@@ -251,7 +252,7 @@ sub WriteNewCtrlFile() { # {{{
 
 
   open(F, '>', $tmpfile) or
-    Fatal(_g("Can't open `%s' for writing: %s"), $tmpfile, $!);
+    Fatal(_g("Cannot open `%s' for writing: %s"), $tmpfile, $!);
 
   foreach $fld (GetFldKeys($FLDTYPE_MAIN)) {
     print F ucfirst($fld) . ": " .  $self->{'MAIN_DATA'}->{$fld} . "\n"

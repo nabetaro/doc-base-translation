@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs.in 203 2011-01-11 00:11:46Z robert $
+# $Id: install-docs.in 208 2011-01-18 23:06:12Z robert $
 
 use warnings;
 use strict;
@@ -24,8 +24,6 @@ BEGIN {
     exit 0;
   }
   $fully_functional = eval {
-                              require Pod::Usage;
-                              import  Pod::Usage qw(pod2usage);
                               require Debian::DocBase::Common;
                               import  Debian::DocBase::Common;
                               require Debian::DocBase::InstallDocs;
@@ -82,20 +80,20 @@ description of the control file syntax and grammar.
 =over 4
 
 =cut
-sub _CheckArgCount($$) {
+sub _CheckArgCount($$) { # {{{
   my ($cnt, $option) = @_;
   ++$cnt;
 
-  if ($option eq "install-all" or$option eq "install-changed" or $option eq "remove-all") {
-    die sprintf _g("Too many arguments for `%s'"), $option unless $cnt == 0;
+  if ($option eq "install-all" or $option eq "install-changed" or $option eq "remove-all") {
+    Fatal( _g("Too many arguments for `%s'"), $option) unless $cnt == 0;
   } 
   elsif ($option eq "dump-db") {
-    die sprintf _g("`%s' requires exactly one argument"), $option unless $cnt == 1;
+    Fatal( _g("`%s' requires exactly one argument"), $option) unless $cnt == 1;
   }
   else {
-    die sprintf _g("Arguments missing for %s"), $option if $cnt == 0;
+    Fatal( _g("Arguments missing for `%s'"), $option) if $cnt == 0;
   }    
-}
+} # }}}
    
 
  sub CheckFunctionality(;$) { # {{{
@@ -119,10 +117,31 @@ sub _CheckArgCount($$) {
 } # }}}
 
 
+sub _Usage($) # {{{
+{
+  my $exit_val = shift;
+  eval  
+  {
+    require Pod::Usage;
+    Pod::Usage::pod2usage(-verbose => 1, -exitval => $exit_val);
+  };
+  if ($@)
+  { 
+# There's no point in translating the text below, it will be shown when perl package
+# is not installed only.
+    Inform("install-docs [options] -i,--install | -r,--remove | -c,--check file [ file ... ]\n\n" .
+           "install-docs [options] -I,--install-all | -C,--install-changed | -R,--remove-all\n\n" .
+           "install-docs [options] -s,--status docid [ docid ... ]\n\n" .
+           "install-docs [options] --dump-db files.db | status.db\n\n" .
+           "install-docs -h,--help | -V,--version\n");
+  };
+  exit ($exit_val);
+} # }}}
+
 #### Parse arguments loop #####
 #
 exit(1) if not $fully_functional and $#ARGV < 0;
-pod2usage(-verbose => 0, -exitval => 1) if $#ARGV < 0 ;
+_Usage(1) if $#ARGV < 0 ;
 while (my $arg = shift @ARGV) {
 
   # try to handle concatenation of options e.g. `-vdi' instead of `-v -d -i'
@@ -317,7 +336,7 @@ Show a short help message.
 
 
 =cut
-    pod2usage(-verbose => 1, -exitval => 0);
+    _Usage(0);
     # NOT REACHED  # }}}
 
    } elsif (($arg eq '-V') or ($arg eq '--version')) { # {{{

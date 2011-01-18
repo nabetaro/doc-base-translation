@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Utils.pm 207 2011-01-17 22:45:18Z robert $
+# $Id: Utils.pm 208 2011-01-18 23:06:12Z robert $
 #
 
 package Debian::DocBase::Utils;
@@ -56,16 +56,16 @@ sub Execute(@) { # {{{
   my @args = @_;
   my $sargs = join " ", @args;
 
-  Fatal ("Internal error: no arguments passed to Execute") if $#args < 0;
+  Fatal (_g("Internal error: no arguments passed to Execute()")) if $#args < 0;
 
   if (-x $args[0]) {
-    Debug ("Executing `$sargs'");
+    Debug (_g("Executing `%s'"), $sargs);
     if (system(@args) != 0) {
-      Warn ("error occured during execution of `$sargs'");
+      Warn (_g("Error occured during execution of `%s'"), $sargs);
     }
   } else {
-    Debug ("Skipping execution of `$sargs'");
-  }   
+    Debug (_g("Skipping execution of `%s'"), $sargs);
+  }
 } # }}}
 
 
@@ -79,24 +79,24 @@ sub  Inform(@) { # {{{
 
 sub Warn(@) { # {{{
   printf STDERR ((shift) . "\n", @_) if $opt_verbose;
-} # }}} 
+} # }}}
 
-sub Error(@) { # {{{ 
+sub Error(@) { # {{{
   printf STDERR ((shift) . "\n", @_);
   $exitval = 1;
-} # }}} 
+} # }}}
 
 # non-fatal error - doesn't set exitval
-sub ErrorNF(@) { # {{{  
+sub ErrorNF(@) { # {{{
   printf STDERR ((shift) . "\n", @_);
 } # }}}
 
 # fatal error, runs $on_fatal_handler and exits
-sub Fatal(@) { # {{{ 
+sub Fatal(@) { # {{{
   printf STDERR ((shift) . "\n", @_);
   if ($on_fatal_handler)
   {
-    Debug("Running fatal handler");
+    Debug(_g("Running fatal errors handler"));
     my $handler = $on_fatal_handler;
     $on_fatal_handler = undef;
     $handler->();
@@ -108,8 +108,8 @@ sub Fatal(@) { # {{{
 
 sub _SigHandler { # {{{
   Fatal(_g("Signal %s received, terminating."), shift);
-} # }}}  
-  
+} # }}}
+
 our %sigactions = ('ignore_cnt' => 0);
 
 sub _IgnoreRestoreSignals($) { # {{{
@@ -124,8 +124,8 @@ sub _IgnoreRestoreSignals($) { # {{{
     $ign_cnt = --$sigactions{'ignore_cnt'};
   } elsif ($mode ne "setup") {
      Fatal(_g("Invalid argument of IgnoreRestoreSignals: %s"), $mode);
-  }       
- 
+  }
+
   if ($mode ne "setup")
   {
     Fatal( _g("Invalid ign_cnt (%d) in IgnoreRestoreSignals(%s)"), $ign_cnt, $mode)
@@ -146,7 +146,7 @@ sub _IgnoreRestoreSignals($) { # {{{
       $SIG{$sig} = \&_SigHandler;
     } else {
       Fatal(_g("Invalid argument of IgnoreRestoreSignals: %s"), $mode);
-    }       
+    }
   }
 } # }}}
 
