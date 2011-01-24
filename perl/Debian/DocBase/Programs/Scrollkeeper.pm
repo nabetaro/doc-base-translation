@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 207 2011-01-17 22:45:18Z robert $
+# $Id: Scrollkeeper.pm 209 2011-01-24 22:44:21Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -138,12 +138,12 @@ sub _RemoveOmfFile($) { # {{{
   my $omf_file = shift;
   my $omf_dir = dirname($omf_file);
   Debug( _g("Removing scrollkeeper OMF file `%s'"), $omf_file);
-  unlink($omf_file) or return Error( _g("%s: could not delete file: %s"), $omf_file, $!);
+  unlink($omf_file) or return Error( _g("Cannot remove file `%s': %s"), $omf_file, $!);
 
   #check to see if the directory is now empty. if so, kill it.
   if (opendir(DIR, $omf_dir)) {
     if (defined grep { $_ !~ /^\.\.?$/ } readdir DIR) {
-      rmdir($omf_dir) or Error( _g("Could not delete directory `%s': %s"), $omf_dir, $!);
+      rmdir($omf_dir) or Error( _g("Cannot delete directory `%s': %s"), $omf_dir, $!);
     }
     closedir DIR;
   }
@@ -169,7 +169,7 @@ sub _WriteOmfFile($$$$) { # {{{
 
 
   if (! -d "$OMF_DIR/$docid") {
-    mkdir("$OMF_DIR/$docid") or Fatal(_g("Cannot create dir `%s': %s"), $OMF_DIR/$docid, $!);
+    mkdir("$OMF_DIR/$docid") or Fatal(_g("Cannot create directory `%s': %s"), $OMF_DIR/$docid, $!);
   }
 
   &Debug("Writing scrollkeeper OMF file `$omf_file'");

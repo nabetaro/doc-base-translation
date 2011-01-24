@@ -2,7 +2,7 @@
 
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 208 2011-01-18 23:06:12Z robert $
+# $Id: InstallDocs.pm 209 2011-01-24 22:44:21Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -100,7 +100,7 @@ sub InstallDocsMain() { # {{{
 sub _HandleCheck() { # {{{
   foreach my $file (@arguments) {
     if (! -f $file) {
-      Error(_g("Can't read doc-base file `%s'"), $file);
+      Error(_g("Doc-base file `%s' does not exist"), $file);
       next;
     }
 
@@ -150,14 +150,14 @@ sub _HandleRemovalOfAllDocs() { # {{{
   my $suffix  = ".removed.$$";
   my @dbdirs  = ($OMF_DIR, $VAR_CTRL_DIR);
 
-  unlink $DB_FILES or Fatal(_g("Cannot remove `%s': %s"), $DB_FILES, $!) if -f $DB_FILES;
+  unlink $DB_FILES or Fatal(_g("Cannot remove file `%s': %s"), $DB_FILES, $!) if -f $DB_FILES;
   foreach my $d (@dbdirs) {
     next unless -d $d;
-    rename ($d, $d.$suffix) or Fatal(_g("Cannot rename `%s' to `%s': %s"), $d, ${d}.${suffix}, $!);
+    rename ($d, $d.$suffix) or Fatal(_g("Cannot rename file `%s' to `%s': %s"), $d, ${d}.${suffix}, $!);
     system ('mkdir', '-m', '0755', '-p', $d);
     system ('rm', '-r', $d.$suffix);
   }
-  unlink $DB_STATUS or Fatal(_g("Cannot remove `%s': %s"), $DB_STATUS, $!) if -f $DB_STATUS;
+  unlink $DB_STATUS or Fatal(_g("Cannot remove file `%s': %s"), $DB_STATUS, $!) if -f $DB_STATUS;
 
   my @documents = ();
   RegisterDwww(1, @documents);
@@ -242,10 +242,10 @@ sub _HandleRegistrationAndUnregistation() { # {{{
 
   foreach my $file (@toinstall) {
     unless (-f $file) {
-      Error(_g("Can't read doc-base file `%s'"), $file);
+      Error(_g("Doc-base file `%s' does not exist"), $file);
       next;
     }
-    Debug(_g("Trying to install file `s'"), $file);
+    Debug(_g("Trying to install file `%s'"), $file);
     my $docfile = Debian::DocBase::DocBaseFile->new($file,  $opt_verbose);
     $docfile->Parse();
     my $docid   = $docfile->GetDocumentID();

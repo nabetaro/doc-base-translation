@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs.in 208 2011-01-18 23:06:12Z robert $
+# $Id: install-docs.in 209 2011-01-24 22:44:21Z robert $
 
 use warnings;
 use strict;
@@ -101,7 +101,7 @@ sub _CheckArgCount($$) { # {{{
   my $dont_force_reg = shift;
   if (not $fully_functional) {
     open F, "> $force_reregister_flagfile"
-      or die sprintf _g("Cannot create %s: %s\n"), $force_reregister_flagfile, $!;
+      or die sprintf _g("Cannot open file `%s' for writing: %s")."\n", $force_reregister_flagfile, $!;
     print F "x";
     close F;
     exit 0;

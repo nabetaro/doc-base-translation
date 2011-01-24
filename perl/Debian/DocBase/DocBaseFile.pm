@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 207 2011-01-17 22:45:18Z robert $
+# $Id: DocBaseFile.pm 209 2011-01-24 22:44:21Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -237,7 +237,7 @@ sub _PrsErr($$) { # {{{
   my $fmt  = shift;
   my $msg  = sprintf ($fmt, @_);
   my $filepos = $. ?  sprintf _g("`%s', line %d"), $self->GetSourceFileName(), $. 
-                   :  sprintf _g("`%s'"), $self->GetSourceFileName();
+                   :  sprintf "`%s'", $self->GetSourceFileName();
 
   $self->{'WARNERR_CNT'}++;
   $self->{'INVALID'} = 1 if $flag != PRS_WARN;
@@ -315,7 +315,7 @@ sub _ReadControlFileSection($$$) { # {{{
     } elsif (/^\s+(\S.*)$/o) {
       $v = $&;
       defined($cf) or return $self->_PrsErr(PRS_FATAL_ERR, _g("syntax error - no field specified"));
-      not defined($FIELDS_DEF{$cf}) or $FIELDS_DEF{$cf}->{$FLDDEF_MULTILINE} or return $self->_PrsErr(PRS_FATAL_ERR, _g("field `%s' can't consist of multi lines"), $origcf);
+      not defined($FIELDS_DEF{$cf}) or $FIELDS_DEF{$cf}->{$FLDDEF_MULTILINE} or return $self->_PrsErr(PRS_FATAL_ERR, _g("field `%s' cannot consist of multi lines"), $origcf);
     #print STDERR "$cf -> $v (continued)\n";
       $$pfields{$cf} .= "\n" . $self->_CheckUTF8($v, $origcf);
     } else {

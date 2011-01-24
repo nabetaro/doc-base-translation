@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DB.pm 208 2011-01-18 23:06:12Z robert $
+# $Id: DB.pm 209 2011-01-24 22:44:21Z robert $
 #
 
 package Debian::DocBase::DB;
@@ -39,7 +39,7 @@ sub _Init() { #  {{{
   my $file = $self->{'FILE'};
   if (-f $file)
   {
-    $self->{'YAML'} = YAML::Tiny->read ($file) or Fatal( _g("Failed to read file `%s': %s"), $file, $!);
+    $self->{'YAML'} = YAML::Tiny->read ($file) or Fatal( _g("Cannot read file `%s': %s"), $file, $!);
   }
   else
   {
@@ -73,14 +73,14 @@ sub _SaveDB() { # {{{
   Debug("Saving $file " . $self->{'CHANGED'});
   return unless $self->{'CHANGED'};
   my $readonly = $> != 0;
-  Fatal(_g("Need to be root for this operation\n")) if $readonly;
+  Fatal(_g("Needs to be root for this operation\n")) if $readonly;
   (my $newfile = $file) =~ s/^[^\.]+/$&-new/g;
   (my $oldfile = $file) =~ s/^[^\.]+/$&-old/g;
 
-  $self->{'YAML'}->write($newfile) or  Fatal(_g("Failed to save file `%s': %s"), $newfile, $!);
+  $self->{'YAML'}->write($newfile) or  Fatal(_g("Cannot save file `%s': %s"), $newfile, $!);
   unlink $oldfile if -f $oldfile;
   rename $file, $oldfile if -f $file;
-  rename $newfile, $file or Fatal(_g("Cannot rename `%s' to `%s': %s"), $newfile, $file, $!);
+  rename $newfile, $file or Fatal(_g("Cannot rename file `%s' to `%s': %s"), $newfile, $file, $!);
   $self->{'CHANGED'} = 0;
 } # }}}
 
@@ -101,7 +101,7 @@ sub DumpDB($) { # {{{
   my $self = shift;
   my $db   = $self->{'DB'};
 
-  Inform(_g("Contents of `%s'\n"), $self->{'FILE'});
+  Inform(_g("Contents of file `%s'\n"), $self->{'FILE'});
   print STDOUT YAML::Tiny::Dump($db);
 } # }}}
 

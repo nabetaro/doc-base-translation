@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Utils.pm 208 2011-01-18 23:06:12Z robert $
+# $Id: Utils.pm 209 2011-01-24 22:44:21Z robert $
 #
 
 package Debian::DocBase::Utils;
@@ -123,12 +123,12 @@ sub _IgnoreRestoreSignals($) { # {{{
   } elsif ($mode eq "restore") {
     $ign_cnt = --$sigactions{'ignore_cnt'};
   } elsif ($mode ne "setup") {
-     Fatal(_g("Invalid argument of IgnoreRestoreSignals: %s"), $mode);
+     Fatal(_g("Internal error: invalid argument of IgnoreRestoreSignals: %s"), $mode);
   }
 
   if ($mode ne "setup")
   {
-    Fatal( _g("Invalid ign_cnt (%d) in IgnoreRestoreSignals(%s)"), $ign_cnt, $mode)
+    Fatal( _g("Internal error: invalid ign_cnt (%d) in IgnoreRestoreSignals(%s)"), $ign_cnt, $mode)
       if $ign_cnt < 0;
 
     return unless $ign_cnt == 0;
@@ -170,7 +170,7 @@ sub ReadMap($$;$) { # {{{
   my $map     = shift;
   my $defval  = shift;
   $defval     = "" unless $defval;
-  open (MAP, "<", $file) or Fatal(_g("Cannot open `%s' for reading: %s"), $file, $!);
+  open (MAP, "<", $file) or Fatal(_g("Cannot open file `%s' for reading: %s"), $file, $!);
   while(<MAP>) {
           chomp;
           next if /^\s*$/;

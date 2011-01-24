@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 208 2011-01-18 23:06:12Z robert $
+# $Id: Document.pm 209 2011-01-24 22:44:21Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -164,7 +164,7 @@ sub DisplayStatusInformation($) { # {{{
       }
       close(F);
     } else {
-      Warn( _g("Cannot open `%s': %s"), $var_ctrl_file, $!);
+      Warn( _g("Cannot open file `%s' for reading: %s"), $var_ctrl_file, $!);
     }
   }
 
@@ -178,7 +178,7 @@ sub DisplayStatusInformation($) { # {{{
   }
 } # }}}
 
-sub Register($$) { # {{{
+sub Register($$) { # {{{ 
   my $self          = shift;
   my $db_file       = shift;
   my $db_filename   = $db_file->GetSourceFileName();
@@ -245,14 +245,14 @@ sub WriteNewCtrlFile() { # {{{
   if ($self->Invalid() || !$self->_HasControlFiles()) {
     if (-e $file)  {
       Debug("Removing control file $file");
-      unlink $file or Fatal(_g("Cannot remove `%s': %s"), $file, $!);
+      unlink $file or Fatal(_g("Cannot remove file `%s': %s"), $file, $!);
     }
     return;
   }
 
 
   open(F, '>', $tmpfile) or
-    Fatal(_g("Cannot open `%s' for writing: %s"), $tmpfile, $!);
+    Fatal(_g("Cannot open file `%s' for writing: %s"), $tmpfile, $!);
 
   foreach $fld (GetFldKeys($FLDTYPE_MAIN)) {
     print F ucfirst($fld) . ": " .  $self->{'MAIN_DATA'}->{$fld} . "\n"
@@ -267,9 +267,9 @@ sub WriteNewCtrlFile() { # {{{
     }
   }
 
-  close F or Fatal(_g("Cannot close `%s': %s"), $file, $!);
+  close F or Fatal(_g("Cannot close file `%s': %s"), $file, $!);
 
-  rename $tmpfile, $file or Fatal(_g("Cannot rename `%s' to `%s': %s"), $tmpfile, $file, $!);
+  rename $tmpfile, $file or Fatal(_g("Cannot rename file `%s' to `%s': %s"), $tmpfile, $file, $!);
 } # }}}
 
 # merge contents of all available control files for the document
