@@ -53,8 +53,10 @@ doc-base (0.9.6~3) UNRELEASED; urgency=low
     a warning to make it possible to remove doc-base when install-docs
     for some reason (LP: #391464).
   *  Update Polish translation of binary.
+  *  Remove ancient stuff from preinst.
+  * Re-register all docs when upgrading to this version.
 
- -- Robert Luberda <robert@debian.org>  Sun, 20 Feb 2011 19:33:39 +0100
+ -- Robert Luberda <robert@debian.org>  Sun, 20 Feb 2011 20:22:39 +0100
 
 doc-base (0.9.5) unstable; urgency=low
 

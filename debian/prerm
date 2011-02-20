@@ -1,35 +1,37 @@
 #!/bin/sh
-# $Id: prerm 213 2011-02-20 18:39:28Z robert $
+# $Id: prerm 215 2011-02-20 19:23:22Z robert $
+# vim:ts=4:sts=4:et:sw
 # prerm for doc-base
 
 # Abort if any command returns an error value
 set -e
 
+VERBOSE=
 package=doc-base
 ctrldir="/usr/share/$package"
 infodir="/var/lib/$package/info"
 
 remove_all_docs ( ) {
     if which install-docs >/dev/null 2>&1; then
-	install-docs ${VERBOSE}  --remove-all || true
+        install-docs ${VERBOSE}  --remove-all || true
     else
-	# This shouldn't happen, because install-docs is doc-base	
-	echo "Warning: cannot find install-docs on path" 1>&2
+        # This shouldn't happen, because install-docs is doc-base
+        echo "Warning: cannot find install-docs on path" 1>&2
     fi
 }
 
 
 case "$1" in
-  remove)
-    remove_all_docs
-    ;;
-  upgrade)
-    ;;
-  failed-upgrade)
-    # Prepare to upgrade from version $2 of this package TO THIS VERSION.
-    # This is only used if the old version's prerm couldn't handle it,
-    # and returned non-zero.  (Fix old prerm bugs here.)
-    ;;
+    remove)
+        remove_all_docs
+        ;;
+    upgrade)
+        ;;
+    failed-upgrade)
+        # Prepare to upgrade from version $2 of this package TO THIS VERSION.
+        # This is only used if the old version's prerm couldn't handle it,
+        # and returned non-zero.  (Fix old prerm bugs here.)
+        ;;
 esac
 
 #DEBHELPER#

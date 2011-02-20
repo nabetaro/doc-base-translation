@@ -1,5 +1,6 @@
 #!/bin/sh
-# $Id: postinst 198 2009-10-15 08:57:25Z robert $
+# $Id: postinst 215 2011-02-20 19:23:22Z robert $
+# vim:ts=4:sts=4:et:sw
 # postinst for doc-base
 
 # Abort if any command returns an error value
@@ -7,12 +8,13 @@ set -e
 
 package=doc-base
 # upgrades prior to this version require complete re-registration
-compat_ver=0.9.5
+compat_ver=0.9.6~
 VERBOSE=
 
 ctrldir="/usr/share/$package"
 infodir="/var/lib/$package/info"
 docsdir="/var/lib/$package/documents"
+status_db="$infodir/status.yml"
 
 if [ "$DEBUG" ]; then
     echo entering $package postinst
@@ -24,24 +26,24 @@ reinstall_docs () {
 }
 
 case "$1" in
-  configure)
+    configure)
+        if dpkg --compare-versions "$2" lt-nl "$compat_ver" ||
+          [ ! -f "$status_db"  ]; then
+            # version is less than last compatable version, we need to
+            # re-register all the docs
+            reinstall_docs all
+        else
+            reinstall_docs changed
+        fi
+        ;;
 
-    if dpkg --compare-versions "$2" lt-nl "$compat_ver" ||
-      [ ! -f "$infodir/status.db"  ]; then
-	# version is less than last compatable version, we need to
-	# re-register all the docs
-        reinstall_docs all
-    else
-	reinstall_docs changed
-    fi
-    ;;
-  triggered)
-    if [ -f "$infodir/status.db" ]; then
-	    reinstall_docs changed
-    else
-    	echo "doc-base seems not to be configured yet, skipping triggers run"
-    fi
-    ;; 	
+    triggered)
+        if [ -f "$status_db" ]; then
+            reinstall_docs changed
+        else
+            echo "doc-base seems not to be configured yet, skipping triggers run"
+        fi
+        ;;
 esac
 
 #DEBHELPER#
