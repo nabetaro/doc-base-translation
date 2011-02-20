@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Utils.pm 209 2011-01-24 22:44:21Z robert $
+# $Id: Utils.pm 212 2011-02-20 18:36:43Z robert $
 #
 
 package Debian::DocBase::Utils;
@@ -61,7 +61,7 @@ sub Execute(@) { # {{{
   if (-x $args[0]) {
     Debug (_g("Executing `%s'"), $sargs);
     if (system(@args) != 0) {
-      Warn (_g("Error occured during execution of `%s'"), $sargs);
+      Warn (_g("Error occurred during execution of `%s'"), $sargs);
     }
   } else {
     Debug (_g("Skipping execution of `%s'"), $sargs);
@@ -145,7 +145,7 @@ sub _IgnoreRestoreSignals($) { # {{{
     } elsif ($mode eq "setup") {
       $SIG{$sig} = \&_SigHandler;
     } else {
-      Fatal(_g("Invalid argument of IgnoreRestoreSignals: %s"), $mode);
+     Fatal(_g("Internal error: invalid argument of IgnoreRestoreSignals: %s"), $mode);
     }
   }
 } # }}}
