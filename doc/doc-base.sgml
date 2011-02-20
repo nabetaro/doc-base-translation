@@ -448,6 +448,10 @@ The full section list is presented below.
         <item>
           <p>Network monitoring software</p>
         </item>
+      <tag><tt>Network/Remote Access</tt></tag>
+        <item>
+          <p>Tools for remotely managing of computer</p>
+        </item>
       <tag><tt>Network/Web Browsing</tt></tag>
         <item>
           <p>Web browsers, tools for offline browsing, etc.</p>
@@ -951,6 +955,6 @@ sgml-declaration:nil
 sgml-local-catalogs:nil
 sgml-local-ecat-files:nil
 End:
-$Id: doc-base.sgml 206 2011-01-16 21:08:22Z robert $
+$Id: doc-base.sgml 214 2011-02-20 18:48:59Z robert $
 vim:ts=2:et:sts=2:sw=2:fdm=marker 
 -->

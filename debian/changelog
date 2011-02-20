@@ -35,9 +35,10 @@ doc-base (0.9.6~3) UNRELEASED; urgency=low
   * doc-base.sgml:
     + Prepend a top-level section name section names to make it more visible 
       that sections' componets are separated by slash (closes: #578331).
+    + Add the `Network/Remote Access' section (closes: #555161).
 
   * debian/rules:
-    + switch to the tny format from debhelper;
+    + switch to the tiny format from debhelper;
     + add support for build-arch, build-indep targets. 
   * Bump debhelper compat mode to 8.
       
