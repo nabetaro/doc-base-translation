@@ -1,75 +1,17 @@
 #!/usr/bin/make -f
-# vim:ts=2
-# rules file for doc-base
-# $Id: rules 208 2011-01-18 23:06:12Z robert $
-#
-# Uncomment this to turn on verbose mode.
-#export DH_VERBOSE=1
-
-package   := doc-base
-stamp     := _build/build-stamp
-
-build: $(stamp)
-
-$(stamp):
-	dh_testdir
-	
-	$(MAKE)
-	touch $@
-
-clean:
-	dh_testdir
-	dh_testroot
-	rm -f $(stamp)
-	$(MAKE) clean
-	dh_clean
+# $Id: rules 213 2011-02-20 18:39:28Z robert $
 
 
+binary binary-indep build build-indep clean:
+	dh $@
 
-install: build
-	dh_testdir
-	dh_testroot
-	dh_prep
-	dh_installdirs
+binary-arch build-arch: # Nothing to do
 
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/$(package)
+override_dh_installdocs:
+	dh_installdocs -X doc-base.debhelper.log -X doc-base.substvars
 
-# Build architecture-independent files here.
-binary-indep: build install
-	dh_testdir
-	dh_testroot
-	dh_installchangelogs
-	dh_installdocs  -X debhelper -X substvars
-	dh_installexamples
-#	dh_installmenu
-#	dh_installdebconf
-#	dh_installlogrotate
-#	dh_installemacsen
-#	dh_installcatalogs
-#	dh_installpam
-#	dh_installmime
-#	dh_installinit
-#	dh_installcron
-#	dh_installinfo
-#	dh_installwm
-#	dh_installudev
-	dh_lintian
-#	dh_bugfiles
-#	dh_undocumented
-#	dh_installman 
-	dh_link
-	dh_compress
-	dh_fixperms
-	dh_perl -d
-#	dh_python
-	dh_installdeb
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
+.PHONY: clean                                   \
+	build-indep   build-arch   build        \
+	binary-indep  binary-arch  binary
 
-# Build architecture-dependent files here.
-binary-arch: build install
-# We have nothing to do by default.
-
-binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install
+DEFAULT_GOAL := binary

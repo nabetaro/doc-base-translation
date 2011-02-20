@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: prerm 115 2008-03-31 18:16:38Z robert $
+# $Id: prerm 213 2011-02-20 18:39:28Z robert $
 # prerm for doc-base
 
 # Abort if any command returns an error value
@@ -9,19 +9,12 @@ package=doc-base
 ctrldir="/usr/share/$package"
 infodir="/var/lib/$package/info"
 
-if [ "$DEBUG" ]; then
-    echo entering $package prerm
-    set -x
-fi
-
 remove_all_docs ( ) {
     if which install-docs >/dev/null 2>&1; then
 	install-docs ${VERBOSE}  --remove-all || true
-
     else
-	# error because this *is* the doc-base package
-	echo "cannot find install-docs on path" 1>&2
-	exit 1
+	# This shouldn't happen, because install-docs is doc-base	
+	echo "Warning: cannot find install-docs on path" 1>&2
     fi
 }
 

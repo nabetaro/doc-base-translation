@@ -1,4 +1,4 @@
-doc-base (0.9.6~2) UNRELEASED; urgency=low
+doc-base (0.9.6~3) UNRELEASED; urgency=low
 
   [ Martin Pitt ]
   * perl/Debian/DocBase/Programs/Scrollkeeper.pm: Provide our own local
@@ -13,7 +13,16 @@ doc-base (0.9.6~2) UNRELEASED; urgency=low
   [ Robert Luberda ]
   * Applied patch from Marin Pitt from Ubuntu to remove dependency on perl
     (closes: #602919).
-  * install-docs.in: Pod::Usage may be missing if perl is not installed.
+  * install-docs.in: Pod::Usage may be missing if perl is not installed
+    LP: #431270, #510976
+
+  
+  * read error in MLDBM - LP: 695319, # 675069  # 672364 , # 668856 , 652102 , #621345 
+
+  * The `/usr/share/doc-base/data/doc-base.map' file is provided in the package,
+    is must have been deleted either manually or by filesystem error 
+    (LP: #660345, #646629)
+
   * Change format of internal databases from MLDBM to YAML, and provide better
     error handling to prevent databases corruption:
     + use libyaml-tiny-perl for YAML files handling.
@@ -26,15 +35,25 @@ doc-base (0.9.6~2) UNRELEASED; urgency=low
   * doc-base.sgml:
     + Prepend a top-level section name section names to make it more visible 
       that sections' componets are separated by slash (closes: #578331).
+
+  * debian/rules:
+    + switch to the tny format from debhelper;
+    + add support for build-arch, build-indep targets. 
+  * Bump debhelper compat mode to 8.
       
   * Set source format to `3.0 (native)'.
   * Standards-Version: 3.9.1:
     + use Breaks instead of Conflicts for versioned conflicts with dwww 
       and dhelp.
   * Fix spelling typos found by lintian.
-  * Bump debhelper compat mode to 8.
+  * The following Ubuntu bugs are duplicates of #501874, fixed in 0.8.18
+    LP: #247718, #249160, #250252, #314996, #327101, #327104.
+  * prerm: Downgrade the `cannot find install-docs on path' error to 
+    a warning to make it possible to remove doc-base when install-docs
+    for some reason (LP: #391464).
+  *  Update Polish translation of binary.
 
- -- Robert Luberda <robert@debian.org>  Wed, 19 Jan 2011 00:04:54 +0100
+ -- Robert Luberda <robert@debian.org>  Sun, 20 Feb 2011 19:33:39 +0100
 
 doc-base (0.9.5) unstable; urgency=low
 
