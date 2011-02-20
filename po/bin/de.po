@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.9.1\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2011-02-20 18:20+0100\n"
+"POT-Creation-Date: 2011-02-20 22:01+0100\n"
 "PO-Revision-Date: 2009-05-05 12:07+0200\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -17,58 +17,52 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../../install-docs.in:88
+#: ../../install-docs.in:89
 #, perl-format
 msgid "Too many arguments for `%s'"
 msgstr "Zu viele Argumente für »%s«"
 
-#: ../../install-docs.in:91
+#: ../../install-docs.in:92
 #, perl-format
 msgid "`%s' requires exactly one argument"
 msgstr "`%s' benötigt genau ein Argument"
 
-#: ../../install-docs.in:94
+#: ../../install-docs.in:95
 #, fuzzy, perl-format
 #| msgid "Arguments missing for %s"
 msgid "Arguments missing for `%s'"
 msgstr "Für %s fehlen Argumente"
 
-#: ../../install-docs.in:104 ../../perl/Debian/DocBase/Document.pm:255
-#, fuzzy, perl-format
-#| msgid "Cannot open `%s': %s"
-msgid "Cannot open file `%s' for writing: %s"
-msgstr "»%s« kann nicht geöffnet werden: %s"
-
-#: ../../install-docs.in:110
+#: ../../install-docs.in:111
 #, perl-format
 msgid "Re-registation of all documents forced by %s"
 msgstr "Erneute Registrierung von allen Dokumenten wurde durch %s erzwungen"
 
-#: ../../perl/Debian/DocBase/DB.pm:42
+#: ../../perl/Debian/DocBase/DB.pm:43
 #, fuzzy, perl-format
 #| msgid "Cannot open `%s': %s"
 msgid "Cannot read file `%s': %s"
 msgstr "»%s« kann nicht geöffnet werden: %s"
 
-#: ../../perl/Debian/DocBase/DB.pm:76
+#: ../../perl/Debian/DocBase/DB.pm:77
 msgid "Needs to be root for this operation\n"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DB.pm:80
+#: ../../perl/Debian/DocBase/DB.pm:83
 #, fuzzy, perl-format
 #| msgid "Cannot open `%s': %s"
 msgid "Cannot save file `%s': %s"
 msgstr "»%s« kann nicht geöffnet werden: %s"
 
-#: ../../perl/Debian/DocBase/DB.pm:83
-#: ../../perl/Debian/DocBase/Document.pm:272
+#: ../../perl/Debian/DocBase/DB.pm:87
+#: ../../perl/Debian/DocBase/Document.pm:273
 #: ../../perl/Debian/DocBase/InstallDocs.pm:156
 #, fuzzy, perl-format
 #| msgid "Cannot open `%s': %s"
 msgid "Cannot rename file `%s' to `%s': %s"
 msgstr "»%s« kann nicht geöffnet werden: %s"
 
-#: ../../perl/Debian/DocBase/DB.pm:104
+#: ../../perl/Debian/DocBase/DB.pm:108
 #, fuzzy, perl-format
 #| msgid "Cannot open `%s': %s"
 msgid "Contents of file `%s'\n"
@@ -76,7 +70,7 @@ msgstr "»%s« kann nicht geöffnet werden: %s"
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:208
 #: ../../perl/Debian/DocBase/Document.pm:167
-#: ../../perl/Debian/DocBase/Utils.pm:173
+#: ../../perl/Debian/DocBase/Utils.pm:178
 #, fuzzy, perl-format
 #| msgid "Cannot open `%s': %s"
 msgid "Cannot open file `%s' for reading: %s"
@@ -99,8 +93,9 @@ msgid "Warning in %s: %s"
 msgstr "Warnung in %s: %s"
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:252
-#, perl-format
-msgid "Internal error: Unknown flag (%s, %s)"
+#, fuzzy, perl-format
+#| msgid "Internal error: Unknown flag (%s, %s)"
+msgid "Unknown flag (%s, %s)"
 msgstr "Interner Fehler: Unbekannte Markierung (%s, %s)"
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:268
@@ -142,7 +137,7 @@ msgstr "Syntaxfehler in Kontrolldatei: %s"
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:332
 #, fuzzy, perl-format
 #| msgid "Internal error: Unknown flag (%s, %s)"
-msgid "Internal error: file `%s' not parsed"
+msgid "File `%s' not parsed"
 msgstr "Interner Fehler: Unbekannte Markierung (%s, %s)"
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:350
@@ -234,6 +229,12 @@ msgstr "Datei »%s« ist nicht registriert, kann nicht entfernt werden"
 msgid "Cannot remove file `%s': %s"
 msgstr "»%s« kann nicht geöffnet werden: %s"
 
+#: ../../perl/Debian/DocBase/Document.pm:255
+#, fuzzy, perl-format
+#| msgid "Cannot open `%s': %s"
+msgid "Cannot open file `%s' for writing: %s"
+msgstr "»%s« kann nicht geöffnet werden: %s"
+
 #: ../../perl/Debian/DocBase/Document.pm:270
 #: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:197
 #, fuzzy, perl-format
@@ -241,38 +242,38 @@ msgstr "»%s« kann nicht geöffnet werden: %s"
 msgid "Cannot close file `%s': %s"
 msgstr "»%s« kann nicht geöffnet werden: %s"
 
-#: ../../perl/Debian/DocBase/Document.pm:300
+#: ../../perl/Debian/DocBase/Document.pm:301
 #, perl-format
 msgid ""
 "Unregistering file `%s', since its actual document id `%s' does not match "
 "its saved document id `%s'"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Document.pm:316
+#: ../../perl/Debian/DocBase/Document.pm:317
 #, perl-format
 msgid "Error while merging %s with %s: inconsistent values of %s"
 msgstr "Fehler beim Verbinden von %s mit %s: Inkonsistente Werte von %s"
 
-#: ../../perl/Debian/DocBase/Document.pm:325
+#: ../../perl/Debian/DocBase/Document.pm:326
 #, perl-format
 msgid "Error while merging %s with %s: format %s already defined"
 msgstr "Fehler beim Verbinden von %s mit %s: Format %s bereits definiert"
 
-#: ../../perl/Debian/DocBase/Document.pm:350
+#: ../../perl/Debian/DocBase/Document.pm:351
 #, fuzzy, perl-format
 #| msgid "Document `%s' is not registered"
-msgid "Internal error: Document `%s' is not yet merged"
+msgid "Document `%s' is not yet merged"
 msgstr "Dokument »%s« ist nicht registriert"
 
-#: ../../perl/Debian/DocBase/Document.pm:427
+#: ../../perl/Debian/DocBase/Document.pm:428
 #, perl-format
-msgid "Internal error: `%s' not yet created"
+msgid "`%s' not yet created"
 msgstr ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:53
 #, fuzzy, perl-format
 #| msgid "Internal error: Unknown flag (%s, %s)"
-msgid "Internal error: mode already set: %s, %s"
+msgid "Mode already set: %s, %s"
 msgstr "Interner Fehler: Unbekannte Markierung (%s, %s)"
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:57
@@ -283,7 +284,7 @@ msgstr "Wert der »%s«-Option ignoriert"
 #: ../../perl/Debian/DocBase/InstallDocs.pm:74
 #, fuzzy
 #| msgid "Internal error: Unknown flag (%s, %s)"
-msgid "Internal error: Unknown mode"
+msgid "Unknown mode"
 msgstr "Interner Fehler: Unbekannte Markierung (%s, %s)"
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:103
@@ -445,7 +446,7 @@ msgstr "%s kann nicht angelegt werden: %s\n"
 #: ../../perl/Debian/DocBase/Utils.pm:59
 #, fuzzy
 #| msgid "Document `%s' is not registered"
-msgid "Internal error: no arguments passed to Execute()"
+msgid "No arguments passed to Execute()"
 msgstr "Dokument »%s« ist nicht registriert"
 
 #: ../../perl/Debian/DocBase/Utils.pm:62
@@ -463,27 +464,42 @@ msgstr ""
 msgid "Skipping execution of `%s'"
 msgstr ""
 
+#: ../../perl/Debian/DocBase/Utils.pm:98
+#, fuzzy
+#| msgid "Internal error: Unknown flag (%s, %s)"
+msgid "Internal error: "
+msgstr "Interner Fehler: Unbekannte Markierung (%s, %s)"
+
 #: ../../perl/Debian/DocBase/Utils.pm:99
+msgid "Database error: "
+msgstr ""
+
+#: ../../perl/Debian/DocBase/Utils.pm:104
 #, fuzzy
 #| msgid "%s: %d warning(s) or non-fatal error(s) found"
 msgid "Running fatal errors handler"
 msgstr "%s: %d Warnung(en) oder nicht schwerwiegende(r) Fehler gefunden"
 
-#: ../../perl/Debian/DocBase/Utils.pm:110
+#: ../../perl/Debian/DocBase/Utils.pm:115
 #, perl-format
 msgid "Signal %s received, terminating."
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Utils.pm:126
-#: ../../perl/Debian/DocBase/Utils.pm:148
+#: ../../perl/Debian/DocBase/Utils.pm:131
+#: ../../perl/Debian/DocBase/Utils.pm:153
 #, perl-format
-msgid "Internal error: invalid argument of IgnoreRestoreSignals: %s"
+msgid "Invalid argument of IgnoreRestoreSignals(): %s"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Utils.pm:131
+#: ../../perl/Debian/DocBase/Utils.pm:136
 #, perl-format
-msgid "Internal error: invalid ign_cnt (%d) in IgnoreRestoreSignals(%s)"
+msgid "Invalid counter (%d) in IgnoreRestoreSignals(%s)"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Document `%s' is not registered"
+#~ msgid "Internal error: Document `%s' is not yet merged"
+#~ msgstr "Dokument »%s« ist nicht registriert"
 
 #, fuzzy
 #~| msgid "Cannot open `%s': %s"

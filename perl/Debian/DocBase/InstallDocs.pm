@@ -2,7 +2,7 @@
 
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 209 2011-01-24 22:44:21Z robert $
+# $Id: InstallDocs.pm 216 2011-02-20 22:42:12Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -50,7 +50,7 @@ sub SetMode($@) { # {{{
   my @args    = @_;
 
 
-  Fatal(_g("Internal error: mode already set: %s, %s"), $mode, $newmode) if (defined $mode);
+  Fatal($ERR_INTERNAL, _g("Mode already set: %s, %s"), $mode, $newmode) if (defined $mode);
 
   $mode = $newmode;
 
@@ -71,7 +71,7 @@ sub SetMode($@) { # {{{
 # Main procedure that gets called by install-docs
 sub InstallDocsMain() { # {{{
 
-  Fatal(_g("Internal error: Unknown mode")) unless defined $mode;
+  Fatal($ERR_INTERNAL, _g("Unknown mode")) unless defined $mode;
 
   if ($mode == $MODE_CHECK) {
     _HandleCheck();
@@ -150,14 +150,14 @@ sub _HandleRemovalOfAllDocs() { # {{{
   my $suffix  = ".removed.$$";
   my @dbdirs  = ($OMF_DIR, $VAR_CTRL_DIR);
 
-  unlink $DB_FILES or Fatal(_g("Cannot remove file `%s': %s"), $DB_FILES, $!) if -f $DB_FILES;
+  unlink $DB_FILES or Fatal($ERR_FSACCESS, _g("Cannot remove file `%s': %s"), $DB_FILES, $!) if -f $DB_FILES;
   foreach my $d (@dbdirs) {
     next unless -d $d;
-    rename ($d, $d.$suffix) or Fatal(_g("Cannot rename file `%s' to `%s': %s"), $d, ${d}.${suffix}, $!);
+    rename ($d, $d.$suffix) or Fatal($ERR_FSACCESS, _g("Cannot rename file `%s' to `%s': %s"), $d, ${d}.${suffix}, $!);
     system ('mkdir', '-m', '0755', '-p', $d);
     system ('rm', '-r', $d.$suffix);
   }
-  unlink $DB_STATUS or Fatal(_g("Cannot remove file `%s': %s"), $DB_STATUS, $!) if -f $DB_STATUS;
+  unlink $DB_STATUS or Fatal($ERR_FSACCESS, _g("Cannot remove file `%s': %s"), $DB_STATUS, $!) if -f $DB_STATUS;
 
   my @documents = ();
   RegisterDwww(1, @documents);

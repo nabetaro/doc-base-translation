@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 209 2011-01-24 22:44:21Z robert $
+# $Id: Document.pm 216 2011-02-20 22:42:12Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -245,14 +245,14 @@ sub WriteNewCtrlFile() { # {{{
   if ($self->Invalid() || !$self->_HasControlFiles()) {
     if (-e $file)  {
       Debug("Removing control file $file");
-      unlink $file or Fatal(_g("Cannot remove file `%s': %s"), $file, $!);
+      unlink $file or Fatal($ERR_FSACCESS, _g("Cannot remove file `%s': %s"), $file, $!);
     }
     return;
   }
 
 
   open(F, '>', $tmpfile) or
-    Fatal(_g("Cannot open file `%s' for writing: %s"), $tmpfile, $!);
+    Fatal($ERR_FSACCESS, _g("Cannot open file `%s' for writing: %s"), $tmpfile, $!);
 
   foreach $fld (GetFldKeys($FLDTYPE_MAIN)) {
     print F ucfirst($fld) . ": " .  $self->{'MAIN_DATA'}->{$fld} . "\n"
@@ -267,9 +267,10 @@ sub WriteNewCtrlFile() { # {{{
     }
   }
 
-  close F or Fatal(_g("Cannot close file `%s': %s"), $file, $!);
+  close F or Fatal($ERR_FSACCESS, _g("Cannot close file `%s': %s"), $file, $!);
 
-  rename $tmpfile, $file or Fatal(_g("Cannot rename file `%s' to `%s': %s"), $tmpfile, $file, $!);
+  rename $tmpfile, $file 
+    or Fatal($ERR_FSACCESS, _g("Cannot rename file `%s' to `%s': %s"), $tmpfile, $file, $!);
 } # }}}
 
 # merge contents of all available control files for the document
@@ -347,7 +348,7 @@ sub SaveStatusChanges($) { # {{{
 sub _CheckMerged($) { # {{{
   my $self = shift;
 
-  Fatal(_g("Internal error: Document `%s' is not yet merged"),  $self->GetDocumentID())
+  Fatal($ERR_INTERNAL, _g("Document `%s' is not yet merged"),  $self->GetDocumentID())
     unless $self->{'MERGED_CTRL_FILES'};
 } # }}}
 
@@ -424,7 +425,7 @@ sub _ParseControlFiles($) { # {{{
   my $self = shift;
 
   foreach my $cfname ($self->_GetControlFileNames()) {
-    Fatal(_g("Internal error: `%s' not yet created"), $cfname) unless $self->{'CONTROL_FILES'}->{$cfname};
+    Fatal($ERR_INTERNAL, _g("`%s' not yet created"), $cfname) unless $self->{'CONTROL_FILES'}->{$cfname};
     $self->{'CONTROL_FILES'}->{$cfname}->Parse();
   }
 } # }}}

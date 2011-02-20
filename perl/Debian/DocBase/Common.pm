@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Common.pm 207 2011-01-17 22:45:18Z robert $
+# $Id: Common.pm 216 2011-02-20 22:42:12Z robert $
 
 
 package Debian::DocBase::Common;
@@ -23,6 +23,7 @@ use vars    qw(@ISA @EXPORT);
                 $FLDDEF_REQUIRED
                 $FLDDEF_MULTILINE
              $opt_verbose $opt_debug $exitval $opt_rootdir $opt_update_menus $on_fatal_handler
+             $ERR_NONE $ERR_USAGE $ERR_PARSING $ERR_FSACCESS $ERR_PROCESSING $ERR_INTERNAL $ERR_DATABASE
              GetFldKeys
             );
 
@@ -37,7 +38,13 @@ our $VAR_CTRL_DIR                 = "/var/lib/doc-base/documents";
 our $CTIME_FIELDNO                = 10;
 our $OMF_DIR                      = "/var/lib/doc-base/omf";
 
-
+our $ERR_NONE                     = 0;
+our $ERR_USAGE                    = 1;
+our $ERR_PARSING                  = 2;
+our $ERR_PROCESSING               = 3;
+our $ERR_FSACCESS                 = 4;  # file system access
+our $ERR_INTERNAL                 = 5;
+our $ERR_DATABASE                 = 10;  # manipulating *.yml data base files, note the value is used in postinst
 # ---configuration-part---
 
 # All formats handled by the doc-base

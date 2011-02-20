@@ -1,6 +1,6 @@
 # vim:ts=2
 # makefile for doc-base
-# $Id: Makefile 178 2009-01-11 14:14:16Z robert $
+# $Id: Makefile 216 2011-02-20 22:42:12Z robert $
 #
 
 ALL_TARGET    := build-local
@@ -12,18 +12,18 @@ x:=$(subst /, ,$(abspath ))
 x1:=$(strip $x)
 
 generated     := $(bdir)/man/man8/install-docs.8  \
-                $(bdir)/check-stamp             \
                 $(bdir)/install-docs.html       \
                 $(bdir)/install-docs
 
 $(ALL_TARGET): $(generated) | $(bdir)
 
 
-
-$(bdir)/check-stamp: $(bdir)/install-docs
+check: $(bdir)/install-docs
 	$(call msg,$@)
-	PERL5LIB="perl" perl -cw $(bdir)/install-docs
-	touch $@
+	perl -I$(CURDIR)/perl -Tcw install-docs.in
+	perl -I$(CURDIR)/perl -Tcw $(bdir)/install-docs
+
+.PHONY: check
 
 
 $(bdir)/install-docs: install-docs.in $(CHANGELOGFILE) | $(bdir)

@@ -1,11 +1,13 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs.in 209 2011-01-24 22:44:21Z robert $
+# $Id: install-docs.in 216 2011-02-20 22:42:12Z robert $
 
 use warnings;
 use strict;
 use lib 'perl'; #LINE_REMOVED_BY_MAKE#
+
+use Debian::DocBase::Common;
 
 
 # declared in Debian::DocBase::InstallDocs;
@@ -24,8 +26,6 @@ BEGIN {
     exit 0;
   }
   $fully_functional = eval {
-                              require Debian::DocBase::Common;
-                              import  Debian::DocBase::Common;
                               require Debian::DocBase::InstallDocs;
                               import  Debian::DocBase::InstallDocs;
                               require Debian::DocBase::Utils;
@@ -34,6 +34,7 @@ BEGIN {
                               import  Debian::DocBase::Gettext;
                               1;
                         };
+  die $@  if $@; #LINE_REMOVED_BY_MAKE#
   warn $@ if $@;
 }
 
@@ -85,24 +86,24 @@ sub _CheckArgCount($$) { # {{{
   ++$cnt;
 
   if ($option eq "install-all" or $option eq "install-changed" or $option eq "remove-all") {
-    Fatal( _g("Too many arguments for `%s'"), $option) unless $cnt == 0;
+    Fatal($ERR_USAGE, _g("Too many arguments for `%s'"), $option) unless $cnt == 0;
   } 
   elsif ($option eq "dump-db") {
-    Fatal( _g("`%s' requires exactly one argument"), $option) unless $cnt == 1;
+    Fatal($ERR_USAGE, _g("`%s' requires exactly one argument"), $option) unless $cnt == 1;
   }
   else {
-    Fatal( _g("Arguments missing for `%s'"), $option) if $cnt == 0;
+    Fatal($ERR_USAGE, _g("Arguments missing for `%s'"), $option) if $cnt == 0;
   }    
 } # }}}
    
 
- sub CheckFunctionality(;$) { # {{{
+sub _CheckFunctionality(;$) { # {{{
   return; #LINE_REMOVED_BY_MAKE#
   my $dont_force_reg = shift;
   if (not $fully_functional) {
     open F, "> $force_reregister_flagfile"
-      or die sprintf _g("Cannot open file `%s' for writing: %s")."\n", $force_reregister_flagfile, $!;
-    print F "x";
+      or die "Cannot open file $force_reregister_flagfile for writing: $!\n"; # gettext functions may not be defined here yet
+    print F "\n";
     close F;
     exit 0;
   }
@@ -136,12 +137,12 @@ sub _Usage($) # {{{
            "install-docs -h,--help | -V,--version\n");
   };
   exit ($exit_val);
-} # }}}
+} # }}} 
 
 #### Parse arguments loop #####
-#
-exit(1) if not $fully_functional and $#ARGV < 0;
-_Usage(1) if $#ARGV < 0 ;
+
+_Usage($ERR_USAGE) if $#ARGV < 0;
+
 while (my $arg = shift @ARGV) {
 
   # try to handle concatenation of options e.g. `-vdi' instead of `-v -d -i'
@@ -226,8 +227,9 @@ Install the documentation described by the control file I<file>.
 
 =cut
     # install new docs
+    _CheckFunctionality();
     _CheckArgCount($#ARGV, "install");
-    SetMode($MODE_INSTALL, @ARGV) unless CheckFunctionality();
+    SetMode($MODE_INSTALL, @ARGV);
     last; # }}}
 
   } elsif (($arg eq '-r') or ($arg eq '--remove')) { # {{{
@@ -239,8 +241,9 @@ I<file>.
 
 =cut
     # remove old docs #
+    _CheckFunctionality();
     _CheckArgCount($#ARGV, "remove");
-    SetMode($MODE_REMOVE, @ARGV) unless CheckFunctionality();
+    SetMode($MODE_REMOVE, @ARGV);
     last; # }}}
 
   } elsif (($arg eq '-c') or ($arg eq '--check')) { # {{{
@@ -264,8 +267,8 @@ given if the `Files' and `Index' fields of the I<file>.
 De-register all registered documents.
 
 =cut
+    _CheckFunctionality(1);
     _CheckArgCount($#ARGV, "remove-all");
-    CheckFunctionality(1);
     SetMode($MODE_REMOVE_ALL);
     last; # }}}
 
@@ -276,8 +279,8 @@ De-register all registered documents.
 (Re)register all documents from F</usr/share/doc-base> and F</etc/doc-base/documents>.
 
 =cut
+    _CheckFunctionality(1);
     _CheckArgCount($#ARGV, "install-all");
-    CheckFunctionality(1);
     SetMode($MODE_INSTALL_ALL);
     last; # }}}
 
@@ -290,8 +293,9 @@ with registered documents database and de-register any files that are missing an
 (re)register only changed or new files.
 
 =cut
+    _CheckFunctionality(1);
     _CheckArgCount($#ARGV, "install-changed");
-    SetMode($MODE_INSTALL_CHANGED) unless CheckFunctionality();
+    SetMode($MODE_INSTALL_CHANGED);
     last; # }}}
 
   } elsif (($arg eq '-s') or ($arg eq '--status')) {  # {{{
@@ -313,7 +317,7 @@ Deprecated option. Does nothing.
 
 =cut
     warn sprintf _g("Ignoring deprecated command line argument: %s\n"), $arg;
-    exit 0;
+    exit $ERR_NONE;
  # }}}
 
   }  elsif ($arg eq '--dump-db') { # {{{
@@ -336,7 +340,7 @@ Show a short help message.
 
 
 =cut
-    _Usage(0);
+    _Usage($ERR_NONE);
     # NOT REACHED  # }}}
 
    } elsif (($arg eq '-V') or ($arg eq '--version')) { # {{{
@@ -349,11 +353,11 @@ Display version information.
 
 =cut
     print "install-docs $version\n";
-    exit 0;
+    exit $ERR_NONE;
     # NOT REACHED  # }}}
 
   } else { # {{{ default: die
-    pod2usage(-msg => "Invalid argument: $arg", -verbose => 0, -exitval => 1);
+    Usage($ERR_USAGE);
   } # }}}
 
 }

@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: postinst 215 2011-02-20 19:23:22Z robert $
+# $Id: postinst 216 2011-02-20 22:42:12Z robert $
 # vim:ts=4:sts=4:et:sw
 # postinst for doc-base
 
@@ -8,21 +8,45 @@ set -e
 
 package=doc-base
 # upgrades prior to this version require complete re-registration
-compat_ver=0.9.6~
-VERBOSE=
+compat_ver=0.9.5.99
 
 ctrldir="/usr/share/$package"
-infodir="/var/lib/$package/info"
-docsdir="/var/lib/$package/documents"
+libdir="/var/lib/$package"
+infodir="$libdir/info"
+docsdir="$libdir/documents"
+omfdir="$libdir/omf"
 status_db="$infodir/status.yml"
+files_db="$infodir/files.yml"
+VERBOSE=
 
-if [ "$DEBUG" ]; then
+if [ "$DOC_BASE_MAINT_DEBUG" ]; then
     echo entering $package postinst
+    [ -z "$DOC_BASE_MAINT_VERBOSE" ] || VERBOSE=-v
     set -x
 fi
 
 reinstall_docs () {
-    install-docs ${VERBOSE} "--install-$1"
+    status=0
+    install-docs ${VERBOSE} "--install-$1" || status=$?
+
+    if [ "$status" = 10 ] ; then # error processing databases
+        echo                                                                     >&2
+        echo "**  Trying to recover from the above install-docs error by"        >&2
+        echo "**  removing its internal databases and re-calling it afterwards"  >&2
+        echo                                                                     >&2
+
+        ext="possibly_corrupted"
+        mv -f "$status_db" "${status_db}.${ext}"
+        mv -f "$files_db" "${files_db}.${ext}"
+        rm -rf "$docsdir" "$omfdir"; mkdir -p -m 755  "$docsdir" "$omfdir"
+        find "$infodir"  -type f '!' -name "*.${ext}" -exec rm -f {} ';'
+
+        install-docs ${VERBOSE} --install-all && status=$? || status=$? 
+
+        [ "$status" != 0 ] || rm -f "${status_db}.${ext}" "${files_db}.${ext}"
+    fi
+    [ "$status" = 0 ] || exit $status
+   
 }
 
 case "$1" in

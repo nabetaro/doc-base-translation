@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 209 2011-01-24 22:44:21Z robert $
+# $Id: Scrollkeeper.pm 216 2011-02-20 22:42:12Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -169,7 +169,7 @@ sub _WriteOmfFile($$$$) { # {{{
 
 
   if (! -d "$OMF_DIR/$docid") {
-    mkdir("$OMF_DIR/$docid") or Fatal(_g("Cannot create directory `%s': %s"), $OMF_DIR/$docid, $!);
+    mkdir("$OMF_DIR/$docid") or Fatal($ERR_FSACCESS, _g("Cannot create directory `%s': %s"), $OMF_DIR/$docid, $!);
   }
 
   &Debug("Writing scrollkeeper OMF file `$omf_file'");
@@ -194,7 +194,7 @@ sub _WriteOmfFile($$$$) { # {{{
 
   #finish the boiler plate
   print OMF "\t</resource>\n</omf>\n";
-  close(OMF) or Fatal(_g("Cannot close file `%s': %s"), $omf_file, $!);
+  close(OMF) or Fatal($ERR_FSACCESS, _g("Cannot close file `%s': %s"), $omf_file, $!);
 
   return $omf_file;
 } # }}}

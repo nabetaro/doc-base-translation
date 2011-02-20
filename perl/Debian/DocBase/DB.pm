@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DB.pm 209 2011-01-24 22:44:21Z robert $
+# $Id: DB.pm 216 2011-02-20 22:42:12Z robert $
 #
 
 package Debian::DocBase::DB;
@@ -39,7 +39,8 @@ sub _Init() { #  {{{
   my $file = $self->{'FILE'};
   if (-f $file)
   {
-    $self->{'YAML'} = YAML::Tiny->read ($file) or Fatal( _g("Cannot read file `%s': %s"), $file, $!);
+    eval { $self->{'YAML'} = YAML::Tiny->read ($file) } 
+      or Fatal($ERR_DATABASE, _g("Cannot read file `%s': %s"), $file, $@);
   }
   else
   {
@@ -73,14 +74,17 @@ sub _SaveDB() { # {{{
   Debug("Saving $file " . $self->{'CHANGED'});
   return unless $self->{'CHANGED'};
   my $readonly = $> != 0;
-  Fatal(_g("Needs to be root for this operation\n")) if $readonly;
+  Fatal($ERR_PROCESSING, _g("Needs to be root for this operation\n")) if $readonly;
   (my $newfile = $file) =~ s/^[^\.]+/$&-new/g;
   (my $oldfile = $file) =~ s/^[^\.]+/$&-old/g;
 
-  $self->{'YAML'}->write($newfile) or  Fatal(_g("Cannot save file `%s': %s"), $newfile, $!);
+
+  eval { $self->{'YAML'}->write($newfile) }  
+    or Fatal($ERR_DATABASE, _g("Cannot save file `%s': %s"), $newfile, $@);
   unlink $oldfile if -f $oldfile;
   rename $file, $oldfile if -f $file;
-  rename $newfile, $file or Fatal(_g("Cannot rename file `%s' to `%s': %s"), $newfile, $file, $!);
+  rename $newfile, $file 
+    or Fatal($ERR_DATABASE, _g("Cannot rename file `%s' to `%s': %s"), $newfile, $file, $!);
   $self->{'CHANGED'} = 0;
 } # }}}
 

@@ -56,6 +56,10 @@ doc-base (0.9.6~3) UNRELEASED; urgency=low
   *  Remove ancient stuff from preinst.
   * Re-register all docs when upgrading to this version.
 
+  * Differentiate fatal error codes.
+  *  postinst: Try to recover for yaml files corruption by deleting them
+     and re-spawning install-docs.
+
  -- Robert Luberda <robert@debian.org>  Sun, 20 Feb 2011 20:22:39 +0100
 
 doc-base (0.9.5) unstable; urgency=low

@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: preinst 215 2011-02-20 19:23:22Z robert $
+# $Id: preinst 216 2011-02-20 22:42:12Z robert $
 # vim:ts=4:sts=4:et:sw
 # preinst for doc-base
 
@@ -10,7 +10,7 @@ package=doc-base
 infodir="/var/lib/$package/info"
 docsdir="/var/lib/$package/documents"
 omfdir="/var/lib/$package/omf"
-compatver=0.9.6~
+compatver=0.9.5.99
 
 
 remove_obsolete() {
@@ -18,7 +18,7 @@ remove_obsolete() {
 }
 
 
-if [ "$1" = "upgrade" ] &&  dpkg --compare-versions "$2" lt-nl "$compat_ver"; then
+if [ "$1" = "upgrade" ] &&  dpkg --compare-versions "$2" lt-nl "$compatver"; then
     remove_obsolete
 fi
 

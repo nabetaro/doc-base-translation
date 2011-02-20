@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.9.6~3\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2011-02-20 19:39+0100\n"
+"POT-Creation-Date: 2011-02-20 22:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,60 +18,55 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: ../../install-docs.in:88
+#: ../../install-docs.in:89
 #, perl-format
 msgid "Too many arguments for `%s'"
 msgstr ""
 
-#: ../../install-docs.in:91
+#: ../../install-docs.in:92
 #, perl-format
 msgid "`%s' requires exactly one argument"
 msgstr ""
 
-#: ../../install-docs.in:94
+#: ../../install-docs.in:95
 #, perl-format
 msgid "Arguments missing for `%s'"
 msgstr ""
 
-#: ../../install-docs.in:104 ../../perl/Debian/DocBase/Document.pm:255
-#, perl-format
-msgid "Cannot open file `%s' for writing: %s"
-msgstr ""
-
-#: ../../install-docs.in:110
+#: ../../install-docs.in:111
 #, perl-format
 msgid "Re-registation of all documents forced by %s"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DB.pm:42
+#: ../../perl/Debian/DocBase/DB.pm:43
 #, perl-format
 msgid "Cannot read file `%s': %s"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DB.pm:76
+#: ../../perl/Debian/DocBase/DB.pm:77
 msgid "Needs to be root for this operation\n"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DB.pm:80
+#: ../../perl/Debian/DocBase/DB.pm:83
 #, perl-format
 msgid "Cannot save file `%s': %s"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DB.pm:83
-#: ../../perl/Debian/DocBase/Document.pm:272
+#: ../../perl/Debian/DocBase/DB.pm:87
+#: ../../perl/Debian/DocBase/Document.pm:273
 #: ../../perl/Debian/DocBase/InstallDocs.pm:156
 #, perl-format
 msgid "Cannot rename file `%s' to `%s': %s"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/DB.pm:104
+#: ../../perl/Debian/DocBase/DB.pm:108
 #, perl-format
 msgid "Contents of file `%s'\n"
 msgstr ""
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:208
 #: ../../perl/Debian/DocBase/Document.pm:167
-#: ../../perl/Debian/DocBase/Utils.pm:173
+#: ../../perl/Debian/DocBase/Utils.pm:178
 #, perl-format
 msgid "Cannot open file `%s' for reading: %s"
 msgstr ""
@@ -94,7 +89,7 @@ msgstr ""
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:252
 #, perl-format
-msgid "Internal error: Unknown flag (%s, %s)"
+msgid "Unknown flag (%s, %s)"
 msgstr ""
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:268
@@ -133,7 +128,7 @@ msgstr ""
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:332
 #, perl-format
-msgid "Internal error: file `%s' not parsed"
+msgid "File `%s' not parsed"
 msgstr ""
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:350
@@ -224,42 +219,47 @@ msgstr ""
 msgid "Cannot remove file `%s': %s"
 msgstr ""
 
+#: ../../perl/Debian/DocBase/Document.pm:255
+#, perl-format
+msgid "Cannot open file `%s' for writing: %s"
+msgstr ""
+
 #: ../../perl/Debian/DocBase/Document.pm:270
 #: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:197
 #, perl-format
 msgid "Cannot close file `%s': %s"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Document.pm:300
+#: ../../perl/Debian/DocBase/Document.pm:301
 #, perl-format
 msgid ""
 "Unregistering file `%s', since its actual document id `%s' does not match "
 "its saved document id `%s'"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Document.pm:316
+#: ../../perl/Debian/DocBase/Document.pm:317
 #, perl-format
 msgid "Error while merging %s with %s: inconsistent values of %s"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Document.pm:325
+#: ../../perl/Debian/DocBase/Document.pm:326
 #, perl-format
 msgid "Error while merging %s with %s: format %s already defined"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Document.pm:350
+#: ../../perl/Debian/DocBase/Document.pm:351
 #, perl-format
-msgid "Internal error: Document `%s' is not yet merged"
+msgid "Document `%s' is not yet merged"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Document.pm:427
+#: ../../perl/Debian/DocBase/Document.pm:428
 #, perl-format
-msgid "Internal error: `%s' not yet created"
+msgid "`%s' not yet created"
 msgstr ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:53
 #, perl-format
-msgid "Internal error: mode already set: %s, %s"
+msgid "Mode already set: %s, %s"
 msgstr ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:57
@@ -268,7 +268,7 @@ msgid "Value of the `%s' option ignored"
 msgstr ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:74
-msgid "Internal error: Unknown mode"
+msgid "Unknown mode"
 msgstr ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:103
@@ -415,7 +415,7 @@ msgid "Cannot create directory `%s': %s"
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Utils.pm:59
-msgid "Internal error: no arguments passed to Execute()"
+msgid "No arguments passed to Execute()"
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Utils.pm:62
@@ -433,22 +433,30 @@ msgstr ""
 msgid "Skipping execution of `%s'"
 msgstr ""
 
+#: ../../perl/Debian/DocBase/Utils.pm:98
+msgid "Internal error: "
+msgstr ""
+
 #: ../../perl/Debian/DocBase/Utils.pm:99
+msgid "Database error: "
+msgstr ""
+
+#: ../../perl/Debian/DocBase/Utils.pm:104
 msgid "Running fatal errors handler"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Utils.pm:110
+#: ../../perl/Debian/DocBase/Utils.pm:115
 #, perl-format
 msgid "Signal %s received, terminating."
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Utils.pm:126
-#: ../../perl/Debian/DocBase/Utils.pm:148
+#: ../../perl/Debian/DocBase/Utils.pm:131
+#: ../../perl/Debian/DocBase/Utils.pm:153
 #, perl-format
-msgid "Internal error: invalid argument of IgnoreRestoreSignals: %s"
+msgid "Invalid argument of IgnoreRestoreSignals(): %s"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Utils.pm:131
+#: ../../perl/Debian/DocBase/Utils.pm:136
 #, perl-format
-msgid "Internal error: invalid ign_cnt (%d) in IgnoreRestoreSignals(%s)"
+msgid "Invalid counter (%d) in IgnoreRestoreSignals(%s)"
 msgstr ""
