@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs.in 216 2011-02-20 22:42:12Z robert $
+# $Id: install-docs.in 217 2011-02-23 21:09:59Z robert $
 
 use warnings;
 use strict;
@@ -357,7 +357,7 @@ Display version information.
     # NOT REACHED  # }}}
 
   } else { # {{{ default: die
-    Usage($ERR_USAGE);
+    _Usage($ERR_USAGE);
   } # }}}
 
 }

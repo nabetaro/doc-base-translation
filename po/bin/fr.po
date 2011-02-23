@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.9.1\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2011-02-20 22:01+0100\n"
+"POT-Creation-Date: 2011-02-23 08:32+0100\n"
 "PO-Revision-Date: 2009-03-16 22:00+0100\n"
 "Last-Translator: Jean-Luc Coulon (f5ibh) <jean-luc.coulon@wanadoo.fr>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -159,40 +159,63 @@ msgstr "la première ligne ne contient pas de champ « Document » valable"
 msgid "invalid value of `Document' field"
 msgstr "valeur non valable pour le champ « Document »"
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:392
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:388
+#, fuzzy, perl-format
+#| msgid " (using `%s' as the root directory)"
+msgid "(using `%s' as the root directory)"
+msgstr " (utilisation de « %s » comme répertoire racine)"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:395
 #, perl-format
 msgid "unsupported doc-base file version: %s"
 msgstr "version du fichier de la documentation non prise en compte : %s"
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:411
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:414
 #, perl-format
 msgid "format `%s' already defined"
 msgstr "le format « %s » est déjà défini"
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:415
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:418
 #, perl-format
 msgid "format `%s' is not supported"
 msgstr "le format « %s » n'est pas pris en compte"
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:427
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:430
 #, perl-format
 msgid "`%s' value missing for format `%s'"
 msgstr "Il manque la valeur « %s » au format « %s »"
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:431
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:434
 #, perl-format
 msgid "`%s' value has to be specified with absolute path: %s"
 msgstr "La valeur de « %s » doit être indiquée avec un chemin absolu : %s"
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:464
-#, perl-format
-msgid " (using `%s' as the root directory)"
-msgstr " (utilisation de « %s » comme répertoire racine)"
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:440
+#, fuzzy, perl-format
+#| msgid "Document `%s' is not registered"
+msgid "file `%s' does not exist"
+msgstr "Le document « %s » n'est pas enregistré"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:451
+#, fuzzy, perl-format
+#| msgid "`%s' value missing for format `%s'"
+msgid "`%s' value not specified for format `%s'"
+msgstr "Il manque la valeur « %s » au format « %s »"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:460
+#, fuzzy, perl-format
+#| msgid "`%s' value has to be specified with absolute path: %s"
+msgid "`%s' value  has to be specified with absolute path: %s"
+msgstr "La valeur de « %s » doit être indiquée avec un chemin absolu : %s"
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:466
 #, perl-format
 msgid "file mask `%s' does not match any files"
 msgstr "aucun fichier ne correspond au masque de fichier « %s »"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:477
+msgid "no valid `Format' section found"
+msgstr ""
 
 #: ../../perl/Debian/DocBase/Document.pm:153
 msgid "---document-information---"
@@ -245,32 +268,32 @@ msgstr "Impossible d'ouvrir « %s » : %s"
 msgid "Cannot close file `%s': %s"
 msgstr "Impossible d'ouvrir « %s » : %s"
 
-#: ../../perl/Debian/DocBase/Document.pm:301
+#: ../../perl/Debian/DocBase/Document.pm:307
 #, perl-format
 msgid ""
 "Unregistering file `%s', since its actual document id `%s' does not match "
 "its saved document id `%s'"
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Document.pm:317
+#: ../../perl/Debian/DocBase/Document.pm:323
 #, perl-format
 msgid "Error while merging %s with %s: inconsistent values of %s"
 msgstr ""
 "Erreur lors de la concaténation de %s avec %s : valeurs incohérentes de %s"
 
-#: ../../perl/Debian/DocBase/Document.pm:326
+#: ../../perl/Debian/DocBase/Document.pm:332
 #, perl-format
 msgid "Error while merging %s with %s: format %s already defined"
 msgstr ""
 "Erreur lors de la concaténation de %s avec %s : le format %s est déjà défini"
 
-#: ../../perl/Debian/DocBase/Document.pm:351
+#: ../../perl/Debian/DocBase/Document.pm:357
 #, fuzzy, perl-format
 #| msgid "Document `%s' is not registered"
 msgid "Document `%s' is not yet merged"
 msgstr "Le document « %s » n'est pas enregistré"
 
-#: ../../perl/Debian/DocBase/Document.pm:428
+#: ../../perl/Debian/DocBase/Document.pm:434
 #, perl-format
 msgid "`%s' not yet created"
 msgstr ""

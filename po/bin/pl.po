@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.9.6\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2011-02-20 22:01+0100\n"
+"POT-Creation-Date: 2011-02-23 08:32+0100\n"
 "PO-Revision-Date: 2011-02-20 23:13+0100\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -90,7 +90,6 @@ msgstr "Ostrzeżenie w %s: %s"
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:252
 #, perl-format
-#| msgid "Internal error: Unknown flag (%s, %s)"
 msgid "Unknown flag (%s, %s)"
 msgstr "Nieznana flaga (%s, %s)"
 
@@ -131,7 +130,6 @@ msgstr "błąd składni w pliku kontrolnym: %s"
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:332
 #, perl-format
-#| msgid "Internal error: file `%s' not parsed"
 msgid "File `%s' not parsed"
 msgstr "Plik \"%s\" nie został jeszcze sparsowany"
 
@@ -153,40 +151,63 @@ msgstr "pierwsza linia nie zawiera poprawnego pola \"Document\""
 msgid "invalid value of `Document' field"
 msgstr "niepoprawna wartość pola \"Document\""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:392
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:388
+#, fuzzy, perl-format
+#| msgid " (using `%s' as the root directory)"
+msgid "(using `%s' as the root directory)"
+msgstr " (używanie \"%s\" jako korzenia drzewa katalogów)"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:395
 #, perl-format
 msgid "unsupported doc-base file version: %s"
 msgstr "nieobsługiwana wersja pliku doc-base: %s"
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:411
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:414
 #, perl-format
 msgid "format `%s' already defined"
 msgstr "format \"%s\" już został zdefiniowany"
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:415
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:418
 #, perl-format
 msgid "format `%s' is not supported"
 msgstr "format \"%s\" nie jest obsługiwany"
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:427
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:430
 #, perl-format
 msgid "`%s' value missing for format `%s'"
 msgstr "brak wartości pola \"%s\" dla formatu \"%s\""
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:431
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:434
 #, perl-format
 msgid "`%s' value has to be specified with absolute path: %s"
 msgstr "wartość pola \"%s\" musi być podana jako pełna ścieżka: %s"
 
-#: ../../perl/Debian/DocBase/DocBaseFile.pm:464
-#, perl-format
-msgid " (using `%s' as the root directory)"
-msgstr " (używanie \"%s\" jako korzenia drzewa katalogów)"
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:440
+#, fuzzy, perl-format
+#| msgid "Doc-base file `%s' does not exist"
+msgid "file `%s' does not exist"
+msgstr "Plik doc-base \"%s\" nie istnieje"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:451
+#, fuzzy, perl-format
+#| msgid "`%s' value missing for format `%s'"
+msgid "`%s' value not specified for format `%s'"
+msgstr "brak wartości pola \"%s\" dla formatu \"%s\""
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:460
+#, fuzzy, perl-format
+#| msgid "`%s' value has to be specified with absolute path: %s"
+msgid "`%s' value  has to be specified with absolute path: %s"
+msgstr "wartość pola \"%s\" musi być podana jako pełna ścieżka: %s"
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:466
 #, perl-format
 msgid "file mask `%s' does not match any files"
 msgstr "maska plików \"%s\" nie pasuje do żadnego pliku"
+
+#: ../../perl/Debian/DocBase/DocBaseFile.pm:477
+msgid "no valid `Format' section found"
+msgstr ""
 
 #: ../../perl/Debian/DocBase/Document.pm:153
 msgid "---document-information---"
@@ -234,7 +255,7 @@ msgstr "Nie można otworzyć pliku \"%s\" do zapisu: %s"
 msgid "Cannot close file `%s': %s"
 msgstr "Nie można zamknąć pliku \"%s\": %s"
 
-#: ../../perl/Debian/DocBase/Document.pm:301
+#: ../../perl/Debian/DocBase/Document.pm:307
 #, perl-format
 msgid ""
 "Unregistering file `%s', since its actual document id `%s' does not match "
@@ -243,31 +264,28 @@ msgstr ""
 "Wyrejestrowanie pliku \"%s\", ponieważ jego bieżący identyfikator dokumentu "
 "\"%s\" różni się od zachowanego identyfikatora \"%s\""
 
-#: ../../perl/Debian/DocBase/Document.pm:317
+#: ../../perl/Debian/DocBase/Document.pm:323
 #, perl-format
 msgid "Error while merging %s with %s: inconsistent values of %s"
 msgstr "Błąd scalania %s z %s: niespójne wartości %s"
 
-#: ../../perl/Debian/DocBase/Document.pm:326
+#: ../../perl/Debian/DocBase/Document.pm:332
 #, perl-format
 msgid "Error while merging %s with %s: format %s already defined"
 msgstr "Błąd scalania %s z %s: format %s już jest zdefiniowany"
 
-#: ../../perl/Debian/DocBase/Document.pm:351
+#: ../../perl/Debian/DocBase/Document.pm:357
 #, perl-format
-#| msgid "Document `%s' is not registered"
 msgid "Document `%s' is not yet merged"
 msgstr "Dokument \"%s\" nie jest jeszcze scalony"
 
-#: ../../perl/Debian/DocBase/Document.pm:428
+#: ../../perl/Debian/DocBase/Document.pm:434
 #, perl-format
-#| msgid "Internal error: `%s' not yet created"
 msgid "`%s' not yet created"
 msgstr "\"%s\" nie został jeszcze utworzony"
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:53
 #, perl-format
-#| msgid "Internal error: mode already set: %s, %s"
 msgid "Mode already set: %s, %s"
 msgstr "Tryb został już ustawiony %s, %s"
 
@@ -277,7 +295,6 @@ msgid "Value of the `%s' option ignored"
 msgstr "Ignorowanie wartości opcji \"%s\""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:74
-#| msgid "Internal error: Unknown mode"
 msgid "Unknown mode"
 msgstr "Nieznany tryb"
 
@@ -432,7 +449,6 @@ msgid "Cannot create directory `%s': %s"
 msgstr "Nie można utworzyć katalogu \"%s\": %s"
 
 #: ../../perl/Debian/DocBase/Utils.pm:59
-#| msgid "Internal error: no arguments passed to Execute()"
 msgid "No arguments passed to Execute()"
 msgstr "Brak argumentów dla Execute()"
 
@@ -452,7 +468,6 @@ msgid "Skipping execution of `%s'"
 msgstr "Pomijanie uruchamiania \"%s\""
 
 #: ../../perl/Debian/DocBase/Utils.pm:98
-#| msgid "Internal error: Unknown mode"
 msgid "Internal error: "
 msgstr "Błąd wewnętrzny: "
 
@@ -472,13 +487,11 @@ msgstr "Otrzymano sygnał %s, kończenie."
 #: ../../perl/Debian/DocBase/Utils.pm:131
 #: ../../perl/Debian/DocBase/Utils.pm:153
 #, perl-format
-#| msgid "Internal error: invalid argument of IgnoreRestoreSignals: %s"
 msgid "Invalid argument of IgnoreRestoreSignals(): %s"
 msgstr "Niepoprawny argument funkcji IgnoreRestoreSignals(): %s"
 
 #: ../../perl/Debian/DocBase/Utils.pm:136
 #, perl-format
-#| msgid "Internal error: invalid ign_cnt (%d) in IgnoreRestoreSignals(%s)"
 msgid "Invalid counter (%d) in IgnoreRestoreSignals(%s)"
 msgstr "Niepoprawny licznik (%d) w IgnoreRestoreSignals(%s)"
 

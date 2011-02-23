@@ -59,6 +59,9 @@ doc-base (0.9.6~3) UNRELEASED; urgency=low
   * Differentiate fatal error codes.
   *  postinst: Try to recover for yaml files corruption by deleting them
      and re-spawning install-docs.
+  * Mark documents as registered only when the file the document in actually 
+    created in /var/lib/doc-base
+  * Fix checking for `no valid `Format' found'
 
  -- Robert Luberda <robert@debian.org>  Sun, 20 Feb 2011 20:22:39 +0100
 

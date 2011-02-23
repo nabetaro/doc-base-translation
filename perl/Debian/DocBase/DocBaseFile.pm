@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 216 2011-02-20 22:42:12Z robert $
+# $Id: DocBaseFile.pm 217 2011-02-23 21:09:59Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -385,11 +385,14 @@ sub _CheckRequiredFields($$$) { # {{{
   $self->_PrsErr(PRS_WARN, _g("invalid value of `Document' field"))
     unless $tmp =~ /^[a-z0-9\.\+\-]+$/;
 
+  my $optdirmsg = ($opt_rootdir eq "") ? "" : " " . sprintf ( _g("(using `%s' as the root directory)"), 
+                                                         $opt_rootdir);
+
   my $doc_data = $self->{'MAIN_DATA'};
   # parse rest of the file
   $self->_ReadControlFileSection($fh, $doc_data, $FLDTYPE_MAIN)
     or return undef;
-  return $self->_PrsErr(PRS_WARN, _g("unsupported doc-base file version: %s"), $$doc_data{'version'}) 
+  return $self->_PrsErr(PRS_FATAL_ERR, _g("unsupported doc-base file version: %s"), $$doc_data{'version'}) 
     if defined $$doc_data{'version'};
 
   $self->_CheckSection($doc_data->{$FLD_SECTION}) if $self->{'DO_ADD_CHECKS'};
@@ -434,9 +437,8 @@ sub _CheckRequiredFields($$$) { # {{{
 
        # c) does the index file exist?
        if (not -e $opt_rootdir.$tmp) {
-        $self->_PrsErr(PRS_WARN, "file `$tmp' does not exist" .
-                       ($opt_rootdir eq "" ? "" : " (using `$opt_rootdir' as the root directory)"));
-        next;
+          $self->_PrsErr(PRS_WARN, _g("file `%s' does not exist").$optdirmsg, $tmp) ;
+          next;
       }
     }
 
@@ -446,7 +448,7 @@ sub _CheckRequiredFields($$$) { # {{{
     $tmp    =  $$format_data{'files'};
     $tmpnam = "Files";
     if (not defined $tmp) {
-      $self->_PrsErr(PRS_WARN, "`$tmpnam' value not specified for format `$format'");
+      $self->_PrsErr(PRS_WARN, _g("`%s' value not specified for format `%s'"), $tmpnam, $format);
       next;
     }
 
@@ -455,14 +457,12 @@ sub _CheckRequiredFields($$$) { # {{{
       # b) do values start with / ?
       my @invalid = grep { /^[^\/]/ } @masks;
       if ($#invalid > -1) {
-        $self->_PrsErr(PRS_WARN, "`$tmpnam' value has to be specified with absolute path: " . join (' ', @invalid));
+        $self->_PrsErr(PRS_WARN, _g("`%s' value  has to be specified with absolute path: %s"), $tmpnam,  join (' ', @invalid));
         next;
       }
 
       # c) do files exist ?
       if (not grep { &bsd_glob($opt_rootdir.$_, GLOB_NOSORT) }  @masks) {
-        my $optdirmsg = ($opt_rootdir eq "") ? "" : sprintf ( _g(" (using `%s' as the root directory)"), 
-                                                              $opt_rootdir);
         $self->_PrsErr(PRS_WARN, _g("file mask `%s' does not match any files") . $optdirmsg, 
                                   join (" ", @masks));
         next;
@@ -473,9 +473,9 @@ sub _CheckRequiredFields($$$) { # {{{
   } continue {
    $format_data = {};
   }
-  return undef unless defined $status;
 
-  return $self->_PrsErr(PRS_ERR_IGN, "no valid `Format' section found") if (keys %{$self->{FORMAT_LIST}} < 0);
+  return $self->_PrsErr(PRS_ERR_IGN, _g("no valid `Format' section found")) 
+    unless keys %{$self->{FORMAT_LIST}};
 
  $self->{'INVALID'} = 0;
 } # }}}

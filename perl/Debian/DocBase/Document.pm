@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 216 2011-02-20 22:42:12Z robert $
+# $Id: Document.pm 217 2011-02-23 21:09:59Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -169,13 +169,13 @@ sub DisplayStatusInformation($) { # {{{
   }
 
   print "\n" . $status_info_msg . "\n";
-  foreach my $cf (sort keys %{$self->{'CONTROL_FILES'}} ) {
-    print "Control-File: $cf (changed: ". localtime ($self->{'CONTROL_FILES'}->{$cf}->GetLastChangeTime()) . ")\n";
-  }
+  map { 
+    print "Control-File: $_ (changed: ". localtime ($self->{'CONTROL_FILES'}->{$_}->GetLastChangeTime()) . ")\n"; 
+  } sort keys %{$self->{'CONTROL_FILES'}};
 
-  foreach my $key (sort keys %{$self->{'STATUS_DICT'}} ) {
-    print "$key: $self->{'STATUS_DICT'}->{$key}\n";
-  }
+  map {
+    print "$_: $self->{'STATUS_DICT'}->{$_}\n";
+  } sort keys %{$self->{'STATUS_DICT'}};
 } # }}}
 
 sub Register($$) { # {{{ 
@@ -199,7 +199,7 @@ sub Register($$) { # {{{
     return Warn( _g( "`%s' contains errors, not registering"), $db_file->GetSourceFileName() );
   }
 
-  $db_file->OnRegistered(1);
+# $db_file->OnRegistered(1); # Set it after document is generated
   $self->{'CONTROL_FILES'}->{$db_filename} = $db_file;
 } # }}}
 
@@ -271,6 +271,12 @@ sub WriteNewCtrlFile() { # {{{
 
   rename $tmpfile, $file 
     or Fatal($ERR_FSACCESS, _g("Cannot rename file `%s' to `%s': %s"), $tmpfile, $file, $!);
+
+
+  # mark the control files as registered
+  map { $self->{'CONTROL_FILES'}->{$_}->OnRegistered(1); } keys %{$self->{'CONTROL_FILES'}};
+
+
 } # }}}
 
 # merge contents of all available control files for the document

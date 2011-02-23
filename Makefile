@@ -1,6 +1,6 @@
 # vim:ts=2
 # makefile for doc-base
-# $Id: Makefile 216 2011-02-20 22:42:12Z robert $
+# $Id: Makefile 217 2011-02-23 21:09:59Z robert $
 #
 
 ALL_TARGET    := build-local
@@ -33,13 +33,13 @@ $(bdir)/install-docs: install-docs.in $(CHANGELOGFILE) | $(bdir)
 	    < $< > $@
 	chmod 755 $@
 
-$(bdir)/man/man8/install-docs.8: $(bdir)/install-docs $(bdir)/check-stamp
+$(bdir)/man/man8/install-docs.8: $(bdir)/install-docs 
 	$(call msg,$@)
 	mkdir -p $(dir $@)
 	cp $< $@.pod
 	$(call podtoman,$(bdir)/man)
 
-$(bdir)/install-docs.html: $(bdir)/install-docs $(bdir)/check-stamp
+$(bdir)/install-docs.html: $(bdir)/install-docs 
 	$(call msg,$@)
 	cd $(bdir) && \
 	pod2html --title "install-docs reference" \
