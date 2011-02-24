@@ -1,72 +1,66 @@
 doc-base (0.9.6~3) UNRELEASED; urgency=low
+ 
+  * Applied a bit modified patch from  Martin Pitt @ Ubuntu to remove dependency
+    on perl (closes: #602919):
+    + Scrollkeeper.pm: provide our own local dirname() function and use it instead
+      of File::Basename.
+    + InstallDocs.pm: use `rm -r' and 'mkdir -p' programs instead of File::Path.
+    + debian/rules: run dh_perl with '-d' to avoid perl dependency. 
 
-  [ Martin Pitt ]
-  * perl/Debian/DocBase/Programs/Scrollkeeper.pm: Provide our own local
-    dirname() function and use it instead of File::Basename.
-  * perl/Debian/DocBase/InstallDocs.pm: Use 'rm -r' and 'mkdir -p' programs
-    instead of File::Path.
-  * perl/Debian/DocBase/DB.pm: If Dumper module is not available, exit with an
-    error that perl needs to be installeld. --dump-db is only required for
-    debugging.
-  * debian/rules: Run dh_perl with '-d' to avoid perl dependency.
-
-  [ Robert Luberda ]
-  * Applied patch from Marin Pitt from Ubuntu to remove dependency on perl
-    (closes: #602919).
-  * install-docs.in: Pod::Usage may be missing if perl is not installed
-    LP: #431270, #510976
-
+  * Switch internal databases format from MLDBM to YAML and provide better 
+    error recovery from database corruption:
+    + DB.pm: use YAML::Tiny module for stroing our internal databases;
+    + Util.pm: introduce Fatal() function and differentiate exit codes
+      by type of error;
+    + make the Fatal() function call 
+    + debian/control: switch dependency on libmdlbm-perl to libyaml-tiny-perl;
+    + debian/postinst: try to recover for yaml files corruption by deleting 
+      them and re-spawning install-docs.
   
-  * read error in MLDBM - LP: 695319, # 675069  # 672364 , # 668856 , 652102 , #621345 
+  * Translations handling:  
+    + patch from David Prévot not to assume word ordering in translated 
+      strings (closes: #606475). 
+    + patch from Chris Leick to fix plurals in the strings (closes: #521384).
+    + mark more doc-base messages as translatable;
+    + Update Polish translation of binary.
 
-  * The `/usr/share/doc-base/data/doc-base.map' file is provided in the package,
-    is must have been deleted either manually or by filesystem error 
-    (LP: #660345, #646629)
-
-  * Change format of internal databases from MLDBM to YAML, and provide better
-    error handling to prevent databases corruption:
-    + use libyaml-tiny-perl for YAML files handling.
-    + save internal databases in case of fatal errors.
-  
-  * Applied patch from David Prévot not to assume word ordering in translated
-    strings (closes: #606475). 
-  * Applied patch from Chris Leick to fix plurals in translated strings
-    (closes: #521384).
   * doc-base.sgml:
-    + Prepend a top-level section name section names to make it more visible 
+    + prepend a top-level section name section names to make it more visible 
       that sections' componets are separated by slash (closes: #578331).
-    + Add the `Network/Remote Access' section (closes: #555161).
+    + add the `Network/Remote Access' section (closes: #555161).
 
-  * debian/rules:
-    + switch to the tiny format from debhelper;
-    + add support for build-arch, build-indep targets. 
-  * Bump debhelper compat mode to 8.
-      
-  * Set source format to `3.0 (native)'.
-  * Standards-Version: 3.9.1:
-    + use Breaks instead of Conflicts for versioned conflicts with dwww 
-      and dhelp.
-  * Fix spelling typos found by lintian.
-  * The following Ubuntu bugs are duplicates of #501874, fixed in 0.8.18
-    LP: #247718, #249160, #250252, #314996, #327101, #327104.
-  * prerm: Downgrade the `cannot find install-docs on path' error to 
-    a warning to make it possible to remove doc-base when install-docs
-    for some reason (LP: #391464).
-  *  Update Polish translation of binary.
-  *  Remove ancient stuff from preinst.
-  * Re-register all docs when upgrading to this version.
-
-  * Differentiate fatal error codes.
-  *  postinst: Try to recover for yaml files corruption by deleting them
-     and re-spawning install-docs.
-  * Mark documents as registered only when the file the document in actually 
-    created in /var/lib/doc-base
-  * Fix checking for `no valid `Format' found'
   * Don't create scrollkeeper files when rarian-compat is not installed
     (closes: #419745)
     + debian/triggers: interest on /usr/share/doc/rarian-compat to be 
       notified of installs/removals of rarian-compat
-     
+  * DocBaseFile.pm: fix `no valid Format found' check.
+
+  * Ubuntu bugs handling:
+    + install-docs.in: check if the Pod::Usage module is available before 
+      using it (LP: #431270, #510976);
+    + this version gets rid of MLDBM and provides a better handling of
+      databases corruption, to prevent `read error' bugs 
+      (LP: #695319, #675069, #672364, #668856, #652102, #621345);
+    + debian/prerm: downgrade the `cannot find install-docs on path' error
+      to a warning to make it possible to remove doc-base when install-docs
+      is not available for some reason (LP: #391464);
+    + the `/usr/share/doc-base/data/doc-base.map' file is provided in the
+      package, it must have been deleted either manually or by filesystem
+      error (LP: #660345, #646629);
+    + close bugs that are duplicates of Debian bug#501874, fixed in 0.8.18
+      (LP: #247718, #249160, #250252, #314996, #327101, #327104).
+
+
+  * debian/rules: switch to the tiny format from debhelper and add support for
+    build-arch and build-indep targets.
+  * Bump debhelper compat mode to 8.
+  * Set source format to `3.0 (native)'.
+  * Standards-Version: 3.9.1.
+  * Drop versioned conflicts with old versions of dwww and dhelp.
+  * Drop versioned dependency on dpkg.
+  * Fix spelling typos found by lintian.
+  * Remove ancient stuff from preinst.
+  * Re-register all docs when upgrading to this version.
 
  -- Robert Luberda <robert@debian.org>  Thu, 24 Feb 2011 22:58:48 +0100
 
