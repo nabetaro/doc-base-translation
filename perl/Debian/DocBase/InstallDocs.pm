@@ -2,7 +2,7 @@
 
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 216 2011-02-20 22:42:12Z robert $
+# $Id: InstallDocs.pm 218 2011-02-24 22:02:29Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -175,6 +175,13 @@ sub _HandleRegistrationAndUnregistation() { # {{{
 
   $on_fatal_handler = \&Debian::DocBase::DB::SaveDatabases;
   SetupSignals();
+
+  if ($mode != $MODE_INSTALL_ALL and ScrollkeeperStatusChanged())
+  {
+    Inform(_g("Scrollkeeper was either removed or installed, forcing re-registration of all documents"));
+    $mode = $MODE_INSTALL_ALL;
+  }
+
 
   if ($mode == $MODE_INSTALL_CHANGED) {
     my @stats = Debian::DocBase::DocBaseFile::GetChangedDocBaseFiles(\@toremove, \@toinstall);

@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DB.pm 216 2011-02-20 22:42:12Z robert $
+# $Id: DB.pm 218 2011-02-24 22:02:29Z robert $
 #
 
 package Debian::DocBase::DB;
@@ -63,7 +63,7 @@ sub GetData($$) { # {{{
 
 sub GetDBKeys() { # {{{
   my $self = shift;
-  my @keys = keys %{$self->{'DB'}}; 
+  my @keys = grep { ! m|^/internal/| } keys %{$self->{'DB'}};   
   map { $_ = $self->DecodeKey($_) } @keys if $self->{'ENCKEY'};
   return @keys;
 } # }}} 

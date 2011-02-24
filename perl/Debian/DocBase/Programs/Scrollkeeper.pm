@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 216 2011-02-20 22:42:12Z robert $
+# $Id: Scrollkeeper.pm 218 2011-02-24 22:02:29Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -11,18 +11,18 @@ use warnings;
 
 use vars qw(@ISA @EXPORT);
 @ISA = qw(Exporter);
-@EXPORT = qw(RegisterScrollkeeper);
+@EXPORT = qw(RegisterScrollkeeper ScrollkeeperStatusChanged);
 
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
 use Debian::DocBase::Gettext;
+use Debian::DocBase::DB;
 use UUID;
 
 
 
 
 our $scrollkeeper_update       = "/usr/bin/scrollkeeper-update";
-#our $scrollkeeper_gen_seriesid = "/usr/bin/scrollkeeper-gen-seriesid";
 our $scrollkeeper_map_file     = "/usr/share/doc-base/data/scrollkeeper.map";
 
 
@@ -57,12 +57,33 @@ sub _GetUUID() { # {{{
 sub RegisterScrollkeeper($@) { # {{{
   my $showinfo  = shift;
   my @documents = @_;
+
+  if (! $opt_update_menus)
+  {
+    Debug(_g("Skipping registration of %s because of --no-update-menus"), $opt_update_menus);
+    return;
+  }
+
+  my $statusChanged=ScrollkeeperStatusChanged();
+  if (-x $scrollkeeper_update)
+  {
+    Inform(_g("Registering documents with %s..."), "scrollkeeper") if $showinfo;
+    _RegisterScrollkeeperFiles(@documents);
+  }
+  elsif ($statusChanged)
+  {
+    Inform(_g("Unregistering documents from %s..."), "scrollkeeper") if $showinfo;
+    _UnregisterScrollkeeperFiles(@documents);
+  }
+  _SaveScrollkeeperStatus() if $statusChanged;
+} # }}}
+
+
+sub _RegisterScrollkeeperFiles($@) { # {{{
+  my @documents = @_;
   my $do_update = 0;
 
-  Inform(_g("Registering documents with %s..."), "scrollkeeper")
-    if $showinfo and $opt_update_menus and -x $scrollkeeper_update;
-
-  Debug(_g("%s started"), "RegisterScrollkeeper");
+  Debug(_g("%s started"), "_RegisterScrollkeeperFiles");
 
   # read in doc-base -> scrollkeeper mappings unless already read
   ReadMap($scrollkeeper_map_file, \%mapping);
@@ -109,12 +130,24 @@ sub RegisterScrollkeeper($@) { # {{{
 
   Execute($scrollkeeper_update, '-q') if ($do_update and $opt_update_menus);
 
-
-  Debug(_g("%s finished"), "RegisterScrollkeeper");
+  Debug(_g("%s finished"), "_RegisterScrollkeeperFiles");
 } # }}}
 
 
+sub _UnregisterScrollkeeperFiles(@) { # {{{
+  my @documents = @_;
 
+  Debug(_g("%s started"), "_UnRegisterScrollkeeperFiles");
+  foreach my $doc (@documents) {
+    my $old_omf_file = $doc->GetStatus('Scrollkeeper-omf-file');
+    my $omf_serial_id = $doc->GetStatus('Scrollkeeper-sid');
+    _RemoveOmfFile($old_omf_file);
+    $doc->SetStatus( 'Scrollkeeper-omf-file' => undef,
+                     'Scrollkeeper-sid'      =>  $omf_serial_id);
+  }
+  Debug(_g("%s finished"), "_UnRegisterScrollkeeperFiles");
+
+} # }}}
 
 # arguments: filename
 # reads a file that looks like:
@@ -199,4 +232,24 @@ sub _WriteOmfFile($$$$) { # {{{
   return $omf_file;
 } # }}}
 
+sub ScrollkeeperStatusChanged()
+{
+  my $scStatus = Debian::DocBase::DB::GetStatusDB()->GetData("/internal/sc-status");
+  unless (defined $scStatus)
+  {
+    _SaveScrollkeeperStatus();
+    return 0;
+  }
+  my $statusChanged = (($scStatus ? 1 : 0) xor (-x $scrollkeeper_update ? 1 : 0));
+  Debug(_g("Scrollkeeper status changed: %d"), $statusChanged);
+  return $statusChanged;
+  
+}
+
+sub _SaveScrollkeeperStatus()
+{
+  my $status = (-x $scrollkeeper_update ? 1 : 0);
+  Debian::DocBase::DB::GetStatusDB()->PutData("/internal/sc-status", $status);
+  Debug(_g("Scrollkeeper status set to %d"), $status);
+}
 1;

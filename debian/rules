@@ -1,5 +1,5 @@
 #!/usr/bin/make -f
-# $Id: rules 213 2011-02-20 18:39:28Z robert $
+# $Id: rules 218 2011-02-24 22:02:29Z robert $
 
 
 binary binary-indep build build-indep clean:
@@ -8,7 +8,7 @@ binary binary-indep build build-indep clean:
 binary-arch build-arch: # Nothing to do
 
 override_dh_installdocs:
-	dh_installdocs -X doc-base.debhelper.log -X doc-base.substvars
+	dh_installdocs -X doc-base.debhelper.log -X doc-base.substvars -X doc-base
 
 .PHONY: clean                                   \
 	build-indep   build-arch   build        \
