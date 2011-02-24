@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 217 2011-02-23 21:09:59Z robert $
+# $Id: Document.pm 220 2011-02-24 22:50:32Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -222,7 +222,7 @@ sub Unregister($$) { # {{{
 sub UnregisterAll($) { # {{{
   my $self          = shift;
 
-  Debug('Unregistering all control files from document `' . $self->GetDocumentID() . "'");
+  Debug(_g("Unregistering all control files from document `%s'"),  $self->GetDocumentID() );
 
   foreach my $doc ( values %{$self->{'CONTROL_FILES'}} ) {
     $doc->OnUnregistered();

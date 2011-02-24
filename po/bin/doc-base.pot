@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.9.6~3\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2011-02-24 22:40+0100\n"
+"POT-Creation-Date: 2011-02-24 23:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -228,6 +228,11 @@ msgstr ""
 #: ../../perl/Debian/DocBase/Document.pm:214
 #, perl-format
 msgid "File `%s' is not registered, cannot remove"
+msgstr ""
+
+#: ../../perl/Debian/DocBase/Document.pm:225
+#, perl-format
+msgid "Unregistering all control files from document `%s'"
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Document.pm:248

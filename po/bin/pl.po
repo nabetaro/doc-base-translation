@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.9.6\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2011-02-24 22:40+0100\n"
-"PO-Revision-Date: 2011-02-20 23:13+0100\n"
+"POT-Creation-Date: 2011-02-24 23:43+0100\n"
+"PO-Revision-Date: 2011-02-24 23:48+0100\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "Language: pl\n"
@@ -152,10 +152,10 @@ msgid "invalid value of `Document' field"
 msgstr "niepoprawna wartość pola \"Document\""
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:388
-#, fuzzy, perl-format
+#, perl-format
 #| msgid " (using `%s' as the root directory)"
 msgid "(using `%s' as the root directory)"
-msgstr " (używanie \"%s\" jako korzenia drzewa katalogów)"
+msgstr "(używanie \"%s\" jako korzenia drzewa katalogów)"
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:395
 #, perl-format
@@ -183,19 +183,19 @@ msgid "`%s' value has to be specified with absolute path: %s"
 msgstr "wartość pola \"%s\" musi być podana jako pełna ścieżka: %s"
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:440
-#, fuzzy, perl-format
+#, perl-format
 #| msgid "Doc-base file `%s' does not exist"
 msgid "file `%s' does not exist"
-msgstr "Plik doc-base \"%s\" nie istnieje"
+msgstr "Plik \"%s\" nie istnieje"
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:451
-#, fuzzy, perl-format
+#, perl-format
 #| msgid "`%s' value missing for format `%s'"
 msgid "`%s' value not specified for format `%s'"
 msgstr "brak wartości pola \"%s\" dla formatu \"%s\""
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:460
-#, fuzzy, perl-format
+#, perl-format
 #| msgid "`%s' value has to be specified with absolute path: %s"
 msgid "`%s' value  has to be specified with absolute path: %s"
 msgstr "wartość pola \"%s\" musi być podana jako pełna ścieżka: %s"
@@ -207,7 +207,7 @@ msgstr "maska plików \"%s\" nie pasuje do żadnego pliku"
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:477
 msgid "no valid `Format' section found"
-msgstr ""
+msgstr "nie znaleziono żadnej poprawnej sekcji \"Format\""
 
 #: ../../perl/Debian/DocBase/Document.pm:153
 msgid "---document-information---"
@@ -235,6 +235,12 @@ msgstr "\"%s\" zawiera błędy, nie zostanie zarejestrowany"
 #, perl-format
 msgid "File `%s' is not registered, cannot remove"
 msgstr "Plik \"%s\" nie jest zarejestrowany, nie można go usunąć"
+
+#: ../../perl/Debian/DocBase/Document.pm:225
+#, perl-format
+#| msgid "Registering documents with %s..."
+msgid "Unregistering all control files from document `%s'"
+msgstr "Wyrejestrowywanie wszystkich plików kontrolnych z dokumentu \"%s\""
 
 #: ../../perl/Debian/DocBase/Document.pm:248
 #: ../../perl/Debian/DocBase/InstallDocs.pm:153
@@ -337,6 +343,8 @@ msgid ""
 "Scrollkeeper was either removed or installed, forcing re-registration of all "
 "documents"
 msgstr ""
+"Scrollkeeper został albo usunięty, albo dodany, wymuszanie rejestracji "
+"wszystkich dokumentów."
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:189
 #, perl-format
@@ -444,13 +452,13 @@ msgstr "%s zakończone"
 #: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:63
 #, perl-format
 msgid "Skipping registration of %s because of --no-update-menus"
-msgstr ""
+msgstr "Pomijanie rejestrowania %s ponieważ podano opcję --no-update-menus"
 
 #: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:75
-#, fuzzy, perl-format
+#, perl-format
 #| msgid "Registering documents with %s..."
 msgid "Unregistering documents from %s..."
-msgstr "Rejestrowanie dokumentów w %s..."
+msgstr "Wyrejestrowywanie dokumentów z %s..."
 
 #: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:173
 #, perl-format
@@ -470,12 +478,12 @@ msgstr "Nie można utworzyć katalogu \"%s\": %s"
 #: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:244
 #, perl-format
 msgid "Scrollkeeper status changed: %d"
-msgstr ""
+msgstr "Stan scrollkeepera się zmienił: %d"
 
 #: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:253
 #, perl-format
 msgid "Scrollkeeper status set to %d"
-msgstr ""
+msgstr "Stan scrollkeepera ustawiony na %d"
 
 #: ../../perl/Debian/DocBase/Utils.pm:59
 msgid "No arguments passed to Execute()"

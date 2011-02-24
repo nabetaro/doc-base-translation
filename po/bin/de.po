@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.9.1\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2011-02-24 22:40+0100\n"
+"POT-Creation-Date: 2011-02-24 23:43+0100\n"
 "PO-Revision-Date: 2009-05-05 12:07+0200\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -159,8 +159,7 @@ msgid "invalid value of `Document' field"
 msgstr "ungültiger Wert für »Document«-Feld"
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:388
-#, fuzzy, perl-format
-#| msgid " (using `%s' as the root directory)"
+#, perl-format
 msgid "(using `%s' as the root directory)"
 msgstr "(»%s« wird als Wurzelverzeichnis benutzt)"
 
@@ -242,6 +241,12 @@ msgstr "»%s« enthält Fehler, wird nicht registriert"
 #, perl-format
 msgid "File `%s' is not registered, cannot remove"
 msgstr "Datei »%s« ist nicht registriert, kann nicht entfernt werden"
+
+#: ../../perl/Debian/DocBase/Document.pm:225
+#, fuzzy, perl-format
+#| msgid "Registering documents with %s..."
+msgid "Unregistering all control files from document `%s'"
+msgstr "Dokumente werden mit %s registriert..."
 
 #: ../../perl/Debian/DocBase/Document.pm:248
 #: ../../perl/Debian/DocBase/InstallDocs.pm:153

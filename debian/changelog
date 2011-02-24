@@ -2,9 +2,10 @@ doc-base (0.9.6~3) UNRELEASED; urgency=low
  
   * Applied a bit modified patch from  Martin Pitt @ Ubuntu to remove dependency
     on perl (closes: #602919):
-    + Scrollkeeper.pm: provide our own local dirname() function and use it instead
-      of File::Basename.
-    + InstallDocs.pm: use `rm -r' and 'mkdir -p' programs instead of File::Path.
+    + Scrollkeeper.pm: provide our own local dirname() function and use it 
+      instead of File::Basename;
+    + InstallDocs.pm: use the `rm -r' and 'mkdir -p' programs instead of 
+      File::Path;
     + debian/rules: run dh_perl with '-d' to avoid perl dependency. 
 
   * Switch internal databases format from MLDBM to YAML and provide better 
@@ -34,6 +35,8 @@ doc-base (0.9.6~3) UNRELEASED; urgency=low
     + debian/triggers: interest on /usr/share/doc/rarian-compat to be 
       notified of installs/removals of rarian-compat
   * DocBaseFile.pm: fix `no valid Format found' check.
+  * Scrollkeeper.pm: avoid `unsuccessful stat on file contains new line' 
+    warnings given by perl (closes: #607498, #614330).
 
   * Ubuntu bugs handling:
     + install-docs.in: check if the Pod::Usage module is available before 

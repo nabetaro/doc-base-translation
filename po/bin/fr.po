@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.9.1\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2011-02-24 22:40+0100\n"
+"POT-Creation-Date: 2011-02-24 23:43+0100\n"
 "PO-Revision-Date: 2009-03-16 22:00+0100\n"
 "Last-Translator: Jean-Luc Coulon (f5ibh) <jean-luc.coulon@wanadoo.fr>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -160,10 +160,9 @@ msgid "invalid value of `Document' field"
 msgstr "valeur non valable pour le champ « Document »"
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:388
-#, fuzzy, perl-format
-#| msgid " (using `%s' as the root directory)"
+#, perl-format
 msgid "(using `%s' as the root directory)"
-msgstr " (utilisation de « %s » comme répertoire racine)"
+msgstr "(utilisation de « %s » comme répertoire racine)"
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:395
 #, perl-format
@@ -245,6 +244,12 @@ msgstr "« %s » contient des erreurs et ne sera pas enregistré"
 #, perl-format
 msgid "File `%s' is not registered, cannot remove"
 msgstr "Le fichier « %s » n'est pas enregistré, impossible de le supprimer"
+
+#: ../../perl/Debian/DocBase/Document.pm:225
+#, fuzzy, perl-format
+#| msgid "Registering documents with %s..."
+msgid "Unregistering all control files from document `%s'"
+msgstr "Enregistrement des documents avec %s..."
 
 #: ../../perl/Debian/DocBase/Document.pm:248
 #: ../../perl/Debian/DocBase/InstallDocs.pm:153
