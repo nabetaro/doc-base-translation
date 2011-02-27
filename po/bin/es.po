@@ -185,7 +185,7 @@ msgid "invalid value of `Document' field"
 msgstr "el campo «Document» posee un valor inválido"
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:388
-#,  perl-format
+#, perl-format
 msgid "(using `%s' as the root directory)"
 msgstr "(usando «%s» como directorio raíz)"
 

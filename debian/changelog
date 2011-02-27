@@ -27,8 +27,9 @@ doc-base (0.9.6~3) UNRELEASED; urgency=low
 
   * doc-base.sgml:
     + prepend a top-level section name section names to make it more visible 
-      that sections' componets are separated by slash (closes: #578331).
-    + add the `Network/Remote Access' section (closes: #555161).
+      that sections' componets are separated by slash (closes: #578331);
+    + add the `Network/Remote Access' section (closes: #555161);
+    + the Network section has two levels, not three (closes: #615488).
 
   * Don't create scrollkeeper files when rarian-compat is not installed
     (closes: #419745)
@@ -65,7 +66,7 @@ doc-base (0.9.6~3) UNRELEASED; urgency=low
   * Remove ancient stuff from preinst.
   * Re-register all docs when upgrading to this version.
 
- -- Robert Luberda <robert@debian.org>  Thu, 24 Feb 2011 22:58:48 +0100
+ -- Robert Luberda <robert@debian.org>  Sun, 27 Feb 2011 22:51:18 +0100
 
 doc-base (0.9.5) unstable; urgency=low
 

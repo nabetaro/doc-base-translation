@@ -153,7 +153,6 @@ msgstr "niepoprawna wartość pola \"Document\""
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:388
 #, perl-format
-#| msgid " (using `%s' as the root directory)"
 msgid "(using `%s' as the root directory)"
 msgstr "(używanie \"%s\" jako korzenia drzewa katalogów)"
 
@@ -184,19 +183,16 @@ msgstr "wartość pola \"%s\" musi być podana jako pełna ścieżka: %s"
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:440
 #, perl-format
-#| msgid "Doc-base file `%s' does not exist"
 msgid "file `%s' does not exist"
 msgstr "Plik \"%s\" nie istnieje"
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:451
 #, perl-format
-#| msgid "`%s' value missing for format `%s'"
 msgid "`%s' value not specified for format `%s'"
 msgstr "brak wartości pola \"%s\" dla formatu \"%s\""
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:460
 #, perl-format
-#| msgid "`%s' value has to be specified with absolute path: %s"
 msgid "`%s' value  has to be specified with absolute path: %s"
 msgstr "wartość pola \"%s\" musi być podana jako pełna ścieżka: %s"
 
@@ -238,7 +234,6 @@ msgstr "Plik \"%s\" nie jest zarejestrowany, nie można go usunąć"
 
 #: ../../perl/Debian/DocBase/Document.pm:225
 #, perl-format
-#| msgid "Registering documents with %s..."
 msgid "Unregistering all control files from document `%s'"
 msgstr "Wyrejestrowywanie wszystkich plików kontrolnych z dokumentu \"%s\""
 
@@ -456,7 +451,6 @@ msgstr "Pomijanie rejestrowania %s ponieważ podano opcję --no-update-menus"
 
 #: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:75
 #, perl-format
-#| msgid "Registering documents with %s..."
 msgid "Unregistering documents from %s..."
 msgstr "Wyrejestrowywanie dokumentów z %s..."
 
