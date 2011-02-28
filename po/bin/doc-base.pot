@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.9.6~4\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2011-02-28 23:00+0100\n"
+"POT-Creation-Date: 2011-03-01 00:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,6 +43,11 @@ msgstr ""
 msgid "Cannot read file `%s': %s."
 msgstr ""
 
+#: ../../perl/Debian/DocBase/DB.pm:74
+#, perl-format
+msgid "Saving `%s' (%d)."
+msgstr ""
+
 #: ../../perl/Debian/DocBase/DB.pm:77
 msgid "Needs to be root for this operation."
 msgstr ""
@@ -66,7 +71,7 @@ msgstr ""
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:208
 #: ../../perl/Debian/DocBase/Document.pm:167
-#: ../../perl/Debian/DocBase/Utils.pm:178
+#: ../../perl/Debian/DocBase/Utils.pm:183
 #, perl-format
 msgid "Cannot open file `%s' for reading: %s."
 msgstr ""
@@ -238,7 +243,7 @@ msgstr ""
 #: ../../perl/Debian/DocBase/Document.pm:248
 #: ../../perl/Debian/DocBase/InstallDocs.pm:153
 #: ../../perl/Debian/DocBase/InstallDocs.pm:160
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:174
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:183
 #, perl-format
 msgid "Cannot remove file `%s': %s."
 msgstr ""
@@ -249,7 +254,7 @@ msgid "Cannot open file `%s' for writing: %s."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Document.pm:270
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:230
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:239
 #, perl-format
 msgid "Cannot close file `%s': %s."
 msgstr ""
@@ -296,7 +301,7 @@ msgid "Unknown mode."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:103
-#: ../../perl/Debian/DocBase/InstallDocs.pm:251
+#: ../../perl/Debian/DocBase/InstallDocs.pm:275
 #, perl-format
 msgid "Doc-base file `%s' does not exist."
 msgstr ""
@@ -328,146 +333,162 @@ msgstr ""
 msgid "Invalid argument `%s' passed to the `%s' option."
 msgstr ""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:181
-msgid ""
-"Scrollkeeper was either removed or installed, forcing re-registration of all "
-"documents."
+#: ../../perl/Debian/DocBase/InstallDocs.pm:186
+msgid "Scrollkeeper was removed, forcing re-registration of all documents."
 msgstr ""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:189
+#: ../../perl/Debian/DocBase/InstallDocs.pm:187
+msgid "Scrollkeeper was installed, forcing re-registration of all documents."
+msgstr ""
+
+#. Translators: the following message will be used to replace `%s' in `Processing %s', e.g.
+#. `Processing 5 removed doc-base files...'
+#. `Processing 1 removed doc-base file, 4 changed doc-base files, 2 added doc-base files...'
+#: ../../perl/Debian/DocBase/InstallDocs.pm:198
 #, perl-format
 msgid "%d removed doc-base file"
 msgid_plural "%d removed doc-base files"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:191
+#. Translators: the following message will be used to replace `%s' in `Processing %s', e.g.
+#. `Processing 5 changed doc-base files...'
+#. `Processing 1 removed doc-base file, 4 changed doc-base files, 2 added doc-base files...'
+#: ../../perl/Debian/DocBase/InstallDocs.pm:204
 #, perl-format
 msgid "%d changed doc-base file"
 msgid_plural "%d changed doc-base files"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:193
+#. Translators: the following message will be used to replace `%s' in `Processing %s', e.g.
+#. `Processing 5 added doc-base files...'
+#. `Processing 1 removed doc-base file, 4 changed doc-base files, 2 added doc-base files...'
+#: ../../perl/Debian/DocBase/InstallDocs.pm:210
 #, perl-format
 msgid "%d added doc-base file"
 msgid_plural "%d added doc-base files"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:195
+#: ../../perl/Debian/DocBase/InstallDocs.pm:213
 #, perl-format
 msgid "Processing %s..."
 msgstr ""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:204
+#. Translators: the `Unregisteing %d doc-base files, ' and `re-registeing %d doc-base files...' 
+#. messages are used together.
+#: ../../perl/Debian/DocBase/InstallDocs.pm:224
 #, perl-format
 msgid "Unregistering %d doc-base file, "
 msgid_plural "Unregistering %d doc-base files, "
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:206
+#. Translators: the `Unregisteing %d doc-base files, ' and `re-registeing %d doc-base files...' 
+#. messages are used together.
+#: ../../perl/Debian/DocBase/InstallDocs.pm:229
 #, perl-format
 msgid "re-registering %d doc-base file..."
 msgid_plural "re-registering %d doc-base files..."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:210
+#: ../../perl/Debian/DocBase/InstallDocs.pm:234
 #, perl-format
 msgid "Unregistering %d doc-base file..."
 msgid_plural "Unregistering %d doc-base files..."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:213
+#: ../../perl/Debian/DocBase/InstallDocs.pm:237
 #, perl-format
 msgid "Registering %d doc-base file..."
 msgid_plural "Registering %d doc-base files..."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:230
+#: ../../perl/Debian/DocBase/InstallDocs.pm:254
 #, perl-format
-msgid "Ignoring nonregistered document `%s'."
+msgid "Ignoring unregistered document `%s'."
 msgstr ""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:233
+#: ../../perl/Debian/DocBase/InstallDocs.pm:257
 #, perl-format
 msgid "Trying to remove document `%s'."
 msgstr ""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:241
+#: ../../perl/Debian/DocBase/InstallDocs.pm:265
 #, perl-format
-msgid "Ignoring nonregistered file `%s'."
+msgid "Ignoring unregistered file `%s'."
 msgstr ""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:254
+#: ../../perl/Debian/DocBase/InstallDocs.pm:278
 #, perl-format
 msgid "Trying to install file `%s'."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Programs/Dhelp.pm:78
 #: ../../perl/Debian/DocBase/Programs/Dwww.pm:27
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:86
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:140
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:94
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:148
 #, perl-format
 msgid "%s started."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Programs/Dhelp.pm:81
 #: ../../perl/Debian/DocBase/Programs/Dwww.pm:30
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:70
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:74
 #, perl-format
 msgid "Registering documents with %s..."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Programs/Dhelp.pm:83
 #: ../../perl/Debian/DocBase/Programs/Dwww.pm:33
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:84
 #, perl-format
 msgid "Skipping execution of %s - %s package doesn't seem to be installed."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Programs/Dhelp.pm:97
 #: ../../perl/Debian/DocBase/Programs/Dwww.pm:35
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:133
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:148
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:141
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:157
 #, perl-format
 msgid "%s finished."
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:63
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:67
 #, perl-format
 msgid "Skipping registration of %s because of --no-update-menus."
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:75
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:79
 #, perl-format
 msgid "Unregistering documents from %s..."
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:173
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:182
 #, perl-format
 msgid "Removing scrollkeeper OMF file `%s'."
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:179
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:188
 #, perl-format
 msgid "Cannot delete directory `%s': %s."
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:205
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:214
 #, perl-format
 msgid "Cannot create directory `%s': %s."
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:244
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:253
 #, perl-format
 msgid "Scrollkeeper status changed: %d."
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:253
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:265
 #, perl-format
 msgid "Scrollkeeper status set to %d."
 msgstr ""
@@ -509,13 +530,25 @@ msgstr ""
 msgid "Signal %s received, terminating."
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Utils.pm:131
-#: ../../perl/Debian/DocBase/Utils.pm:153
+#: ../../perl/Debian/DocBase/Utils.pm:128
+msgid "Ignore signals."
+msgstr ""
+
+#: ../../perl/Debian/DocBase/Utils.pm:132
+msgid "Restore signals."
+msgstr ""
+
+#: ../../perl/Debian/DocBase/Utils.pm:135
+msgid "Setup signals."
+msgstr ""
+
+#: ../../perl/Debian/DocBase/Utils.pm:138
+#: ../../perl/Debian/DocBase/Utils.pm:158
 #, perl-format
 msgid "Invalid argument of IgnoreRestoreSignals(): %s."
 msgstr ""
 
-#: ../../perl/Debian/DocBase/Utils.pm:136
+#: ../../perl/Debian/DocBase/Utils.pm:143
 #, perl-format
 msgid "Invalid counter (%d) in IgnoreRestoreSignals(%s)."
 msgstr ""

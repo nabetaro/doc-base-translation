@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 222 2011-02-28 22:18:55Z robert $
+# $Id: Scrollkeeper.pm 223 2011-02-28 23:34:22Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -11,7 +11,8 @@ use warnings;
 
 use vars qw(@ISA @EXPORT);
 @ISA = qw(Exporter);
-@EXPORT = qw(RegisterScrollkeeper ScrollkeeperStatusChanged);
+@EXPORT = qw(RegisterScrollkeeper ScrollkeeperStatusChanged 
+             $SC_NOTCHANGED $SC_INSTALLED $SC_REMOVED);
 
 use Debian::DocBase::Common;
 use Debian::DocBase::Utils;
@@ -21,6 +22,9 @@ use UUID;
 
 
 
+our $SC_NOTCHANGED             = 0;
+our $SC_INSTALLED              = 1;
+our $SC_REMOVED                = 2;
 
 our $scrollkeeper_update       = "/usr/bin/scrollkeeper-update";
 our $scrollkeeper_map_file     = "/usr/share/doc-base/data/scrollkeeper.map";
@@ -70,12 +74,16 @@ sub RegisterScrollkeeper($@) { # {{{
     Inform(_g("Registering documents with %s..."), "scrollkeeper") if $showinfo;
     _RegisterScrollkeeperFiles(@documents);
   }
-  elsif ($statusChanged)
+  elsif ($statusChanged == $SC_REMOVED)
   {
     Inform(_g("Unregistering documents from %s..."), "scrollkeeper") if $showinfo;
     _UnregisterScrollkeeperFiles(@documents);
   }
-  _SaveScrollkeeperStatus() if $statusChanged;
+  else
+  {
+    Debug(_g("Skipping execution of %s - %s package doesn't seem to be installed."), $scrollkeeper_update, "rarian-compat");
+  }
+  _SaveScrollkeeperStatus() if $statusChanged != $SC_NOTCHANGED;
 } # }}}
 
 
@@ -134,12 +142,13 @@ sub _RegisterScrollkeeperFiles($@) { # {{{
 } # }}}
 
 
-sub _UnregisterScrollkeeperFiles(@) { # {{{
+sub _UnregisterScrollkeeperFiles($@) { # {{{
   my @documents = @_;
 
   Debug(_g("%s started."), "_UnRegisterScrollkeeperFiles");
   foreach my $doc (@documents) {
     my $old_omf_file = $doc->GetStatus('Scrollkeeper-omf-file');
+    next unless defined $old_omf_file;
     my $omf_serial_id = $doc->GetStatus('Scrollkeeper-sid');
     _RemoveOmfFile($old_omf_file);
     $doc->SetStatus( 'Scrollkeeper-omf-file' => undef,
@@ -160,16 +169,16 @@ sub _MapDocbaseToScrollkeeper($) { # {{{
   return $mapping{lc($_[0])};
 } # }}}
 
-sub dirname {
+sub _DirName { # {{{
     my @p = split '/', $_[0];
     return (join '/', @p[0..($#p-1)]) if $#p > 1;
     return '/' if substr ($_[0], 0, 1) eq '/';
     return '.';
-}
+} # }}}
 
 sub _RemoveOmfFile($) { # {{{
   my $omf_file = shift;
-  my $omf_dir = dirname($omf_file);
+  my $omf_dir = _DirName($omf_file);
   Debug( _g("Removing scrollkeeper OMF file `%s'."), $omf_file);
   unlink($omf_file) or return Error( _g("Cannot remove file `%s': %s."), $omf_file, $!);
 
@@ -232,7 +241,7 @@ sub _WriteOmfFile($$$$) { # {{{
   return $omf_file;
 } # }}}
 
-sub ScrollkeeperStatusChanged()
+sub ScrollkeeperStatusChanged() # {{{
 {
   my $scStatus = Debian::DocBase::DB::GetStatusDB()->GetData("/internal/sc-status");
   unless (defined $scStatus)
@@ -242,14 +251,17 @@ sub ScrollkeeperStatusChanged()
   }
   my $statusChanged = (($scStatus ? 1 : 0) xor (-x $scrollkeeper_update ? 1 : 0));
   Debug(_g("Scrollkeeper status changed: %d."), $statusChanged);
-  return $statusChanged;
-  
-}
+  return $SC_NOTCHANGED unless $statusChanged;
+  return $SC_INSTALLED  if -x $scrollkeeper_update;
+  return $SC_REMOVED;
 
-sub _SaveScrollkeeperStatus()
+  
+} # }}}
+
+sub _SaveScrollkeeperStatus() # {{{
 {
   my $status = (-x $scrollkeeper_update ? 1 : 0);
   Debian::DocBase::DB::GetStatusDB()->PutData("/internal/sc-status", $status);
   Debug(_g("Scrollkeeper status set to %d."), $status);
-}
+} # }}}
 1;

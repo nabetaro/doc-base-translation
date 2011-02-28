@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.9.6\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2011-02-28 23:00+0100\n"
-"PO-Revision-Date: 2011-02-28 23:04+0100\n"
+"POT-Creation-Date: 2011-03-01 00:29+0100\n"
+"PO-Revision-Date: 2011-03-01 00:26+0100\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "Language: pl\n"
@@ -44,6 +44,11 @@ msgstr "Ponowne rejestrowanie wszystkich dokumentów wymuszone przez %s."
 msgid "Cannot read file `%s': %s."
 msgstr "Nie można odczytać pliku \"%s\": %s."
 
+#: ../../perl/Debian/DocBase/DB.pm:74
+#, perl-format
+msgid "Saving `%s' (%d)."
+msgstr "Zachowywanie \"%s\" (%d)."
+
 #: ../../perl/Debian/DocBase/DB.pm:77
 msgid "Needs to be root for this operation."
 msgstr "Ta operacja wymaga uprawnień administratora.."
@@ -67,7 +72,7 @@ msgstr "Zawartość pliku \"%s\":."
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:208
 #: ../../perl/Debian/DocBase/Document.pm:167
-#: ../../perl/Debian/DocBase/Utils.pm:178
+#: ../../perl/Debian/DocBase/Utils.pm:183
 #, perl-format
 msgid "Cannot open file `%s' for reading: %s."
 msgstr "Nie można otworzyć pliku \"%s\" do odczytu: %s."
@@ -240,7 +245,7 @@ msgstr "Wyrejestrowywanie wszystkich plików kontrolnych z dokumentu \"%s\"."
 #: ../../perl/Debian/DocBase/Document.pm:248
 #: ../../perl/Debian/DocBase/InstallDocs.pm:153
 #: ../../perl/Debian/DocBase/InstallDocs.pm:160
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:174
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:183
 #, perl-format
 msgid "Cannot remove file `%s': %s."
 msgstr "Nie można usunąć pliku \"%s\": %s."
@@ -251,7 +256,7 @@ msgid "Cannot open file `%s' for writing: %s."
 msgstr "Nie można otworzyć pliku \"%s\" do zapisu: %s."
 
 #: ../../perl/Debian/DocBase/Document.pm:270
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:230
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:239
 #, perl-format
 msgid "Cannot close file `%s': %s."
 msgstr "Nie można zamknąć pliku \"%s\": %s."
@@ -300,7 +305,7 @@ msgid "Unknown mode."
 msgstr "Nieznany tryb."
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:103
-#: ../../perl/Debian/DocBase/InstallDocs.pm:251
+#: ../../perl/Debian/DocBase/InstallDocs.pm:275
 #, perl-format
 msgid "Doc-base file `%s' does not exist."
 msgstr "Plik doc-base \"%s\" nie istnieje."
@@ -333,15 +338,21 @@ msgstr "Dokument \"%s\" nie jest zarejestrowany."
 msgid "Invalid argument `%s' passed to the `%s' option."
 msgstr "Niepoprawny argument \"%s\" opcji \"%s\"."
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:181
-msgid ""
-"Scrollkeeper was either removed or installed, forcing re-registration of all "
-"documents."
+#: ../../perl/Debian/DocBase/InstallDocs.pm:186
+msgid "Scrollkeeper was removed, forcing re-registration of all documents."
 msgstr ""
-"Scrollkeeper został albo usunięty, albo dodany, wymuszanie rejestracji "
-"wszystkich dokumentów."
+"Scrollkeeper został usunięty, wymuszanie rejestracji wszystkich dokumentów."
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:189
+#: ../../perl/Debian/DocBase/InstallDocs.pm:187
+msgid "Scrollkeeper was installed, forcing re-registration of all documents."
+msgstr ""
+"Scrollkeeper został zainstalowany, wymuszanie rejestracji wszystkich "
+"dokumentów."
+
+#. Translators: the following message will be used to replace `%s' in `Processing %s', e.g.
+#. `Processing 5 removed doc-base files...'
+#. `Processing 1 removed doc-base file, 4 changed doc-base files, 2 added doc-base files...'
+#: ../../perl/Debian/DocBase/InstallDocs.pm:198
 #, perl-format
 msgid "%d removed doc-base file"
 msgid_plural "%d removed doc-base files"
@@ -349,7 +360,10 @@ msgstr[0] "%d usuniętego pliku doc-base"
 msgstr[1] "%d usuniętych plików doc-base"
 msgstr[2] "%d usuniętych plików doc-base"
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:191
+#. Translators: the following message will be used to replace `%s' in `Processing %s', e.g.
+#. `Processing 5 changed doc-base files...'
+#. `Processing 1 removed doc-base file, 4 changed doc-base files, 2 added doc-base files...'
+#: ../../perl/Debian/DocBase/InstallDocs.pm:204
 #, perl-format
 msgid "%d changed doc-base file"
 msgid_plural "%d changed doc-base files"
@@ -357,7 +371,10 @@ msgstr[0] "%d zmienionego pliku doc-base"
 msgstr[1] "%d zmienionych plików doc-base"
 msgstr[2] "%d zmienionych plików doc-base"
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:193
+#. Translators: the following message will be used to replace `%s' in `Processing %s', e.g.
+#. `Processing 5 added doc-base files...'
+#. `Processing 1 removed doc-base file, 4 changed doc-base files, 2 added doc-base files...'
+#: ../../perl/Debian/DocBase/InstallDocs.pm:210
 #, perl-format
 msgid "%d added doc-base file"
 msgid_plural "%d added doc-base files"
@@ -365,131 +382,128 @@ msgstr[0] "%d dodanego pliku doc-base"
 msgstr[1] "%d dodanych plików doc-base"
 msgstr[2] "%d dodanych plików doc-base"
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:195
+#: ../../perl/Debian/DocBase/InstallDocs.pm:213
 #, perl-format
 msgid "Processing %s..."
 msgstr "Przetwarzanie %s..."
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:204
+#. Translators: the `Unregisteing %d doc-base files, ' and `re-registeing %d doc-base files...' 
+#. messages are used together.
+#: ../../perl/Debian/DocBase/InstallDocs.pm:224
 #, perl-format
-#| msgid "Registering %d doc-base file"
-#| msgid_plural "Registering %d doc-base files"
 msgid "Unregistering %d doc-base file, "
 msgid_plural "Unregistering %d doc-base files, "
 msgstr[0] "Wyrejestrowywanie %d pliku doc-base, "
 msgstr[1] "Wyrejestrowywanie %d plików doc-base,"
 msgstr[2] "Wyrejestrowywanie %d plików doc-base, "
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:206
+#. Translators: the `Unregisteing %d doc-base files, ' and `re-registeing %d doc-base files...' 
+#. messages are used together.
+#: ../../perl/Debian/DocBase/InstallDocs.pm:229
 #, perl-format
-#| msgid "re-registering %d doc-base file"
-#| msgid_plural "re-registering %d doc-base files"
 msgid "re-registering %d doc-base file..."
 msgid_plural "re-registering %d doc-base files..."
 msgstr[0] "ponowne rejestrowanie %d pliku doc-base..."
 msgstr[1] "ponowne rejestrowanie %d plików doc-base..."
 msgstr[2] "ponowne rejestrowanie %d plików doc-base..."
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:210
+#: ../../perl/Debian/DocBase/InstallDocs.pm:234
 #, perl-format
-#| msgid "Registering %d doc-base file"
-#| msgid_plural "Registering %d doc-base files"
 msgid "Unregistering %d doc-base file..."
 msgid_plural "Unregistering %d doc-base files..."
 msgstr[0] "Wyrejestrowywanie %d pliku doc-base..."
 msgstr[1] "Wyrejestrowywanie %d plików doc-base..."
 msgstr[2] "Wyrejestrowywanie %d plików doc-base..."
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:213
+#: ../../perl/Debian/DocBase/InstallDocs.pm:237
 #, perl-format
-#| msgid "Registering %d doc-base file"
-#| msgid_plural "Registering %d doc-base files"
 msgid "Registering %d doc-base file..."
 msgid_plural "Registering %d doc-base files..."
 msgstr[0] "Rejestrowanie %d pliku doc-base..."
 msgstr[1] "Rejestrowanie %d plików doc-base..."
 msgstr[2] "Rejestrowanie %d plików doc-base..."
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:230
+#: ../../perl/Debian/DocBase/InstallDocs.pm:254
 #, perl-format
-msgid "Ignoring nonregistered document `%s'."
+msgid "Ignoring unregistered document `%s'."
 msgstr "Ignorowanie niezarejestrowanego dokumentu \"%s\"."
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:233
+#: ../../perl/Debian/DocBase/InstallDocs.pm:257
 #, perl-format
 msgid "Trying to remove document `%s'."
-msgstr "Próba usunięca dokumentu \"%s\"."
+msgstr "Próba usunięcia dokumentu \"%s\"."
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:241
+#: ../../perl/Debian/DocBase/InstallDocs.pm:265
 #, perl-format
-msgid "Ignoring nonregistered file `%s'."
+msgid "Ignoring unregistered file `%s'."
 msgstr "Ignorowanie niezarejestrowanego pliku \"%s\"."
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:254
+#: ../../perl/Debian/DocBase/InstallDocs.pm:278
 #, perl-format
 msgid "Trying to install file `%s'."
 msgstr "Próba zainstalowania pliku \"%s\"."
 
 #: ../../perl/Debian/DocBase/Programs/Dhelp.pm:78
 #: ../../perl/Debian/DocBase/Programs/Dwww.pm:27
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:86
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:140
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:94
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:148
 #, perl-format
 msgid "%s started."
 msgstr "%s uruchomione."
 
 #: ../../perl/Debian/DocBase/Programs/Dhelp.pm:81
 #: ../../perl/Debian/DocBase/Programs/Dwww.pm:30
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:70
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:74
 #, perl-format
 msgid "Registering documents with %s..."
 msgstr "Rejestrowanie dokumentów w programie %s..."
 
 #: ../../perl/Debian/DocBase/Programs/Dhelp.pm:83
 #: ../../perl/Debian/DocBase/Programs/Dwww.pm:33
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:84
 #, perl-format
 msgid "Skipping execution of %s - %s package doesn't seem to be installed."
 msgstr "Pomijanie uruchamiania %s - pakiet %s nie jest zainstalowany."
 
 #: ../../perl/Debian/DocBase/Programs/Dhelp.pm:97
 #: ../../perl/Debian/DocBase/Programs/Dwww.pm:35
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:133
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:148
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:141
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:157
 #, perl-format
 msgid "%s finished."
 msgstr "%s zakończone."
 
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:63
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:67
 #, perl-format
 msgid "Skipping registration of %s because of --no-update-menus."
 msgstr "Pomijanie rejestrowania %s ponieważ podano opcję --no-update-menus."
 
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:75
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:79
 #, perl-format
 msgid "Unregistering documents from %s..."
 msgstr "Wyrejestrowywanie dokumentów z %s..."
 
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:173
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:182
 #, perl-format
 msgid "Removing scrollkeeper OMF file `%s'."
 msgstr "Usuwanie pliku OMF scrollkeepera \"%s\"."
 
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:179
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:188
 #, perl-format
 msgid "Cannot delete directory `%s': %s."
 msgstr "Nie można usunąć katalogu \"%s\": %s."
 
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:205
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:214
 #, perl-format
 msgid "Cannot create directory `%s': %s."
 msgstr "Nie można utworzyć katalogu \"%s\": %s."
 
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:244
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:253
 #, perl-format
 msgid "Scrollkeeper status changed: %d."
 msgstr "Stan scrollkeepera się zmienił: %d."
 
-#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:253
+#: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:265
 #, perl-format
 msgid "Scrollkeeper status set to %d."
 msgstr "Stan scrollkeepera ustawiony na %d."
@@ -531,13 +545,25 @@ msgstr "Uruchamianie obsługi błędów krytycznych."
 msgid "Signal %s received, terminating."
 msgstr "Otrzymano sygnał %s, kończenie."
 
-#: ../../perl/Debian/DocBase/Utils.pm:131
-#: ../../perl/Debian/DocBase/Utils.pm:153
+#: ../../perl/Debian/DocBase/Utils.pm:128
+msgid "Ignore signals."
+msgstr "Ignorowanie sygnałów."
+
+#: ../../perl/Debian/DocBase/Utils.pm:132
+msgid "Restore signals."
+msgstr "Przywracanie sygnałów."
+
+#: ../../perl/Debian/DocBase/Utils.pm:135
+msgid "Setup signals."
+msgstr "Ustawianie sygnałów."
+
+#: ../../perl/Debian/DocBase/Utils.pm:138
+#: ../../perl/Debian/DocBase/Utils.pm:158
 #, perl-format
 msgid "Invalid argument of IgnoreRestoreSignals(): %s."
 msgstr "Niepoprawny argument funkcji IgnoreRestoreSignals(): %s."
 
-#: ../../perl/Debian/DocBase/Utils.pm:136
+#: ../../perl/Debian/DocBase/Utils.pm:143
 #, perl-format
 msgid "Invalid counter (%d) in IgnoreRestoreSignals(%s)."
 msgstr "Niepoprawny licznik (%d) w IgnoreRestoreSignals(%s)."

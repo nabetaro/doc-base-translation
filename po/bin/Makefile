@@ -1,6 +1,6 @@
 # vim:ts=2
 # makefile for doc-base
-# $Id: Makefile 186 2009-02-22 12:32:20Z robert $
+# $Id: Makefile 223 2011-02-28 23:34:22Z robert $
 #
 
 ALL_TARGET=build-local
@@ -28,7 +28,7 @@ $(bdir)/%.mo: %.po
 
 $(PACKAGE).pot:	$(NLS_SOURCES) | $(MAKEFILE_LIST)
 	$(call msg,$@)
-	xgettext -L perl  -k -k_g -k_ng:1,2 $(XGETTEXT_COMMON_OPTIONS) -o $@.new $^
+	xgettext -L perl  -cTranslators: -k -k_g -k_ng:1,2 $(XGETTEXT_COMMON_OPTIONS) -o $@.new $^
 	$(call pochanged,$@,$@.new)
 
 %.po: $(PACKAGE).pot

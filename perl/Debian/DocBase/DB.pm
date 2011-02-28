@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DB.pm 222 2011-02-28 22:18:55Z robert $
+# $Id: DB.pm 223 2011-02-28 23:34:22Z robert $
 #
 
 package Debian::DocBase::DB;
@@ -71,7 +71,7 @@ sub GetDBKeys() { # {{{
 sub _SaveDB() { # {{{ 
   my $self = shift;
   my $file = $self->{'FILE'};
-  Debug("Saving $file " . $self->{'CHANGED'});
+  Debug(_g("Saving `%s' (%d)."), $file, $self->{'CHANGED'});
   return unless $self->{'CHANGED'};
   my $readonly = $> != 0;
   Fatal($ERR_PROCESSING, _g("Needs to be root for this operation.")) if $readonly;

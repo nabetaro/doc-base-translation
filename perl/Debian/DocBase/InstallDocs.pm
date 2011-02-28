@@ -2,7 +2,7 @@
 
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 222 2011-02-28 22:18:55Z robert $
+# $Id: InstallDocs.pm 223 2011-02-28 23:34:22Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -176,22 +176,40 @@ sub _HandleRegistrationAndUnregistation() { # {{{
   $on_fatal_handler = \&Debian::DocBase::DB::SaveDatabases;
   SetupSignals();
 
-  if ($mode != $MODE_INSTALL_ALL and ScrollkeeperStatusChanged())
+  if ($mode != $MODE_INSTALL_ALL) 
   {
-    Inform(_g("Scrollkeeper was either removed or installed, forcing re-registration of all documents."));
-    $mode = $MODE_INSTALL_ALL;
+    my $scStatus = ScrollkeeperStatusChanged();
+    if ($scStatus != $SC_NOTCHANGED)
+    {
+      $mode = $MODE_INSTALL_ALL;
+      Inform($scStatus == $SC_REMOVED 
+              ? _g("Scrollkeeper was removed, forcing re-registration of all documents.") 
+              : _g("Scrollkeeper was installed, forcing re-registration of all documents."));
+    }
   }
 
 
   if ($mode == $MODE_INSTALL_CHANGED) {
     my @stats = Debian::DocBase::DocBaseFile::GetChangedDocBaseFiles(\@toremove, \@toinstall);
-
+ 
+    # Translators: the following message will be used to replace `%s' in `Processing %s', e.g.
+    #    `Processing 5 removed doc-base files...'
+    #    `Processing 1 removed doc-base file, 4 changed doc-base files, 2 added doc-base files...'
     $msg      .=  _ng("%d removed doc-base file", "%d removed doc-base files", $stats[0]) if $stats[0];
     $msg      .= ", " if $msg and $stats[1];
+    
+    # Translators: the following message will be used to replace `%s' in `Processing %s', e.g.
+    #    `Processing 5 changed doc-base files...'
+    #    `Processing 1 removed doc-base file, 4 changed doc-base files, 2 added doc-base files...'
     $msg      .=  _ng("%d changed doc-base file", "%d changed doc-base files", $stats[1]) if $stats[1];
     $msg      .= ", " if $msg and $stats[2];
+
+    # Translators: the following message will be used to replace `%s' in `Processing %s', e.g.
+    #    `Processing 5 added doc-base files...'
+    #    `Processing 1 removed doc-base file, 4 changed doc-base files, 2 added doc-base files...'
     $msg      .=  _ng("%d added doc-base file",   "%d added doc-base files",   $stats[2]) if $stats[2];
     $msg       = sprintf $msg, grep { $_ != 0 } @stats if $msg;
+
     Inform(_g("Processing %s..."), $msg) if $msg;
   }
 
@@ -201,10 +219,16 @@ sub _HandleRegistrationAndUnregistation() { # {{{
     my @stats      = ($#toremovedocs+1, $#toinstall+1);
 
     if ($stats[0] and $stats[1]) {
+      # Translators: the `Unregisteing %d doc-base files, ' and `re-registeing %d doc-base files...' 
+      # messages are used together.
       my $msg = _ng("Unregistering %d doc-base file, ",
                     "Unregistering %d doc-base files, ", $stats[0]);
+
+      # Translators: the `Unregisteing %d doc-base files, ' and `re-registeing %d doc-base files...' 
+      # messages are used together.
       $msg .= _ng("re-registering %d doc-base file...",
                   "re-registering %d doc-base files...", $stats[1]);
+
       Inform($msg, $stats[0], $stats[1]);
     } elsif ($stats[0]) {
       Inform(_ng("Unregistering %d doc-base file...",
@@ -227,7 +251,7 @@ sub _HandleRegistrationAndUnregistation() { # {{{
 
   foreach my $docid (@toremovedocs) {
     unless (Debian::DocBase::Document::IsRegistered($docid)) {
-      Inform (_g("Ignoring nonregistered document `%s'."), $docid);
+      Inform (_g("Ignoring unregistered document `%s'."), $docid);
       next;
     }
     Debug(_g("Trying to remove document `%s'."), $docid);
@@ -238,7 +262,7 @@ sub _HandleRegistrationAndUnregistation() { # {{{
   foreach my $file (@toremove) {
     my $docid   = Debian::DocBase::DocBaseFile::GetDocIdFromRegisteredFile($file);
     unless ($docid) {
-      Inform (_g("Ignoring nonregistered file `%s'."), $file);
+      Inform (_g("Ignoring unregistered file `%s'."), $file);
       next;
     }
     my $docfile = Debian::DocBase::DocBaseFile->new($file);

@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Utils.pm 222 2011-02-28 22:18:55Z robert $
+# $Id: Utils.pm 223 2011-02-28 23:34:22Z robert $
 #
 
 package Debian::DocBase::Utils;
@@ -125,10 +125,17 @@ sub _IgnoreRestoreSignals($) { # {{{
 
   if ($mode eq "ignore") {
     $ign_cnt = $sigactions{'ignore_cnt'}++;
+    Debug(_g("Ignore signals."));
+
   } elsif ($mode eq "restore") {
     $ign_cnt = --$sigactions{'ignore_cnt'};
-  } elsif ($mode ne "setup") {
-     Fatal($ERR_INTERNAL, _g("Invalid argument of IgnoreRestoreSignals(): %s."), $mode);
+    Debug(_g("Restore signals."));
+
+  } elsif ($mode eq "setup") {
+    Debug(_g("Setup signals."));
+  }
+  else {
+    Fatal($ERR_INTERNAL, _g("Invalid argument of IgnoreRestoreSignals(): %s."), $mode);
   }
 
   if ($mode ne "setup")
@@ -138,8 +145,6 @@ sub _IgnoreRestoreSignals($) { # {{{
 
     return unless $ign_cnt == 0;
   }
-
-  Debug(ucfirst $mode . " signals");
 
   foreach my $sig ('INT', 'QUIT', 'HUP', 'TSTP', 'TERM') {
     if ($mode eq "ignore") {
