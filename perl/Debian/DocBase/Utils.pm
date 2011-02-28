@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Utils.pm 216 2011-02-20 22:42:12Z robert $
+# $Id: Utils.pm 222 2011-02-28 22:18:55Z robert $
 #
 
 package Debian::DocBase::Utils;
@@ -56,15 +56,15 @@ sub Execute(@) { # {{{
   my @args = @_;
   my $sargs = join " ", @args;
 
-  Fatal ($ERR_INTERNAL, _g("No arguments passed to Execute()")) if $#args < 0;
+  Fatal ($ERR_INTERNAL, _g("No arguments passed to %s.", "Execute()")) if $#args < 0;
 
   if (-x $args[0]) {
     Debug (_g("Executing `%s'"), $sargs);
     if (system(@args) != 0) {
-      Warn (_g("Error occurred during execution of `%s'"), $sargs);
+      Warn (_g("Error occurred during execution of `%s'."), $sargs);
     }
   } else {
-    Debug (_g("Skipping execution of `%s'"), $sargs);
+    Debug (_g("Skipping execution of `%s'."), $sargs);
   }
 } # }}}
 
@@ -101,7 +101,7 @@ sub Fatal($@) { # {{{
   printf STDERR ((shift) . "\n", @_);
   if ($on_fatal_handler and $errCode != $ERR_DATABASE)
   {
-    Debug(_g("Running fatal errors handler"));
+    Debug(_g("Running fatal errors handler."));
     my $handler = $on_fatal_handler;
     $on_fatal_handler = undef;
     $handler->();
@@ -128,12 +128,12 @@ sub _IgnoreRestoreSignals($) { # {{{
   } elsif ($mode eq "restore") {
     $ign_cnt = --$sigactions{'ignore_cnt'};
   } elsif ($mode ne "setup") {
-     Fatal($ERR_INTERNAL, _g("Invalid argument of IgnoreRestoreSignals(): %s"), $mode);
+     Fatal($ERR_INTERNAL, _g("Invalid argument of IgnoreRestoreSignals(): %s."), $mode);
   }
 
   if ($mode ne "setup")
   {
-    Fatal($ERR_INTERNAL, _g("Invalid counter (%d) in IgnoreRestoreSignals(%s)"), $ign_cnt, $mode)
+    Fatal($ERR_INTERNAL, _g("Invalid counter (%d) in IgnoreRestoreSignals(%s)."), $ign_cnt, $mode)
       if $ign_cnt < 0;
 
     return unless $ign_cnt == 0;
@@ -150,7 +150,7 @@ sub _IgnoreRestoreSignals($) { # {{{
     } elsif ($mode eq "setup") {
       $SIG{$sig} = \&_SigHandler;
     } else {
-      Fatal($ERR_INTERNAL, _g("Invalid argument of IgnoreRestoreSignals(): %s"), $mode);
+      Fatal($ERR_INTERNAL, _g("Invalid argument of IgnoreRestoreSignals(): %s."), $mode);
     }
   }
 } # }}}
@@ -175,7 +175,7 @@ sub ReadMap($$;$) { # {{{
   my $map     = shift;
   my $defval  = shift;
   $defval     = "" unless $defval;
-  open (MAP, "<", $file) or Fatal($ERR_FSACCESS, _g("Cannot open file `%s' for reading: %s"), $file, $!);
+  open (MAP, "<", $file) or Fatal($ERR_FSACCESS, _g("Cannot open file `%s' for reading: %s."), $file, $!);
   while(<MAP>) {
           chomp;
           next if /^\s*$/;

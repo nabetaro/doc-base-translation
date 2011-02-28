@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 217 2011-02-23 21:09:59Z robert $
+# $Id: DocBaseFile.pm 222 2011-02-28 22:18:55Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -205,7 +205,7 @@ sub Parse { # {{{
   return if $self->{'PARSED'};
 
   open($fh, "<", $file) or
-    Fatal($ERR_PROCESSING, _g("Cannot open file `%s' for reading: %s"), $file, $!);
+    Fatal($ERR_PROCESSING, _g("Cannot open file `%s' for reading: %s."), $file, $!);
 
   $self->{'CTIME'} = (stat $fh)[$CTIME_FIELDNO];
 
@@ -243,13 +243,13 @@ sub _PrsErr($$) { # {{{
   $self->{'INVALID'} = 1 if $flag != PRS_WARN;
 
   if ($flag == PRS_FATAL_ERR) {
-    Error(_g("Error in %s: %s"), $filepos, $msg);
+    Error(_g("Error in %s: %s."), $filepos, $msg);
   } elsif ($flag == PRS_ERR_IGN) {
-    ErrorNF(_g("Error in %s: %s"), $filepos, $msg);
+    ErrorNF(_g("Error in %s: %s."), $filepos, $msg);
   } elsif ($flag == PRS_WARN) {
-    Warn(_g("Warning in %s: %s"), $filepos, $msg);
+    Warn(_g("Warning in %s: %s."), $filepos, $msg);
   } else {
-    Fatal($ERR_INTERNAL, _g("Unknown flag (%s, %s)"), $flag, $msg);
+    Fatal($ERR_INTERNAL, _g("Unknown flag (%s, %s)."), $flag, $msg);
   }
 
   return undef;
@@ -329,7 +329,7 @@ sub _ReadControlFileSection($$$) { # {{{
 sub _CheckParsed() { # {{{
   my $self      = shift;
   my $filename  = $self->GetSourceFileName();
-  Fatal($ERR_INTERNAL, _g("File `%s' not parsed"), (defined $filename ?  $filename : ""))
+  Fatal($ERR_INTERNAL, _g("File `%s' not yet parsed."), (defined $filename ?  $filename : ""))
     unless $self->{'PARSED'};
 } # }}}
 

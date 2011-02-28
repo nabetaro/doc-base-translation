@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs.in 217 2011-02-23 21:09:59Z robert $
+# $Id: install-docs.in 222 2011-02-28 22:18:55Z robert $
 
 use warnings;
 use strict;
@@ -86,13 +86,13 @@ sub _CheckArgCount($$) { # {{{
   ++$cnt;
 
   if ($option eq "install-all" or $option eq "install-changed" or $option eq "remove-all") {
-    Fatal($ERR_USAGE, _g("Too many arguments for `%s'"), $option) unless $cnt == 0;
+    Fatal($ERR_USAGE, _g("Too many arguments for `%s'."), $option) unless $cnt == 0;
   } 
   elsif ($option eq "dump-db") {
-    Fatal($ERR_USAGE, _g("`%s' requires exactly one argument"), $option) unless $cnt == 1;
+    Fatal($ERR_USAGE, _g("`%s' requires exactly one argument."), $option) unless $cnt == 1;
   }
   else {
-    Fatal($ERR_USAGE, _g("Arguments missing for `%s'"), $option) if $cnt == 0;
+    Fatal($ERR_USAGE, _g("Arguments missing for `%s'."), $option) if $cnt == 0;
   }    
 } # }}}
    
@@ -108,7 +108,7 @@ sub _CheckFunctionality(;$) { # {{{
     exit 0;
   }
   if (!$dont_force_reg && -e $force_reregister_flagfile) {
-    Inform( _g("Re-registation of all documents forced by %s"), $force_reregister_flagfile);
+    Inform( _g("Re-registation of all documents forced by %s."), $force_reregister_flagfile);
     SetMode($MODE_INSTALL_ALL);
     unlink ($force_reregister_flagfile);
     return 1;
@@ -192,7 +192,7 @@ the B<--check> action.
 =cut
     _CheckArgCount($#ARGV, "rootdir");
     $arg = shift @ARGV;
-    -d $arg or die sprintf _g("`%s' does not exist or is not a directory"), $arg;
+    -d $arg or die sprintf _g("`%s' does not exist or is not a directory."), $arg;
     ($opt_rootdir = $arg) =~ s/\/+$//;
     next; # }}}
 
@@ -316,7 +316,7 @@ Display the status of the document identifier I<docid>.
 Deprecated option. Does nothing.
 
 =cut
-    warn sprintf _g("Ignoring deprecated command line argument: %s\n"), $arg;
+    warn sprintf _g("Ignoring deprecated command line argument: %s.\n"), $arg;
     exit $ERR_NONE;
  # }}}
 

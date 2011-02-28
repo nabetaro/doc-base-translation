@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: doc-base 0.9.6~3\n"
+"Project-Id-Version: doc-base 0.9.6~4\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2011-02-24 23:43+0100\n"
+"POT-Creation-Date: 2011-02-28 23:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,55 +20,55 @@ msgstr ""
 
 #: ../../install-docs.in:89
 #, perl-format
-msgid "Too many arguments for `%s'"
+msgid "Too many arguments for `%s'."
 msgstr ""
 
 #: ../../install-docs.in:92
 #, perl-format
-msgid "`%s' requires exactly one argument"
+msgid "`%s' requires exactly one argument."
 msgstr ""
 
 #: ../../install-docs.in:95
 #, perl-format
-msgid "Arguments missing for `%s'"
+msgid "Arguments missing for `%s'."
 msgstr ""
 
 #: ../../install-docs.in:111
 #, perl-format
-msgid "Re-registation of all documents forced by %s"
+msgid "Re-registation of all documents forced by %s."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/DB.pm:43
 #, perl-format
-msgid "Cannot read file `%s': %s"
+msgid "Cannot read file `%s': %s."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/DB.pm:77
-msgid "Needs to be root for this operation\n"
+msgid "Needs to be root for this operation."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/DB.pm:83
 #, perl-format
-msgid "Cannot save file `%s': %s"
+msgid "Cannot save file `%s': %s."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/DB.pm:87
 #: ../../perl/Debian/DocBase/Document.pm:273
 #: ../../perl/Debian/DocBase/InstallDocs.pm:156
 #, perl-format
-msgid "Cannot rename file `%s' to `%s': %s"
+msgid "Cannot rename file `%s' to `%s': %s."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/DB.pm:108
 #, perl-format
-msgid "Contents of file `%s'\n"
+msgid "Contents of file `%s':"
 msgstr ""
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:208
 #: ../../perl/Debian/DocBase/Document.pm:167
 #: ../../perl/Debian/DocBase/Utils.pm:178
 #, perl-format
-msgid "Cannot open file `%s' for reading: %s"
+msgid "Cannot open file `%s' for reading: %s."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:239
@@ -79,17 +79,17 @@ msgstr ""
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:246
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:248
 #, perl-format
-msgid "Error in %s: %s"
+msgid "Error in %s: %s."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:250
 #, perl-format
-msgid "Warning in %s: %s"
+msgid "Warning in %s: %s."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:252
 #, perl-format
-msgid "Unknown flag (%s, %s)"
+msgid "Unknown flag (%s, %s)."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:268
@@ -128,7 +128,7 @@ msgstr ""
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:332
 #, perl-format
-msgid "File `%s' not parsed"
+msgid "File `%s' not yet parsed."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/DocBaseFile.pm:350
@@ -217,22 +217,22 @@ msgstr ""
 
 #: ../../perl/Debian/DocBase/Document.pm:191
 #, perl-format
-msgid "Document id in `%s' does not match our document id (%s != %s)"
+msgid "Document id in `%s' does not match our document id (%s != %s)."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Document.pm:199
 #, perl-format
-msgid "`%s' contains errors, not registering"
+msgid "`%s' contains errors, not registering."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Document.pm:214
 #, perl-format
-msgid "File `%s' is not registered, cannot remove"
+msgid "File `%s' is not registered, cannot remove."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Document.pm:225
 #, perl-format
-msgid "Unregistering all control files from document `%s'"
+msgid "Unregistering all control files from document `%s'."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Document.pm:248
@@ -240,98 +240,98 @@ msgstr ""
 #: ../../perl/Debian/DocBase/InstallDocs.pm:160
 #: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:174
 #, perl-format
-msgid "Cannot remove file `%s': %s"
+msgid "Cannot remove file `%s': %s."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Document.pm:255
 #, perl-format
-msgid "Cannot open file `%s' for writing: %s"
+msgid "Cannot open file `%s' for writing: %s."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Document.pm:270
 #: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:230
 #, perl-format
-msgid "Cannot close file `%s': %s"
+msgid "Cannot close file `%s': %s."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Document.pm:307
 #, perl-format
 msgid ""
 "Unregistering file `%s', since its actual document id `%s' does not match "
-"its saved document id `%s'"
+"its saved document id `%s'."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Document.pm:323
 #, perl-format
-msgid "Error while merging %s with %s: inconsistent values of %s"
+msgid "Error while merging %s with %s: inconsistent values of %s."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Document.pm:332
 #, perl-format
-msgid "Error while merging %s with %s: format %s already defined"
+msgid "Error while merging %s with %s: format %s already defined."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Document.pm:357
 #, perl-format
-msgid "Document `%s' is not yet merged"
+msgid "Document `%s' is not yet merged."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Document.pm:434
 #, perl-format
-msgid "`%s' not yet created"
+msgid "`%s' not yet created."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:53
 #, perl-format
-msgid "Mode already set: %s, %s"
+msgid "Mode already set: %s, %s."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:57
 #, perl-format
-msgid "Value of the `%s' option ignored"
+msgid "Value of the `%s' option ignored."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:74
-msgid "Unknown mode"
+msgid "Unknown mode."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:103
-#: ../../perl/Debian/DocBase/InstallDocs.pm:252
+#: ../../perl/Debian/DocBase/InstallDocs.pm:251
 #, perl-format
-msgid "Doc-base file `%s' does not exist"
+msgid "Doc-base file `%s' does not exist."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:110
 #, perl-format
-msgid "%s: Fatal error found, the file won't be registered"
+msgid "%s: Fatal error found, the file won't be registered."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:112
 #, perl-format
-msgid "%d warning or non-fatal error found"
-msgid_plural "%d warnings or non-fatal errors found"
+msgid "%d warning or non-fatal error found."
+msgid_plural "%d warnings or non-fatal errors found."
 msgstr[0] ""
 msgstr[1] ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:117
 #, perl-format
-msgid "%s: No problems found"
+msgid "%s: No problems found."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:126
 #, perl-format
-msgid "Document `%s' is not registered"
+msgid "Document `%s' is not registered."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:142
 #, perl-format
-msgid "Invalid argument `%s' passed to the `%s' option"
+msgid "Invalid argument `%s' passed to the `%s' option."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:181
 msgid ""
 "Scrollkeeper was either removed or installed, forcing re-registration of all "
-"documents"
+"documents."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:189
@@ -361,45 +361,51 @@ msgid "Processing %s..."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/InstallDocs.pm:204
-#: ../../perl/Debian/DocBase/InstallDocs.pm:211
 #, perl-format
-msgid "De-registering %d doc-base file"
-msgid_plural "De-registering %d doc-base files"
+msgid "Unregistering %d doc-base file, "
+msgid_plural "Unregistering %d doc-base files, "
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:207
+#: ../../perl/Debian/DocBase/InstallDocs.pm:206
 #, perl-format
-msgid "re-registering %d doc-base file"
-msgid_plural "re-registering %d doc-base files"
+msgid "re-registering %d doc-base file..."
+msgid_plural "re-registering %d doc-base files..."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:214
+#: ../../perl/Debian/DocBase/InstallDocs.pm:210
 #, perl-format
-msgid "Registering %d doc-base file"
-msgid_plural "Registering %d doc-base files"
+msgid "Unregistering %d doc-base file..."
+msgid_plural "Unregistering %d doc-base files..."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:231
+#: ../../perl/Debian/DocBase/InstallDocs.pm:213
 #, perl-format
-msgid "Ignoring nonregistered document `%s'"
+msgid "Registering %d doc-base file..."
+msgid_plural "Registering %d doc-base files..."
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../../perl/Debian/DocBase/InstallDocs.pm:230
+#, perl-format
+msgid "Ignoring nonregistered document `%s'."
 msgstr ""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:234
+#: ../../perl/Debian/DocBase/InstallDocs.pm:233
 #, perl-format
-msgid "Trying to remove document `%s'"
+msgid "Trying to remove document `%s'."
 msgstr ""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:242
+#: ../../perl/Debian/DocBase/InstallDocs.pm:241
 #, perl-format
-msgid "Ignoring nonregistered file `%s'"
+msgid "Ignoring nonregistered file `%s'."
 msgstr ""
 
-#: ../../perl/Debian/DocBase/InstallDocs.pm:255
+#: ../../perl/Debian/DocBase/InstallDocs.pm:254
 #, perl-format
-msgid "Trying to install file `%s'"
+msgid "Trying to install file `%s'."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Programs/Dhelp.pm:78
@@ -407,7 +413,7 @@ msgstr ""
 #: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:86
 #: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:140
 #, perl-format
-msgid "%s started"
+msgid "%s started."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Programs/Dhelp.pm:81
@@ -420,7 +426,7 @@ msgstr ""
 #: ../../perl/Debian/DocBase/Programs/Dhelp.pm:83
 #: ../../perl/Debian/DocBase/Programs/Dwww.pm:33
 #, perl-format
-msgid "Skipping execution of %s - %s package doesn't seem to be installed"
+msgid "Skipping execution of %s - %s package doesn't seem to be installed."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Programs/Dhelp.pm:97
@@ -428,12 +434,12 @@ msgstr ""
 #: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:133
 #: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:148
 #, perl-format
-msgid "%s finished"
+msgid "%s finished."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:63
 #, perl-format
-msgid "Skipping registration of %s because of --no-update-menus"
+msgid "Skipping registration of %s because of --no-update-menus."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:75
@@ -443,31 +449,32 @@ msgstr ""
 
 #: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:173
 #, perl-format
-msgid "Removing scrollkeeper OMF file `%s'"
+msgid "Removing scrollkeeper OMF file `%s'."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:179
 #, perl-format
-msgid "Cannot delete directory `%s': %s"
+msgid "Cannot delete directory `%s': %s."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:205
 #, perl-format
-msgid "Cannot create directory `%s': %s"
+msgid "Cannot create directory `%s': %s."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:244
 #, perl-format
-msgid "Scrollkeeper status changed: %d"
+msgid "Scrollkeeper status changed: %d."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Programs/Scrollkeeper.pm:253
 #, perl-format
-msgid "Scrollkeeper status set to %d"
+msgid "Scrollkeeper status set to %d."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Utils.pm:59
-msgid "No arguments passed to Execute()"
+#, perl-format
+msgid "No arguments passed to %s."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Utils.pm:62
@@ -477,12 +484,12 @@ msgstr ""
 
 #: ../../perl/Debian/DocBase/Utils.pm:64
 #, perl-format
-msgid "Error occurred during execution of `%s'"
+msgid "Error occurred during execution of `%s'."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Utils.pm:67
 #, perl-format
-msgid "Skipping execution of `%s'"
+msgid "Skipping execution of `%s'."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Utils.pm:98
@@ -494,7 +501,7 @@ msgid "Database error: "
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Utils.pm:104
-msgid "Running fatal errors handler"
+msgid "Running fatal errors handler."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Utils.pm:115
@@ -505,10 +512,10 @@ msgstr ""
 #: ../../perl/Debian/DocBase/Utils.pm:131
 #: ../../perl/Debian/DocBase/Utils.pm:153
 #, perl-format
-msgid "Invalid argument of IgnoreRestoreSignals(): %s"
+msgid "Invalid argument of IgnoreRestoreSignals(): %s."
 msgstr ""
 
 #: ../../perl/Debian/DocBase/Utils.pm:136
 #, perl-format
-msgid "Invalid counter (%d) in IgnoreRestoreSignals(%s)"
+msgid "Invalid counter (%d) in IgnoreRestoreSignals(%s)."
 msgstr ""

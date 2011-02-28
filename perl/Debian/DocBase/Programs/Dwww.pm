@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Dwww.pm 151 2008-05-22 12:46:05Z robert $
+# $Id: Dwww.pm 222 2011-02-28 22:18:55Z robert $
 #
 
 package Debian::DocBase::Programs::Dwww;
@@ -24,14 +24,14 @@ sub RegisterDwww($@) { # {{{
   my $showinfo = shift;
   my @documents = @_;
 
-  Debug(_g("%s started"), "RegisterDwww");
+  Debug(_g("%s started."), "RegisterDwww");
 
   if (-x $dwww_build_menu) {
     Inform(_g("Registering documents with %s..."), "dwww") if $showinfo and $opt_update_menus;
     Execute($dwww_build_menu) if $opt_update_menus;
   } else {
-    Debug(_g("Skipping execution of %s - %s package doesn't seem to be installed"), $dwww_build_menu, "dwww");
+    Debug(_g("Skipping execution of %s - %s package doesn't seem to be installed."), $dwww_build_menu, "dwww");
   }
-  Debug(_g("%s finished"), "RegisterDwww");
+  Debug(_g("%s finished."), "RegisterDwww");
 
 } # }}}

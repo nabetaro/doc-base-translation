@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Document.pm 220 2011-02-24 22:50:32Z robert $
+# $Id: Document.pm 222 2011-02-28 22:18:55Z robert $
 #
 
 package Debian::DocBase::Document;
@@ -164,7 +164,7 @@ sub DisplayStatusInformation($) { # {{{
       }
       close(F);
     } else {
-      Warn( _g("Cannot open file `%s' for reading: %s"), $var_ctrl_file, $!);
+      Warn( _g("Cannot open file `%s' for reading: %s."), $var_ctrl_file, $!);
     }
   }
 
@@ -188,7 +188,7 @@ sub Register($$) { # {{{
   if ($db_file->GetDocumentID() ne $self->GetDocumentID()) {
     delete $self->{'CONTROL_FILES'}->{$db_filename};
     $db_file->OnRegistered(0);
-    return Error( _g("Document id in `%s' does not match our document id (%s != %s)"),
+    return Error( _g("Document id in `%s' does not match our document id (%s != %s)."),
                   $db_filename, $db_file->GetDocumentID(), $self->GetDocumentID()
                   );
   }
@@ -196,7 +196,7 @@ sub Register($$) { # {{{
   if ($db_file->Invalid()) {
     delete $self->{'CONTROL_FILES'}->{$db_filename};
     $db_file->OnRegistered(0);
-    return Warn( _g( "`%s' contains errors, not registering"), $db_file->GetSourceFileName() );
+    return Warn( _g( "`%s' contains errors, not registering."), $db_file->GetSourceFileName() );
   }
 
 # $db_file->OnRegistered(1); # Set it after document is generated
@@ -211,7 +211,7 @@ sub Unregister($$) { # {{{
   unless (exists $self->{'CONTROL_FILES'}->{$db_filename}) {
     # remove any file data from our existing files database if it's there
     Debian::DocBase::DB::GetFilesDB()->RemoveData($db_filename);
-    return Warn( _g("File `%s' is not registered, cannot remove") , $db_filename)
+    return Warn( _g("File `%s' is not registered, cannot remove.") , $db_filename)
   }
 
   $self->{'CONTROL_FILES'}->{$db_filename}->OnUnregistered();
@@ -222,7 +222,7 @@ sub Unregister($$) { # {{{
 sub UnregisterAll($) { # {{{
   my $self          = shift;
 
-  Debug(_g("Unregistering all control files from document `%s'"),  $self->GetDocumentID() );
+  Debug(_g("Unregistering all control files from document `%s'."),  $self->GetDocumentID() );
 
   foreach my $doc ( values %{$self->{'CONTROL_FILES'}} ) {
     $doc->OnUnregistered();
@@ -245,14 +245,14 @@ sub WriteNewCtrlFile() { # {{{
   if ($self->Invalid() || !$self->_HasControlFiles()) {
     if (-e $file)  {
       Debug("Removing control file $file");
-      unlink $file or Fatal($ERR_FSACCESS, _g("Cannot remove file `%s': %s"), $file, $!);
+      unlink $file or Fatal($ERR_FSACCESS, _g("Cannot remove file `%s': %s."), $file, $!);
     }
     return;
   }
 
 
   open(F, '>', $tmpfile) or
-    Fatal($ERR_FSACCESS, _g("Cannot open file `%s' for writing: %s"), $tmpfile, $!);
+    Fatal($ERR_FSACCESS, _g("Cannot open file `%s' for writing: %s."), $tmpfile, $!);
 
   foreach $fld (GetFldKeys($FLDTYPE_MAIN)) {
     print F ucfirst($fld) . ": " .  $self->{'MAIN_DATA'}->{$fld} . "\n"
@@ -267,10 +267,10 @@ sub WriteNewCtrlFile() { # {{{
     }
   }
 
-  close F or Fatal($ERR_FSACCESS, _g("Cannot close file `%s': %s"), $file, $!);
+  close F or Fatal($ERR_FSACCESS, _g("Cannot close file `%s': %s."), $file, $!);
 
   rename $tmpfile, $file 
-    or Fatal($ERR_FSACCESS, _g("Cannot rename file `%s' to `%s': %s"), $tmpfile, $file, $!);
+    or Fatal($ERR_FSACCESS, _g("Cannot rename file `%s' to `%s': %s."), $tmpfile, $file, $!);
 
 
   # mark the control files as registered
@@ -304,7 +304,7 @@ sub MergeCtrlFiles($) { # {{{
     my $doc_fname = $doc_data->GetSourceFileName();
 
     if ($doc_data->GetDocumentID() ne $doc_id) {
-      Warn( _g("Unregistering file `%s', since its actual document id `%s' does not match its saved document id `%s'"),
+      Warn( _g("Unregistering file `%s', since its actual document id `%s' does not match its saved document id `%s'."),
                $doc_fname, $doc_data->GetDocumentID(), $doc_id);
       $self->Unregister($doc_data);
       splice (@control_files, $idx--, 1);
@@ -320,7 +320,7 @@ sub MergeCtrlFiles($) { # {{{
 
         if ($old_val and $old_val ne $new_val and
             ($fld eq $FLD_DOCUMENT or $fld eq $FLD_SECTION)) {
-            return Error( _g("Error while merging %s with %s: inconsistent values of %s"),
+            return Error( _g("Error while merging %s with %s: inconsistent values of %s."),
                           join(', ', @control_files[0..$idx-1]), $doc_fname, $fld);
         }
         $self->{'MAIN_DATA'}->{$fld} = $new_val unless $old_val;
@@ -329,7 +329,7 @@ sub MergeCtrlFiles($) { # {{{
 
     # merge formats
     foreach my $format ($doc_data->GetFormatNames()) {
-      return Error( _g("Error while merging %s with %s: format %s already defined"),
+      return Error( _g("Error while merging %s with %s: format %s already defined."),
                           join(', ', @control_files[0..$idx-1]), $doc_fname, $format) if $self->{'FORMAT_LIST'}->{$format};
       $self->{'FORMAT_LIST'}->{$format} = $doc_data->GetFormat($format);
     }
@@ -354,7 +354,7 @@ sub SaveStatusChanges($) { # {{{
 sub _CheckMerged($) { # {{{
   my $self = shift;
 
-  Fatal($ERR_INTERNAL, _g("Document `%s' is not yet merged"),  $self->GetDocumentID())
+  Fatal($ERR_INTERNAL, _g("Document `%s' is not yet merged."),  $self->GetDocumentID())
     unless $self->{'MERGED_CTRL_FILES'};
 } # }}}
 
@@ -431,7 +431,7 @@ sub _ParseControlFiles($) { # {{{
   my $self = shift;
 
   foreach my $cfname ($self->_GetControlFileNames()) {
-    Fatal($ERR_INTERNAL, _g("`%s' not yet created"), $cfname) unless $self->{'CONTROL_FILES'}->{$cfname};
+    Fatal($ERR_INTERNAL, _g("`%s' not yet created."), $cfname) unless $self->{'CONTROL_FILES'}->{$cfname};
     $self->{'CONTROL_FILES'}->{$cfname}->Parse();
   }
 } # }}}

@@ -1,49 +1,50 @@
-doc-base (0.9.6~3) UNRELEASED; urgency=low
- 
+doc-base (0.9.6~4) UNRELEASED; urgency=low
+
   * Applied a bit modified patch from  Martin Pitt @ Ubuntu to remove dependency
     on perl (closes: #602919):
-    + Scrollkeeper.pm: provide our own local dirname() function and use it 
+    + Scrollkeeper.pm: provide our own local dirname() function and use it
       instead of File::Basename;
-    + InstallDocs.pm: use the `rm -r' and 'mkdir -p' programs instead of 
+    + InstallDocs.pm: use the `rm -r' and 'mkdir -p' programs instead of
       File::Path;
-    + debian/rules: run dh_perl with '-d' to avoid perl dependency. 
+    + debian/rules: run dh_perl with '-d' to avoid perl dependency.
 
-  * Switch internal databases format from MLDBM to YAML and provide better 
+  * Switch internal databases format from MLDBM to YAML and provide better
     error recovery from database corruption:
-    + DB.pm: use YAML::Tiny module for stroing our internal databases;
+    + DB.pm: use YAML::Tiny module for storing our internal databases;
     + Util.pm: introduce Fatal() function and differentiate exit codes
       by type of error;
-    + make the Fatal() function call 
+    + make the Fatal() function call
     + debian/control: switch dependency on libmdlbm-perl to libyaml-tiny-perl;
-    + debian/postinst: try to recover for yaml files corruption by deleting 
+    + debian/postinst: try to recover for yaml files corruption by deleting
       them and re-spawning install-docs.
-  
-  * Translations handling:  
-    + patch from David Prévot not to assume word ordering in translated 
-      strings (closes: #606475). 
-    + patch from Chris Leick to fix plurals in the strings (closes: #521384).
+
+  * Translations handling:
+    + patch from David Prévot not to assume word ordering in translated
+      strings (closes: #606475);
+    + patch from Chris Leick to fix plurals in the strings (closes: #521384);
+    + English messages cleanups;
     + mark more doc-base messages as translatable;
     + Update Polish translation of binary.
 
   * doc-base.sgml:
-    + prepend a top-level section name section names to make it more visible 
-      that sections' componets are separated by slash (closes: #578331);
+    + prepend a top-level section name section names to make it more visible
+      that sections' components are separated by slash (closes: #578331);
     + add the `Network/Remote Access' section (closes: #555161);
     + the Network section has two levels, not three (closes: #615488).
 
   * Don't create scrollkeeper files when rarian-compat is not installed
     (closes: #419745)
-    + debian/triggers: interest on /usr/share/doc/rarian-compat to be 
+    + debian/triggers: interest on /usr/share/doc/rarian-compat to be
       notified of installs/removals of rarian-compat
   * DocBaseFile.pm: fix `no valid Format found' check.
-  * Scrollkeeper.pm: avoid `unsuccessful stat on file contains new line' 
+  * Scrollkeeper.pm: avoid `unsuccessful stat on file contains new line'
     warnings given by perl (closes: #607498, #614330).
 
   * Ubuntu bugs handling:
-    + install-docs.in: check if the Pod::Usage module is available before 
+    + install-docs.in: check if the Pod::Usage module is available before
       using it (LP: #431270, #510976);
     + this version gets rid of MLDBM and provides a better handling of
-      databases corruption, to prevent `read error' bugs 
+      databases corruption, to prevent `read error' bugs
       (LP: #695319, #675069, #672364, #668856, #652102, #621345);
     + debian/prerm: downgrade the `cannot find install-docs on path' error
       to a warning to make it possible to remove doc-base when install-docs
@@ -57,11 +58,14 @@ doc-base (0.9.6~3) UNRELEASED; urgency=low
 
   * debian/rules: switch to the tiny format from debhelper and add support for
     build-arch and build-indep targets.
+  * debian/control:
+    + sort dependency fields with wrap-and-sort from the
+      ubuntu-dev-tools package;
+    + drop versioned conflicts with old versions of dwww and dhelp;
+    + drop versioned dependency on dpkg;
+    + Standards-Version: 3.9.1.
   * Bump debhelper compat mode to 8.
   * Set source format to `3.0 (native)'.
-  * Standards-Version: 3.9.1.
-  * Drop versioned conflicts with old versions of dwww and dhelp.
-  * Drop versioned dependency on dpkg.
   * Fix spelling typos found by lintian.
   * Remove ancient stuff from preinst.
   * Re-register all docs when upgrading to this version.

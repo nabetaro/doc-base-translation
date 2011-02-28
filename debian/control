@@ -3,11 +3,14 @@ Section: doc
 Priority: optional
 Maintainer: Robert Luberda <robert@debian.org>
 Standards-Version: 3.9.1
-Build-Depends-Indep: debiandoc-sgml (>= 1.1.37), libyaml-tiny-perl, libuuid-perl, po4a (>= 0.35)
+Build-Depends-Indep: debiandoc-sgml (>= 1.1.37),
+                     libuuid-perl,
+                     libyaml-tiny-perl (>= 1.48),
+                     po4a (>= 0.35)
 Build-Depends: debhelper (>= 8)
 
 Package: doc-base
-Depends: ${perl:Depends}, ${misc:Depends}, libuuid-perl, libyaml-tiny-perl
+Depends: libuuid-perl, libyaml-tiny-perl, ${misc:Depends}, ${perl:Depends}
 Suggests: dhelp | dwww | doc-central | yelp | khelpcenter4, rarian-compat
 Architecture: all
 Description: utilities to manage online documentation

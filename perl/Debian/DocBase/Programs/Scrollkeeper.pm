@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: Scrollkeeper.pm 218 2011-02-24 22:02:29Z robert $
+# $Id: Scrollkeeper.pm 222 2011-02-28 22:18:55Z robert $
 #
 
 package Debian::DocBase::Programs::Scrollkeeper;
@@ -60,7 +60,7 @@ sub RegisterScrollkeeper($@) { # {{{
 
   if (! $opt_update_menus)
   {
-    Debug(_g("Skipping registration of %s because of --no-update-menus"), $opt_update_menus);
+    Debug(_g("Skipping registration of %s because of --no-update-menus."), $opt_update_menus);
     return;
   }
 
@@ -83,7 +83,7 @@ sub _RegisterScrollkeeperFiles($@) { # {{{
   my @documents = @_;
   my $do_update = 0;
 
-  Debug(_g("%s started"), "_RegisterScrollkeeperFiles");
+  Debug(_g("%s started."), "_RegisterScrollkeeperFiles");
 
   # read in doc-base -> scrollkeeper mappings unless already read
   ReadMap($scrollkeeper_map_file, \%mapping);
@@ -130,14 +130,14 @@ sub _RegisterScrollkeeperFiles($@) { # {{{
 
   Execute($scrollkeeper_update, '-q') if ($do_update and $opt_update_menus);
 
-  Debug(_g("%s finished"), "_RegisterScrollkeeperFiles");
+  Debug(_g("%s finished."), "_RegisterScrollkeeperFiles");
 } # }}}
 
 
 sub _UnregisterScrollkeeperFiles(@) { # {{{
   my @documents = @_;
 
-  Debug(_g("%s started"), "_UnRegisterScrollkeeperFiles");
+  Debug(_g("%s started."), "_UnRegisterScrollkeeperFiles");
   foreach my $doc (@documents) {
     my $old_omf_file = $doc->GetStatus('Scrollkeeper-omf-file');
     my $omf_serial_id = $doc->GetStatus('Scrollkeeper-sid');
@@ -145,7 +145,7 @@ sub _UnregisterScrollkeeperFiles(@) { # {{{
     $doc->SetStatus( 'Scrollkeeper-omf-file' => undef,
                      'Scrollkeeper-sid'      =>  $omf_serial_id);
   }
-  Debug(_g("%s finished"), "_UnRegisterScrollkeeperFiles");
+  Debug(_g("%s finished."), "_UnRegisterScrollkeeperFiles");
 
 } # }}}
 
@@ -170,13 +170,13 @@ sub dirname {
 sub _RemoveOmfFile($) { # {{{
   my $omf_file = shift;
   my $omf_dir = dirname($omf_file);
-  Debug( _g("Removing scrollkeeper OMF file `%s'"), $omf_file);
-  unlink($omf_file) or return Error( _g("Cannot remove file `%s': %s"), $omf_file, $!);
+  Debug( _g("Removing scrollkeeper OMF file `%s'."), $omf_file);
+  unlink($omf_file) or return Error( _g("Cannot remove file `%s': %s."), $omf_file, $!);
 
   #check to see if the directory is now empty. if so, kill it.
   if (opendir(DIR, $omf_dir)) {
     if (defined grep { $_ !~ /^\.\.?$/ } readdir DIR) {
-      rmdir($omf_dir) or Error( _g("Cannot delete directory `%s': %s"), $omf_dir, $!);
+      rmdir($omf_dir) or Error( _g("Cannot delete directory `%s': %s."), $omf_dir, $!);
     }
     closedir DIR;
   }
@@ -202,7 +202,7 @@ sub _WriteOmfFile($$$$) { # {{{
 
 
   if (! -d "$OMF_DIR/$docid") {
-    mkdir("$OMF_DIR/$docid") or Fatal($ERR_FSACCESS, _g("Cannot create directory `%s': %s"), $OMF_DIR/$docid, $!);
+    mkdir("$OMF_DIR/$docid") or Fatal($ERR_FSACCESS, _g("Cannot create directory `%s': %s."), $OMF_DIR/$docid, $!);
   }
 
   &Debug("Writing scrollkeeper OMF file `$omf_file'");
@@ -227,7 +227,7 @@ sub _WriteOmfFile($$$$) { # {{{
 
   #finish the boiler plate
   print OMF "\t</resource>\n</omf>\n";
-  close(OMF) or Fatal($ERR_FSACCESS, _g("Cannot close file `%s': %s"), $omf_file, $!);
+  close(OMF) or Fatal($ERR_FSACCESS, _g("Cannot close file `%s': %s."), $omf_file, $!);
 
   return $omf_file;
 } # }}}
@@ -241,7 +241,7 @@ sub ScrollkeeperStatusChanged()
     return 0;
   }
   my $statusChanged = (($scStatus ? 1 : 0) xor (-x $scrollkeeper_update ? 1 : 0));
-  Debug(_g("Scrollkeeper status changed: %d"), $statusChanged);
+  Debug(_g("Scrollkeeper status changed: %d."), $statusChanged);
   return $statusChanged;
   
 }
@@ -250,6 +250,6 @@ sub _SaveScrollkeeperStatus()
 {
   my $status = (-x $scrollkeeper_update ? 1 : 0);
   Debian::DocBase::DB::GetStatusDB()->PutData("/internal/sc-status", $status);
-  Debug(_g("Scrollkeeper status set to %d"), $status);
+  Debug(_g("Scrollkeeper status set to %d."), $status);
 }
 1;
