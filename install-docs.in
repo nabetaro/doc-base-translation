@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs.in 222 2011-02-28 22:18:55Z robert $
+# $Id: install-docs.in 224 2011-03-04 14:05:50Z robert $
 
 use warnings;
 use strict;
@@ -32,6 +32,14 @@ BEGIN {
                               import  Debian::DocBase::Utils;
                               require Debian::DocBase::Gettext;
                               import  Debian::DocBase::Gettext;
+                              require Debian::DocBase::DB;
+                              import  Debian::DocBase::DB;
+                              require Debian::DocBase::Programs::Dwww;
+                              import  Debian::DocBase::Programs::Dwww;
+                              require Debian::DocBase::Programs::Dhelp;
+                              import  Debian::DocBase::Programs::Dhelp;
+                              require Debian::DocBase::Programs::Scrollkeeper;
+                              import  Debian::DocBase::Programs::Scrollkeeper;
                               1;
                         };
   die $@  if $@; #LINE_REMOVED_BY_MAKE#
@@ -227,9 +235,8 @@ Install the documentation described by the control file I<file>.
 
 =cut
     # install new docs
-    _CheckFunctionality();
+    _CheckFunctionality() or SetMode($MODE_INSTALL, @ARGV);
     _CheckArgCount($#ARGV, "install");
-    SetMode($MODE_INSTALL, @ARGV);
     last; # }}}
 
   } elsif (($arg eq '-r') or ($arg eq '--remove')) { # {{{
@@ -241,9 +248,8 @@ I<file>.
 
 =cut
     # remove old docs #
-    _CheckFunctionality();
+    _CheckFunctionality() or SetMode($MODE_REMOVE, @ARGV);
     _CheckArgCount($#ARGV, "remove");
-    SetMode($MODE_REMOVE, @ARGV);
     last; # }}}
 
   } elsif (($arg eq '-c') or ($arg eq '--check')) { # {{{

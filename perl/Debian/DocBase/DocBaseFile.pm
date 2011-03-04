@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 222 2011-02-28 22:18:55Z robert $
+# $Id: DocBaseFile.pm 224 2011-03-04 14:05:50Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -392,7 +392,7 @@ sub _CheckRequiredFields($$$) { # {{{
   # parse rest of the file
   $self->_ReadControlFileSection($fh, $doc_data, $FLDTYPE_MAIN)
     or return undef;
-  return $self->_PrsErr(PRS_FATAL_ERR, _g("unsupported doc-base file version: %s"), $$doc_data{'version'}) 
+  return $self->_PrsErr(PRS_WARN, _g("unsupported doc-base file version: %s"), $$doc_data{'version'}) 
     if defined $$doc_data{'version'};
 
   $self->_CheckSection($doc_data->{$FLD_SECTION}) if $self->{'DO_ADD_CHECKS'};

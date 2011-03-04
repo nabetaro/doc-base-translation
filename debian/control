@@ -5,7 +5,7 @@ Maintainer: Robert Luberda <robert@debian.org>
 Standards-Version: 3.9.1
 Build-Depends-Indep: debiandoc-sgml (>= 1.1.37),
                      libuuid-perl,
-                     libyaml-tiny-perl (>= 1.48),
+                     libyaml-tiny-perl,
                      po4a (>= 0.35)
 Build-Depends: debhelper (>= 8)
 

@@ -2,7 +2,7 @@
 
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 223 2011-02-28 23:34:22Z robert $
+# $Id: InstallDocs.pm 225 2011-03-04 14:31:45Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -171,7 +171,7 @@ sub _HandleRegistrationAndUnregistation() { # {{{
   my @toinstall     = ();       # list of files to install
   my @toremove      = ();       # list of files to remove
   my @toremovedocs  = ();       # list of docs to remove
-  my $msg           = "";
+  my $showregmsg    = $opt_verbose;
 
   $on_fatal_handler = \&Debian::DocBase::DB::SaveDatabases;
   SetupSignals();
@@ -191,6 +191,7 @@ sub _HandleRegistrationAndUnregistation() { # {{{
 
   if ($mode == $MODE_INSTALL_CHANGED) {
     my @stats = Debian::DocBase::DocBaseFile::GetChangedDocBaseFiles(\@toremove, \@toinstall);
+    my $msg   = "";
  
     # Translators: the following message will be used to replace `%s' in `Processing %s', e.g.
     #    `Processing 5 removed doc-base files...'
@@ -211,6 +212,7 @@ sub _HandleRegistrationAndUnregistation() { # {{{
     $msg       = sprintf $msg, grep { $_ != 0 } @stats if $msg;
 
     Inform(_g("Processing %s..."), $msg) if $msg;
+    $showregmsg = 1 if $stats[0] or $stats[1] or $stats[2];
   }
 
   elsif ($mode == $MODE_INSTALL_ALL) {
@@ -237,6 +239,7 @@ sub _HandleRegistrationAndUnregistation() { # {{{
       Inform(_ng("Registering %d doc-base file...",
                  "Registering %d doc-base files...", $stats[1]), $stats[1]);
    }
+    $showregmsg = 1 if $stats[0] or $stats[1];
   }
 
   elsif  ($mode == $MODE_INSTALL) {
@@ -303,11 +306,9 @@ sub _HandleRegistrationAndUnregistation() { # {{{
 
   if (@documents)
   {
-    my $showmsg = ($opt_verbose or $msg);
-
-    RegisterDwww($showmsg,          @documents);
-    RegisterDhelp($showmsg,         $mode == $MODE_INSTALL_ALL, @documents);
-    RegisterScrollkeeper($showmsg,  @documents);
+    RegisterDwww($showregmsg,          @documents);
+    RegisterDhelp($showregmsg,         $mode == $MODE_INSTALL_ALL, @documents);
+    RegisterScrollkeeper($showregmsg,  @documents);
     Debian::DocBase::DB::SaveDatabases();
   }
 

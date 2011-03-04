@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.9.6\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2011-03-01 00:29+0100\n"
+"POT-Creation-Date: 2011-03-01 00:43+0100\n"
 "PO-Revision-Date: 2011-03-01 00:26+0100\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -19,22 +19,22 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2);\n"
 "X-Generator: Lokalize 1.0\n"
 
-#: ../../install-docs.in:89
+#: ../../install-docs.in:97
 #, perl-format
 msgid "Too many arguments for `%s'."
 msgstr "Zbyt wiele argumentów dla \"%s\"."
 
-#: ../../install-docs.in:92
+#: ../../install-docs.in:100
 #, perl-format
 msgid "`%s' requires exactly one argument."
 msgstr "\"%s\" wymaga podania dokładnie jednego argumentu."
 
-#: ../../install-docs.in:95
+#: ../../install-docs.in:103
 #, perl-format
 msgid "Arguments missing for `%s'."
 msgstr "Nie podano argumentów dla \"%s\"."
 
-#: ../../install-docs.in:111
+#: ../../install-docs.in:119
 #, perl-format
 msgid "Re-registation of all documents forced by %s."
 msgstr "Ponowne rejestrowanie wszystkich dokumentów wymuszone przez %s."
@@ -394,7 +394,7 @@ msgstr "Przetwarzanie %s..."
 msgid "Unregistering %d doc-base file, "
 msgid_plural "Unregistering %d doc-base files, "
 msgstr[0] "Wyrejestrowywanie %d pliku doc-base, "
-msgstr[1] "Wyrejestrowywanie %d plików doc-base,"
+msgstr[1] "Wyrejestrowywanie %d plików doc-base, "
 msgstr[2] "Wyrejestrowywanie %d plików doc-base, "
 
 #. Translators: the `Unregisteing %d doc-base files, ' and `re-registeing %d doc-base files...' 

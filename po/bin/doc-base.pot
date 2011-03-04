@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: doc-base 0.9.6~4\n"
+"Project-Id-Version: doc-base 0.10.0\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2011-03-01 00:29+0100\n"
+"POT-Creation-Date: 2011-03-01 00:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,22 +18,22 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: ../../install-docs.in:89
+#: ../../install-docs.in:97
 #, perl-format
 msgid "Too many arguments for `%s'."
 msgstr ""
 
-#: ../../install-docs.in:92
+#: ../../install-docs.in:100
 #, perl-format
 msgid "`%s' requires exactly one argument."
 msgstr ""
 
-#: ../../install-docs.in:95
+#: ../../install-docs.in:103
 #, perl-format
 msgid "Arguments missing for `%s'."
 msgstr ""
 
-#: ../../install-docs.in:111
+#: ../../install-docs.in:119
 #, perl-format
 msgid "Re-registation of all documents forced by %s."
 msgstr ""

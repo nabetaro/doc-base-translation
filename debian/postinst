@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: postinst 216 2011-02-20 22:42:12Z robert $
+# $Id: postinst 224 2011-03-04 14:05:50Z robert $
 # vim:ts=4:sts=4:et:sw
 # postinst for doc-base
 
@@ -8,7 +8,7 @@ set -e
 
 package=doc-base
 # upgrades prior to this version require complete re-registration
-compat_ver=0.9.5.99
+compat_ver=0.10.0~
 
 ctrldir="/usr/share/$package"
 libdir="/var/lib/$package"
