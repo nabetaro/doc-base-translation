@@ -1,11 +1,12 @@
-doc-base (0.10.1~) UNRELEASED; urgency=low
+doc-base (0.10.1) unstable; urgency=low
 
-  * NOT RELEASED YET
-  * DocBaseFile.pm: While getting changed files, don't schedule not yet 
-    registered files for removal.
-    
+  * DocBaseFile.pm, InstallDocs.pm:
+    + while getting changed files, don't schedule not yet registered files 
+      for removal;
+    + if some documents cannot be registered and verbose messages are turned 
+      off, inform the user how to get the more detailed reasons of the errors.
 
- -- Robert Luberda <robert@debian.org>  Fri, 04 Mar 2011 22:11:06 +0100
+ -- Robert Luberda <robert@debian.org>  Sun, 06 Mar 2011 18:48:55 +0100
 
 doc-base (0.10.0) unstable; urgency=low
 

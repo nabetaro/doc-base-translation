@@ -2,7 +2,7 @@
 
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: InstallDocs.pm 225 2011-03-04 14:31:45Z robert $
+# $Id: InstallDocs.pm 228 2011-03-06 17:51:46Z robert $
 
 package Debian::DocBase::InstallDocs;
 
@@ -176,14 +176,14 @@ sub _HandleRegistrationAndUnregistation() { # {{{
   $on_fatal_handler = \&Debian::DocBase::DB::SaveDatabases;
   SetupSignals();
 
-  if ($mode != $MODE_INSTALL_ALL) 
+  if ($mode != $MODE_INSTALL_ALL)
   {
     my $scStatus = ScrollkeeperStatusChanged();
     if ($scStatus != $SC_NOTCHANGED)
     {
       $mode = $MODE_INSTALL_ALL;
-      Inform($scStatus == $SC_REMOVED 
-              ? _g("Scrollkeeper was removed, forcing re-registration of all documents.") 
+      Inform($scStatus == $SC_REMOVED
+              ? _g("Scrollkeeper was removed, forcing re-registration of all documents.")
               : _g("Scrollkeeper was installed, forcing re-registration of all documents."));
     }
   }
@@ -192,13 +192,13 @@ sub _HandleRegistrationAndUnregistation() { # {{{
   if ($mode == $MODE_INSTALL_CHANGED) {
     my @stats = Debian::DocBase::DocBaseFile::GetChangedDocBaseFiles(\@toremove, \@toinstall);
     my $msg   = "";
- 
+
     # Translators: the following message will be used to replace `%s' in `Processing %s', e.g.
     #    `Processing 5 removed doc-base files...'
     #    `Processing 1 removed doc-base file, 4 changed doc-base files, 2 added doc-base files...'
     $msg      .=  _ng("%d removed doc-base file", "%d removed doc-base files", $stats[0]) if $stats[0];
     $msg      .= ", " if $msg and $stats[1];
-    
+
     # Translators: the following message will be used to replace `%s' in `Processing %s', e.g.
     #    `Processing 5 changed doc-base files...'
     #    `Processing 1 removed doc-base file, 4 changed doc-base files, 2 added doc-base files...'
@@ -221,12 +221,12 @@ sub _HandleRegistrationAndUnregistation() { # {{{
     my @stats      = ($#toremovedocs+1, $#toinstall+1);
 
     if ($stats[0] and $stats[1]) {
-      # Translators: the `Unregisteing %d doc-base files, ' and `re-registeing %d doc-base files...' 
+      # Translators: the `Unregisteing %d doc-base files, ' and `re-registeing %d doc-base files...'
       # messages are used together.
       my $msg = _ng("Unregistering %d doc-base file, ",
                     "Unregistering %d doc-base files, ", $stats[0]);
 
-      # Translators: the `Unregisteing %d doc-base files, ' and `re-registeing %d doc-base files...' 
+      # Translators: the `Unregisteing %d doc-base files, ' and `re-registeing %d doc-base files...'
       # messages are used together.
       $msg .= _ng("re-registering %d doc-base file...",
                   "re-registering %d doc-base files...", $stats[1]);
@@ -303,6 +303,8 @@ sub _HandleRegistrationAndUnregistation() { # {{{
   }
   Debian::DocBase::DB::SaveDatabases();
   RestoreSignals();
+
+  Debian::DocBase::DocBaseFile::DisplayErrorNote() if $mode == $MODE_INSTALL_ALL or $mode == $MODE_INSTALL_CHANGED;
 
   if (@documents)
   {

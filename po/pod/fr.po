@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2011-02-28 23:28+0100\n"
+"POT-Creation-Date: 2011-03-06 17:31+0100\n"
 "PO-Revision-Date: 2009-03-26 14:39+0100\n"
 "Last-Translator: Jean-Luc Coulon (f5ibh) <jean-luc.coulon@wanadoo.fr>\n"
 "Language-Team: French <<debian-l10n-french@lists.debian.org>>\n"
@@ -18,25 +18,25 @@ msgstr ""
 
 # type: =head1
 #. type: =head1
-#: ../../install-docs.in:41
+#: ../../install-docs.in:49
 msgid "NAME"
 msgstr "NOM"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:43
+#: ../../install-docs.in:51
 msgid "install-docs - manage online Debian documentation"
 msgstr "install-docs - gestion de la documentation en ligne de Debian"
 
 # type: =head1
 #. type: =head1
-#: ../../install-docs.in:56
+#: ../../install-docs.in:64
 msgid "SYNOPSIS"
 msgstr "RÉSUMÉ"
 
 # type: verbatim
 #. type: verbatim
-#: ../../install-docs.in:58
+#: ../../install-docs.in:66
 #, no-wrap
 msgid ""
 " install-docs [options] -i,--install | -r,--remove | -c,--check file [ file ... ]\n"
@@ -47,7 +47,7 @@ msgstr ""
 
 # type: verbatim
 #. type: verbatim
-#: ../../install-docs.in:60
+#: ../../install-docs.in:68
 #, no-wrap
 msgid ""
 " install-docs [options] -I,--install-all | -C,--install-changed | -R,--remove-all\n"
@@ -58,7 +58,7 @@ msgstr ""
 
 # type: verbatim
 #. type: verbatim
-#: ../../install-docs.in:62
+#: ../../install-docs.in:70
 #, no-wrap
 msgid ""
 " install-docs [options] -s,--status docid [ docid ... ]\n"
@@ -69,7 +69,7 @@ msgstr ""
 
 # type: verbatim
 #. type: verbatim
-#: ../../install-docs.in:64
+#: ../../install-docs.in:72
 #, no-wrap
 msgid ""
 " install-docs [options] --dump-db dbname\n"
@@ -80,7 +80,7 @@ msgstr ""
 
 # type: verbatim
 #. type: verbatim
-#: ../../install-docs.in:66
+#: ../../install-docs.in:74
 #, no-wrap
 msgid ""
 " install-docs -h,--help | -V,--version\n"
@@ -91,13 +91,13 @@ msgstr ""
 
 # type: =head1
 #. type: =head1
-#: ../../install-docs.in:69
+#: ../../install-docs.in:77
 msgid "DESCRIPTION"
 msgstr "DESCRIPTION"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:71
+#: ../../install-docs.in:79
 msgid ""
 "B<install-docs> is a tool allow Debian package maintainers to register "
 "documentation to various documentation systems.  It currently supports "
@@ -110,7 +110,7 @@ msgstr ""
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:75
+#: ../../install-docs.in:83
 msgid ""
 "This manual page provides a quick synopsis of B<install-docs> usage.  Full "
 "documentation can be found in the documentation, including a description of "
@@ -123,43 +123,43 @@ msgstr ""
 
 # type: =head1
 #. type: =head1
-#: ../../install-docs.in:79
+#: ../../install-docs.in:87
 msgid "OPTIONS"
 msgstr "OPTIONS"
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:156
+#: ../../install-docs.in:164
 msgid "B<-v>, B<--verbose>"
 msgstr "B<-v>, B<--verbose>"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:158
+#: ../../install-docs.in:166
 msgid "Operate verbosely."
 msgstr "Fonctionnement bavard"
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:166
+#: ../../install-docs.in:174
 msgid "B<-d>, B<--debug>"
 msgstr "B<-d>, B<--debug>"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:168
+#: ../../install-docs.in:176
 msgid "Print some debugging information."
 msgstr "Afficher certaines informations de débogage."
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:176
+#: ../../install-docs.in:184
 msgid "B<--no-update-menus>"
 msgstr "B<--no-update-menus>"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:178
+#: ../../install-docs.in:186
 msgid ""
 "Inhibit running L<dwww-build-menu(8)>, L<dhelp_parse(8)>, and L<scrollkeeper-"
 "update(8)>."
@@ -169,13 +169,13 @@ msgstr ""
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:187
+#: ../../install-docs.in:195
 msgid "B<--rootdir> I<dir>"
 msgstr "B<--rootdir> I<répertoire>"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:189
+#: ../../install-docs.in:197
 msgid ""
 "Set the root directory to I<dir> instead of `I</>'. Useful and valid only "
 "with the B<--check> action."
@@ -185,13 +185,13 @@ msgstr ""
 
 # type: =head1
 #. type: =head1
-#: ../../install-docs.in:202
+#: ../../install-docs.in:210
 msgid "ACTIONS"
 msgstr "ACTIONS"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:204
+#: ../../install-docs.in:212
 msgid ""
 "Below is list of possible actions B<install-docs> could handle. There can be "
 "only one action option passed to install-docs, moreover the action with its "
@@ -204,7 +204,7 @@ msgstr ""
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:208
+#: ../../install-docs.in:216
 msgid ""
 "Each I<file> argument should be the full path for the doc-base control file "
 "(i.e.  `/usr/share/doc-base/some_file' or `/etc/doc-base/documents/"
@@ -221,7 +221,7 @@ msgstr ""
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:214
+#: ../../install-docs.in:222
 msgid ""
 "If I<file> or I<docid> equals `B<->' (the minus sign), the list of arguments "
 "is read from the standard input (each file name or document id in separate "
@@ -233,42 +233,42 @@ msgstr ""
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:224
+#: ../../install-docs.in:232
 msgid "B<-i> I<file> [I<file> ...], B<--install> I<file> [I<file> ...]"
 msgstr ""
 "B<-i> I<fichier> [I<fichier> ...], B<--install> I<fichier> [I<fichier> ...]"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:226
+#: ../../install-docs.in:234
 msgid "Install the documentation described by the control file I<file>."
 msgstr ""
 "Installer la documentation décrite par le fichier de contrôle I<fichier>."
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:237
+#: ../../install-docs.in:244
 msgid "B<-r> I<file> [I<file> ...], B<--remove> I<file> [I<file> ...]"
 msgstr ""
 "B<-r> I<fichier> [I<fichier> ...], B<--remove> I<fichier> [I<fichier> ...]"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:239
+#: ../../install-docs.in:246
 msgid "Remove the documentation identified by the control file I<file>."
 msgstr ""
 "Supprimer la documentation identifiée par le fichier de contrôle I<fichier>."
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:251
+#: ../../install-docs.in:257
 msgid "B<-c> I<file> [I<file> ...], B<--check> I<file> [I<file> ...]"
 msgstr ""
 "B<-c> I<fichier> [I<fichier> ...], B<--check> I<fichier> [I<fichier> ...]"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:253
+#: ../../install-docs.in:259
 msgid ""
 "Check the control file I<file> and display number of possible problems "
 "found.  Use with I<--verbose> to get the actual locations of errors and "
@@ -283,25 +283,25 @@ msgstr ""
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:265
+#: ../../install-docs.in:271
 msgid "B<-R>, B<--remove-all>"
 msgstr "B<-R>, B<--remove-all>"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:267
+#: ../../install-docs.in:273
 msgid "De-register all registered documents."
 msgstr "Désenregistrer tous les documents enregistrés."
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:277
+#: ../../install-docs.in:283
 msgid "B<-I>, B<--install-all>"
 msgstr "B<-I>, B<--install-all>"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:279
+#: ../../install-docs.in:285
 msgid ""
 "(Re)register all documents from F</usr/share/doc-base> and F</etc/doc-base/"
 "documents>."
@@ -311,13 +311,13 @@ msgstr ""
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:289
+#: ../../install-docs.in:295
 msgid "B<-C>, B<--install-changed>"
 msgstr "B<-C>, B<--install-changed>"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:291
+#: ../../install-docs.in:297
 msgid ""
 "Compare contents of F</usr/share/doc-base> and F</etc/doc-base/documents> "
 "directories with registered documents database and de-register any files "
@@ -330,38 +330,38 @@ msgstr ""
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:303
+#: ../../install-docs.in:309
 msgid "B<-s> I<docid> [I<docid> ...], B<--status> I<docid> [I<docid> ...]"
 msgstr "B<-s> I<id_doc> [I<id_doc> ...], B<--status> I<id_doc> [I<id_doc> ...]"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:305
+#: ../../install-docs.in:311
 msgid "Display the status of the document identifier I<docid>."
 msgstr "Afficher l'état de l'identifiant de document I<id_doc>."
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:314
+#: ../../install-docs.in:320
 msgid "B<-L> I<docid> [I<docid> ...], B<--listfiles> I<docid> [I<docid> ...]"
 msgstr ""
 "B<-L> I<id_doc> [I<id_doc> ...], B<--listfiles> I<id_doc> [I<id_doc> ...]"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:316
+#: ../../install-docs.in:322
 msgid "Deprecated option. Does nothing."
 msgstr "Option obsolète. N'effectue rien."
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:325
+#: ../../install-docs.in:331
 msgid "B<--dump-db> I<dbname>"
 msgstr "B<--dump-db> I<nom_base_de_données>"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:327
+#: ../../install-docs.in:333
 msgid ""
 "Dumps contents of internal databases, for debugging purposes. I<dbname> can "
 "be either B<files.db> or B<status.db>."
@@ -371,37 +371,37 @@ msgstr ""
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:337
+#: ../../install-docs.in:343
 msgid "B<-h>, B<--help>"
 msgstr "B<-h>, B<--help>"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:339
+#: ../../install-docs.in:345
 msgid "Show a short help message."
 msgstr "Afficher un court message d'aide."
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:348
+#: ../../install-docs.in:354
 msgid "B<-V>, B<--version>"
 msgstr "B<-V>, B<--version>"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:350
+#: ../../install-docs.in:356
 msgid "Display version information."
 msgstr "Afficher les informations de version."
 
 # type: =head1
 #. type: =head1
-#: ../../install-docs.in:375
+#: ../../install-docs.in:381
 msgid "COMPATIBILITY ISSUES"
 msgstr "PROBLÈMES DE COMPATIBILITÉ"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:377
+#: ../../install-docs.in:383
 msgid ""
 "The following features were added in version 0.8.4, please make sure to add "
 "proper `I<Conflicts>' or `I<Depends>' lines if you would like to use them in "
@@ -413,14 +413,14 @@ msgstr ""
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:383 ../../install-docs.in:387
-#: ../../install-docs.in:391 ../../install-docs.in:395
+#: ../../install-docs.in:389 ../../install-docs.in:393
+#: ../../install-docs.in:397 ../../install-docs.in:401
 msgid "*"
 msgstr "*"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:385
+#: ../../install-docs.in:391
 msgid ""
 "support for passing more than one argument to the B<-i> and B<-r> actions,"
 msgstr ""
@@ -429,13 +429,13 @@ msgstr ""
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:389
+#: ../../install-docs.in:395
 msgid "reading arguments from the standard input,"
 msgstr "lecture des paramètres depuis l'entrée standard."
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:393
+#: ../../install-docs.in:399
 msgid ""
 "B<-I>,B<--install-all>, B<-R>, B<---remove-all>, B<-c>, B<--check> actions,"
 msgstr ""
@@ -443,13 +443,13 @@ msgstr ""
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:397
+#: ../../install-docs.in:403
 msgid "B<-d>, B<--debug>, B<-h>, B<--help> options."
 msgstr "option B<-d>, B<--debug>, B<-h>, B<--help>."
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:401
+#: ../../install-docs.in:407
 msgid ""
 "The B<-C>, B<--install-changed>, B<--dump-db>, B<-V>, B<--version> options "
 "were added in 0.8.12."
@@ -459,19 +459,19 @@ msgstr ""
 
 # type: =head1
 #. type: =head1
-#: ../../install-docs.in:403
+#: ../../install-docs.in:409
 msgid "FILES"
 msgstr "FICHIERS"
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:407
+#: ../../install-docs.in:413
 msgid "F</usr/share/doc-base/>"
 msgstr "F</usr/share/doc-base/>"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:409
+#: ../../install-docs.in:415
 msgid "The location of doc-base control files provided by various packages."
 msgstr ""
 "Emplacement des fichiers de contrôle de documentation fournis par différents "
@@ -479,13 +479,13 @@ msgstr ""
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:411
+#: ../../install-docs.in:417
 msgid "F</etc/doc-base/documents/>"
 msgstr "F</etc/doc-base/documents/>"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:413
+#: ../../install-docs.in:419
 msgid "The location of doc-base control files provided by local administrator."
 msgstr ""
 "Emplacement des fichiers de contrôle de documentation fournis par "
@@ -493,37 +493,37 @@ msgstr ""
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:415
+#: ../../install-docs.in:421
 msgid "F</var/lib/doc-base/info/documents/>"
 msgstr "F</var/lib/doc-base/info/documents/>"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:417
+#: ../../install-docs.in:423
 msgid "The location of registered control files."
 msgstr "Emplacement des fichiers de contrôle enregistrés."
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:419
+#: ../../install-docs.in:425
 msgid "F</var/lib/doc-base/info/status.db>"
 msgstr "F</var/lib/doc-base/info/status.db>"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:421
+#: ../../install-docs.in:427
 msgid "Statuses of registered documents."
 msgstr "État des documents enregistrés."
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:423
+#: ../../install-docs.in:429
 msgid "F</var/lib/doc-base/info/files.db>"
 msgstr "F</var/lib/doc-base/info/files.db>"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:425
+#: ../../install-docs.in:431
 msgid "Timestamps and documents ids of registered doc-base files."
 msgstr ""
 "Horodatage et identifiants des documents des fichiers de documentation "
@@ -531,13 +531,13 @@ msgstr ""
 
 # type: =item
 #. type: =item
-#: ../../install-docs.in:427
+#: ../../install-docs.in:433
 msgid "F</var/lib/doc-base/omf/>"
 msgstr "F</var/lib/doc-base/omf/>"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:429
+#: ../../install-docs.in:435
 msgid ""
 "The location of generated scrollkeeper OMF files.  Note: F</usr/share/omf/"
 "doc-base> should be a symbolic link pointing to the directory."
@@ -547,25 +547,25 @@ msgstr ""
 
 # type: =head1
 #. type: =head1
-#: ../../install-docs.in:434
+#: ../../install-docs.in:440
 msgid "BUGS"
 msgstr "BOGUES"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:436
+#: ../../install-docs.in:442
 msgid "See L<http://bugs.debian.org/doc-base>."
 msgstr "Voir L<http://bugs.debian.org/doc-base>."
 
 # type: =head1
 #. type: =head1
-#: ../../install-docs.in:438
+#: ../../install-docs.in:444
 msgid "SEE ALSO"
 msgstr "VOIR AUSSI"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:440
+#: ../../install-docs.in:446
 msgid ""
 "dhelp(1), doccentral(1), dwww(7), scrollkeeper(7), Debian doc-base Manual F</"
 "usr/share/doc/doc-base/doc-base.html/index.html>"
@@ -575,13 +575,13 @@ msgstr ""
 
 # type: =head1
 #. type: =head1
-#: ../../install-docs.in:443
+#: ../../install-docs.in:449
 msgid "AUTHOR"
 msgstr "AUTEUR"
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:445
+#: ../../install-docs.in:451
 msgid ""
 "This program was originally written by Christian Schwarz <schwarz@debian."
 "org>, for the Debian GNU/Linux system, and the next maintainer was Adam Di "
@@ -595,7 +595,7 @@ msgstr ""
 
 # type: textblock
 #. type: textblock
-#: ../../install-docs.in:450
+#: ../../install-docs.in:456
 msgid ""
 "This software was meant to be for the benefit of the entire Debian user and "
 "developer community.  If you are interested in being involved with this "

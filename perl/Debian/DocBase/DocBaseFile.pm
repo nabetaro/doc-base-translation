@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 227 2011-03-06 16:39:59Z robert $
+# $Id: DocBaseFile.pm 228 2011-03-06 17:51:46Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -23,7 +23,8 @@ use constant PRS_FATAL_ERR    => 1;   # fatal error, marks documents as invalid
 use constant PRS_ERR_IGN      => 2;   # error, marks documents as invalid
 use constant PRS_WARN         => 3;   # warning, marks document as invalid
 
-my %valid_sections = ();
+my %valid_sections    = ();
+my $global_errors_cnt = 0;
 
 #################################################
 ###        PUBLIC STATIC FUNCTIONS            ###
@@ -95,6 +96,16 @@ sub GetChangedDocBaseFiles($$){ # {{{
   return @retval;
 } # }}}
 
+
+sub DisplayErrorNote()
+{
+  return unless  $global_errors_cnt;
+  return if $opt_verbose;
+  Inform(_ng(
+        "Note: `install-docs --verbose --check file_name' may give more details about the above error.",
+        "Note: `install-docs --verbose --check file_name' may give more details about the above errors.",
+        $global_errors_cnt));
+}
 sub new { # {{{
     my $class         = shift;
     my $filename      = shift;
@@ -244,15 +255,17 @@ sub _PrsErr($$) { # {{{
   my $flag = shift;
   my $fmt  = shift;
   my $msg  = sprintf ($fmt, @_);
-  my $filepos = $. ?  sprintf _g("`%s', line %d"), $self->GetSourceFileName(), $. 
+  my $filepos = $. ?  sprintf _g("`%s', line %d"), $self->GetSourceFileName(), $.
                    :  sprintf "`%s'", $self->GetSourceFileName();
 
   $self->{'WARNERR_CNT'}++;
   $self->{'INVALID'} = 1 if $flag != PRS_WARN;
 
   if ($flag == PRS_FATAL_ERR) {
+    ++$global_errors_cnt;
     Error(_g("Error in %s: %s."), $filepos, $msg);
   } elsif ($flag == PRS_ERR_IGN) {
+    ++$global_errors_cnt;
     ErrorNF(_g("Error in %s: %s."), $filepos, $msg);
   } elsif ($flag == PRS_WARN) {
     Warn(_g("Warning in %s: %s."), $filepos, $msg);
@@ -393,14 +406,14 @@ sub _CheckRequiredFields($$$) { # {{{
   $self->_PrsErr(PRS_WARN, _g("invalid value of `Document' field"))
     unless $tmp =~ /^[a-z0-9\.\+\-]+$/;
 
-  my $optdirmsg = ($opt_rootdir eq "") ? "" : " " . sprintf ( _g("(using `%s' as the root directory)"), 
+  my $optdirmsg = ($opt_rootdir eq "") ? "" : " " . sprintf ( _g("(using `%s' as the root directory)"),
                                                          $opt_rootdir);
 
   my $doc_data = $self->{'MAIN_DATA'};
   # parse rest of the file
   $self->_ReadControlFileSection($fh, $doc_data, $FLDTYPE_MAIN)
     or return undef;
-  return $self->_PrsErr(PRS_WARN, _g("unsupported doc-base file version: %s"), $$doc_data{'version'}) 
+  return $self->_PrsErr(PRS_WARN, _g("unsupported doc-base file version: %s"), $$doc_data{'version'})
     if defined $$doc_data{'version'};
 
   $self->_CheckSection($doc_data->{$FLD_SECTION}) if $self->{'DO_ADD_CHECKS'};
@@ -412,8 +425,10 @@ sub _CheckRequiredFields($$$) { # {{{
 
   my $format_data = {};
   my $status      = 0;
+  my $fmts_count  = 0;
   while ($status = $self->_ReadControlFileSection($fh, $format_data, $FLDTYPE_FORMAT)) {
     my $format = $$format_data{'format'};
+    ++$fmts_count;
 
     # adjust control fields
     $format =~ tr/A-Z/a-z/;
@@ -471,7 +486,7 @@ sub _CheckRequiredFields($$$) { # {{{
 
       # c) do files exist ?
       if (not grep { &bsd_glob($opt_rootdir.$_, GLOB_NOSORT) }  @masks) {
-        $self->_PrsErr(PRS_WARN, _g("file mask `%s' does not match any files") . $optdirmsg, 
+        $self->_PrsErr(PRS_WARN, _g("file mask `%s' does not match any files") . $optdirmsg,
                                   join (" ", @masks));
         next;
       }
@@ -482,8 +497,11 @@ sub _CheckRequiredFields($$$) { # {{{
    $format_data = {};
   }
 
-  return $self->_PrsErr(PRS_ERR_IGN, _g("no valid `Format' section found")) 
-    unless keys %{$self->{FORMAT_LIST}};
+  unless (keys %{$self->{FORMAT_LIST}})
+  {
+    return $self->_PrsErr(PRS_ERR_IGN, _g("no `Format' section found")) unless $fmts_count;
+    return $self->_PrsErr(PRS_ERR_IGN, _g("all `Format' sections are invalid"));
+  }
 
  $self->{'INVALID'} = 0;
 } # }}}
