@@ -1,3 +1,12 @@
+doc-base (0.10.1~) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+  * DocBaseFile.pm: While getting changed files, don't schedule not yet 
+    registered files for removal.
+    
+
+ -- Robert Luberda <robert@debian.org>  Fri, 04 Mar 2011 22:11:06 +0100
+
 doc-base (0.10.0) unstable; urgency=low
 
   * Applied a bit modified patch from  Martin Pitt @ Ubuntu to remove dependency

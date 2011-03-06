@@ -1,6 +1,6 @@
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: DocBaseFile.pm 224 2011-03-04 14:05:50Z robert $
+# $Id: DocBaseFile.pm 227 2011-03-06 16:39:59Z robert $
 #
 
 package Debian::DocBase::DocBaseFile;
@@ -56,34 +56,42 @@ sub GetAllDocBaseFiles() { # {{{
 sub GetChangedDocBaseFiles($$){ # {{{
   my ($toremove, $toinstall) = @_;
 
-  my @changed = ();
+  my @changed_reg   = ();
+  my @changed_unreg = ();
 
   my %files   = map { $_ => (stat $_)[$CTIME_FIELDNO] } GetAllDocBaseFiles();
 
   my $filesdb = Debian::DocBase::DB::GetFilesDB();
   my @dbkeys  = $filesdb->GetDBKeys();
   foreach my $realfile ( @dbkeys ) {
-    my $dbdata = $filesdb->GetData($realfile);
+    my $dbdata      = $filesdb->GetData($realfile);
+    my $registered  = defined $dbdata->{'ID'};
+
     if ($files{$realfile} ) {
-      push @changed, $realfile if $files{$realfile} != $dbdata->{'CT'};
+      my $changed = $files{$realfile} != $dbdata->{'CT'};
+      push @changed_reg,   $realfile if $changed and $registered;
+      push @changed_unreg, $realfile if $changed and ! $registered;
       delete $files{$realfile}
-    } elsif (defined $dbdata->{'ID'}) {
+
+    } elsif ($registered) {
       push @$toremove, $realfile;
+
     } else {
       # file no longer exists at file system and ID was not defined,
-      # so it was never registered and can't be de-registered. Don't
-      # try to de-register it, just remove entry from files.db
+      # so it was never registered and can't be unregistered. Don't
+      # try to unregister it, just remove entry from files.db
       $filesdb->RemoveData($realfile);
     }
   }
   @$toinstall = keys %files;
 
- 
-  my @retval = ($#{$toremove}+1, $#changed+1, $#{$toinstall}+1);
+  my @retval = ($#{$toremove} + 1, $#changed_reg + $#changed_unreg + 2, $#{$toinstall} + 1);
 
-  push @$toinstall, @changed;
-  push @$toremove, @changed;
-  undef @changed;
+  push @$toinstall, @changed_reg;
+  push @$toinstall, @changed_unreg;
+  push @$toremove,  @changed_reg;
+  undef @changed_reg;
+  undef @changed_unreg;
   return @retval;
 } # }}}
 
