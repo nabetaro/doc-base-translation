@@ -1,5 +1,6 @@
 doc-base (0.10.2~) UNRELEASED; urgency=low
 
+  * Update German translations (closes: #624345).
   * debian/control:
     + Add VCS fields;
     + Standards-Version: 3.9.2 (no changes).
