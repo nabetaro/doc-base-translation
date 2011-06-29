@@ -2,12 +2,14 @@ Source: doc-base
 Section: doc
 Priority: optional
 Maintainer: Robert Luberda <robert@debian.org>
-Standards-Version: 3.9.1
+Standards-Version: 3.9.2
 Build-Depends-Indep: debiandoc-sgml (>= 1.1.37),
                      libuuid-perl,
                      libyaml-tiny-perl,
                      po4a (>= 0.35)
 Build-Depends: debhelper (>= 8)
+Vcs-Git: git://anonscm.debian.org/users/robert/doc-base.git
+Vcs-Browser: http://anonscm.debian.org/git/users/robert/doc-base.git
 
 Package: doc-base
 Depends: libuuid-perl, libyaml-tiny-perl, ${misc:Depends}, ${perl:Depends}
