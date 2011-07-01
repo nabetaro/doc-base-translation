@@ -38,20 +38,19 @@ sub GetDocIdFromRegisteredFile($) { # {{{
 } # }}}
 
 sub GetAllDocBaseFiles() { # {{{
-  my @global = ();
-  my @local  = ();
-  if (opendir(DIR, $CONTROL_DIR)) {
-    @global = grep { $_ = "$CONTROL_DIR/$_" if -f "$CONTROL_DIR/$_" } readdir(DIR);
-    closedir DIR;
+  my @result;;
+  my @dirs   = ($CONTROL_DIR, $LOCAL_CONTROL_DIR);
+  foreach my $idx (0 .. $#dirs)
+  {
+    if (opendir(DIR, $dirs[$idx])) {
+      push @result, grep { $_ = "$dirs[$idx]/$_"
+                        if $_ ne "README"
+                          and $_ !~ /(\.(bak|swp|dpkg-tmp|dpkg-new|dpkg-old)|~)$/o
+                          and -f "$dirs[$idx]/$_" } readdir(DIR);
+      closedir DIR;
+    }
   }
-  if (opendir(DIR, $LOCAL_CONTROL_DIR)) {
-    @local = grep { $_ = "$LOCAL_CONTROL_DIR/$_"
-                       if $_ ne "README"
-                          and $_ !~ /\.(bak|swp|dpkg-tmp|dpkg-new|dpkg-old|~)$/o
-                          and -f "$LOCAL_CONTROL_DIR/$_" } readdir(DIR);
-    closedir DIR;
-  }
-  return (@global, @local);
+  return @result;
 }  # }}}
 
 sub GetChangedDocBaseFiles($$){ # {{{

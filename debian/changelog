@@ -1,12 +1,14 @@
 doc-base (0.10.2~) UNRELEASED; urgency=low
 
+  * DocBaseFile.pm: Ignore temporary/backup files in both /usr/share/doc-base
+    and /etc/doc-base/documents (closes: #623169).
   * Update German translations (closes: #624345).
   * Update French translations (closes: #627284).
   * debian/control:
     + Add VCS fields;
     + Standards-Version: 3.9.2 (no changes).
 
- -- Robert Luberda <robert@debian.org>  Thu, 30 Jun 2011 00:23:06 +0200
+ -- Robert Luberda <robert@debian.org>  Fri, 01 Jul 2011 20:29:00 +0200
 
 doc-base (0.10.1) unstable; urgency=low
 
