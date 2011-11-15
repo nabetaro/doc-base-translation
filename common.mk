@@ -1,6 +1,5 @@
 # vim:ts=2:et
 # common includes for doc-base
-# $Id: common.mk 189 2009-04-26 22:57:37Z robert $
 #
 getCurrentMakefileName := $(CURDIR)/$(lastword $(MAKEFILE_LIST))
 override TOPDIR   := $(dir $(call getCurrentMakefileName))
@@ -89,6 +88,8 @@ ifndef MAKE_VERBOSE
         ;;                                                      \
     esac
   endef
+else
+  msg := :
 endif
 
 msgprefix         := *$(subst * ,*,$(wordlist 1,$(MAKELEVEL),* * * * * * * * * * * * * * * * * *))
