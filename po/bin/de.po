@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.10.1\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2011-07-01 22:43+0200\n"
+"POT-Creation-Date: 2011-11-17 22:19+0100\n"
 "PO-Revision-Date: 2011-04-21 20:23+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -17,22 +17,22 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../../install-docs.in:97
+#: ../../install-docs.in:107
 #, perl-format
 msgid "Too many arguments for `%s'."
 msgstr "zu viele Parameter für »%s«"
 
-#: ../../install-docs.in:100
+#: ../../install-docs.in:110
 #, perl-format
 msgid "`%s' requires exactly one argument."
 msgstr "`%s' benötigt genau einen Parameter."
 
-#: ../../install-docs.in:103
+#: ../../install-docs.in:113
 #, perl-format
 msgid "Arguments missing for `%s'."
 msgstr "Für »%s« fehlen Parameter."
 
-#: ../../install-docs.in:119
+#: ../../install-docs.in:132
 #, perl-format
 msgid "Re-registation of all documents forced by %s."
 msgstr "Erneute Registrierung von allen Dokumenten wurde durch %s erzwungen."

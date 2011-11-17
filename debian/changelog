@@ -1,3 +1,14 @@
+doc-base (0.10.3) unstable; urgency=low
+
+  * debian/postinst: set PERL_DL_NONLAZY=1 not to fail when perl is being 
+    upgraded (closes: #648937).
+  * install-docs.in:
+    + show verbose warning message when doc-base is not fully functional;
+    + drop the force-reregister file also when install-docs -C is called.
+  * debian/control: Fix Vcs-Browser field.
+
+ -- Robert Luberda <robert@debian.org>  Thu, 17 Nov 2011 22:19:09 +0100
+
 doc-base (0.10.2) unstable; urgency=low
 
   * DocBaseFile.pm: Ignore temporary/backup files in both /usr/share/doc-base

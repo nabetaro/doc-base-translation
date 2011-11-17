@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: doc-base 0.10.1\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
-"POT-Creation-Date: 2011-07-01 22:43+0200\n"
+"POT-Creation-Date: 2011-11-17 22:19+0100\n"
 "PO-Revision-Date: 2011-03-06 18:37+0100\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -19,22 +19,22 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2);\n"
 "X-Generator: Lokalize 1.0\n"
 
-#: ../../install-docs.in:97
+#: ../../install-docs.in:107
 #, perl-format
 msgid "Too many arguments for `%s'."
 msgstr "Zbyt wiele argumentów dla \"%s\"."
 
-#: ../../install-docs.in:100
+#: ../../install-docs.in:110
 #, perl-format
 msgid "`%s' requires exactly one argument."
 msgstr "\"%s\" wymaga podania dokładnie jednego argumentu."
 
-#: ../../install-docs.in:103
+#: ../../install-docs.in:113
 #, perl-format
 msgid "Arguments missing for `%s'."
 msgstr "Nie podano argumentów dla \"%s\"."
 
-#: ../../install-docs.in:119
+#: ../../install-docs.in:132
 #, perl-format
 msgid "Re-registation of all documents forced by %s."
 msgstr "Ponowne rejestrowanie wszystkich dokumentów wymuszone przez %s."
