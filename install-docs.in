@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 # vim:cindent:ts=2:sw=2:et:fdm=marker:cms=\ #\ %s
 #
-# $Id: install-docs.in 224 2011-03-04 14:05:50Z robert $
 
 use warnings;
 use strict;
@@ -43,7 +42,18 @@ BEGIN {
                               1;
                         };
   die $@  if $@; #LINE_REMOVED_BY_MAKE#
-  warn $@ if $@;
+  if ($@) {
+    # gettext is most probably not usable here.
+    warn "The following error has occured while loading doc-base modules:\n\n".
+         $@ ."\n".
+         "*******************************************************************\n".
+         "It seems install-docs is not fully functional at the moment,\n".
+         "and it will try to recover from the error next time it is called.\n".
+         ($ENV{'DPKG_MAINTSCRIPT_PACKAGE'} ?
+         "\nPlease run `install-docs --install-changed' command\n".
+         "manually after the upgrade process is finished.\n" : "") .
+         "*******************************************************************\n\n";
+  }
 }
 
 =head1 NAME
