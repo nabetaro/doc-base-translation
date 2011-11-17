@@ -115,11 +115,14 @@ sub _CheckFunctionality(;$) { # {{{
     close F;
     exit 0;
   }
-  if (!$dont_force_reg && -e $force_reregister_flagfile) {
-    Inform( _g("Re-registation of all documents forced by %s."), $force_reregister_flagfile);
-    SetMode($MODE_INSTALL_ALL);
+
+  if (-e $force_reregister_flagfile) {
     unlink ($force_reregister_flagfile);
-    return 1;
+    if (!$dont_force_reg && -e $force_reregister_flagfile) {
+      Inform( _g("Re-registation of all documents forced by %s."), $force_reregister_flagfile);
+      SetMode($MODE_INSTALL_ALL);
+      return 1;
+    }
   }
   return 0;
 
