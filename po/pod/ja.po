@@ -1,5 +1,5 @@
-# Japanese translations for PACKAGE package
-# PACKAGE パッケージに対する英訳
+# Japanese translations for doc-base package
+# doc-base パッケージに対する英訳
 # Copyright (C) 2010 Robert Luberda <robert@debian.org>
 # This file is distributed under the same license as the doc-base package.
 # KURASAWA Nozomu <nabetaro@debian.or.jp>, 2012.
@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: doc-base 0.9.4\n"
 "Report-Msgid-Bugs-To: doc-base@packages.debian.org\n"
 "POT-Creation-Date: 2011-11-17 22:19+0100\n"
-"PO-Revision-Date: 2012-05-22 09:24+0900\n"
+"PO-Revision-Date: 2012-05-29 17:40+0900\n"
 "Last-Translator: KURASAWA Nozomu <nabetaro@debian.or.jp>\n"
 "Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
 "Language: ja\n"
@@ -90,13 +90,26 @@ msgstr "説明"
 
 #. type: textblock
 #: ../../install-docs.in:89
-msgid "B<install-docs> is a tool allow Debian package maintainers to register documentation to various documentation systems.  It currently supports B<dhelp>, B<dwww>, B<doc-central>, and B<scrollkeeper> browsers."
-msgstr "B<install-docs> は、Debian のパッケージメンテナがさまざまなドキュメンテーションシステムに、ドキュメントを登録できるようにするツールです。現在、B<dhelp>, B<dwww>, B<doc-central>, B<scrollkeeper> といったブラウザをサポートしています。"
+msgid ""
+"B<install-docs> is a tool allow Debian package maintainers to register "
+"documentation to various documentation systems.  It currently supports "
+"B<dhelp>, B<dwww>, B<doc-central>, and B<scrollkeeper> browsers."
+msgstr ""
+"B<install-docs> は、Debian のパッケージメンテナがさまざまなドキュメンテーショ"
+"ンシステムに、ドキュメントを登録できるようにするツールです。現在、B<dhelp>, "
+"B<dwww>, B<doc-central>, B<scrollkeeper> といったブラウザをサポートしていま"
+"す。"
 
 #. type: textblock
 #: ../../install-docs.in:93
-msgid "This manual page provides a quick synopsis of B<install-docs> usage.  Full documentation can be found in the documentation, including a description of the control file syntax and grammar."
-msgstr "このマニュアルページでは、B<install-docs> を使う上での、簡単な書式を提供しています。コントロールファイルの構文や文法に説明といった、完全な文書はドキュメントにあります。"
+msgid ""
+"This manual page provides a quick synopsis of B<install-docs> usage.  Full "
+"documentation can be found in the documentation, including a description of "
+"the control file syntax and grammar."
+msgstr ""
+"このマニュアルページでは、B<install-docs> を使う上での、簡単な書式を提供して"
+"います。コントロールファイルの構文や文法に説明といった、完全な文書はドキュメ"
+"ントにあります。"
 
 #. type: =head1
 #: ../../install-docs.in:97
@@ -120,7 +133,6 @@ msgstr "B<-d>, B<--debug>"
 
 #. type: textblock
 #: ../../install-docs.in:189
-#| msgid "Print some debugging informations."
 msgid "Print some debugging information."
 msgstr "デバッグ情報を表示します。"
 
@@ -131,8 +143,12 @@ msgstr "B<--no-update-menus>"
 
 #. type: textblock
 #: ../../install-docs.in:199
-msgid "Inhibit running L<dwww-build-menu(8)>, L<dhelp_parse(8)>, and L<scrollkeeper-update(8)>."
-msgstr "L<dwww-build-menu(8)>, L<dhelp_parse(8)>, L<scrollkeeper-update(8)> の実行を抑制します。"
+msgid ""
+"Inhibit running L<dwww-build-menu(8)>, L<dhelp_parse(8)>, and L<scrollkeeper-"
+"update(8)>."
+msgstr ""
+"L<dwww-build-menu(8)>, L<dhelp_parse(8)>, L<scrollkeeper-update(8)> の実行を"
+"抑制します。"
 
 #. type: =item
 #: ../../install-docs.in:208
@@ -141,8 +157,12 @@ msgstr "B<--rootdir> I<dir>"
 
 #. type: textblock
 #: ../../install-docs.in:210
-msgid "Set the root directory to I<dir> instead of `I</>'. Useful and valid only with the B<--check> action."
-msgstr "ルートディレクトリを、`I</>' ではなく I<dir> に設定します。B<--check> アクションと共に使用したときのみ、有効で意味があります。"
+msgid ""
+"Set the root directory to I<dir> instead of `I</>'. Useful and valid only "
+"with the B<--check> action."
+msgstr ""
+"ルートディレクトリを、`I</>' ではなく I<dir> に設定します。B<--check> アク"
+"ションと共に使用したときのみ、有効で意味があります。"
 
 #. type: =head1
 #: ../../install-docs.in:223
@@ -151,18 +171,39 @@ msgstr "アクション"
 
 #. type: textblock
 #: ../../install-docs.in:225
-msgid "Below is list of possible actions B<install-docs> could handle. There can be only one action option passed to install-docs, moreover the action with its arguments must be the last option passed."
-msgstr "以下に B<install-docs> が扱える、有効なアクションを列挙します。install-docs へはアクションオプションをひとつしか渡せません。さらに、引数のあるアクションは、最後のオプションとして渡さなければなりません。"
+msgid ""
+"Below is list of possible actions B<install-docs> could handle. There can be "
+"only one action option passed to install-docs, moreover the action with its "
+"arguments must be the last option passed."
+msgstr ""
+"以下に B<install-docs> が扱える、有効なアクションを列挙します。install-docs "
+"へはアクションオプションをひとつしか渡せません。さらに、引数のあるアクション"
+"は、最後のオプションとして渡さなければなりません。"
 
 #. type: textblock
 #: ../../install-docs.in:229
-msgid "Each I<file> argument should be the full path for the doc-base control file (i.e.  `/usr/share/doc-base/some_file' or `/etc/doc-base/documents/some_file'), and each I<docid> should be the document identifier (Document identifiers are set in the `Document' field of the control file, and usually correspond to the package name.)"
-msgstr "各 I<file> は、doc-base コントロールファイルのフルパス (つまり `/usr/share/doc-base/some_file' や `/etc/doc-base/documents/some_file') にしてください。また、各 I<docid> は、ドキュメント識別子 (ドキュメント識別子は、コントロールファイルの `Document' フィールド設定されており、通常パッケージ名と同じ) にしてください。"
+msgid ""
+"Each I<file> argument should be the full path for the doc-base control file "
+"(i.e.  `/usr/share/doc-base/some_file' or `/etc/doc-base/documents/"
+"some_file'), and each I<docid> should be the document identifier (Document "
+"identifiers are set in the `Document' field of the control file, and usually "
+"correspond to the package name.)"
+msgstr ""
+"各 I<file> は、doc-base コントロールファイルのフルパス (つまり `/usr/share/"
+"doc-base/some_file' や `/etc/doc-base/documents/some_file') にしてください。"
+"また、各 I<docid> は、ドキュメント識別子 (ドキュメント識別子は、コントロール"
+"ファイルの `Document' フィールド設定されており、通常パッケージ名と同じ) にし"
+"てください。"
 
 #. type: textblock
 #: ../../install-docs.in:235
-msgid "If I<file> or I<docid> equals `B<->' (the minus sign), the list of arguments is read from the standard input (each file name or document id in separate line)."
-msgstr "I<file> や I<docid> が `B<->' (マイナス記号) の場合、引数のリストを標準入力 (ファイル名やドキュメント ID は改行で区切る) から読み込みます。"
+msgid ""
+"If I<file> or I<docid> equals `B<->' (the minus sign), the list of arguments "
+"is read from the standard input (each file name or document id in separate "
+"line)."
+msgstr ""
+"I<file> や I<docid> が `B<->' (マイナス記号) の場合、引数のリストを標準入力 "
+"(ファイル名やドキュメント ID は改行で区切る) から読み込みます。"
 
 #. type: =item
 #: ../../install-docs.in:245
@@ -172,7 +213,8 @@ msgstr "B<-i> I<file> [I<file> ...], B<--install> I<file> [I<file> ...]"
 #. type: textblock
 #: ../../install-docs.in:247
 msgid "Install the documentation described by the control file I<file>."
-msgstr "コントロールファイル I<file> に記述したドキュメントをインストールします。"
+msgstr ""
+"コントロールファイル I<file> に記述したドキュメントをインストールします。"
 
 #. type: =item
 #: ../../install-docs.in:257
@@ -191,8 +233,16 @@ msgstr "B<-c> I<file> [I<file> ...], B<--check> I<file> [I<file> ...]"
 
 #. type: textblock
 #: ../../install-docs.in:272
-msgid "Check the control file I<file> and display number of possible problems found.  Use with I<--verbose> to get the actual locations of errors and warnings.  If I<--rootdir> was also given, its argument will be prepended to names of the files given if the `Files' and `Index' fields of the I<file>."
-msgstr "コントロールファイル I<file> をチェックし、発見した問題の数を表示します。エラーや警告の実際の場所を得るには、I<--verbose> と合わせて使用してください。I<--rootdir> が与えられた場合、I<file> の `Files' フィールドや `Index' フィールドがあると、そのファイル名の前に付与します。"
+msgid ""
+"Check the control file I<file> and display number of possible problems "
+"found.  Use with I<--verbose> to get the actual locations of errors and "
+"warnings.  If I<--rootdir> was also given, its argument will be prepended to "
+"names of the files given if the `Files' and `Index' fields of the I<file>."
+msgstr ""
+"コントロールファイル I<file> をチェックし、発見した問題の数を表示します。エ"
+"ラーや警告の実際の場所を得るには、I<--verbose> と合わせて使用してください。"
+"I<--rootdir> が与えられた場合、I<file> の `Files' フィールドや `Index' フィー"
+"ルドがあると、そのファイル名の前に付与します。"
 
 #. type: =item
 #: ../../install-docs.in:284
@@ -211,8 +261,12 @@ msgstr "B<-I>, B<--install-all>"
 
 #. type: textblock
 #: ../../install-docs.in:298
-msgid "(Re)register all documents from F</usr/share/doc-base> and F</etc/doc-base/documents>."
-msgstr "F</usr/share/doc-base> や F</etc/doc-base/documents> から、すべてのドキュメントを (再) 登録します。"
+msgid ""
+"(Re)register all documents from F</usr/share/doc-base> and F</etc/doc-base/"
+"documents>."
+msgstr ""
+"F</usr/share/doc-base> や F</etc/doc-base/documents> から、すべてのドキュメン"
+"トを (再) 登録します。"
 
 #. type: =item
 #: ../../install-docs.in:308
@@ -221,8 +275,14 @@ msgstr "B<-C>, B<--install-changed>"
 
 #. type: textblock
 #: ../../install-docs.in:310
-msgid "Compare contents of F</usr/share/doc-base> and F</etc/doc-base/documents> directories with registered documents database and de-register any files that are missing and (re)register only changed or new files."
-msgstr "F</usr/share/doc-base> の内容や F</etc/doc-base/documents> ディレクトリと、登録ドキュメントデータベースとを比較し、見つからないファイルを登録解除したり、変更されただけのファイルや新しいファイルを (再) 登録します。"
+msgid ""
+"Compare contents of F</usr/share/doc-base> and F</etc/doc-base/documents> "
+"directories with registered documents database and de-register any files "
+"that are missing and (re)register only changed or new files."
+msgstr ""
+"F</usr/share/doc-base> の内容や F</etc/doc-base/documents> ディレクトリと、登"
+"録ドキュメントデータベースとを比較し、見つからないファイルを登録解除したり、"
+"変更されただけのファイルや新しいファイルを (再) 登録します。"
 
 #. type: =item
 #: ../../install-docs.in:322
@@ -251,8 +311,12 @@ msgstr "B<--dump-db> I<dbname>"
 
 #. type: textblock
 #: ../../install-docs.in:346
-msgid "Dumps contents of internal databases, for debugging purposes. I<dbname> can be either B<files.db> or B<status.db>."
-msgstr "デバッグ用に、内部データベースをダンプします。I<dbname> は B<files.db> と B<status.db> のいずれかです。"
+msgid ""
+"Dumps contents of internal databases, for debugging purposes. I<dbname> can "
+"be either B<files.db> or B<status.db>."
+msgstr ""
+"デバッグ用に、内部データベースをダンプします。I<dbname> は B<files.db> と "
+"B<status.db> のいずれかです。"
 
 #. type: =item
 #: ../../install-docs.in:356
@@ -271,7 +335,6 @@ msgstr "B<-V>, B<--version>"
 
 #. type: textblock
 #: ../../install-docs.in:369
-#| msgid "Display version infromation"
 msgid "Display version information."
 msgstr "バージョン情報を表示します。"
 
@@ -282,20 +345,25 @@ msgstr "互換性問題"
 
 #. type: textblock
 #: ../../install-docs.in:396
-msgid "The following features were added in version 0.8.4, please make sure to add proper `I<Conflicts>' or `I<Depends>' lines if you would like to use them in your package's scripts:"
-msgstr "以下の機能は、バージョン 0.8.4 で追加されました。パッケージスクリプトで使用する場合は、適切な `I<Conflicts>' 行や `I<Depends>' 行を、確実に追加してください。"
+msgid ""
+"The following features were added in version 0.8.4, please make sure to add "
+"proper `I<Conflicts>' or `I<Depends>' lines if you would like to use them in "
+"your package's scripts:"
+msgstr ""
+"以下の機能は、バージョン 0.8.4 で追加されました。パッケージスクリプトで使用す"
+"る場合は、適切な `I<Conflicts>' 行や `I<Depends>' 行を、確実に追加してくださ"
+"い。"
 
 #. type: =item
-#: ../../install-docs.in:402
-#: ../../install-docs.in:406
-#: ../../install-docs.in:410
-#: ../../install-docs.in:414
+#: ../../install-docs.in:402 ../../install-docs.in:406
+#: ../../install-docs.in:410 ../../install-docs.in:414
 msgid "*"
 msgstr "*"
 
 #. type: textblock
 #: ../../install-docs.in:404
-msgid "support for passing more than one argument to the B<-i> and B<-r> actions,"
+msgid ""
+"support for passing more than one argument to the B<-i> and B<-r> actions,"
 msgstr "B<-i> や B<-r> アクションに対する複数の引数サポート"
 
 #. type: textblock
@@ -305,8 +373,11 @@ msgstr "標準入力からの引数読み込み"
 
 #. type: textblock
 #: ../../install-docs.in:412
-msgid "B<-I>,B<--install-all>, B<-R>, B<---remove-all>, B<-c>, B<--check> actions,"
-msgstr "B<-I>,B<--install-all>, B<-R>, B<---remove-all>, B<-c>, B<--check> の各アクション"
+msgid ""
+"B<-I>,B<--install-all>, B<-R>, B<---remove-all>, B<-c>, B<--check> actions,"
+msgstr ""
+"B<-I>,B<--install-all>, B<-R>, B<---remove-all>, B<-c>, B<--check> の各アク"
+"ション"
 
 #. type: textblock
 #: ../../install-docs.in:416
@@ -315,8 +386,12 @@ msgstr "B<-d>, B<--debug>, B<-h>, B<--help> の各オプション"
 
 #. type: textblock
 #: ../../install-docs.in:420
-msgid "The B<-C>, B<--install-changed>, B<--dump-db>, B<-V>, B<--version> options were added in 0.8.12."
-msgstr "B<-C>, B<--install-changed>, B<--dump-db>, B<-V>, B<--version> の各オプションは 0.8.12 で追加されました。"
+msgid ""
+"The B<-C>, B<--install-changed>, B<--dump-db>, B<-V>, B<--version> options "
+"were added in 0.8.12."
+msgstr ""
+"B<-C>, B<--install-changed>, B<--dump-db>, B<-V>, B<--version> の各オプション"
+"は 0.8.12 で追加されました。"
 
 #. type: =head1
 #: ../../install-docs.in:422
@@ -380,8 +455,12 @@ msgstr "F</var/lib/doc-base/omf/>"
 
 #. type: textblock
 #: ../../install-docs.in:448
-msgid "The location of generated scrollkeeper OMF files.  Note: F</usr/share/omf/doc-base> should be a symbolic link pointing to the directory."
-msgstr "生成された scrollkeeper OMF ファイルの場所。注意: F</usr/share/omf/doc-base> は、このディレクトリへのシンボリックリンクであるべきです。"
+msgid ""
+"The location of generated scrollkeeper OMF files.  Note: F</usr/share/omf/"
+"doc-base> should be a symbolic link pointing to the directory."
+msgstr ""
+"生成された scrollkeeper OMF ファイルの場所。注意: F</usr/share/omf/doc-base> "
+"は、このディレクトリへのシンボリックリンクであるべきです。"
 
 #. type: =head1
 #: ../../install-docs.in:453
@@ -400,8 +479,12 @@ msgstr "関連項目"
 
 #. type: textblock
 #: ../../install-docs.in:459
-msgid "dhelp(1), doccentral(1), dwww(7), scrollkeeper(7), Debian doc-base Manual F</usr/share/doc/doc-base/doc-base.html/index.html>"
-msgstr "dhelp(1), doccentral(1), dwww(7), scrollkeeper(7), Debian doc-base マニュアル F</usr/share/doc/doc-base/doc-base.html/index.html>"
+msgid ""
+"dhelp(1), doccentral(1), dwww(7), scrollkeeper(7), Debian doc-base Manual F</"
+"usr/share/doc/doc-base/doc-base.html/index.html>"
+msgstr ""
+"dhelp(1), doccentral(1), dwww(7), scrollkeeper(7), Debian doc-base マニュア"
+"ル F</usr/share/doc/doc-base/doc-base.html/index.html>"
 
 #. type: =head1
 #: ../../install-docs.in:462
@@ -410,11 +493,24 @@ msgstr "著者"
 
 #. type: textblock
 #: ../../install-docs.in:464
-msgid "This program was originally written by Christian Schwarz <schwarz@debian.org>, for the Debian GNU/Linux system, and the next maintainer was Adam Di Carlo <aph@debian.org>.  Robert Luberda <robert@debian.org> is currently maintaining and extending it."
-msgstr "このプログラムは、元々 Debian GNU/Linux システム向けに Christian Schwarz <schwarz@debian.org> と、次のメンテナである Adam Di Carlo <aph@debian.org> によって書かれました。現在 Robert Luberda <robert@debian.org> が、保守と拡張を行っています。"
+msgid ""
+"This program was originally written by Christian Schwarz <schwarz@debian."
+"org>, for the Debian GNU/Linux system, and the next maintainer was Adam Di "
+"Carlo <aph@debian.org>.  Robert Luberda <robert@debian.org> is currently "
+"maintaining and extending it."
+msgstr ""
+"このプログラムは、元々 Debian GNU/Linux システム向けに Christian Schwarz "
+"<schwarz@debian.org> と、2代目メンテナである Adam Di Carlo <aph@debian.org> "
+"によって書かれました。現在 Robert Luberda <robert@debian.org> が、保守と拡張"
+"を行っています。"
 
 #. type: textblock
 #: ../../install-docs.in:469
-msgid "This software was meant to be for the benefit of the entire Debian user and developer community.  If you are interested in being involved with this software, please join the mailing list <debian-doc@lists.debian.org>."
-msgstr "このソフトウェアは、Debian のユーザ・開発者コミュニティ全体のためになるように作られました。このソフトウェアに興味がある方は、<debian-doc@lists.debian.org> メーリングリストに参加してください。"
-
+msgid ""
+"This software was meant to be for the benefit of the entire Debian user and "
+"developer community.  If you are interested in being involved with this "
+"software, please join the mailing list <debian-doc@lists.debian.org>."
+msgstr ""
+"このソフトウェアは、Debian のユーザ・開発者コミュニティ全体のためになるように"
+"作られました。このソフトウェアに興味がある方は、<debian-doc@lists.debian."
+"org> メーリングリストに参加してください。"
